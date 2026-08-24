@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+*.egg-info/
+
+# Generated patient output
+Population/
+
+# Sample/reference data (potentially sensitive)
+Sample_SDA/
+Sample_Delete_SDA/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor
+*.code-workspace
+.idea/
+*.swp
+
+# Claude session files (keep commands, skip session data)
+.claude/projects/

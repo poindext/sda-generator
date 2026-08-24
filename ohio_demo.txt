@@ -1,0 +1,67 @@
+For a credible statewide Ohio demonstration, I recommend 500,000 synthetic patients covering all 88 counties, with 24 months of history.
+
+That is large enough to demonstrate county-level differences, demographic disparities, chronic-disease cohorts, and drill-downs without creating unnecessary infrastructure overhead.
+
+Recommended dataset
+Data domain	Suggested volume
+Unique patients	500,000
+Counties	All 88
+Encounters/ADT events	3–5 million
+Diagnoses	4–8 million
+Laboratory results	5–10 million
+Vital-sign observations	8–15 million
+Facilities	150–250
+Providers	5,000–10,000
+Historical period	24 months
+New simulated activity	10,000–25,000 clinical events/day
+
+These are approximate ranges; the records should overlap around the same patients rather than representing separate populations.
+
+Suggested disease cohorts
+
+For 500,000 patients:
+
+Cohort	Approximate patients
+Diabetes	55,000–70,000
+Hypertension	120,000–160,000
+Asthma	40,000–55,000
+Cardiovascular disease	35,000–50,000
+Pregnancies during the period	8,000–12,000
+Reportable-disease cases	3,000–8,000
+Patients with multiple chronic conditions	60,000–90,000
+
+Within the diabetes cohort, I would intentionally generate:
+
+15–20% with an A1c above 9%
+20–25% with no A1c received by OHIP in the preceding six months
+Meaningful differences by county, age, race/ethnicity, Medicaid status, and rurality
+A few counties showing improving trends
+One or two counties showing a recent increase requiring investigation
+Geographic distribution
+
+Allocate patients approximately according to county population, but establish a minimum of 750–1,000 patients per county. Strict population-weighted generation would leave Ohio’s smallest counties with too few records for useful demographic breakdowns.
+
+The dashboard can still calculate weighted statewide measures so deliberately oversampling rural counties does not distort the statewide results.
+
+Reportable-disease demonstration
+
+Rare diseases can disappear in statistically realistic synthetic data. Deliberately seed a small outbreak scenario:
+
+A normal baseline of 1–3 cases per week
+A rise to 10–15 positive results in one county
+Related ED visits appearing several days before confirmed laboratory results
+Spread into one neighboring county
+Demographic and facility-level clustering
+A visible reporting and confirmation timeline
+
+That provides a much stronger demonstration than randomly generated cases.
+
+My practical recommendation
+
+Build the initial demo with:
+
+500,000 patients, 24 months of history, approximately 20–30 million clinical facts, and 30 days of simulated near-real-time activity.
+
+If storage or generation time becomes an issue, 250,000 patients is still adequate. I would not go below 100,000 for something presented as a statewide Ohio dashboard, because county and demographic intersections will begin looking artificial or will require extensive suppression.
+
+The synthetic data should also include deliberately incomplete participating-source coverage. That will let us demonstrate a critical OHIP feature: distinguishing a true population trend from a change caused by a hospital or laboratory feed becoming unavailable.

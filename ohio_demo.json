@@ -1,0 +1,154 @@
+{
+  "_comment": "Population config for the Ohio statewide OHIP demonstration dataset.",
+
+  "state": "Ohio",
+  "state_code": "OH",
+  "medicaid_name": "Ohio Medicaid",
+  "medicaid_id_prefix": "OH-MCD",
+  "medicaid_org_code": "OHMCD",
+
+  "age_min": 18,
+  "age_max": 85,
+
+  "cohorts": [
+    ["hypertension",           0.28],
+    ["diabetes_controlled",    0.07],
+    ["diabetes_poor_control",  0.05],
+    ["diabetes_no_recent_a1c", 0.04],
+    ["asthma",                 0.09],
+    ["cardiovascular_disease", 0.08],
+    ["multiple_chronic",       0.14],
+    ["pregnancy",              0.02],
+    ["healthy",                0.23]
+  ],
+
+  "races": [
+    ["2106-3", "White",                            0.79],
+    ["2054-5", "Black or African American",        0.13],
+    ["2028-9", "Asian",                            0.02],
+    ["1002-5", "American Indian or Alaska Native", 0.01],
+    ["2131-1", "Other Race",                       0.05]
+  ],
+
+  "ethnicities": [
+    [null,     null,                  0.96],
+    ["2135-2", "Hispanic or Latino",  0.04]
+  ],
+
+  "insurances": [
+    ["COM", null,            0.45],
+    ["MA",  "Ohio Medicaid", 0.35],
+    ["MC",  "Medicare",      0.20]
+  ],
+
+  "locations": [
+    ["Franklin",    "Columbus",          "43215", "urban",    12.0],
+    ["Cuyahoga",    "Cleveland",         "44101", "urban",    11.0],
+    ["Hamilton",    "Cincinnati",        "45201", "urban",     8.0],
+    ["Summit",      "Akron",             "44301", "suburban",  5.0],
+    ["Montgomery",  "Dayton",            "45401", "suburban",  5.0],
+    ["Lucas",       "Toledo",            "43601", "suburban",  4.5],
+    ["Stark",       "Canton",            "44702", "suburban",  3.5],
+    ["Butler",      "Hamilton",          "45011", "suburban",  3.5],
+    ["Lorain",      "Lorain",            "44052", "suburban",  3.0],
+    ["Mahoning",    "Youngstown",        "44501", "suburban",  2.5],
+    ["Lake",        "Mentor",            "44060", "suburban",  2.5],
+    ["Medina",      "Medina",            "44256", "suburban",  2.0],
+    ["Delaware",    "Delaware",          "43015", "suburban",  2.0],
+    ["Licking",     "Newark",            "43055", "rural",     1.5],
+    ["Warren",      "Lebanon",           "45036", "suburban",  1.5],
+    ["Clark",       "Springfield",       "45501", "rural",     1.5],
+    ["Trumbull",    "Warren",            "44481", "rural",     1.5],
+    ["Wayne",       "Wooster",           "44691", "rural",     1.2],
+    ["Richland",    "Mansfield",         "44902", "rural",     0.7],
+    ["Fairfield",   "Lancaster",         "43130", "rural",     0.7],
+    ["Muskingum",   "Zanesville",        "43701", "rural",     0.7],
+    ["Allen",       "Lima",              "45801", "rural",     0.6],
+    ["Ross",        "Chillicothe",       "45601", "rural",     0.6],
+    ["Wood",        "Bowling Green",     "43402", "suburban",  0.6],
+    ["Greene",      "Xenia",             "45385", "suburban",  0.7],
+    ["Miami",       "Troy",              "45373", "suburban",  0.6],
+    ["Clermont",    "Batavia",           "45103", "suburban",  0.8],
+    ["Athens",      "Athens",            "45701", "rural",     0.5],
+    ["Ashtabula",   "Jefferson",         "44047", "rural",     0.5],
+    ["Columbiana",  "Lisbon",            "44432", "rural",     0.5],
+    ["Portage",     "Ravenna",           "44266", "suburban",  0.7],
+    ["Geauga",      "Chardon",           "44024", "suburban",  0.5],
+    ["Knox",        "Mount Vernon",      "43050", "rural",     0.4],
+    ["Sandusky",    "Fremont",           "43420", "rural",     0.4],
+    ["Lawrence",    "Ironton",           "45638", "rural",     0.4],
+    ["Scioto",      "Portsmouth",        "45662", "rural",     0.4],
+    ["Jackson",     "Jackson",           "45640", "rural",     0.3],
+    ["Guernsey",    "Cambridge",         "43725", "rural",     0.3],
+    ["Coshocton",   "Coshocton",         "43812", "rural",     0.3],
+    ["Jefferson",   "Steubenville",      "43952", "rural",     0.4],
+    ["Carroll",     "Carrollton",        "44615", "rural",     0.2],
+    ["Belmont",     "Saint Clairsville", "43950", "rural",     0.4],
+    ["Tuscarawas",  "New Philadelphia",  "44663", "rural",     0.6],
+    ["Marion",      "Marion",            "43302", "rural",     0.5],
+    ["Ashland",     "Ashland",           "44805", "rural",     0.3],
+    ["Seneca",      "Tiffin",            "44883", "rural",     0.3],
+    ["Erie",        "Sandusky",          "44870", "rural",     0.4],
+    ["Huron",       "Norwalk",           "44857", "rural",     0.3],
+    ["Darke",       "Greenville",        "45331", "rural",     0.3],
+    ["Mercer",      "Celina",            "45822", "rural",     0.3],
+    ["Auglaize",    "Wapakoneta",        "45895", "rural",     0.3],
+    ["Crawford",    "Bucyrus",           "44820", "rural",     0.3],
+    ["Perry",       "New Lexington",     "43764", "rural",     0.3],
+    ["Holmes",      "Millersburg",       "44654", "rural",     0.4],
+    ["Fayette",     "Washington CH",     "43160", "rural",     0.2],
+    ["Clinton",     "Wilmington",        "45177", "rural",     0.2],
+    ["Pickaway",    "Circleville",       "43113", "rural",     0.3],
+    ["Madison",     "London",            "43140", "rural",     0.3],
+    ["Union",       "Marysville",        "43040", "suburban",  0.4],
+    ["Morrow",      "Mount Gilead",      "43338", "rural",     0.2],
+    ["Highland",    "Hillsboro",         "45133", "rural",     0.3],
+    ["Pike",        "Waverly",           "45690", "rural",     0.2],
+    ["Hocking",     "Logan",             "43138", "rural",     0.2],
+    ["Adams",       "West Union",        "45693", "rural",     0.2],
+    ["Brown",       "Georgetown",        "45121", "rural",     0.2],
+    ["Preble",      "Eaton",             "45320", "rural",     0.2],
+    ["Meigs",       "Pomeroy",           "45769", "rural",     0.3],
+    ["Gallia",      "Gallipolis",        "45631", "rural",     0.3],
+    ["Vinton",      "McArthur",          "45651", "rural",     0.2],
+    ["Morgan",      "McConnelsville",    "43756", "rural",     0.2],
+    ["Noble",       "Caldwell",          "43724", "rural",     0.2],
+    ["Monroe",      "Woodsfield",        "43793", "rural",     0.2],
+    ["Harrison",    "Cadiz",             "43907", "rural",     0.2],
+    ["Wyandot",     "Upper Sandusky",    "43351", "rural",     0.2],
+    ["Hardin",      "Kenton",            "43326", "rural",     0.2],
+    ["Henry",       "Napoleon",          "43545", "rural",     0.2],
+    ["Van Wert",    "Van Wert",          "45891", "rural",     0.2],
+    ["Paulding",    "Paulding",          "45879", "rural",     0.2],
+    ["Defiance",    "Defiance",          "43512", "rural",     0.3],
+    ["Fulton",      "Wauseon",           "43567", "rural",     0.2],
+    ["Williams",    "Bryan",             "43506", "rural",     0.2],
+    ["Ottawa",      "Port Clinton",      "43452", "rural",     0.2],
+    ["Putnam",      "Ottawa",            "45875", "rural",     0.2],
+    ["Hancock",     "Findlay",           "45840", "rural",     0.5]
+  ],
+
+  "cohort_descriptions": {
+    "hypertension": "Patient with essential hypertension. Include 1 outpatient encounter and 1-2 antihypertensive medications. Include a blood pressure observation showing elevated readings. No diabetes or other chronic conditions.",
+
+    "diabetes_controlled": "Patient with type 2 diabetes, reasonably controlled (A1c between 7.0-8.9%). Include 1-2 outpatient encounters, metformin and/or one other diabetes medication, and an A1c lab result within the past 6 months.",
+
+    "diabetes_poor_control": "Patient with poorly controlled type 2 diabetes. A1c must be above 9.0%. Include 1-2 outpatient encounters, current diabetes medications, and an A1c lab result clearly showing A1c >= 9.1%. This patient represents the 15-20% of the state diabetes cohort with poor glycemic control.",
+
+    "diabetes_no_recent_a1c": "Patient with type 2 diabetes on metformin. The last encounter was 8-10 months ago. Include glucose results from that encounter but NO A1c result at all — the patient has not had an A1c measured in over 6 months. This represents the 20-25% monitoring gap cohort that the HIE needs to identify.",
+
+    "asthma": "Patient with asthma. Include 1 outpatient encounter and optionally 1 ED encounter if an exacerbation is clinically appropriate. Medications: rescue inhaler (albuterol) required; controller inhaler (fluticasone or combination) optional.",
+
+    "cardiovascular_disease": "Patient with cardiovascular disease (coronary artery disease, prior MI, or heart failure). Include 1-2 encounters, appropriate cardiac medications (statin, aspirin, beta-blocker, ACE inhibitor or ARB), and a lipid panel lab result.",
+
+    "multiple_chronic": "Patient with 2-3 chronic conditions chosen from: type 2 diabetes, hypertension, asthma, obesity, COPD. Include 2 outpatient encounters spread across the past 18 months and appropriate medications for each condition. Include at least one relevant lab result.",
+
+    "pregnancy": "Pregnant patient at a prenatal visit. Include 1-2 prenatal outpatient encounters with appropriate supervision-of-pregnancy diagnoses (Z34.x). Include at least one prenatal lab (blood type, CBC, or glucose screen). Age must be 18-45.",
+
+    "healthy": "Generally healthy patient — new registration or annual wellness visit. Include 1 outpatient encounter with normal vital signs. No chronic diagnoses or medications required. May include basic wellness labs (CBC, lipids) if clinically appropriate for the patient's age."
+  },
+
+  "sending_facility": "Ohio Health Information Partnership",
+
+  "extra_instructions": "Use realistic Ohio facility names appropriate to the county setting. Rural counties should use critical access hospitals or federally qualified health centers. Urban counties may use academic medical centers or large community hospitals."
+}
