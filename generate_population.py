@@ -1879,30 +1879,49 @@ def _build_enc_vitals(
     n_encounters: int,
     rng: random.Random,
     sex: str = "M",
+    age: int = 40,
 ) -> list:
     """
     Generate one vitals snapshot per encounter.  BP diastolic is always derived
     from systolic via a realistic pulse pressure so sys > dia is guaranteed.
-    Weight is derived from a height/BMI calculation (sex-appropriate height
-    distribution, chronic-disease-cohort BMI distribution) rather than from the
-    template's raw normal_min/normal_max, which can be in kg and produce
-    implausibly low lb values.  Weight then drifts ±1.5 lb per encounter.
+    For adults: weight is derived from a height/BMI calculation.
+    For pediatric patients (age < 18): age- and sex-specific height/weight
+    tables are used instead of the adult BMI formula.
     """
-    # Height: sex-appropriate US adult distribution (inches).
-    # Use a Box-Muller approximation with rng.gauss (available in stdlib random).
-    if sex == "F":
-        height_in = max(56.0, min(76.0, rng.gauss(64.0, 2.7)))
+    if age < 2:
+        height_in = max(18.0, min(36.0, rng.gauss(27.0 if sex == "F" else 28.0, 3.0)))
+        base_weight = max(8.0, min(30.0, rng.gauss(20.0, 4.0)))
+        weight_floor = 8.0
+    elif age < 6:
+        height_in = max(32.0, min(48.0, rng.gauss(40.0 if sex == "F" else 41.5, 2.5)))
+        base_weight = max(24.0, min(55.0, rng.gauss(37.0, 5.0)))
+        weight_floor = 24.0
+    elif age < 11:
+        height_in = max(42.0, min(60.0, rng.gauss(50.0 if sex == "F" else 51.5, 3.0)))
+        base_weight = max(38.0, min(100.0, rng.gauss(62.0, 10.0)))
+        weight_floor = 38.0
+    elif age < 15:
+        height_in = max(56.0, min(68.0, rng.gauss(62.0 if sex == "F" else 62.5, 2.5)))
+        base_weight = max(60.0, min(155.0, rng.gauss(98.0, 16.0)))
+        weight_floor = 60.0
+    elif age < 18:
+        height_in = max(58.0, min(72.0 if sex == "F" else 76.0,
+                                  rng.gauss(64.0 if sex == "F" else 68.0, 2.5)))
+        base_weight = max(80.0, min(185.0, rng.gauss(128.0, 18.0)))
+        weight_floor = 80.0
     else:
-        height_in = max(60.0, min(80.0, rng.gauss(69.3, 2.7)))
-    # BMI: chronic-disease cohort skews overweight.  Clamp to survivable range.
-    bmi = max(16.0, min(58.0, rng.gauss(29.5, 6.0)))
-    # Weight (lbs) from BMI: BMI = 703 × weight_lb / height_in²
-    base_weight = round(bmi * (height_in ** 2) / 703.0, 1)
+        if sex == "F":
+            height_in = max(56.0, min(76.0, rng.gauss(64.0, 2.7)))
+        else:
+            height_in = max(60.0, min(80.0, rng.gauss(69.3, 2.7)))
+        bmi = max(16.0, min(58.0, rng.gauss(29.5, 6.0)))
+        base_weight = round(bmi * (height_in ** 2) / 703.0, 1)
+        weight_floor = 88.0
 
     vitals = []
     for _ in range(n_encounters):
-        # Weight: slow ±1.5 lb drift per encounter; hard floor at 88 lb.
-        base_weight = max(88.0, min(500.0, base_weight + rng.uniform(-1.5, 1.5)))
+        # Weight: slow ±1.5 lb drift per encounter; floor is age-dependent.
+        base_weight = max(weight_floor, min(500.0, base_weight + rng.uniform(-1.5, 1.5)))
         # BP: systolic first, diastolic = systolic − pulse_pressure (30–55 mmHg)
         bp_sys = rng.uniform(112.0, 162.0)
         bp_dia = max(50.0, bp_sys - rng.uniform(30.0, 55.0))
@@ -2612,6 +2631,14 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     cohorts = [c for c in tmpl.get("cohorts", []) if c.get("weight", 0) > 0]
     cohort = _wpick(cohorts, "weight", rng)
     age = max(int(cohort.get("min_age", 18)), min(int(cohort.get("max_age", 85)), age))
+    age = min(age, 105)  # hard biological cap — no survivable age beyond 105
+
+    # Compute birth_dt HERE — before enc_dates — so every date in the record can
+    # be clamped to >= DOB.  Moving these two rng calls early shifts the sequence
+    # but that is intentional; correctness > backward compatibility.
+    birth_year = _REFERENCE_DATE.year - age
+    birth_dt = datetime(birth_year, rng.randint(1, 12), rng.randint(1, 28))
+
     if cohort.get("sex_bias") == "F":
         sex = "F"
     elif cohort.get("sex_bias") == "M":
@@ -2651,14 +2678,8 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     facilities = tmpl.get("facilities", [])
     age_eligible_facs = [f for f in facilities if f.get("max_patient_age", 999) >= age]
     county_facs = [f for f in age_eligible_facs if f.get("county_fips") == geo.get("county_fips")]
-    _region_to_fips: dict = {}
-    for _loc in tmpl.get("geography", {}).get("locations", []):
-        _r = _loc.get("region", "")
-        _cf = _loc.get("county_fips", "")
-        if _r and _cf:
-            _region_to_fips.setdefault(_r, set()).add(_cf)
-    _pat_region_fips = _region_to_fips.get(geo.get("region", ""), set())
-    region_facs = [f for f in age_eligible_facs if f.get("county_fips") in _pat_region_fips]
+    _pat_region = geo.get("region", "")
+    region_facs = [f for f in age_eligible_facs if f.get("region") == _pat_region]
     fac = _wpick(county_facs or region_facs or age_eligible_facs or facilities, "weight", rng)
     provs = [p for p in tmpl.get("providers", []) if p.get("facility_code") == fac["code"]]
     prov = rng.choice(provs) if provs else rng.choice(
@@ -2676,12 +2697,18 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     lab_rate = float(ep.get("lab_encounter_rate", 0.6))
     rad_rate = float(ep.get("rad_encounter_rate", 0.2))
 
-    _enc_mean = max(1.0, enc_per_year * history_months / 12)
+    # Clamp history window to the patient's actual lifespan so no encounter
+    # can precede DOB.  For young patients this reduces both the window and the
+    # expected encounter count proportionally.
+    _days_since_birth = max(30, (_REFERENCE_DATE - birth_dt).days)
+    history_days = min(history_months * 30, _days_since_birth)
+    _effective_history_months = history_days / 30.0
+
+    _enc_mean = max(1.0, enc_per_year * _effective_history_months / 12)
     # Poisson-approximate: Gaussian with SD = sqrt(mean) so low-utilizers stay low and
     # high-utilizers spread naturally; clamp to avoid degenerate single-encounter patients.
     n_encounters = max(2, round(rng.gauss(_enc_mean, max(1.0, _enc_mean ** 0.5))))
     n_encounters = min(n_encounters, 20)  # cap for file size
-    history_days = history_months * 30
 
     # Space encounters roughly evenly with jitter; sort chronologically
     interval = history_days // n_encounters
@@ -2706,6 +2733,23 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         d + timedelta(days=rng.randint(1, 3)) if _is_holiday(d) else d
         for d in enc_dates
     )
+    # Final safety clamp: ensure no encounter precedes DOB even after holiday shifts.
+    _day_after_birth = birth_dt + timedelta(days=1)
+    enc_dates = [max(d, _day_after_birth) for d in enc_dates]
+    # Deduplicate (multiple clamped dates may collapse to the same day) and re-sort.
+    _seen_enc = set()
+    _deduped = []
+    for _d in sorted(enc_dates):
+        _key = _d.date()
+        if _key not in _seen_enc:
+            _seen_enc.add(_key)
+            _deduped.append(_d)
+    # Pad back to n_encounters if deduplication shrank the list.
+    while len(_deduped) < min(2, n_encounters):
+        _deduped.append(_deduped[-1] + timedelta(days=rng.randint(14, 60)))
+        _seen_enc.add(_deduped[-1].date())
+    enc_dates = _deduped
+    n_encounters = len(enc_dates)
 
     def _fu_text(gap_days):
         if gap_days is None or gap_days > 200:
@@ -2781,16 +2825,27 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
 
     # Build diag_list here (before scenario pre-selection) so that _pt_diag_codes only
     # contains diagnoses the patient actually has — comorbidities gated by prevalence_pct.
-    # This prevents scenarios from being selected based on a comorbidity the patient
-    # doesn't have, which would produce DX002 false positives.
-    diag_list = list(cohort.get("diagnoses", []))
+    # Diagnoses and comorbidities are also filtered by min_age/max_age/sex so that
+    # adult-onset conditions (e.g. E11.9, I10) are never assigned to pediatric patients.
+    def _dx_age_sex_ok(d: dict) -> bool:
+        if age < int(d.get("min_age", 0)):
+            return False
+        if age > int(d.get("max_age", 999)):
+            return False
+        _req_sex = d.get("sex")
+        if _req_sex and _req_sex != sex:
+            return False
+        return True
+
+    diag_list = [d for d in cohort.get("diagnoses", []) if _dx_age_sex_ok(d)]
     for _comorbidity in cohort.get("comorbidities", []):
         if rng.random() < float(_comorbidity.get("prevalence_pct", 0)):
-            diag_list.append({
-                "code": _comorbidity["code"],
-                "description": _comorbidity["description"],
-                "is_primary": False,
-            })
+            if _dx_age_sex_ok(_comorbidity):
+                diag_list.append({
+                    "code": _comorbidity["code"],
+                    "description": _comorbidity["description"],
+                    "is_primary": False,
+                })
     # Ensure diabetes diagnosis is present when cohort monitors HbA1c.
     _HBA1C_CODE = "4548-4"
     _cohort_has_a1c = any(
@@ -2800,7 +2855,8 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     _has_dm_diag_early = any(d.get("code", "").startswith(("E10", "E11", "E12", "E13")) for d in diag_list)
     if _cohort_has_a1c and not _has_dm_diag_early:
         for _co in cohort.get("comorbidities", []):
-            if _co.get("code", "").startswith(("E10", "E11", "E12", "E13")):
+            if (_co.get("code", "").startswith(("E10", "E11", "E12", "E13"))
+                    and _dx_age_sex_ok(_co)):
                 diag_list.append({
                     "code": _co["code"],
                     "description": _co["description"],
@@ -2812,23 +2868,33 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     # consistent, and so the diagnoses loop can guarantee anchor codes appear on
     # scenario-carrying encounters (DX002 prevention).
     _pt_diag_codes = [d.get("code", "") for d in diag_list]
-    _inpatient_scenes: dict = {}  # ei (0-based) -> selected scenario dict
-    _ed_scenes: dict = {}         # ei (0-based) -> pre-selected scenario dict for ED encounters
+    _inpatient_scenes: dict = {}       # ei (0-based) -> selected scenario dict
+    _inpatient_scen_matched: dict = {} # ei -> True if selected via patient-matching ICD prefix
+    _ed_scenes: dict = {}              # ei (0-based) -> pre-selected scenario dict for ED encounters
+    _ed_scen_matched: dict = {}        # ei -> True if selected via patient-matching ICD prefix
     for _ei, _et in enumerate(enc_types):
         if _et == "I":
             _ip_matching = [
                 s for s in _INPATIENT_SCENARIOS
                 if any(c.startswith(tuple(s["icd_prefixes"])) for c in _pt_diag_codes)
             ]
-            if not _ip_matching:
-                _ip_matching = _SAFE_ED_FALLBACK_SCENARIOS or _INPATIENT_SCENARIOS
-            _inpatient_scenes[_ei] = rng.choice(_ip_matching)
+            if _ip_matching:
+                _inpatient_scenes[_ei] = rng.choice(_ip_matching)
+                _inpatient_scen_matched[_ei] = True
+            else:
+                _ip_fallback = _SAFE_ED_FALLBACK_SCENARIOS or _INPATIENT_SCENARIOS
+                _inpatient_scenes[_ei] = rng.choice(_ip_fallback)
+                _inpatient_scen_matched[_ei] = False
         elif _et == "E":
             _ed_m = [s for s in _INPATIENT_SCENARIOS
                      if any(c.startswith(tuple(s["icd_prefixes"])) for c in _pt_diag_codes)]
-            if not _ed_m:
-                _ed_m = _SAFE_ED_FALLBACK_SCENARIOS or _INPATIENT_SCENARIOS
-            _ed_scenes[_ei] = rng.choice(_ed_m)
+            if _ed_m:
+                _ed_scenes[_ei] = rng.choice(_ed_m)
+                _ed_scen_matched[_ei] = True
+            else:
+                _ed_fallback = _SAFE_ED_FALLBACK_SCENARIOS or _INPATIENT_SCENARIOS
+                _ed_scenes[_ei] = rng.choice(_ed_fallback)
+                _ed_scen_matched[_ei] = False
     # ---- Finalize schedule: inject paired inpatient encounters for admitting EDs ----
     # Pre-determine which ED encounters will admit by mirroring the document loop's
     # variant-rotation logic, so the diagnosis loop can allocate the anchor code.
@@ -2890,7 +2956,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     # Vitals built here (after injection) so n_encounters is final.
     obs_list_for_vitals = cohort.get("observations", [])
     enc_vitals, _patient_height_in = _build_enc_vitals(
-        obs_list_for_vitals, n_encounters, rng, sex=sex
+        obs_list_for_vitals, n_encounters, rng, sex=sex, age=age
     )
 
     # Override enc_vitals BP and HR for inpatient encounters to match selected scenario ranges.
@@ -3064,8 +3130,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 _fac_prov_map[_ofc] = (prov_code, prov_name)
 
     # ---- Static patient fields ----
-    birth_year = _REFERENCE_DATE.year - age
-    birth_dt = datetime(birth_year, rng.randint(1, 12), rng.randint(1, 28))
+    # birth_dt was computed before enc_dates (above); no recalculation needed here.
     _home_fac_code = fac_code
     _home_fac_name = fac_name
     _home_prov_code = prov_code
@@ -3265,7 +3330,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     all_allergies = catalogs.get("allergies", [])
     if all_allergies and rng.random() < 0.4:
         allergy = _wpick(all_allergies, "weight", rng)
-        allergy_onset = enc_dates[0] - timedelta(days=rng.randint(90, 1800))
+        allergy_onset = max(birth_dt, enc_dates[0] - timedelta(days=rng.randint(90, 1800)))
         reaction = allergy.get("reaction_description", allergy.get("reaction", "Rash"))
         _home_shared_parts.append(
             f"  <Allergies>\n"
@@ -4066,9 +4131,11 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                     _vital_conflict = True
             _acute_scenario_name = ""
             if etype == "I" and ei0 in _inpatient_scenes:
-                _acute_scenario_name = _inpatient_scenes[ei0].get("admission_dx", "")
+                if _inpatient_scen_matched.get(ei0, True):
+                    _acute_scenario_name = _inpatient_scenes[ei0].get("admission_dx", "")
             elif etype == "E":
-                _acute_scenario_name = _ed_scen.get("admission_dx", "")
+                if _ed_scen_matched.get(ei, True):
+                    _acute_scenario_name = _ed_scen.get("admission_dx", "")
             _enc_rows.append({
                 "PatientID": patient_id,
                 "EncounterNumber": en,
@@ -4271,7 +4338,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             if med["drug_code"] in seen_drug:
                 continue
             seen_drug.add(med["drug_code"])
-            rx_start = first_enc_date - timedelta(days=rng.randint(0, 180))
+            rx_start = max(birth_dt, first_enc_date - timedelta(days=rng.randint(0, 180)))
             med_xml_parts.append(
                 f"    <Medication>\n"
                 f"      <EnteredBy><Code>{prov_code}</Code><Description>{prov_name}</Description></EnteredBy>\n"
@@ -4491,7 +4558,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     all_vaccinations = catalogs.get("vaccinations", [])
     if all_vaccinations and rng.random() < 0.6:
         vax = _wpick(all_vaccinations, "weight", rng)
-        vax_date = enc_dates[0] - timedelta(days=rng.randint(14, 365))
+        vax_date = max(birth_dt, enc_dates[0] - timedelta(days=rng.randint(14, 365)))
         vax_enc = f"ENC-{vax_date.strftime('%Y%m%d')}-{patient_id:04d}V"
         vax_eod = _ts(vax_date.replace(hour=0, minute=0, second=0))
         _fac_vax.setdefault(_home_fac_code, []).append(
@@ -5177,13 +5244,14 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 "RecordRegenerated": "No",
             })
 
-    # DEM001: implausible BMI
+    # DEM001: implausible BMI (adult patients only — pediatric BMI requires age-specific
+    # percentile tables; adult thresholds do not apply to patients under 18)
     _bmi_check = (
         round(enc_vitals[0]["weight_lb"] * 703 / (_patient_height_in ** 2), 1)
         if (_patient_height_in and enc_vitals)
         else None
     )
-    if _bmi_check is not None and (_bmi_check < 14 or _bmi_check > 60):
+    if _bmi_check is not None and age >= 18 and (_bmi_check < 14 or _bmi_check > 60):
         _val_rows.append({
             "PatientID": patient_id,
             "EncounterNumber": "",
@@ -5200,20 +5268,19 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         })
 
     # GEO002: facility region far from patient region
-    if fac.get("county_fips") and geo.get("county_fips"):
-        if (fac["county_fips"] not in _pat_region_fips
-                and fac["county_fips"] != geo["county_fips"]):
+    if fac.get("region") and geo.get("region"):
+        if fac.get("region") != geo.get("region"):
             _val_rows.append({
                 "PatientID": patient_id,
                 "EncounterNumber": "",
                 "ValidationRuleID": "GEO002",
                 "Severity": "INFO",
                 "Category": "Geography",
-                "Description": "Facility in different region from patient residence",
-                "Field1": "PatientCountyFIPS",
-                "Value1": geo.get("county_fips", ""),
-                "Field2": "FacilityCountyFIPS",
-                "Value2": fac.get("county_fips", ""),
+                "Description": "Facility region differs from patient residence region",
+                "Field1": "PatientRegion",
+                "Value1": geo.get("region", ""),
+                "Field2": "FacilityRegion",
+                "Value2": fac.get("region", ""),
                 "AutoCorrected": "No",
                 "RecordRegenerated": "No",
             })

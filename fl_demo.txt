@@ -1,0 +1,90 @@
+**Synthetic Patient Population Configuration for Florida**
+
+**Purpose & Scope**
+
+This synthetic patient population is designed for an IRIS BI and Logi Reports demonstration, focusing on the state of Florida. The population is small, comprising between 500 and 5,000 patients, with a comprehensive history period of 36 months. This configuration aims to provide a realistic representation of healthcare interactions across Florida's diverse regions and facilities.
+
+**Geography**
+
+The population spans all counties in Florida, organized into five distinct geographic regions for Health Information Exchange (HIE) facility-routing logic:
+
+1. **North Florida**: Includes counties such as Escambia, Leon, and Duval. 
+2. **Central Florida**: Encompasses counties like Orange, Seminole, and Volusia.
+3. **South Florida**: Covers counties including Miami-Dade, Broward, and Palm Beach.
+4. **Tampa Bay Area**: Consists of counties such as Hillsborough, Pinellas, and Pasco.
+5. **Southwest Florida**: Includes counties like Lee, Collier, and Charlotte.
+
+Adjacency is defined as follows:
+- North Florida is adjacent to Central Florida.
+- Central Florida is adjacent to North Florida, South Florida, Tampa Bay Area, and Southwest Florida.
+- South Florida is adjacent to Central Florida and Southwest Florida.
+- Tampa Bay Area is adjacent to Central Florida and Southwest Florida.
+- Southwest Florida is adjacent to Central Florida, South Florida, and Tampa Bay Area.
+
+The urban, rural, and suburban distribution reflects Florida's actual demographics, with an oversampling of rural counties to ensure sufficient records for demographic analysis.
+
+**Facilities & Health Systems**
+
+The configuration includes approximately 40–50 healthcare facilities, distributed across various types:
+
+- **Academic Medical Centers**: 5 facilities
+- **Community Hospitals**: 15 facilities
+- **Federally Qualified Health Centers (FQHCs)**: 5 facilities
+- **Urgent Care Centers**: 5 facilities
+- **Specialty Clinics**: 10 facilities
+- **Independent Labs**: 5 facilities
+- **Long-term Care Facilities**: 5 facilities
+
+These facilities are grouped under major health systems:
+
+- **AdventHealth**: Includes 10 facilities, primarily community hospitals and specialty clinics.
+- **Baptist Health**: Comprises 8 facilities, including academic medical centers and FQHCs.
+- **HCA Florida Healthcare**: Encompasses 12 facilities, featuring urgent care centers and community hospitals.
+
+Facilities are a mix of multi-specialty and single-specialty, ensuring comprehensive healthcare coverage.
+
+**Providers**
+
+Each facility hosts approximately 2–3 providers, focusing on primary care and infectious disease specialties. This ensures a robust network of healthcare professionals capable of addressing a wide range of patient needs.
+
+**Disease Cohorts**
+
+The population includes specific clinical cohorts with defined prevalence:
+
+- **Tick-borne Diseases**: Including Lyme disease, Anaplasmosis, and Ehrlichiosis, affecting 2-3% of the population.
+- **Low Risk Preventive / Wellness**: Comprising 20% of the population, representing healthy patients engaged in preventive care.
+
+**Demographics**
+
+The demographic distribution is aligned with Florida's population characteristics:
+
+- **Age Distribution**:
+  - 0-17 years: 20%
+  - 18-44 years: 35%
+  - 45-64 years: 25%
+  - 65+ years: 20%
+
+- **Sex Distribution**:
+  - Female: 51%
+  - Male: 49%
+
+- **Race/Ethnicity**:
+  - White: 54%
+  - Hispanic/Latino: 26%
+  - Black/African American: 16%
+  - Asian: 3%
+  - Other: 1%
+
+- **Insurance/Payer Mix**:
+  - Medicaid (Florida Medicaid): 20%
+  - Medicare: 18%
+  - Commercial: 50%
+  - Uninsured: 12%
+
+**Multi-Facility HIE Configuration**
+
+In this configuration, 40% of patients appear in more than one facility's records, reflecting a realistic statewide HIE scenario. Patients generally exhibit strong geographic affinity, primarily receiving care within their regional boundaries. However, transfers to regional medical centers are possible. Emergency Department (ED) to inpatient admissions typically remain within the same facility, ensuring continuity of care.
+
+**Special Scenarios**
+
+No special scenarios or deliberate imperfections are included in this configuration, maintaining a straightforward dataset for demonstration purposes.
