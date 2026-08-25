@@ -5,8 +5,9 @@ __pycache__/
 .venv/
 *.egg-info/
 
-# Generated patient output
+# Generated patient output (any casing / suffix)
 Population/
+population*/
 
 # Sample/reference data (potentially sensitive)
 Sample_SDA/
