@@ -8,6 +8,7 @@ __pycache__/
 # Generated patient output (any casing / suffix)
 Population/
 population*/
+cohort*/
 
 # Sample/reference data (potentially sensitive)
 Sample_SDA/
