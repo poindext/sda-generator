@@ -22,9 +22,22 @@ Usage:
   python design_population.py ohio_demo.txt --model gpt-4o
   python design_population.py ohio_demo.txt \\
       --base-url https://apps-llm-1.iscinternal.com/v1 --model Qwen/Qwen3-32B-AWQ
+  python design_population.py ohio_demo.txt --library lab_panels_library.json
 
 Requires OPENAI_API_KEY environment variable unless --base-url points to an
 unauthenticated endpoint.
+
+IMPORTANT — lab_panels_library.json
+  If a lab_panels_library.json file is present (default: same directory as this
+  script), its QA-hardened reference ranges are automatically merged into every
+  generated cohort catalog after the LLM runs. The LLM selects which panels to
+  use and sets abnormal_pct/weight; the library provides correct LOINC codes and
+  physiologically validated normal/abnormal ranges. This prevents the LLM from
+  hallucinating implausible values (e.g. HDL 932 mg/dL).
+
+  The library was produced from ohio_demo.template.json after extensive clinical
+  QA. It is portable across all Ohio (and other state) deployments — do not
+  regenerate it via LLM. To add a new panel, add it directly to the library JSON.
 """
 
 import argparse
@@ -42,11 +55,77 @@ ISC_LLM_DEFAULT_MODEL = "Qwen/Qwen3-32B-AWQ"
 
 MAX_RETRIES = 3
 
+# Low Risk Preventive / wellness cohort names that should have low abnormal rates.
+# Any cohort whose name contains one of these strings will have its lab
+# abnormal_pct capped at PREVENTIVE_MAX_ABN_PCT after the LLM runs.
+_PREVENTIVE_COHORT_KEYWORDS = ("preventive", "wellness", "low risk", "healthy")
+_PREVENTIVE_MAX_ABN_PCT = 0.05
+
 try:
     import openai  # noqa: F401
 except ImportError:
     print("ERROR: Install the OpenAI SDK:  pip install openai")
     sys.exit(1)
+
+
+# ---------------------------------------------------------------------------
+# Lab panel library helpers
+# ---------------------------------------------------------------------------
+
+def load_lab_library(path: str | None) -> dict:
+    """Load lab_panels_library.json. Returns empty dict if path is None/missing."""
+    if path is None:
+        default = Path(__file__).parent / "lab_panels_library.json"
+        path = str(default) if default.exists() else None
+    if path is None:
+        return {}
+    try:
+        data = json.loads(Path(path).read_text(encoding="utf-8"))
+        panels = data.get("panels", data)  # support both {panels:{}} and flat dict
+        print(f"  Loaded lab library: {len(panels)} vetted panels from {path}", flush=True)
+        return panels
+    except Exception as e:
+        print(f"  [WARN] Could not load lab library {path}: {e}", flush=True)
+        return {}
+
+
+def _library_panel_summary(library: dict) -> str:
+    """Build a compact panel list for injection into the Phase 3 prompt."""
+    if not library:
+        return ""
+    lines = ["Vetted lab panels (use these order_codes exactly — ranges will be applied from library):"]
+    for code, panel in sorted(library.items(), key=lambda x: x[1].get("order_description", "")):
+        tags = ", ".join(panel.get("disease_tags", [])) or "general"
+        lines.append(f"  {code}: {panel['order_description']} [{tags}]")
+    return "\n".join(lines)
+
+
+def apply_library_overrides(cohort_catalog: dict, library: dict, cohort_name: str) -> dict:
+    """
+    Replace LLM-generated result_items with library versions where order_code matches.
+    Also caps abnormal_pct for preventive/wellness cohorts.
+    """
+    if not library:
+        return cohort_catalog
+
+    is_preventive = any(
+        kw in cohort_name.lower() for kw in _PREVENTIVE_COHORT_KEYWORDS
+    )
+
+    for lab in cohort_catalog.get("labs", []):
+        code = lab.get("order_code", "")
+        if code in library:
+            lib = library[code]
+            lab["result_items"] = lib["result_items"]
+            lab["order_description"] = lib["order_description"]
+            lab["specimen"] = lib.get("specimen", lab.get("specimen", "Blood"))
+
+        if is_preventive:
+            abn = float(lab.get("abnormal_pct", 0.3))
+            if abn > _PREVENTIVE_MAX_ABN_PCT:
+                lab["abnormal_pct"] = _PREVENTIVE_MAX_ABN_PCT
+
+    return cohort_catalog
 
 
 # ---------------------------------------------------------------------------
@@ -447,8 +526,19 @@ _P3_SCHEMA = """\
 }"""
 
 
-async def phase3_cohort(client, model: str, cohort: dict, description: str) -> dict:
+async def phase3_cohort(client, model: str, cohort: dict, description: str,
+                       library: dict | None = None) -> dict:
     label = f"phase3-{cohort['id']}"
+    lib_hint = ""
+    if library:
+        lib_hint = f"""
+LAB PANELS — IMPORTANT: Use order_codes from this vetted library where applicable.
+Set only abnormal_pct (0.0–1.0) and weight for each panel you include; do NOT invent
+result_items — they will be replaced from the library automatically.
+You may add cohort-specific panels not in this list, but provide full result_items for those.
+
+{_library_panel_summary(library)}
+"""
     result = await call_llm_json(client, model, _P3_SYSTEM, f"""\
 Population context (brief): {description[:400]}
 
@@ -462,7 +552,7 @@ Requirements:
   (for cardiovascular cohorts, always include E11.9 Type 2 diabetes as a comorbidity
    with prevalence_pct ~0.35; for diabetes cohorts include I10 hypertension at ~0.65)
 - 5-10 medications (real RxNorm codes, various drug classes for the condition)
-- 3-6 lab panels (real LOINC codes; include realistic normal AND abnormal value ranges)
+- 3-6 lab panels (see LAB PANELS note below)
 - 4-8 vital sign / observation types (real LOINC codes; realistic min/max ranges)
 - 2-4 procedures (real CPT codes)
 - 2-3 illness history templates (plain English description of condition; use
@@ -482,7 +572,7 @@ Requirements:
 All weights within each list must sum to 1.0 (or be proportional — they will be normalized).
 note_template placeholders available: {{patient_name}}, {{age}}, {{sex}}, {{diagnosis}},
 {{provider}}, {{chief_complaint}}, {{bp}}, {{hr}}, {{weight}}, {{compliance_statement}}, {{plan}}
-
+{lib_hint}
 Schema:
 {_P3_SCHEMA}""", label)
     return result
@@ -570,11 +660,15 @@ def _normalize_weights(items: list, key: str = "weight") -> list:
     return items
 
 
-def merge_template(structure: dict, names: dict, cohort_catalogs: list, shared: dict) -> dict:
+def merge_template(structure: dict, names: dict, cohort_catalogs: list, shared: dict,
+                   library: dict | None = None) -> dict:
     cohort_defs = structure.get("cohorts", [])
     merged_cohorts = []
     for cohort_def, catalog in zip(cohort_defs, cohort_catalogs):
         merged = {**cohort_def, **catalog}
+        # Apply QA-hardened library ranges before normalizing weights
+        if library:
+            merged = apply_library_overrides(merged, library, merged.get("name", ""))
         # Normalize weights within catalog sub-lists
         for key in ("medications", "labs", "observations", "procedures",
                     "illness_history_templates", "social_history_templates",
@@ -627,10 +721,12 @@ async def run(args):
     names = await phase2_names(client, args.model)
 
     # Phase 3 — concurrent (one call per cohort)
+    library = load_lab_library(getattr(args, "library", None))
     cohorts = structure.get("cohorts", [])
     print(f"Phase 3: Clinical catalogs for {len(cohorts)} cohorts (concurrent)...", flush=True)
     results = await asyncio.gather(
-        *[phase3_cohort(client, args.model, c, description) for c in cohorts],
+        *[phase3_cohort(client, args.model, c, description, library=library)
+          for c in cohorts],
         return_exceptions=True,
     )
     cohort_catalogs = []
@@ -647,7 +743,7 @@ async def run(args):
 
     # Merge and write
     print("\nMerging and writing template...", flush=True)
-    template = merge_template(structure, names, cohort_catalogs, shared)
+    template = merge_template(structure, names, cohort_catalogs, shared, library=library)
     output_path.write_text(json.dumps(template, indent=2, ensure_ascii=False), encoding="utf-8")
 
     n_cohorts   = len(template.get("cohorts", []))
@@ -675,7 +771,13 @@ def main():
     parser.add_argument("--base-url", default=DEFAULT_BASE_URL,
                         help="OpenAI-compatible base URL. Omit for OpenAI; "
                              f"use {ISC_LLM_BASE_URL} for internal ISC LLM")
+    parser.add_argument("--library", default=None,
+                        help="Path to lab_panels_library.json. "
+                             "Defaults to lab_panels_library.json in the script directory "
+                             "if present. Pass 'none' to disable.")
     args = parser.parse_args()
+    if getattr(args, "library", None) and args.library.lower() == "none":
+        args.library = ""  # disable
     asyncio.run(run(args))
 
 
