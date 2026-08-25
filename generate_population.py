@@ -1842,6 +1842,23 @@ def _result_value(item: dict, is_abnormal: bool, rng: random.Random) -> str:
     return f"{val:.1f}" if "." in str(lo) or "." in str(hi) else str(int(val))
 
 
+def _derive_interp(val_str: str, ri: dict) -> str:
+    """Derive H/L/N interpretation from actual numeric value vs reference range."""
+    if ri.get("text_values"):
+        return "N"
+    try:
+        v = float(val_str)
+        lo = ri.get("normal_min")
+        hi = ri.get("normal_max")
+        if lo is not None and v < float(lo):
+            return "L"
+        if hi is not None and v > float(hi):
+            return "H"
+        return "N"
+    except (ValueError, TypeError):
+        return "N"
+
+
 # LOINC codes that represent vital signs needing coordinated generation
 _VITAL_LOINC = {
     "8480-6": "bp_sys",      # Systolic BP
@@ -2512,7 +2529,7 @@ def _build_lab_xml(lab, enc_num, enc_date, patient_id, prov_code, prov_name,
         else:
             is_abn = rng.random() < float(lab.get("abnormal_pct", 0.3))
             val = _result_value(ri, is_abn, rng)
-            interp = ri.get("abnormal_flag", "H") if is_abn else "N"
+            interp = _derive_interp(val, ri)
         _result_vals.append({"code": ri.get("code", ""), "value": val, "interp": interp, "is_abn": is_abn})
         norm_range = ri.get(
             "normal_range_text",
@@ -2888,17 +2905,36 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             **enc_vitals[_ei], "bp_sys": _new_sys, "bp_dia": _new_dia, "hr": _new_hr
         }
 
-    # Pre-select which encounters get labs AND which panel is drawn, so note text and
+    # Pre-select which encounters get labs AND which panels are drawn, so note text and
     # lab records reference exactly the same encounter/value pairs.
+    # _lab_enc_plans[ei] = list of panel dicts to draw at that encounter.
     _lab_list = cohort.get("labs", [])
-    _lab_enc_plans: dict = {}  # ei -> lab panel dict
+    _lab_enc_plans: dict = {}  # ei -> list[panel dict]
+
+    def _lab_panels_with_code(code):
+        return [l for l in _lab_list if any(ri.get("code") == code for ri in l.get("result_items", []))]
+
+    def _lab_panels_by_desc(*keywords):
+        return [l for l in _lab_list
+                if any(kw.lower() in l.get("order_description", "").lower() for kw in keywords)]
+
+    def _add_panel(ei, panel):
+        if panel is None:
+            return
+        _lab_enc_plans.setdefault(ei, [])
+        desc = panel.get("order_description", "")
+        if not any(p.get("order_description", "") == desc for p in _lab_enc_plans[ei]):
+            _lab_enc_plans[ei].append(panel)
+
     if _lab_list:
-        # For patients with T2DM in their cohort (primary or comorbidity), triple the
-        # selection weight of the A1c panel so the diabetes story reliably surfaces.
-        _cohort_has_t2dm = any(
-            d.get("code", "").startswith(("E10", "E11"))
-            for d in cohort.get("diagnoses", []) + cohort.get("comorbidities", [])
-        )
+        # Detect this patient's actual disease state from diag_list (not template)
+        _has_dm_labs = any(d.get("code", "").startswith(("E10", "E11", "E12", "E13")) for d in diag_list)
+        _has_htn_labs = any(d.get("code", "").startswith(("I10", "I11", "I12", "I13")) for d in diag_list)
+        _has_cvd_labs = any(d.get("code", "").startswith(("I25", "I20", "I21", "I22", "I50")) for d in diag_list)
+        _is_preventive_cohort = cohort.get("name", "") == "Low Risk Preventive"
+
+        # For T2DM: triple the A1c panel weight so the diabetes story reliably surfaces
+        _cohort_has_t2dm = _has_dm_labs
         _effective_lab_list = [
             {**lab, "weight": lab.get("weight", 1.0) * (
                 3.0 if (_cohort_has_t2dm and
@@ -2907,13 +2943,90 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             )}
             for lab in _lab_list
         ] if _cohort_has_t2dm else _lab_list
+
+        # Step 1: base random panel assignment (one per encounter at lab_rate)
         for _li in range(n_encounters):
             if _li == n_encounters - 1 or rng.random() <= lab_rate:
-                _lab_enc_plans[_li] = _wpick(_effective_lab_list, "weight", rng)
-    # Encounters where the drawn panel actually contains an A1c result item
+                _lab_enc_plans.setdefault(_li, [])
+                _lab_enc_plans[_li].append(_wpick(_effective_lab_list, "weight", rng))
+
+        # Step 2: disease-specific density scheduling
+        _outpt_idxs = [i for i, t in enumerate(enc_types) if t == "O"]
+        _inpt_idxs  = [i for i, t in enumerate(enc_types) if t == "I"]
+        _ed_idxs    = [i for i, t in enumerate(enc_types) if t == "E"]
+
+        _a1c_panels   = _lab_panels_with_code("4548-4")
+        _bmp_panels   = _lab_panels_by_desc("basic metabolic", "metabolic panel")
+        _cmp_panels   = _lab_panels_by_desc("comprehensive metabolic")
+        _lipid_panels = _lab_panels_by_desc("lipid")
+        _uacr_panels  = _lab_panels_by_desc("albumin/creatinine", "urine albumin")
+        _cbc_panels   = _lab_panels_by_desc("cbc", "blood count")
+        _bnp_panels   = _lab_panels_by_desc("bnp", "natriuretic")
+        _trop_panels  = _lab_panels_by_desc("troponin")
+        _egfr_panels  = _lab_panels_by_desc("glomerular filtration", "egfr")
+
+        _bmp_or_cmp   = _bmp_panels or _cmp_panels
+        _a1c_panel_1  = _a1c_panels[0] if _a1c_panels else None
+        _bmp_panel_1  = (_bmp_panels or _cmp_panels or [None])[0]
+        _lipid_panel_1 = (_lipid_panels or [None])[0]
+        _uacr_panel_1  = (_uacr_panels or [None])[0]
+        _cbc_panel_1   = (_cbc_panels or [None])[0]
+        _egfr_panel_1  = (_egfr_panels or [None])[0]
+        _bnp_panel_1   = (_bnp_panels or [None])[0]
+        _trop_panel_1  = (_trop_panels or [None])[0]
+
+        if _has_dm_labs:
+            # A1c every 3rd outpatient encounter (90-day cadence)
+            for _oi, _ei in enumerate(_outpt_idxs):
+                if _oi % 3 == 0 and _a1c_panel_1:
+                    _add_panel(_ei, _a1c_panel_1)
+            # BMP at every outpatient encounter
+            for _ei in _outpt_idxs:
+                _add_panel(_ei, _bmp_panel_1)
+            # uACR every 4th outpatient (annual renal screening)
+            for _oi, _ei in enumerate(_outpt_idxs):
+                if _oi % 4 == 0:
+                    _add_panel(_ei, _uacr_panel_1)
+            # eGFR at inpatient encounters
+            for _ei in _inpt_idxs:
+                _add_panel(_ei, _egfr_panel_1 or _bmp_panel_1)
+
+        if _has_htn_labs and not _has_dm_labs:
+            # BMP every 2nd outpatient
+            for _oi, _ei in enumerate(_outpt_idxs):
+                if _oi % 2 == 0:
+                    _add_panel(_ei, _bmp_panel_1)
+            # Lipid panel first outpatient + every 4th after
+            for _oi, _ei in enumerate(_outpt_idxs):
+                if _oi % 4 == 0:
+                    _add_panel(_ei, _lipid_panel_1)
+
+        if _has_cvd_labs:
+            # Lipid panel first outpatient + every 4th
+            for _oi, _ei in enumerate(_outpt_idxs):
+                if _oi % 4 == 0:
+                    _add_panel(_ei, _lipid_panel_1)
+            # BNP at inpatient encounters (HF monitoring)
+            for _ei in _inpt_idxs:
+                _add_panel(_ei, _bnp_panel_1 or _bmp_panel_1)
+            # Troponin at ED encounters
+            for _ei in _ed_idxs:
+                _add_panel(_ei, _trop_panel_1)
+
+        if _is_preventive_cohort and _outpt_idxs:
+            # Annual physical bundle at first outpatient encounter
+            _first_op = _outpt_idxs[0]
+            _add_panel(_first_op, _cbc_panel_1)
+            _add_panel(_first_op, _bmp_panel_1 or (_cmp_panels or [None])[0])
+            _add_panel(_first_op, _lipid_panel_1)
+
+    # Encounters where any panel contains an A1c result item
     _a1c_enc_set: set = {
-        _li for _li, _p in _lab_enc_plans.items()
-        if any(ri.get("code") == "4548-4" for ri in _p.get("result_items", []))
+        _li for _li, _plist in _lab_enc_plans.items()
+        if any(
+            any(ri.get("code") == "4548-4" for ri in _p.get("result_items", []))
+            for _p in _plist
+        )
     }
 
     # ---- Multi-facility: assign encounters to facilities ----
@@ -3381,6 +3494,47 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                     f"    </Diagnosis>\n"
                 )
                 diag_idx += 1
+
+    # COH001 guarantee: if a flagged condition is in diag_list but never reached any encounter
+    # (can happen when encounter count is low and RNG never sampled the code), force it into
+    # the first outpatient encounter so the COH001 validator never fires a false-alarm ERROR.
+    _GUARANTEE_PREFIXES = [
+        ("E10", "E11", "E12", "E13"),
+        ("I10", "I11", "I12", "I13"),
+        ("I25", "I20", "I21", "I22"),
+        ("I50",),
+        ("I48",),
+        ("J45", "J44"),
+    ]
+    _all_enc_dx_flat: set = set()
+    for _adx_set in _enc_all_dx_codes.values():
+        _all_enc_dx_flat |= _adx_set
+    for _gpfxs in _GUARANTEE_PREFIXES:
+        _gd = next((d for d in diag_list if d.get("code", "").startswith(_gpfxs)), None)
+        if _gd is None:
+            continue
+        if any(c.startswith(_gpfxs) for c in _all_enc_dx_flat):
+            continue
+        _target_ei = next((i for i, t in enumerate(enc_types) if t == "O"), 0)
+        _enc_secondary_diags.setdefault(_target_ei, []).append(_gd)
+        _enc_all_dx_codes.setdefault(_target_ei, set()).add(_gd["code"])
+        _all_enc_dx_flat.add(_gd["code"])
+        _ef_g = _enc_facility_map[_target_ei]
+        _fpc_g, _fpn_g = _fac_prov_map[_ef_g["code"]]
+        _eod_g = _ts(enc_dates[_target_ei].replace(hour=0, minute=0, second=0))
+        _fac_dx.setdefault(_ef_g["code"], []).append(
+            f"    <Diagnosis>\n"
+            f"      <EncounterNumber>{enc_nums[_target_ei]}</EncounterNumber>\n"
+            f"      <DiagnosingClinician><Code>{_fpc_g}</Code><Description>{_fpn_g}</Description></DiagnosingClinician>\n"
+            f"      <Diagnosis><Code>{_gd['code']}</Code><Description>{_gd['description']}</Description></Diagnosis>\n"
+            f"      <DiagnosisType><Code>C</Code><Description>Chronic</Description></DiagnosisType>\n"
+            f"      <EnteredBy><Code>{_fpc_g}</Code><Description>{_fpn_g}</Description></EnteredBy>\n"
+            f"      <EnteredAt><Code>{_ef_g['code']}</Code><Description>{_ef_g['name']}</Description></EnteredAt>\n"
+            f"      <EnteredOn>{_eod_g}</EnteredOn>\n"
+            f"      <ExternalId>Diagnoses_{diag_idx}</ExternalId>\n"
+            f"    </Diagnosis>\n"
+        )
+        diag_idx += 1
 
     # ---- Observations: vitals at every encounter ----
     obs_list = cohort.get("observations", [])
@@ -3962,7 +4116,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 "BNP": "",
                 "LinkedEncounterNumber": "",
                 "ProcedureCount": 0,
-                "LabCount": sum(1 for ei in _lab_enc_plans if ei == ei0),
+                "LabCount": sum(len(_lab_enc_plans.get(ei, [])) for ei in [ei0]),
                 "MedicationChangeCount": (
                     sum(1 for e in _ace_esc_events if e[0] == ei0) +
                     sum(1 for e in _second_esc_events if e[0] == ei0) +
@@ -4025,16 +4179,24 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             fac_code = _ef_lab["code"]
             fac_name = _ef_lab["name"]
             prov_code, prov_name = _fac_prov_map[fac_code]
-            lab = _lab_enc_plans[ei]  # panel already chosen
-            a1c_val = _a1c_by_enc.get(ei) if ei in _a1c_enc_set else None
-            _lab_xml_str, _lab_ri_vals = _build_lab_xml(
-                lab, en, ed, patient_id, prov_code, prov_name,
-                fac_code, fac_name, lab_global_idx, rng,
-                a1c_override=a1c_val,
-                enc_start_time=enc_start_times[ei])
-            _fac_lab.setdefault(fac_code, []).append(_lab_xml_str)
-            _lab_result_values[ei] = {rv["code"]: rv for rv in _lab_ri_vals}
-            lab_global_idx += 1
+            _ei_result_vals: dict = {}
+            for lab in _lab_enc_plans[ei]:  # list of panels
+                a1c_val = (
+                    _a1c_by_enc.get(ei) if (
+                        ei in _a1c_enc_set and
+                        any(ri.get("code") == "4548-4" for ri in lab.get("result_items", []))
+                    ) else None
+                )
+                _lab_xml_str, _lab_ri_vals = _build_lab_xml(
+                    lab, en, ed, patient_id, prov_code, prov_name,
+                    fac_code, fac_name, lab_global_idx, rng,
+                    a1c_override=a1c_val,
+                    enc_start_time=enc_start_times[ei])
+                _fac_lab.setdefault(fac_code, []).append(_lab_xml_str)
+                for rv in _lab_ri_vals:
+                    _ei_result_vals[rv["code"]] = rv
+                lab_global_idx += 1
+            _lab_result_values[ei] = _ei_result_vals
 
     # ---- RadOrders: rate-driven, at most one per patient (last encounter) ----
     rad_tmpls = cohort.get("rad_order_templates", [])
@@ -4082,6 +4244,17 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     prov_code = _home_prov_code
     prov_name = _home_prov_name
     med_list = cohort.get("medications", [])
+    # MED004 prevention: exclude conflicting RAAS class from random pool.
+    # ACE inhibitor primary → drop ARBs; ARB primary → drop ACE inhibitors.
+    _ACE_NAMES = frozenset({"lisinopril", "enalapril", "ramipril", "benazepril", "quinapril"})
+    _ARB_NAMES = frozenset({"losartan", "valsartan", "irbesartan", "olmesartan", "candesartan"})
+    _htn_lower = _HTN_DRUG.lower()
+    if _htn_lower in _ACE_NAMES:
+        med_list = [m for m in med_list
+                    if m.get("drug_description", "").split()[0].lower() not in _ARB_NAMES]
+    elif _htn_lower in _ARB_NAMES:
+        med_list = [m for m in med_list
+                    if m.get("drug_description", "").split()[0].lower() not in _ACE_NAMES]
     chosen_meds = []  # populated below if med_list is non-empty
     if med_list:
         # Prescribe most medications for the cohort (60–100% of the list, no duplicates)
@@ -4662,33 +4835,33 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     # ---- Lab rows ----
     _lab_rows: list = []
     _lab_evt_id = 1
-    for ei, lab in _lab_enc_plans.items():
+    for ei, panels in _lab_enc_plans.items():
         enc_date = enc_dates[ei]
         enc_num = enc_nums[ei]
-        a1c_val = _a1c_by_enc.get(ei) if ei in _a1c_enc_set else None
         _ei_rv_map = _lab_result_values.get(ei, {})
-        for item in lab.get("result_items", []):
-            _item_code = item.get("code", "")
-            _rv_entry = _ei_rv_map.get(_item_code, {})
-            _computed_val = _rv_entry.get("value", "")
-            _computed_interp = _rv_entry.get("interp", "")
-            _lab_rows.append({
-                "PatientID": patient_id,
-                "EncounterNumber": enc_num,
-                "LabEventID": f"{patient_id:06d}-L{_lab_evt_id:03d}",
-                "LabCode": _item_code,
-                "LabName": item.get("description", ""),
-                "ResultValue": _computed_val,
-                "Unit": item.get("units", ""),
-                "ReferenceLow": item.get("normal_min", item.get("reference_low", "")),
-                "ReferenceHigh": item.get("normal_max", item.get("reference_high", "")),
-                "ResultDateTime": (
-                    enc_start_times[ei].strftime("%Y-%m-%dT%H:%M:%S")
-                    if enc_start_times else enc_date.strftime("%Y-%m-%d")
-                ),
-                "AbnormalFlag": _computed_interp if _computed_interp != "N" else "",
-            })
-            _lab_evt_id += 1
+        for lab in panels:
+            for item in lab.get("result_items", []):
+                _item_code = item.get("code", "")
+                _rv_entry = _ei_rv_map.get(_item_code, {})
+                _computed_val = _rv_entry.get("value", "")
+                _computed_interp = _rv_entry.get("interp", "")
+                _lab_rows.append({
+                    "PatientID": patient_id,
+                    "EncounterNumber": enc_num,
+                    "LabEventID": f"{patient_id:06d}-L{_lab_evt_id:03d}",
+                    "LabCode": _item_code,
+                    "LabName": item.get("description", ""),
+                    "ResultValue": _computed_val,
+                    "Unit": item.get("units", ""),
+                    "ReferenceLow": item.get("normal_min", item.get("reference_low", "")),
+                    "ReferenceHigh": item.get("normal_max", item.get("reference_high", "")),
+                    "ResultDateTime": (
+                        enc_start_times[ei].strftime("%Y-%m-%dT%H:%M:%S")
+                        if enc_start_times else enc_date.strftime("%Y-%m-%d")
+                    ),
+                    "AbnormalFlag": _computed_interp if _computed_interp != "N" else "",
+                })
+                _lab_evt_id += 1
 
     # Add point-of-care glucose for hyperglycemic encounters (not part of standard panels)
     for _hg_ei, _hg_glucose in _hyperglycemic_enc_data.items():
@@ -5140,6 +5313,120 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 "RecordRegenerated": "No",
             })
 
+    # LAB003: abnormal flag must agree with numeric result vs reference range
+    for lrow in _lab_rows:
+        _lv = lrow.get("ResultValue", "")
+        _laf = lrow.get("AbnormalFlag", "")
+        _rlo = lrow.get("ReferenceLow", "")
+        _rhi = lrow.get("ReferenceHigh", "")
+        if not _lv or _laf not in ("H", "L"):
+            continue
+        try:
+            _lv_f = float(_lv)
+            _lo_f = float(_rlo) if _rlo != "" else None
+            _hi_f = float(_rhi) if _rhi != "" else None
+            _correct = (
+                (_laf == "H" and _hi_f is not None and _lv_f > _hi_f) or
+                (_laf == "L" and _lo_f is not None and _lv_f < _lo_f)
+            )
+            if not _correct:
+                _val_rows.append({
+                    "PatientID": patient_id,
+                    "EncounterNumber": lrow.get("EncounterNumber", ""),
+                    "ValidationRuleID": "LAB003",
+                    "Severity": "ERROR",
+                    "Category": "Lab",
+                    "Description": (
+                        f"Abnormal flag '{_laf}' inconsistent with result "
+                        f"{_lv} vs range {_rlo}-{_rhi}: {lrow.get('LabName','')}"
+                    ),
+                    "Field1": "AbnormalFlag",
+                    "Value1": _laf,
+                    "Field2": "ResultValue",
+                    "Value2": _lv,
+                    "AutoCorrected": "No",
+                    "RecordRegenerated": "No",
+                })
+        except (ValueError, TypeError):
+            pass
+
+    # LAB004: result value outside physiologic plausibility limits (separate from reference range).
+    # These are hard biological ceilings — values above them cannot occur in living patients.
+    _LAB004_LIMITS = {
+        "2085-9":  (0, 100),    # HDL: 0-100 mg/dL
+        "88294-4": (0, 150),    # eGFR: 0-150 mL/min/1.73m²
+        "3094-0":  (0, 60),     # BUN: 0-60 mg/dL
+        "2160-0":  (0, 5.0),    # Creatinine: 0-5.0 mg/dL
+        "6768-6":  (0, 600),    # Alk Phos: 0-600 U/L
+        "1742-6":  (0, 400),    # ALT: 0-400 U/L
+        "1920-8":  (0, 400),    # AST: 0-400 U/L
+        "6690-2":  (0, 20),     # WBC: 0-20 K/uL
+        "777-3":   (0, 700),    # Platelets: 0-700 K/uL
+        "2093-3":  (100, 450),  # Total Cholesterol: 100-450 mg/dL
+        "1975-2":  (0, 10),     # Total Bilirubin: 0-10 mg/dL
+        "2571-8":  (0, 500),    # Triglycerides: 0-500 mg/dL
+        "13457-7": (0, 300),    # LDL: 0-300 mg/dL
+        "4548-4":  (3.0, 16.0), # HbA1c: 3.0-16.0 %
+        "2951-2":  (110, 165),  # Sodium: 110-165 mEq/L
+        "2823-3":  (2.0, 7.5),  # Potassium: 2.0-7.5 mEq/L
+        "17861-6": (6.0, 14.0), # Calcium: 6.0-14.0 mg/dL
+        "2339-0":  (20, 800),   # Glucose (blood): 20-800 mg/dL (DKA/HHS can exceed 600)
+    }
+    for lrow in _lab_rows:
+        _l4code = lrow.get("LabCode", "")
+        if _l4code not in _LAB004_LIMITS:
+            continue
+        _l4v = lrow.get("ResultValue", "")
+        if not _l4v:
+            continue
+        try:
+            _l4f = float(_l4v)
+            _l4lo, _l4hi = _LAB004_LIMITS[_l4code]
+            if _l4f < _l4lo or _l4f > _l4hi:
+                _val_rows.append({
+                    "PatientID": patient_id,
+                    "EncounterNumber": lrow.get("EncounterNumber", ""),
+                    "ValidationRuleID": "LAB004",
+                    "Severity": "ERROR",
+                    "Category": "Lab",
+                    "Description": (
+                        f"Physiologically implausible: {lrow.get('LabName','')} "
+                        f"= {_l4v} {lrow.get('Unit','')} "
+                        f"(plausibility range {_l4lo}-{_l4hi})"
+                    ),
+                    "Field1": "ResultValue",
+                    "Value1": _l4v,
+                    "Field2": "PlausibilityRange",
+                    "Value2": f"{_l4lo}-{_l4hi}",
+                    "AutoCorrected": "No",
+                    "RecordRegenerated": "No",
+                })
+        except (ValueError, TypeError):
+            pass
+
+    # MED004: simultaneous ACE inhibitor + ARB active maintenance therapy
+    _active_maint_classes: set = set()
+    for mrow in _med_rows:
+        if mrow.get("IsChronicMaintenance") == "Yes" and mrow.get("IsActiveAfterEncounter") == "Yes":
+            _active_maint_classes.add(mrow.get("DrugClass", ""))
+    if "ACE inhibitor" in _active_maint_classes and "ARB" in _active_maint_classes:
+        _arb_meds  = [m["MedicationName"] for m in _med_rows if m.get("DrugClass") == "ARB"  and m.get("IsChronicMaintenance") == "Yes"]
+        _ace_meds  = [m["MedicationName"] for m in _med_rows if m.get("DrugClass") == "ACE inhibitor" and m.get("IsChronicMaintenance") == "Yes"]
+        _val_rows.append({
+            "PatientID": patient_id,
+            "EncounterNumber": "",
+            "ValidationRuleID": "MED004",
+            "Severity": "WARNING",
+            "Category": "Medication",
+            "Description": "Simultaneous ACE inhibitor + ARB active maintenance therapy",
+            "Field1": "ACE",
+            "Value1": _ace_meds[0] if _ace_meds else "",
+            "Field2": "ARB",
+            "Value2": _arb_meds[0] if _arb_meds else "",
+            "AutoCorrected": "No",
+            "RecordRegenerated": "No",
+        })
+
     # ---- Patient row ----
     _baseline_weight = enc_vitals[0]["weight_lb"] if enc_vitals else 0
     _bmi_val = (
@@ -5148,10 +5435,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         else ""
     )
 
-    _diag_codes_all = set(
-        d.get("code", "")
-        for d in cohort.get("diagnoses", []) + cohort.get("comorbidities", [])
-    )
+    _diag_codes_all = set(d.get("code", "") for d in diag_list)
 
     def _has_diag_prefix(*prefixes):
         return any(c.startswith(prefixes) for c in _diag_codes_all)
@@ -5200,6 +5484,77 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             _fd.get("health_system_code", _fd["code"]) for _fd in _ordered_facs
         )),
     }
+
+    # COH001: patient condition summary flags must agree with actual diag_list codes.
+    # Runs after _patient_row (uses Has* flags) and _diag_codes_all (both now available).
+    _coh001_checks = [
+        ("HasDiabetes",     ("E10", "E11", "E12", "E13")),
+        ("HasHypertension", ("I10", "I11", "I12", "I13")),
+        ("HasCAD",          ("I25", "I20", "I21", "I22")),
+        ("HasHeartFailure", ("I50",)),
+        ("HasAFib",         ("I48",)),
+        ("HasAsthmaCOPD",   ("J45", "J44")),
+    ]
+    _enc_diag_codes_flat = set()
+    for _er in _enc_rows:
+        for _c in (_er.get("AllEncounterDiagnosisCodes") or "").split("|"):
+            _c = _c.strip()
+            if _c:
+                _enc_diag_codes_flat.add(_c)
+    for _flag_name, _prefixes in _coh001_checks:
+        _flag_val = _patient_row.get(_flag_name, "No")
+        _has_in_diags = any(c.startswith(_prefixes) for c in _diag_codes_all)
+        _has_in_encs  = any(c.startswith(_prefixes) for c in _enc_diag_codes_flat)
+        if _flag_val == "Yes" and not _has_in_diags:
+            _val_rows.append({
+                "PatientID": patient_id,
+                "EncounterNumber": "",
+                "ValidationRuleID": "COH001",
+                "Severity": "ERROR",
+                "Category": "Cohort",
+                "Description": f"{_flag_name}=Yes but no matching ICD-10 code in patient diagnosis list",
+                "Field1": _flag_name,
+                "Value1": "Yes",
+                "Field2": "DiagCodes",
+                "Value2": ",".join(sorted(_diag_codes_all))[:120],
+                "AutoCorrected": "No",
+                "RecordRegenerated": "No",
+            })
+        elif _flag_val == "Yes" and _has_in_diags and not _has_in_encs:
+            # Condition in diag_list but code never reached any encounter (rare, few encounters)
+            _val_rows.append({
+                "PatientID": patient_id,
+                "EncounterNumber": "",
+                "ValidationRuleID": "COH001",
+                "Severity": "ERROR",
+                "Category": "Cohort",
+                "Description": (
+                    f"{_flag_name}=Yes but condition code never appears in any encounter diagnosis"
+                ),
+                "Field1": _flag_name,
+                "Value1": "Yes",
+                "Field2": "EncounterDiagCodes",
+                "Value2": "",
+                "AutoCorrected": "No",
+                "RecordRegenerated": "No",
+            })
+        elif _flag_val == "No" and _has_in_encs:
+            _val_rows.append({
+                "PatientID": patient_id,
+                "EncounterNumber": "",
+                "ValidationRuleID": "COH001",
+                "Severity": "ERROR",
+                "Category": "Cohort",
+                "Description": f"{_flag_name}=No but matching ICD-10 code present in encounter diagnoses",
+                "Field1": _flag_name,
+                "Value1": "No",
+                "Field2": "EncounterDiagCodes",
+                "Value2": ",".join(
+                    c for c in sorted(_enc_diag_codes_flat) if c.startswith(_prefixes)
+                )[:120],
+                "AutoCorrected": "No",
+                "RecordRegenerated": "No",
+            })
 
     patient_data = {
         "patient": _patient_row,
