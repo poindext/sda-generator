@@ -9,6 +9,39 @@
     "total_patients": 500000,
     "history_months": 24
   },
+  "multi_facility": {
+    "enabled": true,
+    "_comment_distribution": "Proportion of patients using 1, 2, or 3+ distinct facilities. Must sum to 1.0.",
+    "distribution": {
+      "one_facility_pct":        0.55,
+      "two_facility_pct":        0.30,
+      "three_plus_facility_pct": 0.15,
+      "max_facilities":          3
+    },
+    "_comment_outside_prob": "Per encounter-type probability of the encounter occurring outside the patient's primary facility.",
+    "encounter_type_outside_prob": {
+      "O": 0.08,
+      "E": 0.40,
+      "I": 0.20
+    },
+    "_comment_geo_affinity": "When an outside-facility encounter is generated, these weights control how strongly geographic proximity is preferred.",
+    "geographic_affinity": {
+      "same_region_weight":     0.70,
+      "adjacent_region_weight": 0.20,
+      "other_region_weight":    0.10
+    },
+    "_comment_adjacent_regions": "Regions considered geographically adjacent for facility-selection affinity weighting.",
+    "adjacent_regions": {
+      "NE Ohio":      ["Central Ohio", "NW Ohio"],
+      "Central Ohio": ["NE Ohio", "SW Ohio"],
+      "SW Ohio":      ["Central Ohio"],
+      "NW Ohio":      ["NE Ohio"]
+    },
+    "_comment_ed_ip_lock": "ED→inpatient admission always stays at the same facility as the admitting ED (MF-008). Set false only for explicit interfacility-transfer modeling.",
+    "ed_ip_same_facility_lock": true,
+    "_comment_mrn_prefix": "Each facility MRN is prefixed with the facility code to make cross-facility collisions structurally impossible.",
+    "facility_mrn_prefix": true
+  },
   "geography": {
     "locations": [
       {
@@ -359,6 +392,8 @@
     {
       "code": "CLECLINIC",
       "name": "Cleveland Clinic Main Campus",
+      "health_system_code": "CLEVCLINIC_SYS",
+      "health_system_name": "Cleveland Clinic Health System",
       "type": "hospital",
       "city": "Cleveland",
       "county_fips": "39035",
@@ -370,6 +405,8 @@
     {
       "code": "OSUHC",
       "name": "Ohio State University Wexner Medical Center",
+      "health_system_code": "OSU_SYS",
+      "health_system_name": "Ohio State University Health System",
       "type": "hospital",
       "city": "Columbus",
       "county_fips": "39049",
@@ -381,6 +418,8 @@
     {
       "code": "UCHEALTH",
       "name": "University of Cincinnati Medical Center",
+      "health_system_code": "UCHEALTH_SYS",
+      "health_system_name": "UC Health",
       "type": "hospital",
       "city": "Cincinnati",
       "county_fips": "39061",
@@ -391,7 +430,9 @@
     },
     {
       "code": "SUMMAHC",
-      "name": "Summa Health System",
+      "name": "Summa Health System - Akron City Hospital",
+      "health_system_code": "SUMMA_SYS",
+      "health_system_name": "Summa Health",
       "type": "hospital",
       "city": "Akron",
       "county_fips": "39153",
@@ -403,6 +444,8 @@
     {
       "code": "DAYTONHC",
       "name": "Dayton Children's Hospital",
+      "health_system_code": "DAYTON_SYS",
+      "health_system_name": "Dayton Children's Hospital Network",
       "type": "hospital",
       "city": "Dayton",
       "county_fips": "39113",
@@ -415,6 +458,8 @@
     {
       "code": "TOLEDOHC",
       "name": "ProMedica Toledo Hospital",
+      "health_system_code": "PROMEDICA_SYS",
+      "health_system_name": "ProMedica Health System",
       "type": "hospital",
       "city": "Toledo",
       "county_fips": "39095",
@@ -426,6 +471,8 @@
     {
       "code": "AKRONCH",
       "name": "Akron Children's Hospital",
+      "health_system_code": "AKRON_SYS",
+      "health_system_name": "Akron Children's Hospital Network",
       "type": "hospital",
       "city": "Akron",
       "county_fips": "39153",
@@ -438,6 +485,8 @@
     {
       "code": "MERCYHC",
       "name": "Mercy Health - St. Elizabeth Youngstown Hospital",
+      "health_system_code": "MERCY_SYS",
+      "health_system_name": "Mercy Health (Bon Secours Mercy Health)",
       "type": "hospital",
       "city": "Youngstown",
       "county_fips": "39099",

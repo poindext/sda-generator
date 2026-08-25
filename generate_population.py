@@ -2271,6 +2271,164 @@ _SAFE_ED_FALLBACK_SCENARIOS = [
 ]
 
 
+def _assign_facilities(
+    patient_id: int,
+    enc_types: list,
+    home_fac: dict,
+    eligible_facs: list,
+    mf_config: dict,
+    rng: random.Random,
+    ed_to_ip_pairs: dict,
+    is_pregnancy_cohort: bool = False,
+) -> dict:
+    """
+    Assign a facility dict to each encounter index.
+
+    Returns {ei: facility_dict} for every encounter.
+
+    Design (spec MF-001 through MF-009):
+    - Draw this patient's facility count from the configured distribution.
+    - Pre-select alternate facilities using geographic affinity weights so the
+      patient has a stable set of organisations rather than random per-encounter
+      draws.
+    - Assign each encounter to home or an alternate based on
+      encounter_type_outside_prob.
+    - ED→inpatient pairs are locked to the same facility (MF-008).
+    - Pregnancy cohort always stays at home facility.
+    """
+    n_enc = len(enc_types)
+
+    # --- shortcircuit: multi-facility disabled or pregnancy cohort ---
+    if not mf_config.get("enabled", False) or is_pregnancy_cohort:
+        return {i: home_fac for i in range(n_enc)}
+
+    # --- step 1: how many distinct facilities does this patient use? ---
+    dist = mf_config.get("distribution", {})
+    one_pct = dist.get("one_facility_pct", 0.55)
+    two_pct = dist.get("two_facility_pct", 0.30)
+    max_facs = dist.get("max_facilities", 3)
+
+    r = rng.random()
+    if r < one_pct:
+        n_target = 1
+    elif r < one_pct + two_pct:
+        n_target = 2
+    else:
+        n_target = max_facs
+
+    if n_target == 1:
+        return {i: home_fac for i in range(n_enc)}
+
+    # --- step 2: build geo-affinity weights for alternate facilities ---
+    geo = mf_config.get("geographic_affinity", {})
+    same_w = geo.get("same_region_weight", 0.70)
+    adj_w = geo.get("adjacent_region_weight", 0.20)
+    other_w = geo.get("other_region_weight", 0.10)
+    adjacent_map = mf_config.get("adjacent_regions", {})
+
+    home_region = home_fac.get("region", "")
+    home_code = home_fac.get("code", "")
+    alt_pool = [f for f in eligible_facs if f.get("code") != home_code]
+
+    if not alt_pool:
+        return {i: home_fac for i in range(n_enc)}
+
+    def _geo_weight(f):
+        fr = f.get("region", "")
+        base = f.get("weight", 0.05)
+        if fr == home_region:
+            return same_w * base
+        if fr in adjacent_map.get(home_region, []):
+            return adj_w * base
+        return other_w * base
+
+    raw_weights = [_geo_weight(f) for f in alt_pool]
+    total_w = sum(raw_weights)
+    if total_w == 0:
+        return {i: home_fac for i in range(n_enc)}
+    norm_weights = [w / total_w for w in raw_weights]
+
+    # Weighted sample without replacement to get the patient's alternate facilities
+    n_alts = min(n_target - 1, len(alt_pool))
+    alternates: list = []
+    pool = list(alt_pool)
+    weights = list(norm_weights)
+    for _ in range(n_alts):
+        if not pool:
+            break
+        cumsum = 0.0
+        pick = rng.random()
+        chosen = len(pool) - 1
+        for idx, w in enumerate(weights):
+            cumsum += w
+            if pick <= cumsum:
+                chosen = idx
+                break
+        alternates.append(pool.pop(chosen))
+        weights.pop(chosen)
+        s = sum(weights)
+        if s > 0:
+            weights = [w / s for w in weights]
+
+    if not alternates:
+        return {i: home_fac for i in range(n_enc)}
+
+    # --- step 3: assign per encounter ---
+    outside_prob = mf_config.get("encounter_type_outside_prob", {})
+    # ed_ip_same_facility_lock forces injected IP encounters to share their ED's facility
+    ed_ip_lock = mf_config.get("ed_ip_same_facility_lock", True)
+
+    # ip_locked maps new_ip_ei → facility, populated when we assign the triggering ED
+    ip_locked: dict = {}
+    enc_facs: dict = {}
+
+    for ei, etype in enumerate(enc_types):
+        if ed_ip_lock and ei in ip_locked:
+            enc_facs[ei] = ip_locked[ei]
+            continue
+
+        p_outside = outside_prob.get(etype, 0.0)
+        if rng.random() < p_outside:
+            fac = rng.choice(alternates)
+        else:
+            fac = home_fac
+
+        enc_facs[ei] = fac
+
+        # Lock the paired inpatient to this same facility (MF-008)
+        if ed_ip_lock and etype == "E" and ei in ed_to_ip_pairs:
+            ip_locked[ed_to_ip_pairs[ei]] = fac
+
+    return enc_facs
+
+
+def _facility_mrn(patient_id: int, facility_code: str, use_prefix: bool = True) -> str:
+    """
+    Derive a deterministic, facility-specific MRN for a patient.
+
+    Properties guaranteed by design (spec MF-004):
+      same patient_id + same facility_code  → identical MRN every run
+      same patient_id + different facility  → different MRN
+      different patient_id + same facility  → different MRN (collision prob ~1/9M)
+
+    When use_prefix is True the facility code is prepended, making cross-facility
+    MRN collision structurally impossible regardless of the numeric component.
+
+    Implementation: SHA-256 of "{patient_id}:{facility_code}" → take the first
+    7 hex digits → map to the decimal range [1 000 000, 9 999 999].
+    No RNG is involved so there is nothing to seed or replay.
+    """
+    import hashlib
+    digest = hashlib.sha256(
+        f"{patient_id}:{facility_code}".encode()
+    ).hexdigest()
+    # 7 hex chars = 28 bits → 0..268,435,455; map to 7-digit decimal range
+    numeric = int(digest[:7], 16) % 9_000_000 + 1_000_000
+    if use_prefix:
+        return f"{facility_code}-{numeric}"
+    return str(numeric)
+
+
 def _plan_pregnancy_episodes(rng, enc_dates):
     """
     Plan biologically plausible pregnancy episodes for a pregnancy-cohort patient.
@@ -2758,10 +2916,48 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         if any(ri.get("code") == "4548-4" for ri in _p.get("result_items", []))
     }
 
+    # ---- Multi-facility: assign encounters to facilities ----
+    _mf_config = tmpl.get("multi_facility", {})
+    _mf_prefix = _mf_config.get("facility_mrn_prefix", True)
+    _ed_to_ip_pairs: dict = {}
+    for _ii in range(len(enc_types) - 1):
+        if enc_types[_ii] == "E" and enc_types[_ii + 1] == "I":
+            _ed_to_ip_pairs[_ii] = _ii + 1
+    _enc_facility_map: dict = _assign_facilities(
+        patient_id=patient_id,
+        enc_types=enc_types,
+        home_fac=fac,
+        eligible_facs=age_eligible_facs,
+        mf_config=_mf_config,
+        rng=rng,
+        ed_to_ip_pairs=_ed_to_ip_pairs,
+        is_pregnancy_cohort=_is_pregnancy_cohort,
+    )
+
+    # Per-facility provider: select one provider per facility from that facility's pool,
+    # seeded by the same per-patient RNG so it's deterministic. Home facility uses
+    # the provider already selected above (no second RNG call → single-facility patients
+    # are completely unaffected by this block).
+    _fac_prov_map: dict = {fac_code: (prov_code, prov_name)}  # home pre-populated
+    _tmpl_providers = tmpl.get("providers", [])
+    for _oi in range(len(enc_types)):
+        _ofc = _enc_facility_map[_oi]["code"]
+        if _ofc not in _fac_prov_map:
+            _ep_pool = [p for p in _tmpl_providers if p.get("facility_code") == _ofc]
+            if _ep_pool:
+                _ep = rng.choice(_ep_pool)
+                _fac_prov_map[_ofc] = (_ep["code"], _ep["name"])
+            else:
+                _fac_prov_map[_ofc] = (prov_code, prov_name)
+
     # ---- Static patient fields ----
     birth_year = _REFERENCE_DATE.year - age
     birth_dt = datetime(birth_year, rng.randint(1, 12), rng.randint(1, 28))
-    mrn = f"MRN{patient_id:06d}"
+    _home_fac_code = fac_code
+    _home_fac_name = fac_name
+    _home_prov_code = prov_code
+    _home_prov_name = prov_name
+    mrn = _facility_mrn(patient_id, _home_fac_code, use_prefix=_mf_prefix)
     county_name = geo.get("county", "County")
     county_fips = geo.get("county_fips", "39049")
     city_entry = rng.choice(geo.get("cities", [geo.get("county", "City")]))
@@ -2774,7 +2970,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     last_enc_date = enc_dates[-1]
     entered_on_date = last_enc_date.replace(hour=0, minute=0, second=0)
 
-    parts = ["<Container>\n"]
+    parts = []  # Patient section only (no Container wrapper; assembly adds it per-facility)
 
     # ---- Patient ----
     ins_number_type = (
@@ -2787,9 +2983,9 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     patient_numbers = (
         f"    <PatientNumbers>\n"
         f"      <PatientNumber>\n"
-        f"        <Number>{mrn}</Number>\n"
+        f"        <Number>__FAC_MRN__</Number>\n"
         f"        <NumberType>MRN</NumberType>\n"
-        f"        <Organization><Code>{fac_code}</Code><Description>{fac_name}</Description></Organization>\n"
+        f"        <Organization><Code>__FAC_CODE__</Code><Description>__FAC_NAME__</Description></Organization>\n"
         f"      </PatientNumber>\n"
     )
     if ins_number_type != "MRN":
@@ -2844,8 +3040,8 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         f"        <County><SDACodingStandard>FIPS</SDACodingStandard><Code>{county_fips}</Code><Description>{county_name} County</Description></County>\n"
         f"      </Address>\n"
         f"    </Addresses>\n"
-        f"    <EnteredBy><Code>{prov_code}</Code><Description>{prov_name}</Description></EnteredBy>\n"
-        f"    <EnteredAt><Code>{fac_code}</Code><Description>{fac_name}</Description></EnteredAt>\n"
+        f"    <EnteredBy><Code>__PROV_CODE__</Code><Description>__PROV_NAME__</Description></EnteredBy>\n"
+        f"    <EnteredAt><Code>__FAC_CODE__</Code><Description>__FAC_NAME__</Description></EnteredAt>\n"
         f"    <EnteredOn>{_ts(entered_on_date)}</EnteredOn>\n"
         f"    <ActionCode>A</ActionCode>\n"
         f"  </Patient>\n"
@@ -2878,11 +3074,24 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             f"      </HealthFunds>\n"
         )
 
-    parts.append("  <Encounters>\n")
+    _fac_enc: dict = {}
+    _fac_dx: dict = {}
+    _fac_obs: dict = {}
+    _fac_proc: dict = {}
+    _fac_doc: dict = {}
+    _fac_lab: dict = {}
+    _fac_rad: dict = {}
+    _fac_med: dict = {}
+    _fac_vax: dict = {}
     enc_nums = []
     enc_end_times = []    # stored for doc-signing timestamps
     enc_start_times = []  # stored for obs/procedure timestamps
     for ei, (ed, etype) in enumerate(zip(enc_dates, enc_types), 1):
+        _ei0 = ei - 1
+        _ef = _enc_facility_map[_ei0]
+        fac_code = _ef["code"]
+        fac_name = _ef["name"]
+        prov_code, prov_name = _fac_prov_map[fac_code]
         en = f"ENC-{ed.strftime('%Y%m%d')}-{patient_id:04d}-{ei}"
         enc_nums.append(en)
         # Inpatient: scenario-specific LOS; ED: fixed window; outpatient: random slot 20-90 min
@@ -2912,7 +3121,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         ete = _ts(enc_end)
         eod = _ts(ed.replace(hour=0, minute=0, second=0))
         this_hf = hf_block if ei == n_encounters else ""
-        parts.append(
+        _fac_enc.setdefault(fac_code, []).append(
             f"    <Encounter>\n"
             f"      <EncounterNumber>{en}</EncounterNumber>\n"
             f"      <EncounterType>{etype}</EncounterType>\n"
@@ -2931,7 +3140,12 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             f"      <ToTime>{ete}</ToTime>\n"
             f"    </Encounter>\n"
         )
-    parts.append("  </Encounters>\n")
+    # Restore home facility vars for shared sections (allergies, illness, social, family)
+    fac_code = _home_fac_code
+    fac_name = _home_fac_name
+    prov_code = _home_prov_code
+    prov_name = _home_prov_name
+    _home_shared_parts: list = []
 
     # ---- Allergies (catalogs key; once per patient) ----
     catalogs = tmpl.get("catalogs", tmpl.get("shared", {}))
@@ -2940,7 +3154,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         allergy = _wpick(all_allergies, "weight", rng)
         allergy_onset = enc_dates[0] - timedelta(days=rng.randint(90, 1800))
         reaction = allergy.get("reaction_description", allergy.get("reaction", "Rash"))
-        parts.append(
+        _home_shared_parts.append(
             f"  <Allergies>\n"
             f"    <Allergy>\n"
             f"      <Allergy>\n"
@@ -2963,7 +3177,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     # ---- IllnessHistories (once per patient) ----
     illness_tmpls = cohort.get("illness_history_templates", [])
     if illness_tmpls:
-        parts.append("  <IllnessHistories>\n")
+        _home_shared_parts.append("  <IllnessHistories>\n")
         eod0 = _ts(enc_dates[0].replace(hour=0, minute=0, second=0))
         # Max onset age: must be before the first encounter date
         _age_at_first_enc = max(1, (enc_dates[0] - birth_dt).days // 365 - 1)
@@ -2982,7 +3196,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 onset = birth_dt + timedelta(days=onset_age * 365)
             cond_text = re.sub(r'at age \d+', f'at age {onset_age}',
                                 ih.get("condition", "Chronic condition"))
-            parts.append(
+            _home_shared_parts.append(
                 f"    <IllnessHistory>\n"
                 f"      <Condition><Code>{cond_text}</Code><Description>{cond_text}</Description></Condition>\n"
                 f"      <EnteredBy><Code>{prov_code}</Code><Description>{prov_name}</Description></EnteredBy>\n"
@@ -2992,7 +3206,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 f"      <ExternalId>IllnessHistories_{idx}</ExternalId>\n"
                 f"    </IllnessHistory>\n"
             )
-        parts.append("  </IllnessHistories>\n")
+        _home_shared_parts.append("  </IllnessHistories>\n")
 
     # ---- SocialHistories ----
     social_tmpls = cohort.get("social_history_templates", [])
@@ -3000,7 +3214,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         sh = _wpick(social_tmpls, "weight", rng)
         comment = rng.choice(sh.get("comments", ["No additional information."]))
         eod0 = _ts(enc_dates[0].replace(hour=0, minute=0, second=0))
-        parts.append(
+        _home_shared_parts.append(
             f"  <SocialHistories>\n"
             f"    <SocialHistory>\n"
             f"      <SocialHabit><Code>{sh.get('habit_code','NS')}</Code>"
@@ -3018,13 +3232,13 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     # ---- FamilyHistories ----
     fam_tmpls = cohort.get("family_history_templates", [])
     if fam_tmpls:
-        parts.append("  <FamilyHistories>\n")
+        _home_shared_parts.append("  <FamilyHistories>\n")
         eod0 = _ts(enc_dates[0].replace(hour=0, minute=0, second=0))
         for idx, fh in enumerate(fam_tmpls[:2], 1):
             rel = fh.get("relationship", "Father")
             rel_code = _FAMILY_MEMBER_MAP.get(rel.lower(), "FTH")
             cond = fh.get("condition", "Chronic condition")
-            parts.append(
+            _home_shared_parts.append(
                 f"    <FamilyHistory>\n"
                 f"      <FamilyMember><Code>{rel_code}</Code><Description>{rel}</Description></FamilyMember>\n"
                 f"      <Diagnosis><Code>{cond}</Code><Description>{cond}</Description></Diagnosis>\n"
@@ -3033,7 +3247,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 f"      <ExternalId>FamilyHistories_{idx}</ExternalId>\n"
                 f"    </FamilyHistory>\n"
             )
-        parts.append("  </FamilyHistories>\n")
+        _home_shared_parts.append("  </FamilyHistories>\n")
 
     # ---- Diagnoses: primary at every encounter; comorbidities at even-indexed ones ----
     # diag_list was built above (before scenario pre-selection) so scenarios are only
@@ -3042,7 +3256,6 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     _enc_secondary_diags: dict = {}  # ei -> list of secondary diag dicts for this encounter
     _enc_all_dx_codes: dict = {}    # ei -> set of all applicable diagnosis codes (primary+secondary)
     if diag_list:
-        parts.append("  <Diagnoses>\n")
         diag_idx = 1
         primary_diags = [d for d in diag_list if d.get("is_primary")]
         secondary_diags = [d for d in diag_list if not d.get("is_primary")]
@@ -3056,6 +3269,10 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 _deduped_sec.append(_d)
         secondary_diags = _deduped_sec
         for ei, (ed, en, etype) in enumerate(zip(enc_dates, enc_nums, enc_types)):
+            _ef_d = _enc_facility_map[ei]
+            fac_code = _ef_d["code"]
+            fac_name = _ef_d["name"]
+            prov_code, prov_name = _fac_prov_map[fac_code]
             eod = _ts(ed.replace(hour=0, minute=0, second=0))
             # Filter primary_diags to those applicable to this encounter type.
             # Diagnoses with only_encounter_types restrict which encounter types they appear on.
@@ -3151,7 +3368,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             for d in enc_primary + enc_secondary:
                 dtype_code = "F" if d.get("is_primary") else "C"
                 dtype_desc = "Final" if d.get("is_primary") else "Chronic"
-                parts.append(
+                _fac_dx.setdefault(fac_code, []).append(
                     f"    <Diagnosis>\n"
                     f"      <EncounterNumber>{en}</EncounterNumber>\n"
                     f"      <DiagnosingClinician><Code>{prov_code}</Code><Description>{prov_name}</Description></DiagnosingClinician>\n"
@@ -3164,14 +3381,16 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                     f"    </Diagnosis>\n"
                 )
                 diag_idx += 1
-        parts.append("  </Diagnoses>\n")
 
     # ---- Observations: vitals at every encounter ----
     obs_list = cohort.get("observations", [])
     if obs_list:
-        parts.append("  <Observations>\n")
         obs_idx = 1
         for ei_o, (ed, en) in enumerate(zip(enc_dates, enc_nums)):
+            _ef_o = _enc_facility_map[ei_o]
+            fac_code = _ef_o["code"]
+            fac_name = _ef_o["name"]
+            prov_code, prov_name = _fac_prov_map[fac_code]
             obs_time = _ts(enc_start_times[ei_o] + timedelta(minutes=rng.randint(3, 10)))
             ev = enc_vitals[ei_o]
             for obs in obs_list:
@@ -3182,7 +3401,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 else:
                     is_abn = rng.random() < float(obs.get("abnormal_pct", 0.2))
                     val = _result_value(obs, is_abn, rng)
-                parts.append(
+                _fac_obs.setdefault(fac_code, []).append(
                     f"    <Observation>\n"
                     f"      <ExternalId>Observations_{obs_idx}</ExternalId>\n"
                     f"      <EncounterNumber>{en}</EncounterNumber>\n"
@@ -3195,17 +3414,19 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                     f"    </Observation>\n"
                 )
                 obs_idx += 1
-        parts.append("  </Observations>\n")
 
     # ---- Procedures: one billing code per encounter ----
     proc_list = cohort.get("procedures", [])
     if proc_list:
-        parts.append("  <Procedures>\n")
         for ep_i, (ed, en) in enumerate(zip(enc_dates, enc_nums)):
+            _ef_p = _enc_facility_map[ep_i]
+            fac_code = _ef_p["code"]
+            fac_name = _ef_p["name"]
+            prov_code, prov_name = _fac_prov_map[fac_code]
             proc = _wpick(proc_list, "weight", rng)
             ets = _ts(enc_start_times[ep_i] + timedelta(minutes=rng.randint(10, 25)))
             eod = _ts(ed.replace(hour=0, minute=0, second=0))
-            parts.append(
+            _fac_proc.setdefault(fac_code, []).append(
                 f"    <Procedure>\n"
                 f"      <FromTime>{ets}</FromTime>\n"
                 f"      <EncounterNumber>{en}</EncounterNumber>\n"
@@ -3220,7 +3441,6 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 f"      <ActionCode>A</ActionCode>\n"
                 f"    </Procedure>\n"
             )
-        parts.append("  </Procedures>\n")
 
     _enc_rows: list = []  # accumulated inside the document loop below
     _hyperglycemic_enc_data: dict = {}  # ei0 -> glucose_admit for hyperglycemic encounters
@@ -3301,7 +3521,6 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         # primary_diag_code/desc are resolved per encounter inside the loop below
         # so that only_encounter_types filtering applies to the narrative and CSV.
         _primary_diag_fallback = diag_list[0] if diag_list else {"code": "", "description": "chronic condition"}
-        parts.append("  <Documents>\n")
         for doc_idx, (ed, en, etype) in enumerate(zip(enc_dates, enc_nums, enc_types), 1):
             dt_item = _wpick(doc_tmpls, "weight", rng) if len(doc_tmpls) > 1 else doc_tmpls[0]
             cc = rng.choice(dt_item.get("chief_complaints", ["Follow-up visit"]))
@@ -3324,6 +3543,10 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             wt_val = int(ev["weight_lb"])
             age_at_enc = max(1, (ed - birth_dt).days // 365)
             ei0 = doc_idx - 1  # 0-based encounter index
+            _ef_doc = _enc_facility_map[ei0]
+            fac_code = _ef_doc["code"]
+            fac_name = _ef_doc["name"]
+            prov_code, prov_name = _fac_prov_map[fac_code]
 
             # Pick the primary diagnosis for this encounter's narrative and CSV.
             # Pregnancy cohort: use episode-context-aware codes (trimester / delivery / etc).
@@ -3761,7 +3984,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             if _is_hyperglycemic and _glucose_admit is not None:
                 _hyperglycemic_enc_data[ei0] = _glucose_admit
 
-            parts.append(
+            _fac_doc.setdefault(fac_code, []).append(
                 f"    <Document>\n"
                 f"      <EncounterNumber>{en}</EncounterNumber>\n"
                 f"      <DocumentTime>{doc_time}</DocumentTime>\n"
@@ -3776,7 +3999,6 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 f"      <ExternalId>Documents_{doc_idx}</ExternalId>\n"
                 f"    </Document>\n"
             )
-        parts.append("  </Documents>\n")
 
     # Post-process: link admitted ED encounters to the immediately following inpatient encounter,
     # but only when the inpatient starts within 24 hours of the ED end (same episode of care).
@@ -3795,11 +4017,14 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     # ---- LabOrders: use pre-selected encounter/panel pairs ----
     _lab_result_values: dict = {}  # ei -> {loinc_code: computed_value_str}
     if _lab_enc_plans:
-        lab_xml_parts = []
         lab_global_idx = 1
         for ei, (ed, en) in enumerate(zip(enc_dates, enc_nums)):
             if ei not in _lab_enc_plans:
                 continue
+            _ef_lab = _enc_facility_map[ei]
+            fac_code = _ef_lab["code"]
+            fac_name = _ef_lab["name"]
+            prov_code, prov_name = _fac_prov_map[fac_code]
             lab = _lab_enc_plans[ei]  # panel already chosen
             a1c_val = _a1c_by_enc.get(ei) if ei in _a1c_enc_set else None
             _lab_xml_str, _lab_ri_vals = _build_lab_xml(
@@ -3807,13 +4032,9 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 fac_code, fac_name, lab_global_idx, rng,
                 a1c_override=a1c_val,
                 enc_start_time=enc_start_times[ei])
-            lab_xml_parts.append(_lab_xml_str)
+            _fac_lab.setdefault(fac_code, []).append(_lab_xml_str)
             _lab_result_values[ei] = {rv["code"]: rv for rv in _lab_ri_vals}
             lab_global_idx += 1
-        if lab_xml_parts:
-            parts.append("  <LabOrders>\n")
-            parts.extend(lab_xml_parts)
-            parts.append("  </LabOrders>\n")
 
     # ---- RadOrders: rate-driven, at most one per patient (last encounter) ----
     rad_tmpls = cohort.get("rad_order_templates", [])
@@ -3822,13 +4043,16 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         last_ed = enc_dates[-1]
         last_en = enc_nums[-1]
         _rad_start = enc_start_times[-1]
+        _ef_rad = _enc_facility_map[n_encounters - 1]
+        fac_code = _ef_rad["code"]
+        fac_name = _ef_rad["name"]
+        prov_code, prov_name = _fac_prov_map[fac_code]
         ets = _ts(_rad_start + timedelta(minutes=rng.randint(10, 30)))
         rad_result_ts = _ts(_rad_start + timedelta(minutes=rng.randint(45, 90)))
         eod = _ts(last_ed.replace(hour=0, minute=0, second=0))
         result_text = rng.choice(rad.get("result_texts", ["No acute findings."]))
         reason = rad.get("reason_description", "Clinical evaluation")
-        parts.append(
-            f"  <RadOrders>\n"
+        _fac_rad.setdefault(fac_code, []).append(
             f"    <RadOrder>\n"
             f"      <PlacerId>RAD-{last_ed.strftime('%Y%m%d')}-{patient_id:04d}</PlacerId>\n"
             f"      <OrderItem><Code>{rad['order_code']}</Code><Description>{rad['order_description']}</Description></OrderItem>\n"
@@ -3849,10 +4073,14 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             f"      <ExternalId>RadOrders_1</ExternalId>\n"
             f"      <EncounterNumber>{last_en}</EncounterNumber>\n"
             f"    </RadOrder>\n"
-            f"  </RadOrders>\n"
         )
 
     # ---- Medications: prescribed at first encounter, active throughout ----
+    # Medications and vaccinations are attributed to the home facility
+    fac_code = _home_fac_code
+    fac_name = _home_fac_name
+    prov_code = _home_prov_code
+    prov_name = _home_prov_name
     med_list = cohort.get("medications", [])
     chosen_meds = []  # populated below if med_list is non-empty
     if med_list:
@@ -4084,9 +4312,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             med_idx += 1
 
         if med_xml_parts:
-            parts.append("  <Medications>\n")
-            parts.extend(med_xml_parts)
-            parts.append("  </Medications>\n")
+            _fac_med.setdefault(_home_fac_code, []).extend(med_xml_parts)
 
     # ---- Vaccinations: once per patient ----
     all_vaccinations = catalogs.get("vaccinations", [])
@@ -4095,8 +4321,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         vax_date = enc_dates[0] - timedelta(days=rng.randint(14, 365))
         vax_enc = f"ENC-{vax_date.strftime('%Y%m%d')}-{patient_id:04d}V"
         vax_eod = _ts(vax_date.replace(hour=0, minute=0, second=0))
-        parts.append(
-            f"  <Vaccinations>\n"
+        _fac_vax.setdefault(_home_fac_code, []).append(
             f"    <Vaccination>\n"
             f"      <EnteredBy><Code>{prov_code}</Code><Description>{prov_name}</Description></EnteredBy>\n"
             f"      <EnteredAt><Code>{fac_code}</Code><Description>{fac_name}</Description></EnteredAt>\n"
@@ -4115,11 +4340,86 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             f"      <Route><Code>IM</Code><Description>intramuscular</Description></Route>\n"
             f"      <Indication>vaccination</Indication>\n"
             f"    </Vaccination>\n"
-            f"  </Vaccinations>\n"
         )
 
-    parts.append("</Container>\n")
-    xml = "".join(parts)
+    # Build per-facility XMLs (Patient section has __FAC_*__ placeholders)
+    _patient_xml = "".join(parts)
+    _home_shared_xml = "".join(_home_shared_parts)
+    _seen_fcs: set = set()
+    _ordered_facs: list = []
+    _seen_fcs.add(_home_fac_code)
+    _ordered_facs.append(fac)
+    for _oi in range(n_encounters):
+        _of = _enc_facility_map[_oi]
+        _ofc = _of["code"]
+        if _ofc not in _seen_fcs:
+            _seen_fcs.add(_ofc)
+            _ordered_facs.append(_of)
+    _result_xmls: list = []
+    for _fac_d in _ordered_facs:
+        _fc = _fac_d["code"]
+        _fn = _fac_d["name"]
+        _fpc, _fpn = _fac_prov_map[_fc]
+        _fmrn = _facility_mrn(patient_id, _fc, use_prefix=_mf_prefix)
+        _fxml = "<Container>\n"
+        _fxml += (_patient_xml
+                  .replace("__FAC_MRN__", _fmrn)
+                  .replace("__FAC_CODE__", _fc)
+                  .replace("__FAC_NAME__", _fn)
+                  .replace("__PROV_CODE__", _fpc)
+                  .replace("__PROV_NAME__", _fpn))
+        if _fc in _fac_enc:
+            _fxml += "  <Encounters>\n" + "".join(_fac_enc[_fc]) + "  </Encounters>\n"
+        if _fc == _home_fac_code:
+            _fxml += _home_shared_xml
+        if _fc in _fac_dx:
+            _fxml += "  <Diagnoses>\n" + "".join(_fac_dx[_fc]) + "  </Diagnoses>\n"
+        if _fc in _fac_obs:
+            _fxml += "  <Observations>\n" + "".join(_fac_obs[_fc]) + "  </Observations>\n"
+        if _fc in _fac_proc:
+            _fxml += "  <Procedures>\n" + "".join(_fac_proc[_fc]) + "  </Procedures>\n"
+        if _fc in _fac_doc:
+            _fxml += "  <Documents>\n" + "".join(_fac_doc[_fc]) + "  </Documents>\n"
+        if _fc in _fac_lab:
+            _fxml += "  <LabOrders>\n" + "".join(_fac_lab[_fc]) + "  </LabOrders>\n"
+        if _fc in _fac_rad:
+            _fxml += "  <RadOrders>\n" + "".join(_fac_rad[_fc]) + "  </RadOrders>\n"
+        if _fc in _fac_med:
+            _fxml += "  <Medications>\n" + "".join(_fac_med[_fc]) + "  </Medications>\n"
+        if _fc in _fac_vax:
+            _fxml += "  <Vaccinations>\n" + "".join(_fac_vax[_fc]) + "  </Vaccinations>\n"
+        _fxml += "</Container>\n"
+        _result_xmls.append((_fc, inject_container_fields(_fxml, _fc)))
+
+    # Build patient_facilities rows (one per unique facility this patient was seen at)
+    _fac_rows: list = []
+    for _fac_d in _ordered_facs:
+        _fc = _fac_d["code"]
+        _fn = _fac_d["name"]
+        _fmrn2 = _facility_mrn(patient_id, _fc, use_prefix=_mf_prefix)
+        _fac_enc_dates = [
+            enc_dates[_oi] for _oi in range(n_encounters)
+            if _enc_facility_map[_oi]["code"] == _fc
+        ]
+        _fac_rows.append({
+            "PatientID": patient_id,
+            "FacilityCode": _fc,
+            "FacilityName": _fn,
+            "HealthSystemCode": _fac_d.get("health_system_code", ""),
+            "HealthSystemName": _fac_d.get("health_system_name", ""),
+            "FacilityMRN": _fmrn2,
+            "IsPrimaryFacility": "Yes" if _fc == _home_fac_code else "No",
+            "FirstEncounterDate": (
+                min(_fac_enc_dates).strftime("%Y-%m-%d") if _fac_enc_dates else ""
+            ),
+            "LastEncounterDate": (
+                max(_fac_enc_dates).strftime("%Y-%m-%d") if _fac_enc_dates else ""
+            ),
+            "EncounterCount": len(_fac_enc_dates),
+            "ProviderCode": _fac_prov_map[_fc][0],
+            "ProviderName": _fac_prov_map[_fc][1],
+            "XMLFileName": f"patient_{patient_id:06d}_{_fc}.xml",
+        })
 
     # =========================================================================
     # Build CSV data structures
@@ -4745,6 +5045,101 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 "RecordRegenerated": "No",
             })
 
+    # MF001: multi-facility patient has distinct facility count consistent with XML files
+    if len(_ordered_facs) > 1:
+        for _mf_fac in _ordered_facs[1:]:
+            _mfc = _mf_fac["code"]
+            _mf_enc_count = sum(
+                1 for _oi in range(n_encounters)
+                if _enc_facility_map[_oi]["code"] == _mfc
+            )
+            if _mf_enc_count == 0:
+                _val_rows.append({
+                    "PatientID": patient_id,
+                    "EncounterNumber": "",
+                    "ValidationRuleID": "MF001",
+                    "Severity": "ERROR",
+                    "Category": "MultiFacility",
+                    "Description": (
+                        f"Non-primary facility in ordered list has no encounters: {_mfc}"
+                    ),
+                    "Field1": "FacilityCode",
+                    "Value1": _mfc,
+                    "Field2": "EncounterCount",
+                    "Value2": "0",
+                    "AutoCorrected": "No",
+                    "RecordRegenerated": "No",
+                })
+
+    # MF002: facility MRN prefix matches facility code (when prefix mode is on)
+    if _mf_prefix:
+        for _mf_row in _fac_rows:
+            _expected_prefix = _mf_row["FacilityCode"] + "-"
+            if not _mf_row["FacilityMRN"].startswith(_expected_prefix):
+                _val_rows.append({
+                    "PatientID": patient_id,
+                    "EncounterNumber": "",
+                    "ValidationRuleID": "MF002",
+                    "Severity": "ERROR",
+                    "Category": "MultiFacility",
+                    "Description": (
+                        f"Facility MRN does not start with facility code prefix: "
+                        f"{_mf_row['FacilityMRN']}"
+                    ),
+                    "Field1": "FacilityMRN",
+                    "Value1": _mf_row["FacilityMRN"],
+                    "Field2": "ExpectedPrefix",
+                    "Value2": _expected_prefix,
+                    "AutoCorrected": "No",
+                    "RecordRegenerated": "No",
+                })
+
+    # MF004: ED→inpatient continuity — both must be at the same facility
+    for _ed_ei, _ip_ei in _ed_to_ip_pairs.items():
+        _ed_fac = _enc_facility_map[_ed_ei]["code"]
+        _ip_fac = _enc_facility_map[_ip_ei]["code"]
+        if _ed_fac != _ip_fac:
+            _val_rows.append({
+                "PatientID": patient_id,
+                "EncounterNumber": enc_nums[_ed_ei] if _ed_ei < len(enc_nums) else "",
+                "ValidationRuleID": "MF004",
+                "Severity": "ERROR",
+                "Category": "MultiFacility",
+                "Description": (
+                    "ED→inpatient pair split across facilities: "
+                    f"ED at {_ed_fac}, inpatient at {_ip_fac}"
+                ),
+                "Field1": "EDFacilityCode",
+                "Value1": _ed_fac,
+                "Field2": "IPFacilityCode",
+                "Value2": _ip_fac,
+                "AutoCorrected": "No",
+                "RecordRegenerated": "No",
+            })
+
+    # MF005: provider in each facility file must belong to that facility's pool
+    for _mf_row in _fac_rows:
+        _mfc2 = _mf_row["FacilityCode"]
+        _mf_prov = _mf_row["ProviderCode"]
+        _mf_valid_provs = {p["code"] for p in _tmpl_providers if p.get("facility_code") == _mfc2}
+        if _mf_valid_provs and _mf_prov not in _mf_valid_provs:
+            _val_rows.append({
+                "PatientID": patient_id,
+                "EncounterNumber": "",
+                "ValidationRuleID": "MF005",
+                "Severity": "WARNING",
+                "Category": "MultiFacility",
+                "Description": (
+                    f"Provider {_mf_prov} does not belong to facility {_mfc2}'s provider pool"
+                ),
+                "Field1": "ProviderCode",
+                "Value1": _mf_prov,
+                "Field2": "FacilityCode",
+                "Value2": _mfc2,
+                "AutoCorrected": "No",
+                "RecordRegenerated": "No",
+            })
+
     # ---- Patient row ----
     _baseline_weight = enc_vitals[0]["weight_lb"] if enc_vitals else 0
     _bmi_val = (
@@ -4799,6 +5194,11 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         "InpatientEncounters": sum(1 for t in enc_types if t == "I"),
         "FirstEncounterDate": enc_dates[0].strftime("%Y-%m-%d") if enc_dates else "",
         "LastEncounterDate": enc_dates[-1].strftime("%Y-%m-%d") if enc_dates else "",
+        "IsMultiFacilityPatient": "Yes" if len(_ordered_facs) > 1 else "No",
+        "DistinctFacilityCount": len(_ordered_facs),
+        "DistinctHealthSystemCount": len(set(
+            _fd.get("health_system_code", _fd["code"]) for _fd in _ordered_facs
+        )),
     }
 
     patient_data = {
@@ -4807,9 +5207,10 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         "medications": _med_rows,
         "labs": _lab_rows,
         "validations": _val_rows,
+        "facilities": _fac_rows,
     }
 
-    return inject_container_fields(xml, fac_code), patient_data
+    return _result_xmls, patient_data
 
 
 
@@ -4834,24 +5235,26 @@ def _worker_generate(args):
     patient_id, xml_dir_str, delete_dir_str, resume = args
     xml_dir = Path(xml_dir_str)
     delete_dir = Path(delete_dir_str)
-    out_file = xml_dir / f"patient_{patient_id:06d}.xml"
 
-    if resume and out_file.exists():
+    if resume and any(xml_dir.glob(f"patient_{patient_id:06d}_*.xml")):
         return (patient_id, "skipped", [], None)
 
-    xml, patient_data = generate_from_template(patient_id, _worker_tmpl)
+    xml_results, patient_data = generate_from_template(patient_id, _worker_tmpl)
 
     if _worker_schema is not None:
-        is_valid, errors = validate_xml(xml, _worker_schema)
-        if not is_valid:
-            (xml_dir / f"patient_{patient_id:06d}.invalid.xml").write_text(
-                xml, encoding="utf-8"
-            )
-            return (patient_id, "invalid", errors, None)
+        for _fc, _xml in xml_results:
+            is_valid, errors = validate_xml(_xml, _worker_schema)
+            if not is_valid:
+                (xml_dir / f"patient_{patient_id:06d}_{_fc}.invalid.xml").write_text(
+                    _xml, encoding="utf-8"
+                )
+                return (patient_id, "invalid", errors, None)
 
-    out_file.write_text(xml, encoding="utf-8")
-    del_file = delete_dir / f"patient_{patient_id:06d}_delete.xml"
-    del_file.write_text(generate_delete_sda(xml, ""), encoding="utf-8")
+    for _fc, _xml in xml_results:
+        (xml_dir / f"patient_{patient_id:06d}_{_fc}.xml").write_text(_xml, encoding="utf-8")
+        (delete_dir / f"patient_{patient_id:06d}_{_fc}_delete.xml").write_text(
+            generate_delete_sda(_xml, _fc), encoding="utf-8"
+        )
     return (patient_id, "ok", [], patient_data)
 
 
@@ -4937,22 +5340,30 @@ def run_template_mode(count: int, output_dir: Path, template_path: str, resume: 
         # Single-process path — identical logic, no pickle overhead
         schema = None if no_validate else load_schema()
         for patient_id in range(1, count + 1):
-            out_file = xml_dir / f"patient_{patient_id:06d}.xml"
-            if resume and out_file.exists():
+            if resume and any(xml_dir.glob(f"patient_{patient_id:06d}_*.xml")):
                 _handle_result(patient_id, "skipped", [], None)
                 continue
-            xml, patient_data = generate_from_template(patient_id, tmpl)
+            xml_results, patient_data = generate_from_template(patient_id, tmpl)
             if schema:
-                is_valid, errors = validate_xml(xml, schema)
-                if not is_valid:
-                    (xml_dir / f"patient_{patient_id:06d}.invalid.xml").write_text(
-                        xml, encoding="utf-8"
-                    )
-                    _handle_result(patient_id, "invalid", errors, None)
+                failed = False
+                for _fc, _xml in xml_results:
+                    is_valid, errors = validate_xml(_xml, schema)
+                    if not is_valid:
+                        (xml_dir / f"patient_{patient_id:06d}_{_fc}.invalid.xml").write_text(
+                            _xml, encoding="utf-8"
+                        )
+                        _handle_result(patient_id, "invalid", errors, None)
+                        failed = True
+                        break
+                if failed:
                     continue
-            out_file.write_text(xml, encoding="utf-8")
-            del_file = delete_dir / f"patient_{patient_id:06d}_delete.xml"
-            del_file.write_text(generate_delete_sda(xml, ""), encoding="utf-8")
+            for _fc, _xml in xml_results:
+                (xml_dir / f"patient_{patient_id:06d}_{_fc}.xml").write_text(
+                    _xml, encoding="utf-8"
+                )
+                (delete_dir / f"patient_{patient_id:06d}_{_fc}_delete.xml").write_text(
+                    generate_delete_sda(_xml, _fc), encoding="utf-8"
+                )
             _handle_result(patient_id, "ok", [], patient_data)
 
     # Sort by patient_id so CSV rows are in deterministic order
@@ -4962,12 +5373,26 @@ def run_template_mode(count: int, output_dir: Path, template_path: str, resume: 
     all_medications = [r for i in ordered_ids for r in results_by_id[i]["medications"]]
     all_labs = [r for i in ordered_ids for r in results_by_id[i]["labs"]]
     all_validations = [r for i in ordered_ids for r in results_by_id[i]["validations"]]
+    all_facilities = [r for i in ordered_ids for r in results_by_id[i]["facilities"]]
+
+    _FACILITY_FIELDNAMES = [
+        "PatientID", "FacilityCode", "FacilityName",
+        "HealthSystemCode", "HealthSystemName",
+        "FacilityMRN", "IsPrimaryFacility",
+        "FirstEncounterDate", "LastEncounterDate", "EncounterCount",
+        "ProviderCode", "ProviderName", "XMLFileName",
+    ]
 
     print()
     _write_csv(all_patients,    output_dir / "patients.csv")
     _write_csv(all_encounters,  output_dir / "encounters.csv")
     _write_csv(all_medications, output_dir / "medications.csv")
     _write_csv(all_labs,        output_dir / "labs.csv")
+    _write_csv(
+        all_facilities,
+        output_dir / "patient_facilities.csv",
+        fieldnames=_FACILITY_FIELDNAMES,
+    )
     _write_csv(
         all_validations,
         output_dir / "generator_validation.csv",
