@@ -389,8 +389,8 @@ _P3_SCHEMA = """\
   "illness_history_templates": [
     {
       "condition": "Type 2 diabetes mellitus, diagnosed at age 45",
-      "onset_years_ago_min": 2,
-      "onset_years_ago_max": 20,
+      "onset_at_age_min": 40,
+      "onset_at_age_max": 55,
       "is_resolved": false,
       "weight": 1.0
     }
@@ -437,7 +437,13 @@ _P3_SCHEMA = """\
       ],
       "weight": 0.3
     }
-  ]
+  ],
+  "encounter_pattern": {
+    "encounters_per_year": 4.0,
+    "encounter_type_weights": {"O": 0.90, "E": 0.05, "I": 0.05},
+    "lab_encounter_rate": 0.75,
+    "rad_encounter_rate": 0.15
+  }
 }"""
 
 
@@ -453,15 +459,25 @@ Patient age range: {cohort.get('min_age', 18)}–{cohort.get('max_age', 85)} yea
 Requirements:
 - 2-4 diagnoses (real ICD-10-CM codes; mark the primary one)
 - 2-4 common comorbidities with realistic prevalence percentages
+  (for cardiovascular cohorts, always include E11.9 Type 2 diabetes as a comorbidity
+   with prevalence_pct ~0.35; for diabetes cohorts include I10 hypertension at ~0.65)
 - 5-10 medications (real RxNorm codes, various drug classes for the condition)
 - 3-6 lab panels (real LOINC codes; include realistic normal AND abnormal value ranges)
 - 4-8 vital sign / observation types (real LOINC codes; realistic min/max ranges)
 - 2-4 procedures (real CPT codes)
-- 2-3 illness history templates (plain English, NOT ICD codes)
+- 2-3 illness history templates (plain English description of condition; use
+  "onset_at_age_min" and "onset_at_age_max" fields, NOT "onset_years_ago",
+  so onset dates anchor to patient birth year — e.g. CAD diagnosed at age 52–58)
 - 2-3 social history templates (use standard habit codes: NS/TOBA/ETOH/NOALC/DRUGS/EXER)
 - 1-2 family history templates
 - 1-2 progress note document templates with realistic clinical text
 - 1-2 radiology order templates if clinically relevant (e.g. CXR for cardiac/pulmonary patients)
+- 1 encounter_pattern block that reflects this condition's realistic care frequency:
+  * encounters_per_year: float (e.g. 2.0 for healthy, 4.0 for hypertension, 8.0 for CHF/ESRD)
+  * encounter_type_weights: object with keys "O" (outpatient), "E" (emergency), "I" (inpatient)
+    summing to 1.0 (e.g. a CHF patient has more ED/inpatient visits than a hypertension patient)
+  * lab_encounter_rate: float 0–1, probability a lab order is placed at a given encounter
+  * rad_encounter_rate: float 0–1, probability a radiology order is placed at a given encounter
 
 All weights within each list must sum to 1.0 (or be proportional — they will be normalized).
 note_template placeholders available: {{patient_name}}, {{age}}, {{sex}}, {{diagnosis}},
