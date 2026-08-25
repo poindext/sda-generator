@@ -224,6 +224,7 @@ _P1_SCHEMA = """\
         "county": "County Name",
         "county_fips": "5-digit FIPS",
         "state_code": "OH",
+        "region": "NE Ohio",
         "weight": 0.15,
         "rurality": "urban|suburban|rural",
         "cities": ["City1", "City2"]
@@ -256,7 +257,10 @@ _P1_SCHEMA = """\
       "code": "CLECLINIC",
       "name": "Cleveland Clinic Main Campus",
       "type": "hospital",
+      "health_system_code": "CCHS",
+      "health_system_name": "Cleveland Clinic Health System",
       "city": "Cleveland",
+      "region": "NE Ohio",
       "county_fips": "39035",
       "address": "9500 Euclid Ave",
       "zip": "44195",
@@ -294,7 +298,35 @@ _P1_SCHEMA = """\
       "description": "Patients with type 2 diabetes, managed with oral agents and/or insulin"
     }
   ],
-  "sending_facility": "CLECLINIC"
+  "sending_facility": "CLECLINIC",
+  "multi_facility": {
+    "enabled": true,
+    "distribution": {
+      "one_facility_pct": 0.55,
+      "two_facility_pct": 0.30,
+      "three_plus_facility_pct": 0.15,
+      "max_facilities": 3
+    },
+    "encounter_type_outside_prob": {
+      "O": 0.08,
+      "E": 0.40,
+      "I": 0.20
+    },
+    "geographic_affinity": {
+      "same_region_weight": 0.70,
+      "adjacent_region_weight": 0.20,
+      "other_region_weight": 0.10
+    },
+    "adjacent_regions": {
+      "NE Ohio": ["Central Ohio", "NW Ohio"],
+      "Central Ohio": ["NE Ohio", "SW Ohio", "SE Ohio"],
+      "SW Ohio": ["Central Ohio", "SE Ohio"],
+      "NW Ohio": ["NE Ohio"],
+      "SE Ohio": ["Central Ohio", "SW Ohio"]
+    },
+    "ed_ip_same_facility_lock": true,
+    "facility_mrn_prefix": true
+  }
 }"""
 
 
@@ -305,11 +337,16 @@ Population description:
 {description}
 
 Generate a JSON object matching the schema below. Include:
-- 8-15 geographic locations
-- 8-15 facilities
-- 10-20 providers (spread across facilities)
+- 8-15 geographic locations, each with a "region" label grouping them
+  (e.g. "NE Ohio", "Central Ohio") — 3-6 distinct regions total
+- 8-15 facilities, each with a health_system_code/name (group related facilities
+  under the same health system), a region matching one of the location regions,
+  and a realistic weight (larger/academic centers get higher weight)
+- 10-20 providers spread across facilities
 - 3-8 insurance plans
 - 6-12 clinical cohorts
+- A multi_facility block: set adjacent_regions to reflect actual geographic
+  adjacency between the regions you defined above; keep all other values as shown
 All weights within each array must sum to 1.0.
 
 Schema:
@@ -392,7 +429,8 @@ _P3_SCHEMA = """\
       "description": "Type 2 diabetes mellitus without complications",
       "is_primary": true,
       "onset_age_min": 30,
-      "onset_age_max": 85
+      "onset_age_max": 85,
+      "only_encounter_types": []
     }
   ],
   "comorbidities": [
@@ -547,7 +585,9 @@ Generate a complete clinical data catalog for the "{cohort['name']}" cohort.
 Patient age range: {cohort.get('min_age', 18)}–{cohort.get('max_age', 85)} years.
 
 Requirements:
-- 2-4 diagnoses (real ICD-10-CM codes; mark the primary one)
+- 2-4 diagnoses (real ICD-10-CM codes; mark the primary one; set
+  only_encounter_types to ["I"] for codes that should only appear on inpatient
+  encounters, e.g. delivery codes like O80; leave as [] for all others)
 - 2-4 common comorbidities with realistic prevalence percentages
   (for cardiovascular cohorts, always include E11.9 Type 2 diabetes as a comorbidity
    with prevalence_pct ~0.35; for diabetes cohorts include I10 hypertension at ~0.65)
@@ -677,6 +717,39 @@ def merge_template(structure: dict, names: dict, cohort_catalogs: list, shared: 
                 _normalize_weights(merged[key])
         merged_cohorts.append(merged)
 
+    # multi_facility: merge LLM output over stable defaults so no field is ever missing.
+    _mf_defaults = {
+        "enabled": True,
+        "distribution": {
+            "one_facility_pct": 0.55,
+            "two_facility_pct": 0.30,
+            "three_plus_facility_pct": 0.15,
+            "max_facilities": 3,
+        },
+        "encounter_type_outside_prob": {"O": 0.08, "E": 0.40, "I": 0.20},
+        "geographic_affinity": {
+            "same_region_weight": 0.70,
+            "adjacent_region_weight": 0.20,
+            "other_region_weight": 0.10,
+        },
+        "adjacent_regions": {},
+        "ed_ip_same_facility_lock": True,
+        "facility_mrn_prefix": True,
+    }
+    _mf_llm = structure.get("multi_facility", {})
+    _multi_facility = {**_mf_defaults, **_mf_llm}
+    # Deep-merge sub-dicts so a partial LLM response doesn't drop defaults
+    for _sub in ("distribution", "encounter_type_outside_prob", "geographic_affinity"):
+        _multi_facility[_sub] = {**_mf_defaults[_sub], **_mf_llm.get(_sub, {})}
+    # If LLM didn't generate adjacent_regions, derive them from facility regions:
+    # each region is adjacent to every other region (safe default).
+    if not _multi_facility.get("adjacent_regions"):
+        _regions = sorted({f.get("region", "") for f in structure.get("facilities", [])
+                           if f.get("region")})
+        _multi_facility["adjacent_regions"] = {
+            r: [x for x in _regions if x != r] for r in _regions
+        }
+
     return {
         "meta":             structure.get("meta", {}),
         "geography":        structure.get("geography", {}),
@@ -685,6 +758,7 @@ def merge_template(structure: dict, names: dict, cohort_catalogs: list, shared: 
         "providers":        structure.get("providers", []),
         "insurance_plans":  structure.get("insurance_plans", []),
         "sending_facility": structure.get("sending_facility", ""),
+        "multi_facility":   _multi_facility,
         "name_pools":       names.get("name_pools", {}),
         "cohorts":          merged_cohorts,
         "catalogs": {
