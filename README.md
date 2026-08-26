@@ -31,7 +31,7 @@ sda_generator/
 pip install openai lxml requests
 ```
 
-- **OpenAI API key** (required for `design_population.py`, `auto_qa.py`, `population_wizard.py`; not needed for `generate_population.py --mode template`)
+- **OpenAI API key** (required for `design_population.py`, `auto_qa.py`, `population_wizard.py`; not needed for `generate_population.py`)
 
 ---
 
@@ -274,7 +274,7 @@ The loop logs every fix applied to `logs/auto_qa_changelog.jsonl`.
    python3 scripts/generate_population.py \
      --template templates/my_pop.template.json \
      --output populations/population-my_pop_1000 \
-     --mode template --count 1000
+     --count 1000
    ```
 
 4. Run the QA loop until approved:

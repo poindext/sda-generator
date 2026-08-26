@@ -5,18 +5,15 @@ Generates synthetic SDA3 XML patient files from a JSON template (no LLM required
 
 Usage:
   python generate_population.py --template templates/fl_demo.template.json \
-      --output populations/population-fl_1000 --mode template --count 1000
+      --output populations/population-fl_1000 --count 1000
 """
 
 import argparse
 import concurrent.futures
-import copy
 import json
 import os
 import random
 import re
-import sys
-import time
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -5301,7 +5298,7 @@ def main():
     )
     parser.add_argument("--count", type=int, default=10,
                         help="Number of patients to generate (default: 10)")
-    parser.add_argument("--output-dir", default="Population",
+    parser.add_argument("--output", default="Population",
                         help="Output directory (default: Population/)")
     parser.add_argument("--mode", choices=["template"], default="template",
                         help="Generation mode (default: template)")
@@ -5318,7 +5315,7 @@ def main():
     if not args.template:
         parser.error("--template is required")
 
-    output_dir = Path(args.output_dir)
+    output_dir = Path(args.output)
     delete_dir = output_dir / "Delete"
     output_dir.mkdir(parents=True, exist_ok=True)
     delete_dir.mkdir(exist_ok=True)
