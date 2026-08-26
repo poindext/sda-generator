@@ -248,14 +248,6 @@ The loop logs every fix applied to `logs/auto_qa_changelog.jsonl`.
 
 ---
 
-## Existing Populations
-
-| Template | Description | Count |
-|----------|-------------|-------|
-| `templates/fl_demo.template.json` | Florida demo — preventive wellness, diabetes, hypertension, asthma, COPD, tick-borne diseases | 1,000 |
-| `templates/ohio_demo.template.json` | Ohio statewide OHIP demo — 88 counties, chronic disease cohorts | 10,000 |
-
----
 
 ## Creating a New Population
 
