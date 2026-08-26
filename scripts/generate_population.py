@@ -79,7 +79,7 @@ def load_schema():
               flush=True)
         return None
 
-    base = Path(__file__).parent
+    base = Path(__file__).parent.parent / "schema"
     schema_path = base / "SDA.xsd"
     if not schema_path.exists():
         print(f"WARNING: SDA.xsd not found at {schema_path} — validation disabled", flush=True)
@@ -1918,6 +1918,13 @@ def _build_enc_vitals(
         base_weight = round(bmi * (height_in ** 2) / 703.0, 1)
         weight_floor = 88.0
 
+    # Enforce minimum BMI of 13 for all pediatric patients so height/weight
+    # combinations never produce implausibly low values against adult standards.
+    if age < 18:
+        _min_ped_weight = round(13.0 * height_in ** 2 / 703.0, 1)
+        base_weight = max(base_weight, _min_ped_weight)
+        weight_floor = max(weight_floor, _min_ped_weight)
+
     vitals = []
     for _ in range(n_encounters):
         # Weight: slow ±1.5 lb drift per encounter; floor is age-dependent.
@@ -2853,16 +2860,6 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         for lab in cohort.get("labs", [])
     )
     _has_dm_diag_early = any(d.get("code", "").startswith(("E10", "E11", "E12", "E13")) for d in diag_list)
-    if _cohort_has_a1c and not _has_dm_diag_early:
-        for _co in cohort.get("comorbidities", []):
-            if (_co.get("code", "").startswith(("E10", "E11", "E12", "E13"))
-                    and _dx_age_sex_ok(_co)):
-                diag_list.append({
-                    "code": _co["code"],
-                    "description": _co["description"],
-                    "is_primary": False,
-                })
-                break
 
     # Pre-select inpatient and ED scenarios so narrative and structured vitals are
     # consistent, and so the diagnoses loop can guarantee anchor codes appear on
@@ -3049,6 +3046,10 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             # BMP at every outpatient encounter
             for _ei in _outpt_idxs:
                 _add_panel(_ei, _bmp_panel_1)
+            # Lipid panel first outpatient + every 4th (ADA annual monitoring)
+            for _oi, _ei in enumerate(_outpt_idxs):
+                if _oi % 4 == 0:
+                    _add_panel(_ei, _lipid_panel_1)
             # uACR every 4th outpatient (annual renal screening)
             for _oi, _ei in enumerate(_outpt_idxs):
                 if _oi % 4 == 0:
@@ -3671,10 +3672,10 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     _ACE_DOSE_STEPS = _htn_regimen["doses"]  # reused variable name
     _HTN_RXNORM   = _htn_regimen["rxnorm"]
 
-    # Does this cohort have an HTN diagnosis?
+    # Does this patient have an HTN diagnosis (checked against their actual diag_list)?
     _has_htn_diag = any(
         d.get("code", "").startswith(("I10", "I11", "I12", "I13"))
-        for d in cohort.get("diagnoses", []) + cohort.get("comorbidities", [])
+        for d in diag_list
     )
 
     # Progressive antihypertensive dose-escalation tracking
@@ -3963,7 +3964,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 _scen = _inpatient_scenes[ei0]
                 _is_hyperglycemic = _scen.get("admission_dx") == "Hyperglycemic crisis"
                 if _is_hyperglycemic:
-                    _glucose_admit = rng.randint(400, 700)
+                    _glucose_admit = rng.randint(280, 380)
                     _glucose_post = rng.randint(180, 280)
                 # Collect scenario-specific medications (e.g. furosemide for ADHF, apixaban for
                 # AFib) — deduplicated so each drug is only started once across all admissions.
@@ -4038,7 +4039,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 _is_af_rvr = _ed_key.startswith("I48")
                 _is_hyperglycemic = _ed_key.startswith(("E10", "E11", "E12", "E13"))
                 if _is_hyperglycemic:
-                    _glucose_admit = rng.randint(400, 700)
+                    _glucose_admit = rng.randint(280, 380)
                     _glucose_post = rng.randint(180, 280)
                 if _is_htn_urgency:
                     _arr_sys = rng.randint(188, 228)
@@ -4310,7 +4311,17 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     fac_name = _home_fac_name
     prov_code = _home_prov_code
     prov_name = _home_prov_name
-    med_list = cohort.get("medications", [])
+    _pt_diag_set = {d.get("code", "") for d in diag_list}
+    # Use age at history start for min_age check — prevents assigning adult
+    # chronic medications to patients who were underage when history began.
+    _age_at_hist_start = max(0, age - (history_months // 12))
+    med_list = [m for m in cohort.get("medications", [])
+                if _age_at_hist_start >= int(m.get("min_age", 0))
+                and age <= int(m.get("max_age", 999))
+                and (not m.get("sex") or m.get("sex") == sex)
+                and (not m.get("for_diagnosis_code")
+                     or any(c.startswith(m["for_diagnosis_code"])
+                            for c in _pt_diag_set))]
     # MED004 prevention: exclude conflicting RAAS class from random pool.
     # ACE inhibitor primary → drop ARBs; ARB primary → drop ACE inhibitors.
     _ACE_NAMES = frozenset({"lisinopril", "enalapril", "ramipril", "benazepril", "quinapril"})
@@ -4692,6 +4703,16 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         "clopidogrel": "Antiplatelet",
         "nitroglycerin": "Nitrate",
         "insulin": "Insulin",
+        "doxycycline": "Antibiotic",
+        "amoxicillin": "Antibiotic",
+        "cefuroxime": "Antibiotic",
+        "azithromycin": "Antibiotic",
+        "ciprofloxacin": "Antibiotic",
+        "tiotropium": "LAMA",
+        "budesonide": "ICS",
+        "prednisone": "Oral Corticosteroid",
+        "prednisolone": "Oral Corticosteroid",
+        "methylprednisolone": "Oral Corticosteroid",
     }
 
     _med_rows: list = []
@@ -4708,6 +4729,16 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 cm.get("drug_description", ""), re.IGNORECASE
             )
             _cm_dose = _cm_dose_m.group(1) if _cm_dose_m else ""
+        # Antibiotics and oral corticosteroids are acute courses, not chronic maintenance
+        _drug_cls = _MED_CLASS.get(drug_name, cm.get("drug_class", "Other"))
+        _is_antibiotic = _drug_cls == "Antibiotic"
+        _is_oral_steroid = _drug_cls == "Oral Corticosteroid"
+        _course_days = 21 if _is_antibiotic else 10 if _is_oral_steroid else 0
+        _end_dt = (
+            (_FIRST_ENC_DATE + timedelta(days=_course_days)).strftime("%Y-%m-%d")
+            if _course_days else ""
+        )
+        _is_acute = _is_antibiotic or _is_oral_steroid
         _med_rows.append({
             "PatientID": patient_id,
             "EncounterNumber": enc_nums[0] if enc_nums else "",
@@ -4720,12 +4751,12 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             "Frequency": cm.get("frequency_code", ""),
             "Route": cm.get("route_code", "PO"),
             "StartDateTime": _FIRST_ENC_DATE.strftime("%Y-%m-%d"),
-            "EndDateTime": "",
+            "EndDateTime": _end_dt,
             "Action": "Start",
             "PreviousDoseValue": "",
             "NewDoseValue": _cm_dose,
-            "IsActiveAfterEncounter": "Yes",
-            "IsChronicMaintenance": "Yes",
+            "IsActiveAfterEncounter": "No" if _is_acute else "Yes",
+            "IsChronicMaintenance": "No" if _is_acute else "Yes",
             "IsDuplicateActiveIngredient": "No",
             "IsInvalidDoseChange": "No",
         })
@@ -5420,7 +5451,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     # LAB004: result value outside physiologic plausibility limits (separate from reference range).
     # These are hard biological ceilings — values above them cannot occur in living patients.
     _LAB004_LIMITS = {
-        "2085-9":  (0, 100),    # HDL: 0-100 mg/dL
+        "2085-9":  (15, 100),   # HDL: 15-100 mg/dL (below 15 not physiologically viable)
         "88294-4": (0, 150),    # eGFR: 0-150 mL/min/1.73m²
         "3094-0":  (0, 60),     # BUN: 0-60 mg/dL
         "2160-0":  (0, 5.0),    # Creatinine: 0-5.0 mg/dL
@@ -5431,13 +5462,13 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         "777-3":   (0, 700),    # Platelets: 0-700 K/uL
         "2093-3":  (100, 450),  # Total Cholesterol: 100-450 mg/dL
         "1975-2":  (0, 10),     # Total Bilirubin: 0-10 mg/dL
-        "2571-8":  (0, 500),    # Triglycerides: 0-500 mg/dL
+        "2571-8":  (40, 500),   # Triglycerides: 40-500 mg/dL (below 40 not realistic)
         "13457-7": (0, 300),    # LDL: 0-300 mg/dL
         "4548-4":  (3.0, 16.0), # HbA1c: 3.0-16.0 %
         "2951-2":  (110, 165),  # Sodium: 110-165 mEq/L
         "2823-3":  (2.0, 7.5),  # Potassium: 2.0-7.5 mEq/L
-        "17861-6": (6.0, 14.0), # Calcium: 6.0-14.0 mg/dL
-        "2339-0":  (20, 800),   # Glucose (blood): 20-800 mg/dL (DKA/HHS can exceed 600)
+        "17861-6": (6.0, 12.0), # Calcium: 6.0-12.0 mg/dL
+        "2339-0":  (20, 600),   # Glucose (blood): 20-600 mg/dL
     }
     for lrow in _lab_rows:
         _l4code = lrow.get("LabCode", "")

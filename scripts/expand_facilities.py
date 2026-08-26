@@ -11,7 +11,7 @@ Run once, then regenerate the population.
 import json
 from pathlib import Path
 
-TEMPLATE = Path("ohio_demo.template.json")
+TEMPLATE = Path("templates/ohio_demo.template.json")
 
 # ---------------------------------------------------------------------------
 # New facilities  (38 additions → total 46)

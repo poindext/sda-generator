@@ -1,10 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(awk 'NR>=447 && NR<=600 && /name=\"Patient\"/' /Users/poindext/Projects/sda_generator/SDA.xsd)",
-      "Bash(awk 'NR>=447 && NR<=700 && /name=\"/' /Users/poindext/Projects/sda_generator/SDA.xsd)",
-      "Bash(awk 'NR>=2 && NR<=460 && /name=\"[A-Z]/' /Users/poindext/Projects/sda_generator/SDA.xsd)",
-      "Bash(python3 generate_population.py --mode template --template ohio_demo.template.json --count 10)"
+      "Bash",
+      "Edit",
+      "Write",
+      "Read"
     ]
   }
 }

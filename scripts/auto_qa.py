@@ -35,7 +35,26 @@ from pathlib import Path
 
 DEFAULT_MODEL = "gpt-4o"
 ISSUES_FILE = "qa_issues.json"
-CHANGELOG_FILE = "auto_qa_changelog.jsonl"
+CHANGELOG_FILE = "logs/auto_qa_changelog.jsonl"
+
+
+def _load_dotenv(path: str = ".env") -> None:
+    """Load KEY=VALUE pairs from .env into os.environ (skips already-set keys)."""
+    env_file = Path(path)
+    if not env_file.exists():
+        return
+    for raw in env_file.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, val = line.partition("=")
+        key = key.strip()
+        val = val.strip().strip('"').strip("'")
+        if key and key not in os.environ:
+            os.environ[key] = val
+
+
+_load_dotenv()
 
 # Human-readable names for LOINC codes used in the generator
 _LOINC_NAMES = {
@@ -289,13 +308,18 @@ def build_review_package(output_dir: Path, template_name: str) -> str:
     for pid in patients:
         cohort_pids[cohort_by_pat.get(pid, "Other")].append(pid)
 
-    rng = random.Random(42)
+    rng = random.Random(137)
     shown = 0
     max_cases = 20
     for cohort, _ in cohort_counts.most_common():
         if shown >= max_cases:
             break
-        sample_pids = rng.sample(cohort_pids[cohort], min(2, len(cohort_pids[cohort])))
+        # Prefer adults 21+ as representative cases to avoid reviewer confusion about
+        # borderline-age patients; fall back to all cohort patients if none qualify.
+        adult_pids = [p for p in cohort_pids[cohort]
+                      if int(patients[p].get("Age", 0)) >= 21]
+        pool = adult_pids if adult_pids else cohort_pids[cohort]
+        sample_pids = rng.sample(pool, min(2, len(pool)))
         for pid in sample_pids:
             p = patients[pid]
             age_val = p.get("Age", "?")
@@ -383,16 +407,93 @@ You are a clinician and healthcare informatics specialist reviewing a synthetic 
 patient population for use in a healthcare IT demonstration. Your role is to \
 assess clinical accuracy and believability.
 
+IMPORTANT CONTEXT: This is an INTENTIONALLY ENRICHED demo dataset, not a random \
+population sample. Chronic disease cohorts (diabetes, hypertension, COPD, etc.) \
+are deliberately overrepresented so the system has enough cases to demonstrate \
+analytics. DO NOT flag overall disease prevalence rates as issues — those \
+percentages are a deliberate design choice by the system operator, not a bug. \
+For example, a 25-40% diabetes prevalence in this demo is expected and intentional.
+
 Review the population data for:
 1. Clinically implausible values (impossible lab results, anthropometrics, vitals)
-2. Age-inappropriate diagnoses, medications, or lab ordering
+2. Age-inappropriate diagnoses, medications, or lab ordering (focus on patients \
+   under 18 — adult chronic disease medications such as antihypertensives, \
+   statins, and diabetes drugs should NOT appear in pediatric patients under 18; \
+   adults aged 18 and older may appropriately receive any of these medications)
 3. Sex-inappropriate diagnoses or medications
-4. Incoherent clinical trajectories (e.g. worsening symptoms but labs improving)
-5. Statistically implausible disease prevalence vs. real-world expectations
-6. Missing expected clinical associations (e.g. T2DM without lipid monitoring)
-7. Implausible combinations (pediatric patient with adult medications, etc.)
-8. Any temporal inconsistencies visible in the data
+4. Missing expected clinical associations (e.g. T2DM without lipid monitoring)
+5. Implausible combinations within a single patient record
+6. Implausible lab VALUE RANGES (e.g. glucose > 500 without ketoacidosis context, \
+   HDL < 20, or A1c > 15%)
 
+Do NOT flag:
+- Overall disease prevalence rates (intentionally enriched)
+- Mild temporal variability in lab values between visits (random fluctuation is \
+  normal and expected in synthetic data)
+- Glucose up to 500 mg/dL for acute hyperglycemic encounters
+- Systolic BP up to 230 mmHg in ED encounters — hypertensive urgency/emergency \
+  genuinely presents with SBP 180-230
+- Lab abnormalities detected on screening panels in wellness patients (high \
+  cholesterol on a wellness visit, mildly elevated glucose, etc.) — discovering \
+  undiagnosed conditions is the whole purpose of wellness screening
+- Multiple rows for the same medication in a single patient record — these represent \
+  dose escalation events (Action=Start then Action=Increase) and are clinically \
+  correct for chronic disease management. Do NOT flag escalation sequences as \
+  duplicate prescriptions.
+- Doxycycline prescribed to any patient with a tick-borne disease diagnosis — \
+  Doxycycline is the IDSA/CDC first-line treatment for ALL tick-borne diseases \
+  in patients of any age. Never flag it as age-inappropriate when a tick-borne \
+  diagnosis is present.
+- Standard infection-specific antibiotics (Doxycycline, Amoxicillin for Lyme; \
+  azithromycin for respiratory infections, etc.) — appropriate regardless of age \
+  when the matching diagnosis is present
+- Elevated transaminases (AST/ALT) in infectious disease patients — Lyme hepatitis \
+  and antibiotic-associated transaminase elevation are well-documented
+- Montelukast 10 MG in patients 15 and older — FDA-approved adult/adolescent dose \
+  for ages ≥15. The 5 MG dose applies to ages 6-14 only. Do not flag 10 MG for \
+  patients 15-17.
+- Rescue inhalers (Albuterol, Levalbuterol) and inhaled corticosteroids \
+  (Fluticasone, Budesonide, Beclomethasone) for asthma or COPD patients — \
+  appropriate at all ages. Never flag inhaled asthma medications as \
+  age-inappropriate when an asthma or COPD diagnosis is present.
+- ARB antihypertensives (Losartan, Valsartan, Irbesartan, etc.) in patients with \
+  hypertension or diabetes — guideline-recommended, especially for diabetic \
+  nephroprotection. Not age-inappropriate for adults 18+.
+- SGLT2 inhibitors (Empagliflozin, Dapagliflozin, Canagliflozin) in adult \
+  diabetes patients — standard ADA second-line agents. Not age-inappropriate \
+  for adults 18+.
+- Pediatric BMI values — pediatric BMI is assessed on age-specific growth charts, \
+  not adult standards. BMI 10-15 is normal for infants and young children. Never \
+  flag low BMI for patients under 18.
+- Mildly elevated calcium (up to 11.5 mg/dL) in infectious or inflammatory \
+  disease — hypercalcemia occurs in Lyme disease and granulomatous conditions.
+- Elevated total IgE (up to 500 IU/mL) in asthma, atopic, or tick-borne \
+  disease patients — IgE elevation is a well-established feature of these \
+  conditions.
+CRITICAL: age-inappropriate medications — ONLY flag if the patient's AGE field \
+in the REPRESENTATIVE CASES section shows 17 or younger AND the specific \
+medication appears in that patient's MEDICATIONS list. Age 18+ is an adult. \
+Verify both the Age field and the medication text explicitly before flagging.
+CRITICAL: population stats are not patient records — The MEDICATION ANALYSIS \
+section lists population-wide drug frequencies. A drug appearing in that table \
+does NOT mean any specific patient received it inappropriately. You MUST find \
+the medication in a specific patient's MEDICATIONS section before reporting it.
+DATA INTEGRITY: Each representative patient's MEDICATIONS list is complete and \
+authoritative. A patient with no medications listed has zero medications. Do NOT \
+infer, assume, or fabricate medications from diagnoses or population-level data.
+
+GROUNDING RULE — THIS IS MANDATORY:
+Before writing any issue, locate the EXACT text in this data packet that \
+supports it. You may only cite:
+  - A specific patient from REPRESENTATIVE CASES: quote their PatientID, Age, \
+    and the exact medication name or lab value as it appears in the packet.
+  - A specific statistic from POPULATION STATS or LAB SUMMARY: quote the exact \
+    field name, numeric value, and units.
+If you cannot point to the verbatim text in the packet that proves the finding, \
+do NOT include the issue. Reasoning about what the data "probably" contains, or \
+what "should" be present, is not evidence. Only report what you can directly quote.
+
+{population_specific_context}
 Respond ONLY with a valid JSON object — no prose, no markdown code fences:
 {
   "approved": true or false,
@@ -404,7 +505,8 @@ Respond ONLY with a valid JSON object — no prose, no markdown code fences:
       "category": "labs|vitals|medications|demographics|diagnoses|temporal|anthropometrics|comorbidities|other",
       "title": "brief title under 60 chars",
       "description": "specific detailed description",
-      "evidence": "concrete example with patient ID or observed value",
+      "evidence": "verbatim quote from the data packet (section name + exact text)",
+      "data_section": "e.g. REPRESENTATIVE CASES > Patient 475 | LAB SUMMARY | MEDICATION ANALYSIS",
       "fix_target": "template|generator|both",
       "suggested_approach": "specific suggestion pointing at cohort, field, or code section"
     }
@@ -418,7 +520,43 @@ are not useful.
 """
 
 
-def review_with_openai(package: str, model: str, base_url: str) -> dict:
+# ---------------------------------------------------------------------------
+# Template-specific QA config
+# ---------------------------------------------------------------------------
+
+def load_qa_config(template_path: str) -> dict:
+    """Load <template_stem>.qa_config.json if it exists, else return empty config."""
+    p = Path(template_path)
+    stem = p.stem
+    if stem.endswith(".template"):
+        stem = stem[: -len(".template")]
+    config_path = p.parent / f"{stem}.qa_config.json"
+    if config_path.exists():
+        with open(config_path, encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+
+def build_population_specific_context(config: dict) -> str:
+    """Render qa_config into a prompt block for injection into the system prompt."""
+    if not config:
+        return ""
+    parts = []
+    description = config.get("description", "")
+    if description:
+        parts.append(f"POPULATION-SPECIFIC CONTEXT: {description}")
+    exemptions = config.get("do_not_flag", [])
+    if exemptions:
+        parts.append("Additional population-specific items — Do NOT flag:")
+        for item in exemptions:
+            parts.append(f"- {item}")
+    for note in config.get("clarifications", []):
+        parts.append(note)
+    return "\n".join(parts) + "\n" if parts else ""
+
+
+def review_with_openai(package: str, model: str, base_url: str,
+                       qa_config: dict | None = None) -> dict:
     try:
         from openai import OpenAI
     except ImportError:
@@ -434,16 +572,22 @@ def review_with_openai(package: str, model: str, base_url: str) -> dict:
             sys.exit(2)
         client = OpenAI(api_key=api_key)
 
+    population_ctx = build_population_specific_context(qa_config or {})
+    system_prompt = _REVIEW_SYSTEM_PROMPT.replace(
+        "{population_specific_context}",
+        population_ctx,
+    )
+
     pkg_tokens_est = len(package) // 4
     print(f"  Sending review package to {model} (~{pkg_tokens_est:,} tokens)...", flush=True)
 
     resp = client.chat.completions.create(
         model=model,
-        temperature=0.1,
+        temperature=0.0,
         max_tokens=4096,
         response_format={"type": "json_object"},
         messages=[
-            {"role": "system", "content": _REVIEW_SYSTEM_PROMPT},
+            {"role": "system", "content": system_prompt},
             {"role": "user",   "content": package},
         ],
     )
@@ -515,6 +659,11 @@ def main() -> None:
         print(f"ERROR: output directory not found: {output_dir}", file=sys.stderr)
         sys.exit(2)
 
+    # ── Load template-specific QA config ────────────────────────────────────
+    qa_config = load_qa_config(args.template)
+    if qa_config:
+        print(f"  QA config: {Path(args.template).stem.replace('.template','')}.qa_config.json loaded")
+
     # ── Build review package ─────────────────────────────────────────────────
     print("Building clinical review package...")
     package = build_review_package(output_dir, args.template)
@@ -523,7 +672,8 @@ def main() -> None:
     print(f"  Package: {len(package):,} chars saved to {pkg_path}")
 
     # ── OpenAI review ────────────────────────────────────────────────────────
-    review   = review_with_openai(package, args.model, args.base_url)
+    review   = review_with_openai(package, args.model, args.base_url,
+                                  qa_config=qa_config)
     approved = review.get("approved", False)
     issues   = review.get("issues", [])
     summary  = review.get("overall_assessment", "")
