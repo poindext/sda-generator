@@ -5,14 +5,11 @@ __pycache__/
 .venv/
 *.egg-info/
 
-# Generated patient output (any casing / suffix)
-Population/
-population*/
-cohort*/
+# Generated patient output
+populations/
 
 # Sample/reference data (potentially sensitive)
-Sample_SDA/
-Sample_Delete_SDA/
+sample_data/
 
 # macOS
 .DS_Store
@@ -23,6 +20,9 @@ Sample_Delete_SDA/
 *.code-workspace
 .idea/
 *.swp
+
+# Environment / secrets — never commit
+.env
 
 # Claude session files (keep commands, skip session data)
 .claude/projects/

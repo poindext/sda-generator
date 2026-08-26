@@ -75,7 +75,7 @@ except ImportError:
 def load_lab_library(path: str | None) -> dict:
     """Load lab_panels_library.json. Returns empty dict if path is None/missing."""
     if path is None:
-        default = Path(__file__).parent / "lab_panels_library.json"
+        default = Path(__file__).parent.parent / "config" / "lab_panels_library.json"
         path = str(default) if default.exists() else None
     if path is None:
         return {}

@@ -980,7 +980,7 @@
       "id": "tick_borne_diseases",
       "name": "Tick-borne Diseases",
       "weight": 0.025,
-      "min_age": 0,
+      "min_age": 8,
       "max_age": 105,
       "sex_bias": null,
       "description": "Patients diagnosed with Lyme disease, Anaplasmosis, or Ehrlichiosis",
@@ -990,23 +990,7 @@
           "description": "Lyme disease, unspecified",
           "is_primary": true,
           "onset_age_min": 5,
-          "onset_age_max": 70,
-          "only_encounter_types": []
-        },
-        {
-          "code": "A77.9",
-          "description": "Ehrlichiosis, unspecified",
-          "is_primary": false,
-          "onset_age_min": 10,
-          "onset_age_max": 80,
-          "only_encounter_types": []
-        },
-        {
-          "code": "A79.82",
-          "description": "Anaplasmosis",
-          "is_primary": false,
-          "onset_age_min": 15,
-          "onset_age_max": 75,
+          "onset_age_max": 105,
           "only_encounter_types": []
         }
       ],
@@ -1020,13 +1004,13 @@
           "code": "I10",
           "description": "Essential hypertension",
           "prevalence_pct": 0.2,
-          "min_age": 18
+          "min_age": 30
         },
         {
           "code": "E11.9",
           "description": "Type 2 diabetes mellitus without complications",
-          "prevalence_pct": 0.1,
-          "min_age": 18
+          "prevalence_pct": 0.05,
+          "min_age": 30
         }
       ],
       "medications": [
@@ -1043,12 +1027,14 @@
           "frequency_description": "Twice daily",
           "status": "active",
           "for_diagnosis_code": "A69.20",
-          "weight": 0.444444
+          "weight": 1.0,
+          "drug_class": "Antibiotic",
+          "min_age": 8
         },
         {
           "drug_code": "197361",
-          "drug_description": "Amoxicillin 500 MG Oral Capsule",
-          "dose_quantity": "500",
+          "drug_description": "Amoxicillin 250 MG Oral Capsule",
+          "dose_quantity": "250",
           "dose_uom": "mg",
           "dosage_form_code": "CAP",
           "dosage_form_description": "Capsule",
@@ -1058,22 +1044,9 @@
           "frequency_description": "Three times daily",
           "status": "active",
           "for_diagnosis_code": "A69.20",
-          "weight": 0.333333
-        },
-        {
-          "drug_code": "617314",
-          "drug_description": "Cefuroxime 500 MG Oral Tablet",
-          "dose_quantity": "500",
-          "dose_uom": "mg",
-          "dosage_form_code": "TAB",
-          "dosage_form_description": "Tablet",
-          "route_code": "PO",
-          "route_description": "Oral",
-          "frequency_code": "BID",
-          "frequency_description": "Twice daily",
-          "status": "active",
-          "for_diagnosis_code": "A69.20",
-          "weight": 0.222222
+          "max_age": 7,
+          "weight": 1.0,
+          "drug_class": "Antibiotic"
         }
       ],
       "labs": [
@@ -1091,7 +1064,7 @@
               "is_numeric": true,
               "normal_min": 4.5,
               "normal_max": 11.0,
-              "abnormal_min": 0.5,
+              "abnormal_min": 3.0,
               "abnormal_max": 18.0
             },
             {
@@ -1111,7 +1084,7 @@
               "is_numeric": true,
               "normal_min": 11.5,
               "normal_max": 17.5,
-              "abnormal_min": 6.0,
+              "abnormal_min": 10.5,
               "abnormal_max": 20.0
             },
             {
@@ -1122,7 +1095,7 @@
               "normal_min": 35,
               "normal_max": 52,
               "abnormal_min": 20,
-              "abnormal_max": 60
+              "abnormal_max": 55
             },
             {
               "code": "777-3",
@@ -1211,7 +1184,7 @@
               "normal_min": 70,
               "normal_max": 99,
               "abnormal_min": 50,
-              "abnormal_max": 450
+              "abnormal_max": 150
             },
             {
               "code": "3094-0",
@@ -1221,7 +1194,7 @@
               "normal_min": 6,
               "normal_max": 20,
               "abnormal_min": 2,
-              "abnormal_max": 50
+              "abnormal_max": 30
             },
             {
               "code": "2160-0",
@@ -1231,7 +1204,7 @@
               "normal_min": 0.6,
               "normal_max": 1.2,
               "abnormal_min": 0.4,
-              "abnormal_max": 3.5
+              "abnormal_max": 1.6
             },
             {
               "code": "17861-6",
@@ -1241,7 +1214,7 @@
               "normal_min": 8.5,
               "normal_max": 10.5,
               "abnormal_min": 7.0,
-              "abnormal_max": 13.0
+              "abnormal_max": 11.0
             },
             {
               "code": "2885-2",
@@ -1271,7 +1244,7 @@
               "normal_min": 7,
               "normal_max": 56,
               "abnormal_min": 57,
-              "abnormal_max": 200
+              "abnormal_max": 150
             },
             {
               "code": "1920-8",
@@ -1281,7 +1254,7 @@
               "normal_min": 10,
               "normal_max": 40,
               "abnormal_min": 41,
-              "abnormal_max": 200
+              "abnormal_max": 150
             },
             {
               "code": "6768-6",
@@ -1301,7 +1274,7 @@
               "normal_min": 0.1,
               "normal_max": 1.2,
               "abnormal_min": 1.3,
-              "abnormal_max": 5.0
+              "abnormal_max": 2.5
             }
           ]
         },
@@ -1321,9 +1294,58 @@
               "normal_min": 0,
               "normal_max": 100,
               "abnormal_min": 101,
-              "abnormal_max": 1000,
+              "abnormal_max": 400,
               "abnormal_flag": "H",
               "text_values": []
+            }
+          ]
+        },
+        {
+          "order_code": "57698-3",
+          "order_description": "Lipid panel",
+          "specimen": "Blood",
+          "abnormal_pct": 0.3,
+          "weight": 0.1,
+          "result_items": [
+            {
+              "code": "2093-3",
+              "description": "Total Cholesterol",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 130,
+              "normal_max": 200,
+              "abnormal_min": 201,
+              "abnormal_max": 340
+            },
+            {
+              "code": "2571-8",
+              "description": "Triglycerides",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 40,
+              "normal_max": 149,
+              "abnormal_min": 150,
+              "abnormal_max": 499
+            },
+            {
+              "code": "2085-9",
+              "description": "HDL Cholesterol",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 40,
+              "normal_max": 90,
+              "abnormal_min": 20,
+              "abnormal_max": 39
+            },
+            {
+              "code": "13457-7",
+              "description": "LDL Cholesterol",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 50,
+              "normal_max": 100,
+              "abnormal_min": 101,
+              "abnormal_max": 220
             }
           ]
         }
@@ -1520,20 +1542,20 @@
         {
           "code": "E11.9",
           "description": "Type 2 diabetes mellitus without complications",
-          "prevalence_pct": 0.35,
-          "min_age": 18
+          "prevalence_pct": 0.1,
+          "min_age": 35
         },
         {
           "code": "I10",
           "description": "Essential hypertension",
           "prevalence_pct": 0.25,
-          "min_age": 18
+          "min_age": 35
         },
         {
           "code": "E78.5",
           "description": "Hyperlipidemia, unspecified",
           "prevalence_pct": 0.2,
-          "min_age": 18
+          "min_age": 35
         },
         {
           "code": "Z72.0",
@@ -1555,7 +1577,8 @@
           "frequency_description": "Twice daily",
           "status": "active",
           "for_diagnosis_code": "E11.9",
-          "weight": 0.3
+          "weight": 0.3,
+          "min_age": 18
         },
         {
           "drug_code": "617317",
@@ -1570,7 +1593,8 @@
           "frequency_description": "Once daily",
           "status": "active",
           "for_diagnosis_code": "E78.5",
-          "weight": 0.25
+          "weight": 0.25,
+          "min_age": 18
         },
         {
           "drug_code": "1049630",
@@ -1585,7 +1609,8 @@
           "frequency_description": "Once daily",
           "status": "active",
           "for_diagnosis_code": "I10",
-          "weight": 0.2
+          "weight": 0.2,
+          "min_age": 18
         },
         {
           "drug_code": "197361",
@@ -1600,7 +1625,8 @@
           "frequency_description": "Once daily",
           "status": "active",
           "for_diagnosis_code": "Z13.6",
-          "weight": 0.15
+          "weight": 0.15,
+          "min_age": 40
         },
         {
           "drug_code": "1049502",
@@ -1615,7 +1641,8 @@
           "frequency_description": "Once daily",
           "status": "active",
           "for_diagnosis_code": "I10",
-          "weight": 0.1
+          "weight": 0.1,
+          "min_age": 18
         }
       ],
       "labs": [
@@ -1674,7 +1701,7 @@
               "normal_min": 70,
               "normal_max": 99,
               "abnormal_min": 50,
-              "abnormal_max": 450
+              "abnormal_max": 300
             },
             {
               "code": "3094-0",
@@ -1704,7 +1731,7 @@
               "normal_min": 8.5,
               "normal_max": 10.5,
               "abnormal_min": 7.0,
-              "abnormal_max": 13.0
+              "abnormal_max": 11.0
             },
             {
               "code": "2885-2",
@@ -1734,7 +1761,7 @@
               "normal_min": 7,
               "normal_max": 56,
               "abnormal_min": 57,
-              "abnormal_max": 200
+              "abnormal_max": 120
             },
             {
               "code": "1920-8",
@@ -1744,7 +1771,7 @@
               "normal_min": 10,
               "normal_max": 40,
               "abnormal_min": 41,
-              "abnormal_max": 200
+              "abnormal_max": 120
             },
             {
               "code": "6768-6",
@@ -1764,7 +1791,7 @@
               "normal_min": 0.1,
               "normal_max": 1.2,
               "abnormal_min": 1.3,
-              "abnormal_max": 5.0
+              "abnormal_max": 2.5
             }
           ]
         },
@@ -1790,10 +1817,10 @@
               "description": "Triglycerides",
               "units": "mg/dL",
               "is_numeric": true,
-              "normal_min": 0,
-              "normal_max": 150,
-              "abnormal_min": 151,
-              "abnormal_max": 400
+              "normal_min": 40,
+              "normal_max": 149,
+              "abnormal_min": 150,
+              "abnormal_max": 499
             },
             {
               "code": "2085-9",
@@ -1802,7 +1829,7 @@
               "is_numeric": true,
               "normal_min": 40,
               "normal_max": 90,
-              "abnormal_min": 0,
+              "abnormal_min": 20,
               "abnormal_max": 39
             },
             {
@@ -1831,7 +1858,7 @@
               "is_numeric": true,
               "normal_min": 4.5,
               "normal_max": 11.0,
-              "abnormal_min": 0.5,
+              "abnormal_min": 3.0,
               "abnormal_max": 18.0
             },
             {
@@ -1851,7 +1878,7 @@
               "is_numeric": true,
               "normal_min": 11.5,
               "normal_max": 17.5,
-              "abnormal_min": 6.0,
+              "abnormal_min": 10.5,
               "abnormal_max": 20.0
             },
             {
@@ -1862,7 +1889,7 @@
               "normal_min": 35,
               "normal_max": 52,
               "abnormal_min": 20,
-              "abnormal_max": 60
+              "abnormal_max": 55
             },
             {
               "code": "777-3",
@@ -1951,7 +1978,7 @@
               "normal_min": 70,
               "normal_max": 99,
               "abnormal_min": 50,
-              "abnormal_max": 450
+              "abnormal_max": 300
             },
             {
               "code": "3094-0",
@@ -1981,7 +2008,7 @@
               "normal_min": 8.5,
               "normal_max": 10.5,
               "abnormal_min": 7.0,
-              "abnormal_max": 13.0
+              "abnormal_max": 11.0
             }
           ]
         }
@@ -2180,7 +2207,7 @@
           "code": "I10",
           "description": "Essential hypertension",
           "prevalence_pct": 0.65,
-          "min_age": 18
+          "min_age": 30
         },
         {
           "code": "E78.5",
@@ -2214,7 +2241,8 @@
           "frequency_description": "Twice daily",
           "status": "active",
           "for_diagnosis_code": "E11.9",
-          "weight": 0.3
+          "weight": 0.3,
+          "min_age": 18
         },
         {
           "drug_code": "1049630",
@@ -2229,7 +2257,8 @@
           "frequency_description": "Once daily",
           "status": "active",
           "for_diagnosis_code": "I10",
-          "weight": 0.2
+          "weight": 0.2,
+          "min_age": 18
         },
         {
           "drug_code": "617314",
@@ -2244,7 +2273,8 @@
           "frequency_description": "Once daily",
           "status": "active",
           "for_diagnosis_code": "E78.5",
-          "weight": 0.2
+          "weight": 0.2,
+          "min_age": 18
         },
         {
           "drug_code": "104922",
@@ -2322,10 +2352,10 @@
               "description": "Triglycerides",
               "units": "mg/dL",
               "is_numeric": true,
-              "normal_min": 0,
-              "normal_max": 150,
-              "abnormal_min": 151,
-              "abnormal_max": 400
+              "normal_min": 40,
+              "normal_max": 149,
+              "abnormal_min": 150,
+              "abnormal_max": 499
             },
             {
               "code": "2085-9",
@@ -2334,7 +2364,7 @@
               "is_numeric": true,
               "normal_min": 40,
               "normal_max": 90,
-              "abnormal_min": 0,
+              "abnormal_min": 20,
               "abnormal_max": 39
             },
             {
@@ -2404,7 +2434,7 @@
               "normal_min": 70,
               "normal_max": 99,
               "abnormal_min": 50,
-              "abnormal_max": 450
+              "abnormal_max": 300
             },
             {
               "code": "3094-0",
@@ -2434,7 +2464,7 @@
               "normal_min": 8.5,
               "normal_max": 10.5,
               "abnormal_min": 7.0,
-              "abnormal_max": 13.0
+              "abnormal_max": 11.0
             }
           ]
         },
@@ -2493,7 +2523,7 @@
               "normal_min": 70,
               "normal_max": 99,
               "abnormal_min": 50,
-              "abnormal_max": 450
+              "abnormal_max": 300
             },
             {
               "code": "3094-0",
@@ -2523,7 +2553,7 @@
               "normal_min": 8.5,
               "normal_max": 10.5,
               "abnormal_min": 7.0,
-              "abnormal_max": 13.0
+              "abnormal_max": 11.0
             },
             {
               "code": "2885-2",
@@ -2553,7 +2583,7 @@
               "normal_min": 7,
               "normal_max": 56,
               "abnormal_min": 57,
-              "abnormal_max": 200
+              "abnormal_max": 120
             },
             {
               "code": "1920-8",
@@ -2563,7 +2593,7 @@
               "normal_min": 10,
               "normal_max": 40,
               "abnormal_min": 41,
-              "abnormal_max": 200
+              "abnormal_max": 120
             },
             {
               "code": "6768-6",
@@ -2583,7 +2613,7 @@
               "normal_min": 0.1,
               "normal_max": 1.2,
               "abnormal_min": 1.3,
-              "abnormal_max": 5.0
+              "abnormal_max": 2.5
             }
           ]
         },
@@ -2780,15 +2810,6 @@
           "min_age": 18
         },
         {
-          "code": "E11.9",
-          "description": "Type 2 diabetes mellitus without complications",
-          "is_primary": false,
-          "onset_age_min": 40,
-          "onset_age_max": 85,
-          "only_encounter_types": [],
-          "min_age": 18
-        },
-        {
           "code": "I25.10",
           "description": "Atherosclerotic heart disease of native coronary artery without angina pectoris",
           "is_primary": false,
@@ -2811,7 +2832,7 @@
         {
           "code": "E11.9",
           "description": "Type 2 diabetes mellitus without complications",
-          "prevalence_pct": 0.35,
+          "prevalence_pct": 0.3,
           "min_age": 18
         },
         {
@@ -2846,7 +2867,8 @@
           "frequency_description": "Once daily",
           "status": "active",
           "for_diagnosis_code": "I10",
-          "weight": 0.25
+          "weight": 0.25,
+          "min_age": 18
         },
         {
           "drug_code": "617317",
@@ -2861,7 +2883,8 @@
           "frequency_description": "Once daily",
           "status": "active",
           "for_diagnosis_code": "I10",
-          "weight": 0.25
+          "weight": 0.25,
+          "min_age": 18
         },
         {
           "drug_code": "860975",
@@ -2876,7 +2899,8 @@
           "frequency_description": "Twice daily",
           "status": "active",
           "for_diagnosis_code": "E11.9",
-          "weight": 0.2
+          "weight": 0.2,
+          "min_age": 18
         },
         {
           "drug_code": "1049630",
@@ -2891,7 +2915,8 @@
           "frequency_description": "Once daily",
           "status": "active",
           "for_diagnosis_code": "E78.5",
-          "weight": 0.15
+          "weight": 0.15,
+          "min_age": 18
         },
         {
           "drug_code": "314076",
@@ -2906,7 +2931,8 @@
           "frequency_description": "Once daily",
           "status": "active",
           "for_diagnosis_code": "I10",
-          "weight": 0.15
+          "weight": 0.15,
+          "min_age": 18
         }
       ],
       "labs": [
@@ -2965,7 +2991,7 @@
               "normal_min": 70,
               "normal_max": 99,
               "abnormal_min": 50,
-              "abnormal_max": 450
+              "abnormal_max": 300
             },
             {
               "code": "3094-0",
@@ -2995,7 +3021,7 @@
               "normal_min": 8.5,
               "normal_max": 10.5,
               "abnormal_min": 7.0,
-              "abnormal_max": 13.0
+              "abnormal_max": 11.0
             }
           ]
         },
@@ -3013,7 +3039,7 @@
               "is_numeric": true,
               "normal_min": 4.5,
               "normal_max": 11.0,
-              "abnormal_min": 0.5,
+              "abnormal_min": 3.0,
               "abnormal_max": 18.0
             },
             {
@@ -3033,7 +3059,7 @@
               "is_numeric": true,
               "normal_min": 11.5,
               "normal_max": 17.5,
-              "abnormal_min": 6.0,
+              "abnormal_min": 10.5,
               "abnormal_max": 20.0
             },
             {
@@ -3044,7 +3070,7 @@
               "normal_min": 35,
               "normal_max": 52,
               "abnormal_min": 20,
-              "abnormal_max": 60
+              "abnormal_max": 55
             },
             {
               "code": "777-3",
@@ -3133,7 +3159,7 @@
               "normal_min": 70,
               "normal_max": 99,
               "abnormal_min": 50,
-              "abnormal_max": 450
+              "abnormal_max": 300
             },
             {
               "code": "3094-0",
@@ -3163,7 +3189,7 @@
               "normal_min": 8.5,
               "normal_max": 10.5,
               "abnormal_min": 7.0,
-              "abnormal_max": 13.0
+              "abnormal_max": 11.0
             },
             {
               "code": "2885-2",
@@ -3193,7 +3219,7 @@
               "normal_min": 7,
               "normal_max": 56,
               "abnormal_min": 57,
-              "abnormal_max": 200
+              "abnormal_max": 120
             },
             {
               "code": "1920-8",
@@ -3203,7 +3229,7 @@
               "normal_min": 10,
               "normal_max": 40,
               "abnormal_min": 41,
-              "abnormal_max": 200
+              "abnormal_max": 120
             },
             {
               "code": "6768-6",
@@ -3223,7 +3249,7 @@
               "normal_min": 0.1,
               "normal_max": 1.2,
               "abnormal_min": 1.3,
-              "abnormal_max": 5.0
+              "abnormal_max": 2.5
             }
           ]
         },
@@ -3249,10 +3275,10 @@
               "description": "Triglycerides",
               "units": "mg/dL",
               "is_numeric": true,
-              "normal_min": 0,
-              "normal_max": 150,
-              "abnormal_min": 151,
-              "abnormal_max": 400
+              "normal_min": 40,
+              "normal_max": 149,
+              "abnormal_min": 150,
+              "abnormal_max": 499
             },
             {
               "code": "2085-9",
@@ -3261,7 +3287,7 @@
               "is_numeric": true,
               "normal_min": 40,
               "normal_max": 90,
-              "abnormal_min": 0,
+              "abnormal_min": 20,
               "abnormal_max": 39
             },
             {
@@ -3498,7 +3524,7 @@
           "code": "I10",
           "description": "Essential hypertension",
           "prevalence_pct": 0.15,
-          "min_age": 18
+          "min_age": 30
         }
       ],
       "medications": [
@@ -3545,7 +3571,8 @@
           "frequency_description": "Once daily",
           "status": "active",
           "for_diagnosis_code": "J45.909",
-          "weight": 0.2
+          "weight": 0.2,
+          "min_age": 15
         },
         {
           "drug_code": "104922",
@@ -3560,7 +3587,8 @@
           "frequency_description": "Once daily",
           "status": "active",
           "for_diagnosis_code": "J45.901",
-          "weight": 0.1
+          "weight": 0.1,
+          "min_age": 18
         }
       ],
       "labs": [
@@ -3602,7 +3630,7 @@
               "normal_min": 0,
               "normal_max": 100,
               "abnormal_min": 101,
-              "abnormal_max": 1000,
+              "abnormal_max": 400,
               "abnormal_flag": "H",
               "text_values": []
             }
@@ -3833,12 +3861,12 @@
           "code": "I10",
           "description": "Essential hypertension",
           "prevalence_pct": 0.65,
-          "min_age": 18
+          "min_age": 30
         },
         {
           "code": "E11.9",
           "description": "Type 2 diabetes mellitus without complications",
-          "prevalence_pct": 0.35,
+          "prevalence_pct": 0.15,
           "min_age": 18
         },
         {
@@ -3927,7 +3955,8 @@
           "frequency_description": "Once daily",
           "status": "active",
           "for_diagnosis_code": "J44.1",
-          "weight": 0.15
+          "weight": 0.15,
+          "min_age": 18
         }
       ],
       "labs": [
@@ -3945,7 +3974,7 @@
               "is_numeric": true,
               "normal_min": 4.5,
               "normal_max": 11.0,
-              "abnormal_min": 0.5,
+              "abnormal_min": 3.0,
               "abnormal_max": 18.0
             },
             {
@@ -3965,7 +3994,7 @@
               "is_numeric": true,
               "normal_min": 11.5,
               "normal_max": 17.5,
-              "abnormal_min": 6.0,
+              "abnormal_min": 10.5,
               "abnormal_max": 20.0
             },
             {
@@ -3976,7 +4005,7 @@
               "normal_min": 35,
               "normal_max": 52,
               "abnormal_min": 20,
-              "abnormal_max": 60
+              "abnormal_max": 55
             },
             {
               "code": "777-3",
@@ -4048,7 +4077,7 @@
               "normal_min": 0,
               "normal_max": 100,
               "abnormal_min": 101,
-              "abnormal_max": 1000,
+              "abnormal_max": 400,
               "abnormal_flag": "H",
               "text_values": []
             }
@@ -4086,6 +4115,55 @@
               "abnormal_max": 2.5,
               "abnormal_flag": "L",
               "text_values": []
+            }
+          ]
+        },
+        {
+          "order_code": "57698-3",
+          "order_description": "Lipid panel",
+          "specimen": "Blood",
+          "abnormal_pct": 0.3,
+          "weight": 0.1,
+          "result_items": [
+            {
+              "code": "2093-3",
+              "description": "Total Cholesterol",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 130,
+              "normal_max": 200,
+              "abnormal_min": 201,
+              "abnormal_max": 340
+            },
+            {
+              "code": "2571-8",
+              "description": "Triglycerides",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 40,
+              "normal_max": 149,
+              "abnormal_min": 150,
+              "abnormal_max": 499
+            },
+            {
+              "code": "2085-9",
+              "description": "HDL Cholesterol",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 40,
+              "normal_max": 90,
+              "abnormal_min": 20,
+              "abnormal_max": 39
+            },
+            {
+              "code": "13457-7",
+              "description": "LDL Cholesterol",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 50,
+              "normal_max": 100,
+              "abnormal_min": 101,
+              "abnormal_max": 220
             }
           ]
         }
