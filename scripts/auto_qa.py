@@ -583,7 +583,7 @@ def review_with_openai(package: str, model: str, base_url: str,
 
     resp = client.chat.completions.create(
         model=model,
-        temperature=0.0,
+        temperature=0.1,
         max_tokens=4096,
         response_format={"type": "json_object"},
         messages=[
