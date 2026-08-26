@@ -2,7 +2,7 @@
 
 Generates realistic synthetic patient populations in InterSystems HealthShare **SDA3 XML** format for use in healthcare IT demonstrations, analytics testing, and platform evaluation.
 
-Populations are defined by cohort templates (diabetes, hypertension, asthma, COPD, tick-borne diseases, etc.) and produced entirely in Python — no LLM required for generation. An optional automated clinical QA loop uses GPT-4o to review the output for clinical plausibility and iterates until the population passes review.
+Populations are defined by cohort templates (diabetes, hypertension, asthma, COPD, tick-borne diseases, etc.) and produced entirely in Python with no LLM or API key required. An optional automated clinical QA loop uses GPT-4o to review the output for clinical plausibility and iterates until the population passes review.
 
 ---
 
@@ -127,36 +127,26 @@ python3 scripts/design_population.py templates/fl_demo.txt \
 
 ### `scripts/generate_population.py` — Generate patients from a template
 
-The main generator. In `--mode template` it runs entirely in Python (no LLM, no API key required) and produces SDA3 XML files plus a set of analysis CSVs. This is the primary mode for demo populations.
+The main generator. Runs entirely in Python (no LLM, no API key required) and produces SDA3 XML files plus a set of analysis CSVs.
 
 ```bash
 # Generate 1000 patients from the Florida template
 python3 scripts/generate_population.py \
   --template templates/fl_demo.template.json \
   --output populations/population-fl_1000 \
-  --mode template \
   --count 1000
 ```
 
-**Modes:**
-
-| Mode | Description |
-|------|-------------|
-| `template` | Pure Python generation from a JSON template — fast, reproducible, no LLM |
-| `async` | LLM-driven generation with concurrent requests and XSD validation |
-| `batch` | LLM-driven via OpenAI Batches API (50% cost, slower turnaround) |
-| `validate` | Validate and fix existing XML files |
-
-**Common options:**
+**Options:**
 
 | Flag | Default | Description |
 |------|---------|-------------|
-| `--template` | — | Template JSON file (required for `--mode template`) |
+| `--template` | — | Template JSON file (required) |
 | `--output` | `Population/` | Output directory for XML + CSVs |
 | `--count` | `10` | Number of patients to generate |
-| `--mode` | — | Generation mode (see table above) |
+| `--concurrency` | `10` | Parallel workers |
+| `--resume` | off | Skip patients whose files already exist |
 | `--no-validate` | off | Skip XSD validation (faster) |
-| `--model` | `gpt-4o-mini` | LLM model (async/batch modes only) |
 
 **Output files** (all in the output directory):
 

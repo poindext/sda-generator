@@ -1,46 +1,13 @@
 #!/usr/bin/env python3
 """
 SDA3 Population Generator
-Generates synthetic SDA3 XML patient files at scale using an OpenAI-compatible LLM API.
-
-Modes:
-  async    - concurrent requests, immediate results (good for <200 patients)
-  batch    - OpenAI Batches API at 50% cost (OpenAI only; not supported on internal LLM)
-  validate - validate and fix existing files in output-dir
+Generates synthetic SDA3 XML patient files from a JSON template (no LLM required).
 
 Usage:
-  # Quick async test - 20 patients, 10 at a time
-  python generate_population.py --count 20 --mode async
-
-  # Large batch - 1000 patients at half price
-  python generate_population.py --count 1000 --mode batch
-
-  # Resume (skips patients whose files already exist)
-  python generate_population.py --count 1000 --mode async --resume
-
-  # Use a population config file to control cohort mix, demographics, counties
-  python generate_population.py --count 1000 --mode async --config ohio_demo.json
-
-  # Use the internal ISC LLM instead of OpenAI (no API key needed)
-  python generate_population.py --count 20 --mode async \
-      --base-url https://apps-llm-1.iscinternal.com/v1 --model Qwen/Qwen3-32B-AWQ
-
-Model cost guidance (per 1000 patients, ~1K tokens output each):
-  gpt-4o-mini  : ~$0.001 async / ~$0.0005 batch  (recommended for bulk)
-  gpt-4o       : ~$0.015 async / ~$0.0075 batch
-
-Requires OPENAI_API_KEY environment variable (not needed for --base-url on the internal LLM).
+  python generate_population.py --template templates/fl_demo.template.json \
+      --output populations/population-fl_1000 --mode template --count 1000
 """
 
-# Default LLM — OpenAI. Empty base URL means "use the OpenAI SDK default endpoint".
-DEFAULT_BASE_URL = ""
-DEFAULT_MODEL = "gpt-4o-mini"
-
-# Internal ISC LLM endpoint — pass via --base-url / --model to use instead of OpenAI
-ISC_LLM_BASE_URL = "https://apps-llm-1.iscinternal.com/v1"
-ISC_LLM_DEFAULT_MODEL = "Qwen/Qwen3-32B-AWQ"
-
-import asyncio
 import argparse
 import concurrent.futures
 import copy
@@ -52,14 +19,6 @@ import sys
 import time
 from datetime import datetime, timedelta
 from pathlib import Path
-
-try:
-    import openai  # noqa: F401
-except ImportError:
-    print("ERROR: Install the OpenAI SDK:  pip install openai")
-    sys.exit(1)
-
-MAX_RETRIES = 3   # validation fix attempts before giving up on a patient
 
 # ---------------------------------------------------------------------------
 # XSD validation helpers
@@ -117,58 +76,6 @@ def validate_xml(xml_str: str, schema) -> tuple:
     is_valid = schema.validate(doc)
     errors = [str(e) for e in schema.error_log]
     return is_valid, errors
-
-
-def build_fix_prompt(xml_str: str, errors: list) -> str:
-    """Build a user prompt asking the LLM to fix specific validation errors."""
-    capped = errors[:20]
-    error_text = "\n".join(f"  - {e}" for e in capped)
-    if len(errors) > 20:
-        error_text += f"\n  ... and {len(errors) - 20} more errors"
-    section_order_hint = (
-        "REMINDER — mandatory Container section order (do not deviate):\n"
-        "  Patient → Encounters → Allergies → IllnessHistories → SocialHistories → FamilyHistories\n"
-        "  → Diagnoses → Observations → Problems → Procedures → Documents → LabOrders → RadOrders\n"
-        "  → Medications → Vaccinations → MedicalClaims → SocialDeterminants\n"
-        "If an 'element not expected' error names Observations/Diagnoses/LabOrders/Medications, "
-        "those sections appear AFTER a section that should come later — reorder them.\n\n"
-    )
-    return (
-        "The SDA3 XML below failed XSD validation. Fix ONLY the structural errors listed — "
-        "do not change patient identity, dates, or clinical content unless they caused an error.\n\n"
-        + section_order_hint
-        + f"Validation errors:\n{error_text}\n\n"
-        f"XML to fix:\n{xml_str}"
-    )
-
-
-def strip_fences(text: str) -> str:
-    """Remove markdown code fences if the model wrapped the XML in them."""
-    text = text.strip()
-    if text.startswith("```"):
-        lines = text.splitlines()
-        end = len(lines) - 1 if lines[-1].strip() == "```" else len(lines)
-        text = "\n".join(lines[1:end])
-    return text.strip()
-
-
-def sanitize_xml_text_nodes(xml: str) -> str:
-    """Escape bare < > & characters that appear inside text content (between tags).
-
-    The LLM frequently writes things like '<150 mg/dL' or 'BP < 130' in NoteText,
-    ResultText, etc. This replaces unescaped special chars in text-only segments
-    so the XML parses cleanly, without touching tag markup.
-    """
-    # Split on tag boundaries. Even-indexed segments are text nodes; odd-indexed are tags.
-    parts = re.split(r'(<[^>]*>)', xml)
-    result = []
-    for i, part in enumerate(parts):
-        if i % 2 == 0:  # text node
-            # Unescape already-escaped sequences first to avoid double-escaping
-            part = part.replace('&amp;', '&').replace('&lt;', '<').replace('&gt;', '>')
-            part = part.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-        result.append(part)
-    return ''.join(result)
 
 
 def inject_container_fields(xml: str, fallback_facility: str = "") -> str:
@@ -1306,478 +1213,6 @@ OrderItem and DrugProduct use the same CVX code. Status is the plain string "V" 
 - SendingFacility inside <LabOrder> — LabOrder does not use SendingFacility; omit it entirely from LabOrder records
 - Empty sections like <Diagnoses></Diagnoses> — omit entirely if no records
 """.strip()
-
-# ---------------------------------------------------------------------------
-# Scenario builder
-# ---------------------------------------------------------------------------
-
-def weighted_choice(items_with_weights: list, rng: random.Random = None) -> tuple:
-    _rng = rng or random
-    total = sum(w for *_, w in items_with_weights)
-    r = _rng.uniform(0, total)
-    cumulative = 0.0
-    for *item, weight in items_with_weights:
-        cumulative += weight
-        if r <= cumulative:
-            return tuple(item)
-    return tuple(items_with_weights[-1][:-1])
-
-
-# ---------------------------------------------------------------------------
-# Config loading
-# ---------------------------------------------------------------------------
-
-# Active config — populated by load_config(), used by build_scenario()
-_config: dict = {}
-
-
-def load_config(path: str):
-    """Load a population config JSON file and merge into active config."""
-    global _config
-    with open(path) as f:
-        _config = json.load(f)
-    print(f"Config loaded: {path}")
-
-
-def _get(key: str, default):
-    """Return config value if set, else the built-in default."""
-    return _config.get(key, default)
-
-
-def build_scenario(patient_id: int) -> str:
-    rng = random.Random(patient_id)  # deterministic per patient_id
-
-    locations = _get("locations", [])
-    if not locations:
-        raise ValueError("Config must include a 'locations' array. See ohio_demo.json for an example.")
-    county, city, zip_code, region = weighted_choice([(*loc,) for loc in locations], rng)
-
-    cohorts = _get("cohorts", COHORTS)
-    cohort = weighted_choice(cohorts, rng)[0]
-
-    races = _get("races", RACES)
-    race_code, race_desc = weighted_choice(races, rng)
-
-    ethnicities = _get("ethnicities", ETHNICITIES)
-    eth_row = weighted_choice(ethnicities, rng)
-    eth_code, eth_desc = eth_row[0], eth_row[1]
-
-    insurances = _get("insurances", INSURANCES)
-    ins_row = weighted_choice(insurances, rng)
-    ins_type, ins_org = ins_row[0], ins_row[1]
-
-    age_min = _get("age_min", 18)
-    age_max = _get("age_max", 85)
-    age = rng.randint(age_min, age_max)
-    if cohort == "pregnancy":
-        age = rng.randint(age_min, min(age_max, 45))
-
-    gender_code = rng.choice(["M", "F"])
-    if cohort == "pregnancy":
-        gender_code = "F"
-    gender_desc = "Male" if gender_code == "M" else "Female"
-
-    # Cohort descriptions: config can override individual cohorts or add custom ones
-    cohort_descriptions = copy.copy(COHORT_DESCRIPTIONS)
-    cohort_descriptions.update(_get("cohort_descriptions", {}))
-    cohort_detail = cohort_descriptions.get(
-        cohort, f"patient with condition: {cohort}"
-    )
-
-    # Optional extra instructions from config (e.g. facility naming conventions)
-    extra = _get("extra_instructions", "")
-    extra_note = f"\n- Additional instructions: {extra}" if extra else ""
-
-    ins_note = f"Insurance: {ins_org or 'commercial'}"
-    eth_note = f", ethnicity: {eth_desc}" if eth_desc else ""
-    rurality_note = f"({region} setting)"
-
-    state = _get("state", "Unknown State")
-    state_code = _get("state_code", "XX")
-
-    return (
-        f"Generate a single synthetic SDA3 patient record with these characteristics:\n\n"
-        f"- County: {county}, City: {city}, {state_code} {zip_code} {rurality_note}\n"
-        f"- Age: approximately {age} years old\n"
-        f"- Gender: {gender_desc}\n"
-        f"- Race: {race_desc} (CDCREC code {race_code}){eth_note}\n"
-        f"- {ins_note}\n"
-        f"- Clinical scenario: {cohort_detail}"
-        f"{extra_note}\n\n"
-        f"Patient ID for file tracking: {patient_id:06d}"
-    )
-
-
-# ---------------------------------------------------------------------------
-# LLM client helpers
-# ---------------------------------------------------------------------------
-
-def _make_async_client(base_url: str):
-    """Return an AsyncOpenAI client pointed at base_url."""
-    from openai import AsyncOpenAI
-    import os
-    if base_url and "openai.com" not in base_url:
-        return AsyncOpenAI(base_url=base_url, api_key="none")
-    return AsyncOpenAI(api_key=os.environ.get("OPENAI_API_KEY", ""))
-
-
-def _make_sync_client(base_url: str):
-    """Return a synchronous OpenAI client pointed at base_url."""
-    from openai import OpenAI
-    import os
-    if base_url and "openai.com" not in base_url:
-        return OpenAI(base_url=base_url, api_key="none")
-    return OpenAI(api_key=os.environ.get("OPENAI_API_KEY", ""))
-
-
-def _extra_body(model: str) -> dict | None:
-    """Disable Qwen3 thinking mode so the model returns plain XML without reasoning tokens."""
-    if "qwen" in model.lower():
-        return {"chat_template_kwargs": {"enable_thinking": False}}
-    return None
-
-
-# ---------------------------------------------------------------------------
-# Async mode
-# ---------------------------------------------------------------------------
-
-async def generate_one_async(
-    patient_id: int,
-    output_dir: Path,
-    delete_dir: Path,
-    model: str,
-    semaphore: asyncio.Semaphore,
-    resume: bool,
-    schema,
-    base_url: str = DEFAULT_BASE_URL,
-) -> bool:
-    output_file = output_dir / f"patient_{patient_id:06d}.xml"
-    if resume and output_file.exists():
-        return True
-
-    scenario = build_scenario(patient_id)
-    messages = [
-        {"role": "system", "content": SYSTEM_PROMPT},
-        {"role": "user",   "content": scenario},
-    ]
-
-    async with semaphore:
-        oai = _make_async_client(base_url)
-
-        for attempt in range(1, MAX_RETRIES + 1):
-            try:
-                response = await oai.chat.completions.create(
-                    model=model,
-                    max_tokens=16384,
-                    messages=messages,
-                    extra_body=_extra_body(model),
-                )
-                xml = sanitize_xml_text_nodes(strip_fences(response.choices[0].message.content))
-
-                if schema is not None:
-                    is_valid, errors = validate_xml(xml, schema)
-                    if not is_valid:
-                        if attempt < MAX_RETRIES:
-                            print(
-                                f"  [RETRY {attempt}/{MAX_RETRIES}] patient_{patient_id:06d}: "
-                                f"{len(errors)} error(s) — sending back for correction",
-                                flush=True,
-                            )
-                            for e in errors[:5]:
-                                print(f"    ERR: {e}", flush=True)
-                            messages = [
-                                {"role": "system", "content": SYSTEM_PROMPT},
-                                {"role": "user",   "content": build_fix_prompt(xml, errors)},
-                            ]
-                            continue
-                        else:
-                            print(
-                                f"  [FAIL] patient_{patient_id:06d}: "
-                                f"still invalid after {MAX_RETRIES} attempts — "
-                                f"saving as .invalid.xml",
-                                flush=True,
-                            )
-                            (output_dir / f"patient_{patient_id:06d}.invalid.xml").write_text(
-                                xml, encoding="utf-8"
-                            )
-                            return False
-
-                sending_facility = _get("sending_facility", "")
-                if sending_facility:
-                    xml = inject_container_fields(xml, sending_facility)
-                output_file.write_text(xml, encoding="utf-8")
-                delete_file = delete_dir / f"patient_{patient_id:06d}_delete.xml"
-                delete_file.write_text(generate_delete_sda(xml, sending_facility), encoding="utf-8")
-                tag = f" (fixed in {attempt} attempts)" if attempt > 1 else ""
-                print(f"  [OK{tag}] {output_file.name}", flush=True)
-                return True
-
-            except Exception as exc:
-                print(f"  [ERR] patient_{patient_id:06d}: {exc}", flush=True)
-                return False
-
-    return False
-
-
-async def run_async(count: int, output_dir: Path, delete_dir: Path, model: str, concurrency: int,
-                    resume: bool, schema, base_url: str = DEFAULT_BASE_URL):
-    semaphore = asyncio.Semaphore(concurrency)
-    validate_note = "with XSD validation" if schema is not None else "validation disabled"
-    print(f"Async mode: {count} patients, concurrency={concurrency}, model={model}, "
-          f"{validate_note}")
-    tasks = [
-        generate_one_async(i, output_dir, delete_dir, model, semaphore, resume, schema, base_url)
-        for i in range(1, count + 1)
-    ]
-    results = await asyncio.gather(*tasks)
-    ok = sum(1 for r in results if r)
-    print(f"\nDone. {ok}/{count} valid (or already existed).")
-
-
-# ---------------------------------------------------------------------------
-# Validate-and-fix mode — repair existing files in the output directory
-# ---------------------------------------------------------------------------
-
-async def _fix_one_file(filepath: Path, xml_str: str, errors: list, model: str,
-                        semaphore: asyncio.Semaphore, schema,
-                        base_url: str = DEFAULT_BASE_URL) -> bool:
-    async with semaphore:
-        oai = _make_async_client(base_url)
-        messages = [
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user",   "content": build_fix_prompt(xml_str, errors)},
-        ]
-        for attempt in range(1, MAX_RETRIES + 1):
-            try:
-                response = await oai.chat.completions.create(
-                    model=model, max_tokens=16384, messages=messages,
-                    extra_body=_extra_body(model),
-                )
-                xml = sanitize_xml_text_nodes(strip_fences(response.choices[0].message.content))
-                is_valid, new_errors = validate_xml(xml, schema)
-                if not is_valid:
-                    if attempt < MAX_RETRIES:
-                        print(
-                            f"  [RETRY {attempt}] {filepath.name}: "
-                            f"{len(new_errors)} error(s) remain",
-                            flush=True,
-                        )
-                        messages = [
-                            {"role": "system", "content": SYSTEM_PROMPT},
-                            {"role": "user",   "content": build_fix_prompt(xml, new_errors)},
-                        ]
-                        continue
-                    print(f"  [FAIL] {filepath.name}: still invalid after {MAX_RETRIES} attempts",
-                          flush=True)
-                    return False
-                sending_facility = _get("sending_facility", "")
-                if sending_facility:
-                    xml = inject_container_fields(xml, sending_facility)
-                filepath.write_text(xml, encoding="utf-8")
-                delete_dir = filepath.parent / "Delete"
-                delete_dir.mkdir(exist_ok=True)
-                delete_file = delete_dir / filepath.name.replace(".xml", "_delete.xml")
-                delete_file.write_text(generate_delete_sda(xml, sending_facility), encoding="utf-8")
-                print(f"  [FIXED] {filepath.name} (attempt {attempt})", flush=True)
-                return True
-            except Exception as exc:
-                print(f"  [ERR] {filepath.name}: {exc}", flush=True)
-                return False
-    return False
-
-
-async def validate_and_fix_dir(output_dir: Path, model: str, concurrency: int, schema,
-                               base_url: str = DEFAULT_BASE_URL):
-    if schema is None:
-        print("XSD validation not available. Install lxml and ensure SDA.xsd is present.")
-        return
-
-    xml_files = sorted(
-        f for f in output_dir.glob("patient_*.xml")
-        if not f.name.endswith(".invalid.xml")
-    )
-    if not xml_files:
-        print(f"No patient XML files found in {output_dir}/")
-        return
-
-    print(f"Validating {len(xml_files)} file(s)...")
-    invalid = []
-    for f in xml_files:
-        try:
-            content = f.read_text(encoding="utf-8")
-            is_valid, errors = validate_xml(content, schema)
-            if is_valid:
-                print(f"  [OK] {f.name}", flush=True)
-            else:
-                print(f"  [INVALID] {f.name}: {len(errors)} error(s)", flush=True)
-                invalid.append((f, content, errors))
-        except Exception as e:
-            print(f"  [READ ERR] {f.name}: {e}", flush=True)
-
-    if not invalid:
-        print(f"\nAll {len(xml_files)} file(s) are valid.")
-        return
-
-    print(f"\nFixing {len(invalid)} invalid file(s)...")
-    semaphore = asyncio.Semaphore(concurrency)
-    tasks = [
-        _fix_one_file(f, content, errors, model, semaphore, schema, base_url)
-        for f, content, errors in invalid
-    ]
-    results = await asyncio.gather(*tasks)
-    ok = sum(1 for r in results if r)
-    print(f"\nValidation pass complete. Fixed: {ok}/{len(invalid)}")
-
-
-# ---------------------------------------------------------------------------
-# Batch mode — submit
-# ---------------------------------------------------------------------------
-
-def batch_submit(count: int, output_dir: Path, model: str, resume: bool,
-                 base_url: str = DEFAULT_BASE_URL):
-    import io
-    client = _make_sync_client(base_url)
-
-    patient_ids = [
-        i for i in range(1, count + 1)
-        if not (resume and (output_dir / f"patient_{i:06d}.xml").exists())
-    ]
-    skipped = count - len(patient_ids)
-
-    if not patient_ids:
-        print("All patients already exist. Nothing to submit.")
-        return
-
-    # Build JSONL content for the OpenAI Batch API
-    lines = []
-    for pid in patient_ids:
-        scenario = build_scenario(pid)
-        record = {
-            "custom_id": f"patient-{pid:06d}",
-            "method": "POST",
-            "url": "/v1/chat/completions",
-            "body": {
-                "model": model,
-                "max_tokens": 16384,
-                "messages": [
-                    {"role": "system", "content": SYSTEM_PROMPT},
-                    {"role": "user",   "content": scenario},
-                ],
-            },
-        }
-        lines.append(json.dumps(record))
-
-    print(f"Submitting batch: {len(patient_ids)} patients (skipped {skipped} existing)...")
-
-    # Upload the JSONL file
-    jsonl_bytes = "\n".join(lines).encode("utf-8")
-    upload = client.files.create(
-        file=("batch_input.jsonl", io.BytesIO(jsonl_bytes), "application/jsonl"),
-        purpose="batch",
-    )
-
-    # Create the batch
-    batch = client.batches.create(
-        input_file_id=upload.id,
-        endpoint="/v1/chat/completions",
-        completion_window="24h",
-    )
-
-    status_file = output_dir / "batch_status.json"
-    status_file.write_text(json.dumps({
-        "batch_id": batch.id,
-        "input_file_id": upload.id,
-        "patient_count": len(patient_ids),
-        "model": model,
-        "submitted_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-    }, indent=2))
-
-    print(f"\nBatch submitted successfully.")
-    print(f"  Batch ID : {batch.id}")
-    print(f"  Patients : {len(patient_ids)}")
-    print(f"  Status   : {status_file}")
-    print(f"\nTo retrieve results when ready:")
-    print(f"  python generate_population.py --mode batch --batch-id {batch.id}")
-
-
-# ---------------------------------------------------------------------------
-# Batch mode — retrieve
-# ---------------------------------------------------------------------------
-
-def batch_retrieve(batch_id: str, output_dir: Path, base_url: str = DEFAULT_BASE_URL):
-    client = _make_sync_client(base_url)
-
-    print(f"Checking batch {batch_id}...")
-    while True:
-        batch = client.batches.retrieve(batch_id)
-        counts = batch.request_counts
-        print(
-            f"  Status: {batch.status}  |  "
-            f"completed={counts.completed}  failed={counts.failed}  total={counts.total}",
-            flush=True,
-        )
-        if batch.status == "completed":
-            break
-        if batch.status in ("failed", "expired", "cancelled"):
-            print(f"  Batch ended with status: {batch.status}")
-            return
-        print("  Not ready yet — waiting 30 seconds...")
-        time.sleep(30)
-
-    if not batch.output_file_id:
-        print("  No output file — batch may have had no successful results.")
-        return
-
-    content = client.files.content(batch.output_file_id).text
-    written = 0
-    api_errors = 0
-    invalid_count = 0
-
-    schema = load_schema()
-
-    for line in content.splitlines():
-        if not line.strip():
-            continue
-        result = json.loads(line)
-        custom_id = result["custom_id"]           # e.g. "patient-000042"
-        patient_num = int(custom_id.split("-")[1])
-        output_file = output_dir / f"patient_{patient_num:06d}.xml"
-
-        if result.get("error"):
-            print(f"  [ERR] {custom_id}: {result['error']}", flush=True)
-            api_errors += 1
-        else:
-            xml = strip_fences(
-                result["response"]["body"]["choices"][0]["message"]["content"]
-            )
-            if schema is not None:
-                is_valid, val_errors = validate_xml(xml, schema)
-                if not is_valid:
-                    print(
-                        f"  [INVALID] {custom_id}: {len(val_errors)} validation error(s) — "
-                        f"saving as .invalid.xml (run --mode validate to fix)",
-                        flush=True,
-                    )
-                    (output_dir / f"patient_{patient_num:06d}.invalid.xml").write_text(
-                        xml, encoding="utf-8"
-                    )
-                    invalid_count += 1
-                    continue
-            sending_facility = _get("sending_facility", "")
-            if sending_facility:
-                xml = inject_container_fields(xml, sending_facility)
-            output_file.write_text(xml, encoding="utf-8")
-            _del_dir = output_dir / "Delete"
-            _del_dir.mkdir(exist_ok=True)
-            (_del_dir / f"patient_{patient_num:06d}_delete.xml").write_text(
-                generate_delete_sda(xml, sending_facility), encoding="utf-8"
-            )
-            written += 1
-
-    print(f"\nDone. Written: {written}, API errors: {api_errors}, "
-          f"XSD invalid (saved as .invalid.xml): {invalid_count}")
-    if invalid_count:
-        print(f"Run:  python generate_population.py --mode validate  to fix invalid files.")
 
 
 # ---------------------------------------------------------------------------
@@ -5861,63 +5296,44 @@ def run_template_mode(count: int, output_dir: Path, template_path: str, resume: 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Generate synthetic SDA3 XML patient files using the OpenAI API.",
+        description="Generate synthetic SDA3 XML patient files from a JSON template.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument("--count", type=int, default=10,
                         help="Number of patients to generate (default: 10)")
     parser.add_argument("--output-dir", default="Population",
                         help="Output directory (default: Population/)")
-    parser.add_argument("--mode", choices=["async", "batch", "validate", "template"],
-                        default="async",
-                        help=(
-                            "async=concurrent LLM requests with XSD validation+retry; "
-                            "batch=Batches API at 50%% cost; "
-                            "validate=validate+fix existing files; "
-                            "template=pure-Python generation from a design_population template (no LLM)"
-                        ))
+    parser.add_argument("--mode", choices=["template"], default="template",
+                        help="Generation mode (default: template)")
     parser.add_argument("--template",
-                        help="Path to template JSON produced by design_population.py "
-                             "(required for --mode template)")
+                        help="Path to template JSON produced by design_population.py (required)")
     parser.add_argument("--concurrency", type=int, default=10,
-                        help="Parallel requests for async/validate mode (default: 10)")
-    parser.add_argument("--model", default=DEFAULT_MODEL,
-                        help=f"LLM model ID (default: {DEFAULT_MODEL})")
-    parser.add_argument("--base-url", default=DEFAULT_BASE_URL,
-                        help=("OpenAI-compatible base URL. Omit for OpenAI; "
-                              f"use {ISC_LLM_BASE_URL} for the internal ISC LLM"))
+                        help="Parallel workers (default: 10)")
     parser.add_argument("--resume", action="store_true",
                         help="Skip patients whose output files already exist")
-    parser.add_argument("--batch-id",
-                        help="Retrieve results of a previously submitted batch (batch mode only)")
-    parser.add_argument("--config",
-                        help="Path to a population config JSON file (overrides built-in defaults)")
     parser.add_argument("--no-validate", action="store_true",
                         help="Disable XSD validation even if lxml and SDA.xsd are available")
     args = parser.parse_args()
 
-    if args.config:
-        load_config(args.config)
+    if not args.template:
+        parser.error("--template is required")
 
     output_dir = Path(args.output_dir)
     delete_dir = output_dir / "Delete"
     output_dir.mkdir(parents=True, exist_ok=True)
     delete_dir.mkdir(exist_ok=True)
 
-    # Clear output and delete dirs before each fresh run (skip when resuming or fixing)
-    if not args.resume and args.mode not in ("validate", "batch"):
+    if not args.resume:
         for f in output_dir.glob("patient_*.xml"):
             f.unlink()
         for f in output_dir.glob("patient_*.invalid.xml"):
             f.unlink()
-        # Also clear xml/ subdirectory (used by template mode)
         xml_sub = output_dir / "xml"
         if xml_sub.exists():
             for f in xml_sub.glob("patient_*.xml"):
                 f.unlink()
             for f in xml_sub.glob("patient_*.invalid.xml"):
                 f.unlink()
-        # Clear CSV files written by template mode
         for csv_name in ("patients.csv", "encounters.csv", "medications.csv",
                          "labs.csv", "generator_validation.csv"):
             csv_path = output_dir / csv_name
@@ -5927,26 +5343,8 @@ def main():
             f.unlink()
         print(f"Cleared {output_dir}/ and {delete_dir}/")
 
-    schema = None if args.no_validate else load_schema()
-
-    if args.mode == "template":
-        if not args.template:
-            parser.error("--template is required for --mode template")
-        run_template_mode(args.count, output_dir, args.template, args.resume,
-                          args.no_validate, args.concurrency)
-        return
-
-    if args.mode == "validate":
-        asyncio.run(validate_and_fix_dir(output_dir, args.model, args.concurrency, schema,
-                                         args.base_url))
-    elif args.mode == "batch":
-        if args.batch_id:
-            batch_retrieve(args.batch_id, output_dir, args.base_url)
-        else:
-            batch_submit(args.count, output_dir, args.model, args.resume, args.base_url)
-    else:
-        asyncio.run(run_async(args.count, output_dir, delete_dir, args.model, args.concurrency,
-                              args.resume, schema, args.base_url))
+    run_template_mode(args.count, output_dir, args.template, args.resume,
+                      args.no_validate, args.concurrency)
 
 
 if __name__ == "__main__":
