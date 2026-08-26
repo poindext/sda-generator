@@ -3564,10 +3564,10 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                     _vital_conflict = True
             _acute_scenario_name = ""
             if etype == "I" and ei0 in _inpatient_scenes:
-                if _inpatient_scen_matched.get(ei0, True):
+                if _inpatient_scen_matched.get(ei0, False):
                     _acute_scenario_name = _inpatient_scenes[ei0].get("admission_dx", "")
             elif etype == "E":
-                if _ed_scen_matched.get(ei, True):
+                if _ed_scen_matched.get(ei, False):
                     _acute_scenario_name = _ed_scen.get("admission_dx", "")
             _enc_rows.append({
                 "PatientID": patient_id,
