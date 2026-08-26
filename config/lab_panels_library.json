@@ -106,13 +106,15 @@
           "normal_min": 8.5,
           "normal_max": 10.5,
           "abnormal_min": 7.0,
-          "abnormal_max": 13.0
+          "abnormal_max": 12.0
         }
       ],
       "disease_tags": [
         "cardiovascular",
         "diabetes",
-        "hypertension"
+        "hypertension",
+        "heart_failure",
+        "stroke"
       ]
     },
     "57698-3": {
@@ -135,7 +137,7 @@
           "description": "Triglycerides",
           "units": "mg/dL",
           "is_numeric": true,
-          "normal_min": 0,
+          "normal_min": 40,
           "normal_max": 150,
           "abnormal_min": 151,
           "abnormal_max": 400
@@ -147,7 +149,7 @@
           "is_numeric": true,
           "normal_min": 40,
           "normal_max": 90,
-          "abnormal_min": 0,
+          "abnormal_min": 15,
           "abnormal_max": 39
         },
         {
@@ -166,7 +168,10 @@
         "complex",
         "diabetes",
         "hypertension",
-        "preventive"
+        "preventive",
+        "stroke",
+        "behavioral_health",
+        "heart_failure"
       ]
     },
     "14959-1": {
@@ -294,7 +299,12 @@
         "diabetes",
         "hypertension",
         "preventive",
-        "respiratory"
+        "respiratory",
+        "sickle_cell",
+        "opioid_use_disorder",
+        "behavioral_health",
+        "stroke",
+        "heart_failure"
       ]
     },
     "11579-0": {
@@ -341,7 +351,8 @@
         }
       ],
       "disease_tags": [
-        "respiratory"
+        "respiratory",
+        "copd"
       ]
     },
     "32623-1": {
@@ -377,7 +388,8 @@
         }
       ],
       "disease_tags": [
-        "respiratory"
+        "respiratory",
+        "copd"
       ]
     },
     "33762-6": {
@@ -397,7 +409,8 @@
         }
       ],
       "disease_tags": [
-        "cardiovascular"
+        "cardiovascular",
+        "heart_failure"
       ]
     },
     "42757-5": {
@@ -417,7 +430,8 @@
         }
       ],
       "disease_tags": [
-        "cardiovascular"
+        "cardiovascular",
+        "heart_failure"
       ]
     },
     "57021-8": {
@@ -572,7 +586,7 @@
           "normal_min": 8.5,
           "normal_max": 10.5,
           "abnormal_min": 7.0,
-          "abnormal_max": 13.0
+          "abnormal_max": 12.0
         },
         {
           "code": "2885-2",
@@ -637,7 +651,286 @@
       ],
       "disease_tags": [
         "complex",
+        "preventive",
+        "sickle_cell",
+        "opioid_use_disorder",
+        "behavioral_health",
+        "stroke",
+        "heart_failure"
+      ]
+    },
+    "718-7-scd": {
+      "order_code": "718-7",
+      "order_description": "Hemoglobin [Mass/volume] in Blood",
+      "specimen": "Blood",
+      "result_items": [
+        {
+          "code": "718-7",
+          "description": "Hemoglobin [Mass/volume] in Blood",
+          "is_numeric": true,
+          "units": "g/dL",
+          "normal_min": 12,
+          "normal_max": 16,
+          "abnormal_min": 6,
+          "abnormal_max": 10
+        }
+      ],
+      "disease_tags": [
+        "sickle_cell"
+      ]
+    },
+    "14804-9": {
+      "order_code": "14804-9",
+      "order_description": "Lactate dehydrogenase (LDH) panel",
+      "specimen": "Blood",
+      "result_items": [
+        {
+          "code": "14804-9",
+          "description": "Lactate dehydrogenase [Enzymatic activity/volume] in Serum or Plasma",
+          "is_numeric": true,
+          "units": "U/L",
+          "normal_min": 100,
+          "normal_max": 250,
+          "abnormal_min": 251,
+          "abnormal_max": 800
+        }
+      ],
+      "disease_tags": [
+        "sickle_cell",
+        "heart_failure",
+        "cardiovascular"
+      ]
+    },
+    "17849-1": {
+      "order_code": "17849-1",
+      "order_description": "Reticulocyte count",
+      "specimen": "Blood",
+      "result_items": [
+        {
+          "code": "17849-1",
+          "description": "Reticulocytes/100 erythrocytes in Blood",
+          "is_numeric": true,
+          "units": "%",
+          "normal_min": 0.5,
+          "normal_max": 1.5,
+          "abnormal_min": 2.0,
+          "abnormal_max": 10.0
+        }
+      ],
+      "disease_tags": [
+        "sickle_cell"
+      ]
+    },
+    "2276-4": {
+      "order_code": "2276-4",
+      "order_description": "Ferritin panel",
+      "specimen": "Blood",
+      "result_items": [
+        {
+          "code": "2276-4",
+          "description": "Ferritin [Mass/volume] in Serum or Plasma",
+          "is_numeric": true,
+          "units": "ng/mL",
+          "normal_min": 12,
+          "normal_max": 150,
+          "abnormal_min": 151,
+          "abnormal_max": 3000
+        }
+      ],
+      "disease_tags": [
+        "sickle_cell"
+      ]
+    },
+    "3016-3": {
+      "order_code": "3016-3",
+      "order_description": "TSH (Thyroid stimulating hormone) panel",
+      "specimen": "Blood",
+      "result_items": [
+        {
+          "code": "3016-3",
+          "description": "Thyrotropin [Units/volume] in Serum or Plasma",
+          "is_numeric": true,
+          "units": "mIU/L",
+          "normal_min": 0.5,
+          "normal_max": 4.5,
+          "abnormal_min": 4.6,
+          "abnormal_max": 20.0
+        }
+      ],
+      "disease_tags": [
+        "behavioral_health",
         "preventive"
+      ]
+    },
+    "10998-5": {
+      "order_code": "10998-5",
+      "order_description": "Urine drug screen panel",
+      "specimen": "Urine",
+      "result_items": [
+        {
+          "code": "3399-3",
+          "description": "Opiates [Presence] in Urine",
+          "is_numeric": false,
+          "units": "",
+          "normal_min": 0,
+          "normal_max": 0,
+          "abnormal_min": 0,
+          "abnormal_max": 0,
+          "text_values": ["Negative", "Positive"]
+        },
+        {
+          "code": "3393-6",
+          "description": "Cocaine [Presence] in Urine",
+          "is_numeric": false,
+          "units": "",
+          "normal_min": 0,
+          "normal_max": 0,
+          "abnormal_min": 0,
+          "abnormal_max": 0,
+          "text_values": ["Negative", "Positive"]
+        },
+        {
+          "code": "3349-8",
+          "description": "Amphetamines [Presence] in Urine",
+          "is_numeric": false,
+          "units": "",
+          "normal_min": 0,
+          "normal_max": 0,
+          "abnormal_min": 0,
+          "abnormal_max": 0,
+          "text_values": ["Negative", "Positive"]
+        },
+        {
+          "code": "3366-2",
+          "description": "Benzodiazepines [Presence] in Urine",
+          "is_numeric": false,
+          "units": "",
+          "normal_min": 0,
+          "normal_max": 0,
+          "abnormal_min": 0,
+          "abnormal_max": 0,
+          "text_values": ["Negative", "Positive"]
+        },
+        {
+          "code": "3426-4",
+          "description": "THC/Marijuana [Presence] in Urine",
+          "is_numeric": false,
+          "units": "",
+          "normal_min": 0,
+          "normal_max": 0,
+          "abnormal_min": 0,
+          "abnormal_max": 0,
+          "text_values": ["Negative", "Positive"]
+        }
+      ],
+      "disease_tags": [
+        "opioid_use_disorder"
+      ]
+    },
+    "34714-6": {
+      "order_code": "34714-6",
+      "order_description": "INR (International normalized ratio) panel",
+      "specimen": "Blood",
+      "result_items": [
+        {
+          "code": "34714-6",
+          "description": "INR in Blood by Coagulation assay",
+          "is_numeric": true,
+          "units": "",
+          "normal_min": 0.8,
+          "normal_max": 1.2,
+          "abnormal_min": 1.3,
+          "abnormal_max": 4.0
+        }
+      ],
+      "disease_tags": [
+        "stroke",
+        "cardiovascular"
+      ]
+    },
+    "4551-8": {
+      "order_code": "4551-8",
+      "order_description": "Valproic acid level",
+      "specimen": "Blood",
+      "result_items": [
+        {
+          "code": "4551-8",
+          "description": "Valproic acid [Mass/volume] in Serum or Plasma",
+          "is_numeric": true,
+          "units": "ug/mL",
+          "normal_min": 50,
+          "normal_max": 100,
+          "abnormal_min": 10,
+          "abnormal_max": 150
+        }
+      ],
+      "disease_tags": [
+        "behavioral_health"
+      ]
+    },
+    "14334-7": {
+      "order_code": "14334-7",
+      "order_description": "Lithium level",
+      "specimen": "Blood",
+      "result_items": [
+        {
+          "code": "14334-7",
+          "description": "Lithium [Moles/volume] in Serum or Plasma",
+          "is_numeric": true,
+          "units": "mEq/L",
+          "normal_min": 0.6,
+          "normal_max": 1.2,
+          "abnormal_min": 1.3,
+          "abnormal_max": 2.5
+        }
+      ],
+      "disease_tags": [
+        "behavioral_health"
+      ]
+    },
+    "1988-5": {
+      "order_code": "1988-5",
+      "order_description": "C-reactive protein (CRP) panel",
+      "specimen": "Blood",
+      "result_items": [
+        {
+          "code": "1988-5",
+          "description": "C reactive protein [Mass/volume] in Serum or Plasma",
+          "is_numeric": true,
+          "units": "mg/L",
+          "normal_min": 0.0,
+          "normal_max": 1.0,
+          "abnormal_min": 1.1,
+          "abnormal_max": 100.0
+        }
+      ],
+      "disease_tags": [
+        "respiratory",
+        "respiratory_illness",
+        "copd",
+        "infectious"
+      ]
+    },
+    "16128-1": {
+      "order_code": "16128-1",
+      "order_description": "Hepatitis C virus antibody screen",
+      "specimen": "Blood",
+      "result_items": [
+        {
+          "code": "16128-1",
+          "description": "Hepatitis C virus Ab [Presence] in Serum",
+          "is_numeric": false,
+          "units": "",
+          "normal_min": 0,
+          "normal_max": 0,
+          "abnormal_min": 0,
+          "abnormal_max": 0,
+          "text_values": ["Non-reactive", "Reactive"]
+        }
+      ],
+      "disease_tags": [
+        "opioid_use_disorder",
+        "infectious"
       ]
     }
   }

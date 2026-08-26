@@ -589,8 +589,11 @@ Requirements:
   only_encounter_types to ["I"] for codes that should only appear on inpatient
   encounters, e.g. delivery codes like O80; leave as [] for all others)
 - 2-4 common comorbidities with realistic prevalence percentages
-  (for cardiovascular cohorts, always include E11.9 Type 2 diabetes as a comorbidity
-   with prevalence_pct ~0.35; for diabetes cohorts include I10 hypertension at ~0.65)
+  (for cardiovascular cohorts, always include E11.9 Type 2 diabetes ~0.35;
+   for diabetes cohorts include I10 hypertension ~0.65;
+   for COPD cohorts include tobacco use disorder F17.210 ~0.70;
+   for behavioral health cohorts include substance use disorders ~0.30;
+   for OUD cohorts include chronic Hep C B18.2 ~0.30 and depression F32.9 ~0.40)
 - 5-10 medications (real RxNorm codes, various drug classes for the condition)
 - 3-6 lab panels (see LAB PANELS note below)
 - 4-8 vital sign / observation types (real LOINC codes; realistic min/max ranges)
@@ -612,6 +615,37 @@ Requirements:
 All weights within each list must sum to 1.0 (or be proportional — they will be normalized).
 note_template placeholders available: {{patient_name}}, {{age}}, {{sex}}, {{diagnosis}},
 {{provider}}, {{chief_complaint}}, {{bp}}, {{hr}}, {{weight}}, {{compliance_statement}}, {{plan}}
+
+LAB VALUE CONSTRAINTS (the generator enforces hard limits — violating them causes validation failures):
+  - Triglycerides: normal_min must be >= 40 mg/dL
+  - HDL Cholesterol: abnormal_min must be >= 15 mg/dL
+  - Calcium: abnormal_max must be <= 12.0 mg/dL
+
+COHORT-TYPE CLINICAL HINTS (apply when cohort name/description matches):
+  - COPD: smoking history near-universal (TOBA social_history_template); include spirometry/PFT
+    labs (order_code 32623-1) and CRP (1988-5); encounters_per_year typically 4-8
+  - Heart failure / CHF: include NT-proBNP (33762-6) and LDH (14804-9) labs; encounters_per_year
+    typically 6-10; raise E and I weights (e.g. O:0.60 E:0.25 I:0.15)
+  - Sickle cell / SCD: mandatory labs are CBC (58410-2), LDH (14804-9), reticulocyte count
+    (17849-1), ferritin (2276-4); Hgb typically 6-10 g/dL (abnormal); do NOT include iron
+    supplementation unless iron-deficiency co-diagnosis is explicitly documented
+  - Behavioral health / psychiatric: include metabolic monitoring labs (CMP 24323-8, lipid
+    panel 57698-3); include TSH (3016-3) for lithium-treated patients; include drug level labs
+    (valproic acid 4551-8, lithium 14334-7) when mood stabilizers are prescribed; document
+    weight/BMI observations for antipsychotic metabolic monitoring
+  - Opioid use disorder / OUD: first-line medications are buprenorphine/naloxone (Suboxone RxNorm
+    993755) and naltrexone (Vivitrol RxNorm 1655058); include naloxone rescue (RxNorm 1659929) for
+    all patients; mandatory labs are urine drug screen (10998-5), hepatitis C Ab (16128-1), and
+    CMP for liver monitoring (24323-8); Hep C B18.2 comorbidity ~30%
+  - Respiratory illness / acute respiratory: include CBC (58410-2) and CRP (1988-5) labs; include
+    chest imaging in rad_order_templates; code both viral (J06.9 URI) and bacterial (J18.9
+    pneumonia) diagnoses; encounters_per_year 2-4 with higher E weighting
+  - Stroke / CVA: include INR (34714-6) for anticoagulation monitoring; include lipid panel
+    (57698-3) and CBC (58410-2); common medications are antiplatelets (aspirin, clopidogrel) and
+    anticoagulants (warfarin, apixaban, rivaroxaban); encounters_per_year 3-5
+  - STIs / sexually transmitted infections: include culture/serology labs (chlamydia antigen,
+    GC culture, RPR syphilis serology); first-line treatments are azithromycin (chlamydia),
+    ceftriaxone (gonorrhea), penicillin G benzathine (syphilis)
 {lib_hint}
 Schema:
 {_P3_SCHEMA}""", label)
@@ -828,7 +862,7 @@ async def run(args):
     print(f"\n✓ Template written → {output_path}")
     print(f"  {n_cohorts} cohorts  |  {n_facilities} facilities  |  {n_counties} counties")
     print(f"  {n_allergies} shared allergies")
-    print(f"\nNext step: python generate_population.py --template {output_path} --count 100 --mode fast")
+    print(f"\nNext step: python generate_population.py --template {output_path} --count 100")
 
 
 def main():
