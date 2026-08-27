@@ -100,6 +100,91 @@ def _library_panel_summary(library: dict) -> str:
     return "\n".join(lines)
 
 
+def load_cohort_hints(path: str | None = None) -> dict:
+    """Load cohort_hints_library.json. Returns empty dict if path is None/missing."""
+    if path is None:
+        default = Path(__file__).parent.parent / "config" / "cohort_hints_library.json"
+        path = str(default) if default.exists() else None
+    if path is None:
+        return {}
+    try:
+        data = json.loads(Path(path).read_text(encoding="utf-8"))
+        n = len(data.get("cohort_hints", []))
+        print(f"  Loaded cohort hints: {n} cohort types from {path}", flush=True)
+        return data
+    except Exception as e:
+        print(f"  [WARN] Could not load cohort hints {path}: {e}", flush=True)
+        return {}
+
+
+def _lab_constraints_text(cohort_hints_lib: dict) -> str:
+    """Build the LAB VALUE CONSTRAINTS block from config."""
+    constraints = cohort_hints_lib.get("lab_constraints", {})
+    rules = constraints.get("rules", [])
+    if not rules:
+        return ""
+    note = constraints.get("note", "Generator enforces hard limits")
+    lines = [f"LAB VALUE CONSTRAINTS ({note}):"]
+    for r in rules:
+        lines.append(f"  - {r['analyte']}: {r['field']} must be {r['operator']} {r['value']} {r['unit']}")
+    return "\n".join(lines)
+
+
+def _matched_cohort_hints(cohort_name: str, cohort_hints_lib: dict, library: dict) -> str:
+    """Return targeted hints + vetted panel suggestions for matching cohort type(s)."""
+    if not cohort_hints_lib:
+        return ""
+    name_lower = cohort_name.lower()
+    matched = [
+        h for h in cohort_hints_lib.get("cohort_hints", [])
+        if any(kw in name_lower for kw in h.get("keywords", []))
+    ]
+    if not matched:
+        return ""
+
+    blocks = []
+    for hint in matched:
+        lines = [f"  [{hint['cohort_type'].upper()}]"]
+
+        # Proactive panel suggestions from disease_tags in lab_panels_library
+        tag = hint.get("disease_tag")
+        if tag and library:
+            tagged = [
+                f"    {code} — {p['order_description']}"
+                for code, p in library.items()
+                if tag in p.get("disease_tags", [])
+            ]
+            if tagged:
+                lines.append("  Vetted panels for this cohort type (use these order_codes):")
+                lines.extend(tagged)
+
+        if hint.get("labs"):
+            lab_strs = [f"{l['order_code']} ({l['description']})" for l in hint["labs"]]
+            lines.append(f"  Key labs: {', '.join(lab_strs)}")
+
+        if hint.get("medications"):
+            lines.append("  Key medications:")
+            for m in hint["medications"]:
+                lines.append(f"    - {m['name']} [RxNorm {m['rxnorm']}] — {m['indication']}")
+
+        if hint.get("comorbidities"):
+            com_strs = [
+                f"{c['code']} {c['description']} ~{int(float(c['prevalence_pct']) * 100)}%"
+                for c in hint["comorbidities"]
+            ]
+            lines.append(f"  Comorbidities: {'; '.join(com_strs)}")
+
+        if hint.get("_note"):
+            lines.append(f"  NOTE: {hint['_note']}")
+
+        if hint.get("encounter_pattern_guidance"):
+            lines.append(f"  Encounter pattern: {hint['encounter_pattern_guidance']}")
+
+        blocks.append("\n".join(lines))
+
+    return "COHORT-SPECIFIC CLINICAL HINTS (from cohort_hints_library.json):\n" + "\n".join(blocks)
+
+
 def apply_library_overrides(cohort_catalog: dict, library: dict, cohort_name: str) -> dict:
     """
     Replace LLM-generated result_items with library versions where order_code matches.
@@ -565,7 +650,8 @@ _P3_SCHEMA = """\
 
 
 async def phase3_cohort(client, model: str, cohort: dict, description: str,
-                       library: dict | None = None) -> dict:
+                       library: dict | None = None,
+                       cohort_hints_lib: dict | None = None) -> dict:
     label = f"phase3-{cohort['id']}"
     lib_hint = ""
     if library:
@@ -589,11 +675,7 @@ Requirements:
   only_encounter_types to ["I"] for codes that should only appear on inpatient
   encounters, e.g. delivery codes like O80; leave as [] for all others)
 - 2-4 common comorbidities with realistic prevalence percentages
-  (for cardiovascular cohorts, always include E11.9 Type 2 diabetes ~0.35;
-   for diabetes cohorts include I10 hypertension ~0.65;
-   for COPD cohorts include tobacco use disorder F17.210 ~0.70;
-   for behavioral health cohorts include substance use disorders ~0.30;
-   for OUD cohorts include chronic Hep C B18.2 ~0.30 and depression F32.9 ~0.40)
+  (see COHORT-SPECIFIC CLINICAL HINTS below for comorbidity recommendations)
 - 5-10 medications (real RxNorm codes, various drug classes for the condition)
 - 3-6 lab panels (see LAB PANELS note below)
 - 4-8 vital sign / observation types (real LOINC codes; realistic min/max ranges)
@@ -616,36 +698,9 @@ All weights within each list must sum to 1.0 (or be proportional — they will b
 note_template placeholders available: {{patient_name}}, {{age}}, {{sex}}, {{diagnosis}},
 {{provider}}, {{chief_complaint}}, {{bp}}, {{hr}}, {{weight}}, {{compliance_statement}}, {{plan}}
 
-LAB VALUE CONSTRAINTS (the generator enforces hard limits — violating them causes validation failures):
-  - Triglycerides: normal_min must be >= 40 mg/dL
-  - HDL Cholesterol: abnormal_min must be >= 15 mg/dL
-  - Calcium: abnormal_max must be <= 12.0 mg/dL
+{_lab_constraints_text(cohort_hints_lib or {})}
 
-COHORT-TYPE CLINICAL HINTS (apply when cohort name/description matches):
-  - COPD: smoking history near-universal (TOBA social_history_template); include spirometry/PFT
-    labs (order_code 32623-1) and CRP (1988-5); encounters_per_year typically 4-8
-  - Heart failure / CHF: include NT-proBNP (33762-6) and LDH (14804-9) labs; encounters_per_year
-    typically 6-10; raise E and I weights (e.g. O:0.60 E:0.25 I:0.15)
-  - Sickle cell / SCD: mandatory labs are CBC (58410-2), LDH (14804-9), reticulocyte count
-    (17849-1), ferritin (2276-4); Hgb typically 6-10 g/dL (abnormal); do NOT include iron
-    supplementation unless iron-deficiency co-diagnosis is explicitly documented
-  - Behavioral health / psychiatric: include metabolic monitoring labs (CMP 24323-8, lipid
-    panel 57698-3); include TSH (3016-3) for lithium-treated patients; include drug level labs
-    (valproic acid 4551-8, lithium 14334-7) when mood stabilizers are prescribed; document
-    weight/BMI observations for antipsychotic metabolic monitoring
-  - Opioid use disorder / OUD: first-line medications are buprenorphine/naloxone (Suboxone RxNorm
-    993755) and naltrexone (Vivitrol RxNorm 1655058); include naloxone rescue (RxNorm 1659929) for
-    all patients; mandatory labs are urine drug screen (10998-5), hepatitis C Ab (16128-1), and
-    CMP for liver monitoring (24323-8); Hep C B18.2 comorbidity ~30%
-  - Respiratory illness / acute respiratory: include CBC (58410-2) and CRP (1988-5) labs; include
-    chest imaging in rad_order_templates; code both viral (J06.9 URI) and bacterial (J18.9
-    pneumonia) diagnoses; encounters_per_year 2-4 with higher E weighting
-  - Stroke / CVA: include INR (34714-6) for anticoagulation monitoring; include lipid panel
-    (57698-3) and CBC (58410-2); common medications are antiplatelets (aspirin, clopidogrel) and
-    anticoagulants (warfarin, apixaban, rivaroxaban); encounters_per_year 3-5
-  - STIs / sexually transmitted infections: include culture/serology labs (chlamydia antigen,
-    GC culture, RPR syphilis serology); first-line treatments are azithromycin (chlamydia),
-    ceftriaxone (gonorrhea), penicillin G benzathine (syphilis)
+{_matched_cohort_hints(cohort["name"], cohort_hints_lib or {}, library or {})}
 {lib_hint}
 Schema:
 {_P3_SCHEMA}""", label)
@@ -830,10 +885,12 @@ async def run(args):
 
     # Phase 3 — concurrent (one call per cohort)
     library = load_lab_library(getattr(args, "library", None))
+    cohort_hints_lib = load_cohort_hints()
     cohorts = structure.get("cohorts", [])
     print(f"Phase 3: Clinical catalogs for {len(cohorts)} cohorts (concurrent)...", flush=True)
     results = await asyncio.gather(
-        *[phase3_cohort(client, args.model, c, description, library=library)
+        *[phase3_cohort(client, args.model, c, description,
+                        library=library, cohort_hints_lib=cohort_hints_lib)
           for c in cohorts],
         return_exceptions=True,
     )
