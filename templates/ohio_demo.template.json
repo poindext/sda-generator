@@ -5067,11 +5067,11 @@
         }
       ],
       "encounter_pattern": {
-        "encounters_per_year": 14.0,
+        "encounters_per_year": 8.0,
         "encounter_type_weights": {
-          "O": 0.75,
+          "O": 0.82,
           "E": 0.1,
-          "I": 0.15
+          "I": 0.08
         },
         "lab_encounter_rate": 0.7,
         "rad_encounter_rate": 0.45

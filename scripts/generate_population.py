@@ -2317,6 +2317,10 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         elif _et == "E":
             _ed_m = [s for s in _INPATIENT_SCENARIOS
                      if any(c.startswith(tuple(s["icd_prefixes"])) for c in _pt_diag_codes)]
+            # Delivery is a planned inpatient-only event; exclude it from the ED pool so
+            # pregnancy patients don't get spurious "Normal term delivery" ED encounters.
+            if _is_pregnancy_cohort:
+                _ed_m = [s for s in _ed_m if s.get("ed_course") is not None]
             if _ed_m:
                 _ed_scenes[_ei] = rng.choice(_ed_m)
                 _ed_scen_matched[_ei] = True
@@ -2361,7 +2365,9 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
 
     # Remap all pre-selected scene dicts to new encounter indices.
     _inpatient_scenes = {_old_to_new_ei[k]: v for k, v in _inpatient_scenes.items()}
+    _inpatient_scen_matched = {_old_to_new_ei[k]: v for k, v in _inpatient_scen_matched.items()}
     _ed_scenes = {_old_to_new_ei[k]: v for k, v in _ed_scenes.items()}
+    _ed_scen_matched = {_old_to_new_ei[k]: v for k, v in _ed_scen_matched.items()}
     # Injected IP inherits its paired ED's scenario.
     for _old_ed_ei, _new_ip_ei in _new_ip_for_ed.items():
         _inpatient_scenes[_new_ip_ei] = _ed_scenes[_old_to_new_ei[_old_ed_ei]]
