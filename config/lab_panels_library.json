@@ -911,6 +911,27 @@
         "infectious"
       ]
     },
+    "20447-9": {
+      "order_code": "20447-9",
+      "order_description": "HIV-1 RNA [Copies/volume] in Plasma (Viral Load)",
+      "specimen": "Blood",
+      "result_items": [
+        {
+          "code": "20447-9",
+          "description": "HIV-1 RNA [Copies/volume] in Plasma",
+          "is_numeric": true,
+          "units": "copies/mL",
+          "normal_min": 0,
+          "normal_max": 20,
+          "abnormal_min": 200,
+          "abnormal_max": 1000000
+        }
+      ],
+      "disease_tags": [
+        "infectious",
+        "opioid_use_disorder"
+      ]
+    },
     "16128-1": {
       "order_code": "16128-1",
       "order_description": "Hepatitis C virus antibody screen",

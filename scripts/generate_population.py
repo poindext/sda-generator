@@ -2335,7 +2335,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         _prior = _pre_ed_key_counts.get(_key, 0)
         _vrnts = _scen.get("ed_variants", [])
         if _prior == 0 or not _vrnts:
-            _chk = _scen.get("ed_course", _scen.get("hospital_course", ""))
+            _chk = _scen.get("ed_course") or _scen.get("hospital_course") or ""
         else:
             _chk = _vrnts[(_prior - 1) % len(_vrnts)]
         _ed_will_admit[_ei] = "dmit" in _chk
@@ -3447,7 +3447,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 _ed_prior_count = _used_ed_scenario_keys.count(_ed_key)
                 _ed_variants = _ed_scen.get("ed_variants", [])
                 if _ed_prior_count == 0 or not _ed_variants:
-                    _ed_course_text = _ed_scen.get("ed_course", _ed_scen["hospital_course"])
+                    _ed_course_text = _ed_scen.get("ed_course") or _ed_scen.get("hospital_course") or ""
                 else:
                     _variant_idx = (_ed_prior_count - 1) % len(_ed_variants)
                     _ed_course_text = _ed_variants[_variant_idx]

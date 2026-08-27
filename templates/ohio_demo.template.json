@@ -53,7 +53,7 @@
         "SW Ohio"
       ]
     },
-    "_comment_ed_ip_lock": "ED\u2192inpatient admission always stays at the same facility as the admitting ED (MF-008). Set false only for explicit interfacility-transfer modeling.",
+    "_comment_ed_ip_lock": "ED→inpatient admission always stays at the same facility as the admitting ED (MF-008). Set false only for explicit interfacility-transfer modeling.",
     "ed_ip_same_facility_lock": true,
     "_comment_mrn_prefix": "Each facility MRN is prefixed with the facility code to make cross-facility collisions structurally impossible.",
     "facility_mrn_prefix": true
@@ -2918,7 +2918,7 @@
             "Routine monitoring of type 2 diabetes",
             "Diabetes follow-up with medication review"
           ],
-          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Denies chest pain, shortness of breath, or dizziness.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n\nFOLLOW-UP: Return in 3 months."
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Denies chest pain, shortness of breath, or dizziness.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 3 months."
         },
         {
           "type_code": "PN",
@@ -2929,7 +2929,7 @@
             "Hypertension follow-up",
             "Blood pressure monitoring"
           ],
-          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for blood pressure management. Patient reports {compliance_statement}. No recent episodes of dizziness or headaches.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Alert and oriented, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n\nFOLLOW-UP: Return in 6 months."
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for blood pressure management. Patient reports {compliance_statement}. No recent episodes of dizziness or headaches.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Alert and oriented, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 6 months."
         }
       ],
       "rad_order_templates": [
@@ -3332,7 +3332,7 @@
         {
           "code": "8310-5",
           "description": "Body temperature",
-          "units": "\u00b0F",
+          "units": "°F",
           "normal_min": 97.0,
           "normal_max": 99.0,
           "abnormal_min": 100.0,
@@ -3432,7 +3432,7 @@
             "Routine monitoring of blood pressure",
             "Hypertension follow-up with medication review"
           ],
-          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Denies chest pain, shortness of breath, or dizziness.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n\nFOLLOW-UP: Return in 3 months."
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Denies chest pain, shortness of breath, or dizziness.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 3 months."
         }
       ],
       "rad_order_templates": [
@@ -3735,7 +3735,7 @@
         {
           "code": "8310-5",
           "description": "Body temperature",
-          "units": "\u00b0F",
+          "units": "°F",
           "normal_min": 97.0,
           "normal_max": 99.0,
           "abnormal_min": 100.0,
@@ -3853,7 +3853,7 @@
             "Routine asthma check-up",
             "Asthma follow-up with medication review"
           ],
-          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Denies chest pain, shortness of breath, or wheezing.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n\nFOLLOW-UP: Return in 3 months."
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Denies chest pain, shortness of breath, or wheezing.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 3 months."
         }
       ],
       "rad_order_templates": [
@@ -4384,7 +4384,7 @@
             "Routine monitoring of coronary artery disease",
             "Heart failure follow-up with medication review"
           ],
-          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Denies chest pain, shortness of breath, or dizziness.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n\nFOLLOW-UP: Return in 3 months."
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Denies chest pain, shortness of breath, or dizziness.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 3 months."
         }
       ],
       "rad_order_templates": [
@@ -4413,12 +4413,66 @@
     {
       "id": "pregnancy",
       "name": "Pregnancy",
-      "weight": 0.03,
+      "weight": 0.04,
       "min_age": 18,
       "max_age": 45,
       "sex_bias": "F",
-      "description": "Patients who were pregnant during the period",
+      "description": "Patients with current or recent pregnancy — includes prenatal care by trimester, high-risk pregnancy (preeclampsia, gestational diabetes), labor and delivery (vaginal and cesarean), postnatal follow-up, and documented history of previous pregnancies (normal and high-risk).",
       "diagnoses": [
+        {
+          "code": "Z34.01",
+          "description": "Encounter for supervision of normal first pregnancy, first trimester",
+          "is_primary": true,
+          "only_encounter_types": [
+            "O"
+          ],
+          "onset_age_min": 18,
+          "onset_age_max": 45
+        },
+        {
+          "code": "Z34.02",
+          "description": "Encounter for supervision of normal first pregnancy, second trimester",
+          "is_primary": true,
+          "only_encounter_types": [
+            "O"
+          ],
+          "onset_age_min": 18,
+          "onset_age_max": 45
+        },
+        {
+          "code": "Z34.03",
+          "description": "Encounter for supervision of normal first pregnancy, third trimester",
+          "is_primary": true,
+          "only_encounter_types": [
+            "O"
+          ],
+          "onset_age_min": 18,
+          "onset_age_max": 45
+        },
+        {
+          "code": "O14.00",
+          "description": "Mild to moderate pre-eclampsia, unspecified trimester",
+          "is_primary": true,
+          "only_encounter_types": [],
+          "onset_age_min": 18,
+          "onset_age_max": 45
+        },
+        {
+          "code": "O24.419",
+          "description": "Gestational diabetes mellitus in pregnancy, unspecified",
+          "is_primary": false,
+          "only_encounter_types": [],
+          "onset_age_min": 18,
+          "onset_age_max": 45
+        },
+        {
+          "code": "O34.21",
+          "description": "Maternal care for scar from previous cesarean delivery",
+          "is_primary": false,
+          "only_encounter_types": [],
+          "onset_age_min": 22,
+          "onset_age_max": 45
+        },
         {
           "code": "O80",
           "description": "Encounter for full-term uncomplicated delivery",
@@ -4430,25 +4484,56 @@
           "onset_age_max": 45
         },
         {
-          "code": "Z34.90",
-          "description": "Encounter for supervision of normal pregnancy, unspecified, unspecified trimester",
+          "code": "O82",
+          "description": "Encounter for cesarean delivery without indication",
           "is_primary": true,
+          "only_encounter_types": [
+            "I"
+          ],
           "onset_age_min": 18,
           "onset_age_max": 45
         },
         {
-          "code": "O26.899",
-          "description": "Other specified pregnancy-related conditions, unspecified trimester",
-          "is_primary": false,
+          "code": "Z39.0",
+          "description": "Encounter for care and examination of mother immediately after delivery",
+          "is_primary": true,
+          "only_encounter_types": [
+            "O"
+          ],
+          "onset_age_min": 18,
+          "onset_age_max": 45
+        },
+        {
+          "code": "Z39.2",
+          "description": "Encounter for routine postpartum follow-up",
+          "is_primary": true,
+          "only_encounter_types": [
+            "O"
+          ],
           "onset_age_min": 18,
           "onset_age_max": 45
         }
       ],
       "comorbidities": [
         {
+          "code": "O14.00",
+          "description": "Mild to moderate pre-eclampsia",
+          "prevalence_pct": 0.2
+        },
+        {
+          "code": "O24.419",
+          "description": "Gestational diabetes mellitus in pregnancy",
+          "prevalence_pct": 0.1
+        },
+        {
           "code": "F41.9",
           "description": "Anxiety disorder, unspecified",
           "prevalence_pct": 0.15
+        },
+        {
+          "code": "I10",
+          "description": "Essential (primary) hypertension",
+          "prevalence_pct": 0.1
         }
       ],
       "medications": [
@@ -4464,23 +4549,38 @@
           "frequency_code": "QD",
           "frequency_description": "Once daily",
           "status": "active",
-          "for_diagnosis_code": "Z34.90",
-          "weight": 0.444444
+          "for_diagnosis_code": "Z34.01",
+          "weight": 0.2
         },
         {
-          "drug_code": "860975",
-          "drug_description": "Metformin 500 MG Oral Tablet",
-          "dose_quantity": "500",
+          "drug_code": "221137",
+          "drug_description": "Folic Acid 1 MG Oral Tablet",
+          "dose_quantity": "1",
           "dose_uom": "mg",
           "dosage_form_code": "TAB",
           "dosage_form_description": "Tablet",
           "route_code": "PO",
           "route_description": "Oral",
-          "frequency_code": "BID",
-          "frequency_description": "Twice daily",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
           "status": "active",
-          "for_diagnosis_code": "E11.9",
-          "weight": 0.333333
+          "for_diagnosis_code": "Z34.01",
+          "weight": 0.2
+        },
+        {
+          "drug_code": "310325",
+          "drug_description": "Ferrous Sulfate 325 MG Oral Tablet",
+          "dose_quantity": "325",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "Z34.02",
+          "weight": 0.2
         },
         {
           "drug_code": "1049630",
@@ -4494,33 +4594,41 @@
           "frequency_code": "BID",
           "frequency_description": "Twice daily",
           "status": "active",
-          "for_diagnosis_code": "I10",
-          "weight": 0.222222
+          "for_diagnosis_code": "O14.00",
+          "weight": 0.15
+        },
+        {
+          "drug_code": "905168",
+          "drug_description": "Nifedipine 30 MG Extended Release Oral Tablet",
+          "dose_quantity": "30",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "O14.00",
+          "weight": 0.1
+        },
+        {
+          "drug_code": "816726",
+          "drug_description": "Insulin NPH Human 100 UNT/ML Injectable Suspension",
+          "dose_quantity": "10",
+          "dose_uom": "units",
+          "dosage_form_code": "INJ",
+          "dosage_form_description": "Injectable",
+          "route_code": "SC",
+          "route_description": "Subcutaneous",
+          "frequency_code": "QHS",
+          "frequency_description": "At bedtime",
+          "status": "active",
+          "for_diagnosis_code": "O24.419",
+          "weight": 0.15
         }
       ],
       "labs": [
-        {
-          "order_code": "57021-8",
-          "order_description": "Glucose [Mass/volume] in Blood",
-          "specimen": "Blood",
-          "result_items": [
-            {
-              "code": "57021-8",
-              "description": "Glucose [Mass/volume] in Blood",
-              "is_numeric": true,
-              "units": "mg/dL",
-              "normal_range_text": "70-99",
-              "normal_min": 70,
-              "normal_max": 99,
-              "abnormal_min": 100,
-              "abnormal_max": 200,
-              "abnormal_flag": "H",
-              "text_values": []
-            }
-          ],
-          "abnormal_pct": 0.25,
-          "weight": 0.6
-        },
         {
           "order_code": "718-7",
           "order_description": "Hemoglobin [Mass/volume] in Blood",
@@ -4531,17 +4639,172 @@
               "description": "Hemoglobin [Mass/volume] in Blood",
               "is_numeric": true,
               "units": "g/dL",
-              "normal_range_text": "12-16",
-              "normal_min": 12,
-              "normal_max": 16,
-              "abnormal_min": 10,
-              "abnormal_max": 18,
+              "normal_range_text": "11-16",
+              "normal_min": 11.0,
+              "normal_max": 16.0,
+              "abnormal_min": 7.0,
+              "abnormal_max": 18.0,
               "abnormal_flag": "L",
               "text_values": []
             }
           ],
+          "abnormal_pct": 0.2,
+          "weight": 0.25
+        },
+        {
+          "order_code": "57021-8",
+          "order_description": "Glucose Tolerance Test (GDM screen)",
+          "specimen": "Blood",
+          "result_items": [
+            {
+              "code": "57021-8",
+              "description": "Glucose [Mass/volume] in Blood",
+              "is_numeric": true,
+              "units": "mg/dL",
+              "normal_range_text": "70-139",
+              "normal_min": 70,
+              "normal_max": 139,
+              "abnormal_min": 140,
+              "abnormal_max": 300,
+              "abnormal_flag": "H",
+              "text_values": []
+            }
+          ],
           "abnormal_pct": 0.15,
-          "weight": 0.4
+          "weight": 0.2
+        },
+        {
+          "order_code": "58410-2",
+          "order_description": "CBC panel — Blood by Automated count",
+          "specimen": "Blood",
+          "result_items": [
+            {
+              "code": "6690-2",
+              "description": "WBC",
+              "is_numeric": true,
+              "units": "K/uL",
+              "normal_min": 4.5,
+              "normal_max": 11.0,
+              "abnormal_min": 0.5,
+              "abnormal_max": 18.0,
+              "text_values": []
+            },
+            {
+              "code": "718-7",
+              "description": "Hemoglobin",
+              "is_numeric": true,
+              "units": "g/dL",
+              "normal_min": 11.0,
+              "normal_max": 16.0,
+              "abnormal_min": 7.0,
+              "abnormal_max": 18.0,
+              "abnormal_flag": "L",
+              "text_values": []
+            },
+            {
+              "code": "4544-3",
+              "description": "Hematocrit",
+              "is_numeric": true,
+              "units": "%",
+              "normal_min": 33,
+              "normal_max": 47,
+              "abnormal_min": 22,
+              "abnormal_max": 55,
+              "text_values": []
+            },
+            {
+              "code": "777-3",
+              "description": "Platelets",
+              "is_numeric": true,
+              "units": "K/uL",
+              "normal_min": 150,
+              "normal_max": 400,
+              "abnormal_min": 50,
+              "abnormal_max": 600,
+              "text_values": []
+            }
+          ],
+          "abnormal_pct": 0.2,
+          "weight": 0.25
+        },
+        {
+          "order_code": "24357-6",
+          "order_description": "Urinalysis with microscopy panel",
+          "specimen": "Urine",
+          "result_items": [
+            {
+              "code": "2888-6",
+              "description": "Protein [Presence] in Urine",
+              "is_numeric": false,
+              "units": "",
+              "normal_min": 0,
+              "normal_max": 0,
+              "abnormal_min": 0,
+              "abnormal_max": 0,
+              "text_values": [
+                "Negative",
+                "Trace",
+                "1+",
+                "2+",
+                "3+"
+              ]
+            },
+            {
+              "code": "2349-9",
+              "description": "Glucose [Presence] in Urine",
+              "is_numeric": false,
+              "units": "",
+              "normal_min": 0,
+              "normal_max": 0,
+              "abnormal_min": 0,
+              "abnormal_max": 0,
+              "text_values": [
+                "Negative",
+                "Trace",
+                "Positive"
+              ]
+            },
+            {
+              "code": "5767-9",
+              "description": "Leukocyte esterase [Presence] in Urine",
+              "is_numeric": false,
+              "units": "",
+              "normal_min": 0,
+              "normal_max": 0,
+              "abnormal_min": 0,
+              "abnormal_max": 0,
+              "text_values": [
+                "Negative",
+                "Trace",
+                "Positive"
+              ]
+            }
+          ],
+          "abnormal_pct": 0.2,
+          "weight": 0.15
+        },
+        {
+          "order_code": "17563-8",
+          "order_description": "Group B Streptococcus (GBS) culture",
+          "specimen": "Vaginal/Rectal",
+          "result_items": [
+            {
+              "code": "17563-8",
+              "description": "Streptococcus agalactiae [Presence] in Vaginal culture",
+              "is_numeric": false,
+              "units": "",
+              "normal_min": 0,
+              "normal_max": 0,
+              "abnormal_min": 0,
+              "abnormal_max": 0,
+              "text_values": [
+                "Negative",
+                "Positive"
+              ]
+            }
+          ],
+          "abnormal_pct": 0.15,
+          "weight": 0.15
         }
       ],
       "observations": [
@@ -4555,7 +4818,7 @@
           "abnormal_max": 175,
           "abnormal_flag": "H",
           "abnormal_pct": 0.25,
-          "weight": 0.333333
+          "weight": 0.25
         },
         {
           "code": "8462-4",
@@ -4567,61 +4830,125 @@
           "abnormal_max": 110,
           "abnormal_flag": "H",
           "abnormal_pct": 0.25,
-          "weight": 0.333333
+          "weight": 0.2
         },
         {
-          "code": "8302-2",
-          "description": "Body height",
+          "code": "11876-0",
+          "description": "Fundal height of uterus",
           "units": "cm",
-          "normal_min": 150,
-          "normal_max": 180,
-          "abnormal_min": 140,
-          "abnormal_max": 200,
-          "abnormal_flag": "N",
+          "normal_min": 20,
+          "normal_max": 40,
+          "abnormal_min": 10,
+          "abnormal_max": 46,
+          "abnormal_flag": "L",
+          "abnormal_pct": 0.1,
+          "weight": 0.2
+        },
+        {
+          "code": "55283-6",
+          "description": "Fetal heart rate",
+          "units": "bpm",
+          "normal_min": 110,
+          "normal_max": 160,
+          "abnormal_min": 80,
+          "abnormal_max": 109,
+          "abnormal_flag": "L",
           "abnormal_pct": 0.05,
-          "weight": 0.166667
+          "weight": 0.2
         },
         {
           "code": "29463-7",
           "description": "Body weight",
           "units": "kg",
           "normal_min": 50,
-          "normal_max": 90,
-          "abnormal_min": 40,
-          "abnormal_max": 120,
-          "abnormal_flag": "N",
+          "normal_max": 100,
+          "abnormal_min": 100,
+          "abnormal_max": 130,
+          "abnormal_flag": "H",
           "abnormal_pct": 0.1,
-          "weight": 0.166667
+          "weight": 0.15
         }
       ],
       "procedures": [
         {
+          "code": "76805",
+          "description": "Obstetric ultrasound, fetal and maternal evaluation, after first trimester",
+          "encounter_type": "O",
+          "weight": 0.3
+        },
+        {
+          "code": "59025",
+          "description": "Nonstress test (NST) for fetal well-being",
+          "encounter_type": "O",
+          "weight": 0.2
+        },
+        {
+          "code": "59400",
+          "description": "Routine obstetric care including antepartum care, vaginal delivery and postpartum care",
+          "encounter_type": "I",
+          "weight": 0.15
+        },
+        {
           "code": "59514",
           "description": "Cesarean delivery",
           "encounter_type": "I",
-          "weight": 0.375
+          "weight": 0.15
         },
         {
-          "code": "76805",
-          "description": "Ultrasound, pregnant uterus, real time with image documentation, fetal and maternal evaluation, after first trimester",
+          "code": "59430",
+          "description": "Postpartum care only (separate procedure)",
           "encounter_type": "O",
-          "weight": 0.625
+          "weight": 0.1
+        },
+        {
+          "code": "87081",
+          "description": "Culture, bacterial; GBS screening",
+          "encounter_type": "O",
+          "weight": 0.1
         }
       ],
       "illness_history_templates": [
         {
-          "condition": "Gestational diabetes diagnosed during pregnancy",
-          "onset_at_age_min": 25,
-          "onset_at_age_max": 40,
+          "condition": "Previous uncomplicated vaginal delivery at full term",
+          "onset_at_age_min": 20,
+          "onset_at_age_max": 36,
           "is_resolved": true,
-          "weight": 0.5
+          "weight": 0.25
         },
         {
-          "condition": "Hypertension during pregnancy",
+          "condition": "Previous cesarean delivery due to fetal malpresentation or failure to progress",
+          "onset_at_age_min": 22,
+          "onset_at_age_max": 38,
+          "is_resolved": true,
+          "weight": 0.2
+        },
+        {
+          "condition": "Previous pregnancy complicated by pre-eclampsia requiring hospitalization and early delivery",
+          "onset_at_age_min": 20,
+          "onset_at_age_max": 36,
+          "is_resolved": true,
+          "weight": 0.15
+        },
+        {
+          "condition": "Previous gestational diabetes mellitus, managed with dietary modification and insulin during prior pregnancy, resolved postpartum",
+          "onset_at_age_min": 24,
+          "onset_at_age_max": 38,
+          "is_resolved": true,
+          "weight": 0.2
+        },
+        {
+          "condition": "Previous first trimester spontaneous abortion",
+          "onset_at_age_min": 18,
+          "onset_at_age_max": 34,
+          "is_resolved": true,
+          "weight": 0.15
+        },
+        {
+          "condition": "Previous preterm delivery at 34 weeks gestation; newborn required NICU admission",
           "onset_at_age_min": 20,
           "onset_at_age_max": 35,
           "is_resolved": true,
-          "weight": 0.5
+          "weight": 0.05
         }
       ],
       "social_history_templates": [
@@ -4630,65 +4957,124 @@
           "habit_description": "Non Smoker",
           "comments": [
             "Patient has never smoked.",
-            "Former smoker, quit 5 years ago."
+            "Former smoker, quit prior to becoming pregnant."
           ],
-          "weight": 0.7
+          "weight": 0.75
         },
         {
-          "habit_code": "ETOH",
-          "habit_description": "Alcohol use",
+          "habit_code": "TOBA",
+          "habit_description": "Tobacco use",
           "comments": [
-            "Occasional social drinker.",
-            "Abstains from alcohol during pregnancy."
+            "Smoker prior to pregnancy; currently attempting cessation."
           ],
-          "weight": 0.3
+          "weight": 0.05
+        },
+        {
+          "habit_code": "NOALC",
+          "habit_description": "No Alcohol Use",
+          "comments": [
+            "Abstains completely from alcohol during pregnancy.",
+            "Social drinker prior to pregnancy; currently abstaining."
+          ],
+          "weight": 0.2
         }
       ],
       "family_history_templates": [
         {
-          "condition": "Hypertension",
-          "relationship": "Father",
-          "weight": 0.571429
+          "condition": "Gestational diabetes mellitus",
+          "relationship": "Mother",
+          "weight": 0.35
         },
         {
-          "condition": "Gestational diabetes",
+          "condition": "Essential hypertension",
+          "relationship": "Father",
+          "weight": 0.35
+        },
+        {
+          "condition": "Pre-eclampsia during pregnancy",
           "relationship": "Sister",
-          "weight": 0.428571
+          "weight": 0.3
         }
       ],
       "document_templates": [
         {
           "type_code": "PN",
-          "type_description": "Progress Note",
+          "type_description": "Prenatal Progress Note",
           "encounter_type": "O",
           "chief_complaints": [
-            "Routine prenatal visit",
-            "Follow-up for gestational diabetes",
-            "Monitoring of blood pressure during pregnancy"
+            "Routine prenatal visit — first trimester",
+            "Prenatal follow-up — second trimester",
+            "Third trimester prenatal visit",
+            "High-risk OB monitoring — pre-eclampsia",
+            "Gestational diabetes management and prenatal follow-up"
           ],
-          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine prenatal care. Patient reports {compliance_statement}. Denies contractions, vaginal bleeding, or leakage of fluid.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n\nFOLLOW-UP: Return in 4 weeks."
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for prenatal care. Patient reports {compliance_statement}. Denies contractions, vaginal bleeding, leakage of fluid, or decreased fetal movement.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress. Gravid abdomen consistent with stated gestational age.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 4 weeks for routine prenatal visit."
+        },
+        {
+          "type_code": "PN",
+          "type_description": "Postpartum Follow-Up Note",
+          "encounter_type": "O",
+          "chief_complaints": [
+            "6-week postpartum visit after vaginal delivery",
+            "6-week postpartum visit after cesarean delivery",
+            "Postpartum follow-up — blood pressure monitoring",
+            "Postpartum visit — gestational diabetes follow-up"
+          ],
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for postpartum follow-up. Patient reports {compliance_statement}. Denies fever, excessive lochia, breast pain, or wound concerns.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress. Uterus involuted to normal size.\n\nASSESSMENT AND PLAN:\n1. Postpartum care — {plan}\n2. Contraception counseling provided.\n3. Postpartum depression screening completed.\n\nFOLLOW-UP: Return as needed or in 1 year for well-woman visit."
+        },
+        {
+          "type_code": "DS",
+          "type_description": "Delivery Summary",
+          "encounter_type": "I",
+          "chief_complaints": [
+            "Vaginal delivery of viable term infant",
+            "Cesarean delivery of term infant",
+            "Delivery complicated by pre-eclampsia with severe features"
+          ],
+          "note_template": "DELIVERY SUMMARY\n\nPatient: {patient_name}, {age}-year-old {sex}\nAdmission Diagnosis: {diagnosis}\n\nDelivery proceeded with appropriate obstetric management. Newborn transitioned to nursery in stable condition. Postpartum care initiated per protocol.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n2. Postpartum hemorrhage precautions in place.\n\nFOLLOW-UP: 6-week postpartum visit scheduled."
         }
       ],
       "rad_order_templates": [
         {
-          "order_code": "US-OB",
-          "order_description": "Obstetric ultrasound",
-          "reason_description": "Routine fetal growth monitoring",
+          "order_code": "US-OB-1ST",
+          "order_description": "Obstetric ultrasound — first trimester dating scan",
+          "reason_description": "Establish gestational age and viability",
           "result_texts": [
-            "Single live intrauterine pregnancy, estimated gestational age 20 weeks.",
-            "Normal fetal anatomy, no abnormalities detected."
+            "Single live intrauterine pregnancy, estimated gestational age 10 weeks 3 days by crown-rump length. No abnormalities identified.",
+            "Single viable intrauterine pregnancy consistent with 12 weeks gestation. Normal nuchal translucency 1.4mm. Fetal heart rate 162 bpm."
           ],
-          "weight": 1.0
+          "weight": 0.25
+        },
+        {
+          "order_code": "US-OB-ANATOMY",
+          "order_description": "Obstetric ultrasound — second trimester anatomy survey",
+          "reason_description": "Fetal anatomy survey at approximately 20 weeks",
+          "result_texts": [
+            "Single live intrauterine pregnancy, estimated gestational age 20 weeks 1 day. Normal fetal anatomy survey. No structural abnormalities identified. Normal amniotic fluid volume.",
+            "Single viable intrauterine pregnancy at 22 weeks. Normal fetal anatomy. Appropriate interval growth for gestational age. Posterior placenta, no previa. Normal umbilical artery Doppler."
+          ],
+          "weight": 0.4
+        },
+        {
+          "order_code": "US-OB-GROWTH",
+          "order_description": "Obstetric ultrasound — third trimester growth and biophysical profile",
+          "reason_description": "Fetal growth assessment and biophysical profile",
+          "result_texts": [
+            "Single live intrauterine pregnancy at 36 weeks vertex presentation. Estimated fetal weight 2,650g (55th percentile). Biophysical profile 8/8. Normal amniotic fluid index 12cm.",
+            "Single viable vertex-presenting fetus at 38 weeks. Estimated fetal weight 3,150g. Normal placental location. Reactive non-stress test. Adequate amniotic fluid volume."
+          ],
+          "weight": 0.35
         }
       ],
       "encounter_pattern": {
-        "encounters_per_year": 10.0,
+        "encounters_per_year": 14.0,
         "encounter_type_weights": {
-          "O": 0.9,
-          "I": 0.1
+          "O": 0.75,
+          "E": 0.1,
+          "I": 0.15
         },
-        "lab_encounter_rate": 0.6,
-        "rad_encounter_rate": 0.2
+        "lab_encounter_rate": 0.7,
+        "rad_encounter_rate": 0.45
       }
     },
     {
@@ -4853,13 +5239,13 @@
           "weight": 0.571429
         },
         {
-          "order_code": "11579-0",
-          "order_description": "HIV 1 RNA [Viral Load] (copies/mL)",
+          "order_code": "20447-9",
+          "order_description": "HIV-1 RNA [Copies/volume] in Plasma (Viral Load)",
           "specimen": "Blood",
           "result_items": [
             {
-              "code": "11579-0",
-              "description": "HIV 1 RNA [Viral Load] (copies/mL)",
+              "code": "20447-9",
+              "description": "HIV-1 RNA [Copies/volume] in Plasma",
               "is_numeric": true,
               "units": "copies/mL",
               "normal_range_text": "Undetectable",
@@ -5045,7 +5431,7 @@
             "Routine monitoring of HIV status",
             "Tuberculosis follow-up with medication review"
           ],
-          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Denies fever, night sweats, or weight loss.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n\nFOLLOW-UP: Return in 1 month."
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Denies fever, night sweats, or weight loss.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 1 month."
         }
       ],
       "rad_order_templates": [
@@ -5586,7 +5972,7 @@
             "Routine monitoring of type 2 diabetes",
             "Diabetes follow-up with medication review"
           ],
-          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Denies chest pain, shortness of breath, or dizziness.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n\nFOLLOW-UP: Return in 3 months."
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Denies chest pain, shortness of breath, or dizziness.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 3 months."
         }
       ],
       "rad_order_templates": [
@@ -5669,7 +6055,7 @@
             "Routine monitoring of blood pressure",
             "Hypertension follow-up with medication review"
           ],
-          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Denies chest pain, shortness of breath, or dizziness.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n\nFOLLOW-UP: Return in 3 months."
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Denies chest pain, shortness of breath, or dizziness.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 3 months."
         }
       ],
       "lab_order_templates": [],
@@ -5702,7 +6088,7 @@
         {
           "code": "8310-5",
           "description": "Body temperature",
-          "units": "\u00b0F",
+          "units": "°F",
           "normal_min": 97.0,
           "normal_max": 99.0,
           "abnormal_min": 100.0,
@@ -6044,7 +6430,7 @@
             "Health maintenance visit",
             "Annual health examination"
           ],
-          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for {chief_complaint}. Patient reports {compliance_statement}. Denies chest pain, shortness of breath, or other acute complaints.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n\nFOLLOW-UP: Return in 3 months."
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for {chief_complaint}. Patient reports {compliance_statement}. Denies chest pain, shortness of breath, or other acute complaints.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 3 months."
         }
       ],
       "lab_order_templates": [],
@@ -6077,7 +6463,7 @@
         {
           "code": "8310-5",
           "description": "Body temperature",
-          "units": "\u00b0F",
+          "units": "°F",
           "normal_min": 97.0,
           "normal_max": 99.0,
           "abnormal_min": 100.0,
@@ -6745,11 +7131,11 @@
           "encounter_type": "O",
           "chief_complaints": [
             "Follow-up for COPD management",
-            "COPD exacerbation \u2014 increased dyspnea",
+            "COPD exacerbation — increased dyspnea",
             "Routine COPD check-up and medication review",
             "Worsening shortness of breath and productive cough"
           ],
-          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Reports dyspnea on exertion. Productive cough with whitish sputum. Denies fever.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, in mild respiratory distress.\nLungs: Decreased breath sounds bilaterally. Prolonged expiratory phase. No acute wheezing.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n\nFOLLOW-UP: Return in 3 months or sooner if symptoms worsen."
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Reports dyspnea on exertion. Productive cough with whitish sputum. Denies fever.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, in mild respiratory distress.\nLungs: Decreased breath sounds bilaterally. Prolonged expiratory phase. No acute wheezing.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 3 months or sooner if symptoms worsen."
         }
       ],
       "rad_order_templates": [
@@ -7188,11 +7574,11 @@
           "encounter_type": "O",
           "chief_complaints": [
             "Follow-up for heart failure management",
-            "CHF \u2014 worsening edema and dyspnea",
+            "CHF — worsening edema and dyspnea",
             "Routine heart failure check-up and weight monitoring",
-            "Shortness of breath on exertion \u2014 CHF follow-up"
+            "Shortness of breath on exertion — CHF follow-up"
           ],
-          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Reports daily weight monitoring. Notes 2 lb weight gain over 2 days. Bilateral lower extremity edema present. Dyspnea on exertion at 1 flight of stairs.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, in no acute distress.\nCardiovascular: Irregular rhythm. 2+ pitting edema bilateral lower extremities.\nLungs: Bibasilar crackles.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n\nFOLLOW-UP: Return in 2 weeks for weight and fluid status reassessment."
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Reports daily weight monitoring. Notes 2 lb weight gain over 2 days. Bilateral lower extremity edema present. Dyspnea on exertion at 1 flight of stairs.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, in no acute distress.\nCardiovascular: Irregular rhythm. 2+ pitting edema bilateral lower extremities.\nLungs: Bibasilar crackles.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 2 weeks for weight and fluid status reassessment."
         }
       ],
       "rad_order_templates": [
@@ -7504,8 +7890,8 @@
               "abnormal_max": null,
               "abnormal_flag": "A",
               "text_values": [
-                "Hemoglobin S present \u2014 consistent with sickle cell disease",
-                "Hemoglobin S detected \u2014 Hb-SS pattern on electrophoresis"
+                "Hemoglobin S present — consistent with sickle cell disease",
+                "Hemoglobin S detected — Hb-SS pattern on electrophoresis"
               ]
             }
           ]
@@ -7640,12 +8026,12 @@
           "type_description": "Progress Note",
           "encounter_type": "O",
           "chief_complaints": [
-            "Sickle cell disease \u2014 routine hematology follow-up",
-            "Vaso-occlusive pain crisis \u2014 chest and back pain",
+            "Sickle cell disease — routine hematology follow-up",
+            "Vaso-occlusive pain crisis — chest and back pain",
             "Sickle cell check-up with hydroxyurea monitoring",
             "Fever in patient with sickle cell disease"
           ],
-          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} with known sickle cell disease presenting for {chief_complaint}. Patient reports {compliance_statement}. Pain scale 7/10 in bilateral lower extremities and lower back. Denies chest pain or shortness of breath at rest.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Appears uncomfortable, in moderate pain. Icteric sclerae noted.\nAbdomen: Mild left upper quadrant tenderness. Spleen not palpable (autosplenectomy).\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n2. Pain management \u2014 IV hydration, analgesics as needed.\n\nFOLLOW-UP: Return in 4-6 weeks or sooner if fever develops or pain escalates."
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} with known sickle cell disease presenting for {chief_complaint}. Patient reports {compliance_statement}. Pain scale 7/10 in bilateral lower extremities and lower back. Denies chest pain or shortness of breath at rest.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Appears uncomfortable, in moderate pain. Icteric sclerae noted.\nAbdomen: Mild left upper quadrant tenderness. Spleen not palpable (autosplenectomy).\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n2. Pain management — IV hydration, analgesics as needed.\n\nFOLLOW-UP: Return in 4-6 weeks or sooner if fever develops or pain escalates."
         }
       ],
       "rad_order_templates": [
@@ -7951,7 +8337,7 @@
         {
           "code": "8310-5",
           "description": "Body temperature",
-          "units": "\u00b0F",
+          "units": "°F",
           "normal_min": 97.0,
           "normal_max": 99.0,
           "abnormal_min": 100.0,
@@ -8071,9 +8457,9 @@
             "Follow-up for depression management",
             "Anxiety and mood disorder check-up",
             "Medication management for major depressive disorder",
-            "Worsening depression \u2014 increased isolation and low mood"
+            "Worsening depression — increased isolation and low mood"
           ],
-          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for follow-up of {diagnosis}. Patient reports {compliance_statement}. Reports persistent low mood and fatigue over the past 2 weeks. Sleep disturbance noted. Denies suicidal ideation or intent.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-groomed, cooperative, appropriate affect.\nPsych: Alert and oriented. Speech regular rate and rhythm. Mood: 'down'. Affect: constricted. No psychotic features.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n2. Safety plan reviewed. Patient denies active suicidal ideation.\n\nFOLLOW-UP: Return in 4 weeks for medication response assessment."
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for follow-up of {diagnosis}. Patient reports {compliance_statement}. Reports persistent low mood and fatigue over the past 2 weeks. Sleep disturbance noted. Denies suicidal ideation or intent.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-groomed, cooperative, appropriate affect.\nPsych: Alert and oriented. Speech regular rate and rhythm. Mood: 'down'. Affect: constricted. No psychotic features.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n2. Safety plan reviewed. Patient denies active suicidal ideation.\n\nFOLLOW-UP: Return in 4 weeks for medication response assessment."
         }
       ],
       "rad_order_templates": [
@@ -8478,10 +8864,10 @@
           "chief_complaints": [
             "Medication-assisted treatment follow-up for opioid use disorder",
             "Buprenorphine/naloxone medication management",
-            "Opioid use disorder \u2014 monthly check-in",
+            "Opioid use disorder — monthly check-in",
             "Post-overdose follow-up and harm reduction counseling"
           ],
-          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for follow-up of {diagnosis}. Patient reports {compliance_statement}. Denies recent illicit opioid use. Reports compliance with prescribed medication-assisted treatment. No recent overdose events.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, RR {rr} /min, Weight {weight} lbs\nGeneral: Alert and oriented, no acute distress.\nSkin: No track marks or signs of active IV drug use noted.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n2. Naloxone rescue kit prescribed and patient educated on use.\n3. Urine drug screen obtained.\n\nFOLLOW-UP: Return in 1 month for medication monitoring."
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for follow-up of {diagnosis}. Patient reports {compliance_statement}. Denies recent illicit opioid use. Reports compliance with prescribed medication-assisted treatment. No recent overdose events.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, RR {rr} /min, Weight {weight} lbs\nGeneral: Alert and oriented, no acute distress.\nSkin: No track marks or signs of active IV drug use noted.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n2. Naloxone rescue kit prescribed and patient educated on use.\n3. Urine drug screen obtained.\n\nFOLLOW-UP: Return in 1 month for medication monitoring."
         }
       ],
       "rad_order_templates": [
@@ -8515,7 +8901,7 @@
       "min_age": 1,
       "max_age": 90,
       "sex_bias": null,
-      "description": "Acute respiratory illnesses including influenza, pneumonia, RSV, and upper/lower respiratory tract infections \u2014 captures hospitalization volume and visit patterns",
+      "description": "Acute respiratory illnesses including influenza, pneumonia, RSV, and upper/lower respiratory tract infections — captures hospitalization volume and visit patterns",
       "diagnoses": [
         {
           "code": "J18.9",
@@ -8901,7 +9287,7 @@
         {
           "code": "8310-5",
           "description": "Body temperature",
-          "units": "\u00b0F",
+          "units": "°F",
           "normal_min": 97.0,
           "normal_max": 99.0,
           "abnormal_min": 100.4,
@@ -9025,7 +9411,7 @@
             "Shortness of breath and wheezing",
             "Upper respiratory symptoms"
           ],
-          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting with {chief_complaint}. Symptoms began approximately 3 days ago. Patient reports {compliance_statement}.\n\nPHYSICAL EXAMINATION:\nVitals: Temp {temp} \u00b0F, O2 Sat {o2sat}%, RR {rr} breaths/min, HR {hr} bpm\nGeneral: Ill-appearing, in mild to moderate distress.\nRespiratory: Decreased breath sounds, crackles noted at bases.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n\nFOLLOW-UP: Return if symptoms worsen or in 5-7 days."
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting with {chief_complaint}. Symptoms began approximately 3 days ago. Patient reports {compliance_statement}.\n\nPHYSICAL EXAMINATION:\nVitals: Temp {temp} °F, O2 Sat {o2sat}%, RR {rr} breaths/min, HR {hr} bpm\nGeneral: Ill-appearing, in mild to moderate distress.\nRespiratory: Decreased breath sounds, crackles noted at bases.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return if symptoms worsen or in 5-7 days."
         },
         {
           "type_code": "PN",
@@ -9036,7 +9422,7 @@
             "High fever with cough",
             "Worsening respiratory distress"
           ],
-          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting to the emergency department with {chief_complaint}. Onset of symptoms {compliance_statement}.\n\nPHYSICAL EXAMINATION:\nVitals: Temp {temp} \u00b0F, O2 Sat {o2sat}%, RR {rr} breaths/min, HR {hr} bpm\nGeneral: Acute respiratory distress.\nLungs: Decreased aeration, bilateral rales.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n\nDISPOSITION: Admitted for further management."
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting to the emergency department with {chief_complaint}. Onset of symptoms {compliance_statement}.\n\nPHYSICAL EXAMINATION:\nVitals: Temp {temp} °F, O2 Sat {o2sat}%, RR {rr} breaths/min, HR {hr} bpm\nGeneral: Acute respiratory distress.\nLungs: Decreased aeration, bilateral rales.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nDISPOSITION: Admitted for further management."
         }
       ],
       "rad_order_templates": [
@@ -9069,7 +9455,7 @@
       "min_age": 40,
       "max_age": 90,
       "sex_bias": null,
-      "description": "Patients with ischemic or hemorrhagic stroke and TIA \u2014 includes acute events and post-stroke management",
+      "description": "Patients with ischemic or hemorrhagic stroke and TIA — includes acute events and post-stroke management",
       "diagnoses": [
         {
           "code": "I63.9",
@@ -9596,7 +9982,7 @@
             "Facial droop and slurred speech",
             "Acute neurological deficits"
           ],
-          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting with {chief_complaint}. Symptom onset approximately {compliance_statement}. Last known well time documented.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm\nNeurological: NIH Stroke Scale score assessed. Focal neurological deficits noted.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n\nDISPOSITION: Admitted to stroke unit for monitoring and management."
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting with {chief_complaint}. Symptom onset approximately {compliance_statement}. Last known well time documented.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm\nNeurological: NIH Stroke Scale score assessed. Focal neurological deficits noted.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nDISPOSITION: Admitted to stroke unit for monitoring and management."
         },
         {
           "type_code": "PN",
@@ -9607,7 +9993,7 @@
             "Neurological rehabilitation progress",
             "Stroke management and secondary prevention"
           ],
-          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for {chief_complaint}. Patient reports {compliance_statement}. On antiplatelet/anticoagulation therapy.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm\nNeurological: Residual deficits assessed.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n\nFOLLOW-UP: Return in 3 months."
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for {chief_complaint}. Patient reports {compliance_statement}. On antiplatelet/anticoagulation therapy.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm\nNeurological: Residual deficits assessed.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 3 months."
         }
       ],
       "rad_order_templates": [
