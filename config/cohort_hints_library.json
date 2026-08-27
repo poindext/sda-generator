@@ -294,7 +294,7 @@
 
     {
       "cohort_type": "stis",
-      "keywords": ["sexually transmitted", "sti", "std", "chlamydia", "gonorrhea", "syphilis", "hiv", "reportable disease"],
+      "keywords": ["sexually transmitted", "sti", "std", "chlamydia", "gonorrhea", "syphilis", "hiv"],
       "disease_tag": "infectious",
       "labs": [
         {"order_code": "16128-1", "description": "Hepatitis C antibody"},
@@ -345,6 +345,67 @@
       ],
       "_note": "Only assign pregnancy-related diagnoses to female patients. Delivery codes (O80, O82) must have only_encounter_types: [\"I\"]. Prenatal supervision codes (Z34.x) and postpartum codes (Z39.x) must have only_encounter_types: [\"O\"].",
       "encounter_pattern_guidance": "encounters_per_year 8-14 during active pregnancy; O:0.82 E:0.10 I:0.08; the single inpatient encounter is the delivery"
+    },
+
+    {
+      "cohort_type": "multiple_chronic",
+      "keywords": ["multiple chronic", "multimorbidity", "complex chronic", "multi chronic", "multiple comorbid"],
+      "disease_tag": "complex",
+      "labs": [
+        {"order_code": "24323-8", "description": "CMP — baseline metabolic panel"},
+        {"order_code": "57698-3", "description": "Lipid panel"},
+        {"order_code": "4548-4",  "description": "Hemoglobin A1c"},
+        {"order_code": "58410-2", "description": "CBC with differential"},
+        {"order_code": "3016-3",  "description": "TSH — thyroid function"}
+      ],
+      "comorbidities": [
+        {"code": "E11.9", "description": "Type 2 diabetes mellitus",  "prevalence_pct": 0.60},
+        {"code": "I10",   "description": "Essential hypertension",     "prevalence_pct": 0.75},
+        {"code": "E78.5", "description": "Hyperlipidemia, unspecified","prevalence_pct": 0.65},
+        {"code": "N18.3", "description": "Chronic kidney disease, stage 3", "prevalence_pct": 0.30}
+      ],
+      "encounter_pattern_guidance": "encounters_per_year 6-10; moderate I weight for exacerbations (O:0.70, E:0.20, I:0.10)"
+    },
+
+    {
+      "cohort_type": "preventive",
+      "keywords": ["preventive", "wellness", "annual physical", "low risk", "healthy adult", "routine care", "checkup", "screening"],
+      "disease_tag": "preventive",
+      "labs": [
+        {"order_code": "57698-3", "description": "Lipid panel — baseline cardiovascular risk"},
+        {"order_code": "4548-4",  "description": "Hemoglobin A1c — diabetes screening"},
+        {"order_code": "24323-8", "description": "CMP — baseline metabolic"},
+        {"order_code": "3016-3",  "description": "TSH — thyroid screening"}
+      ],
+      "medications": [
+        {"rxnorm": "243670", "name": "Aspirin 81 mg oral tablet",    "indication": "primary prevention — high-risk patients only"},
+        {"rxnorm": "617310", "name": "Atorvastatin 40 mg oral tablet","indication": "primary prevention — ASCVD risk ≥ 7.5%"}
+      ],
+      "encounter_pattern_guidance": "encounters_per_year 1-2; almost entirely outpatient (O:0.95, E:0.04, I:0.01); abnormal_pct for all labs should be low (0.05-0.15)"
+    },
+
+    {
+      "cohort_type": "reportable_disease",
+      "keywords": ["reportable disease", "hiv aids", "infectious disease surveillance", "communicable disease"],
+      "disease_tag": "infectious",
+      "labs": [
+        {"order_code": "20447-9", "description": "HIV-1 RNA viral load (copies/mL)"},
+        {"order_code": "16128-1", "description": "Hepatitis C antibody"},
+        {"order_code": "58410-2", "description": "CBC — immune function monitoring"},
+        {"order_code": "24323-8", "description": "CMP — ART hepatotoxicity monitoring"}
+      ],
+      "medications": [
+        {"rxnorm": "1747347", "name": "Bictegravir/emtricitabine/tenofovir 50/200/25 mg (Biktarvy)", "indication": "HIV ART first-line single-tablet regimen"},
+        {"rxnorm": "1747286", "name": "Emtricitabine/tenofovir 200/25 mg (Descovy)",                 "indication": "HIV PrEP"},
+        {"rxnorm": "1665008", "name": "Penicillin G benzathine 2.4M units IM",                       "indication": "syphilis treatment"},
+        {"rxnorm": "308460",  "name": "Azithromycin 1 g single-dose oral",                           "indication": "chlamydia / gonorrhea (with ceftriaxone)"}
+      ],
+      "comorbidities": [
+        {"code": "B18.2", "description": "Chronic viral hepatitis C",         "prevalence_pct": 0.25},
+        {"code": "F32.9", "description": "Major depressive disorder",         "prevalence_pct": 0.30},
+        {"code": "F19.10","description": "Other psychoactive substance use",  "prevalence_pct": 0.20}
+      ],
+      "encounter_pattern_guidance": "encounters_per_year 3-6; mostly outpatient ART monitoring (O:0.80, E:0.15, I:0.05)"
     }
 
   ]

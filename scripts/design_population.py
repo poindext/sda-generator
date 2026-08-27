@@ -185,6 +185,140 @@ def _matched_cohort_hints(cohort_name: str, cohort_hints_lib: dict, library: dic
     return "COHORT-SPECIFIC CLINICAL HINTS (from cohort_hints_library.json):\n" + "\n".join(blocks)
 
 
+# ---------------------------------------------------------------------------
+# Cohort catalog — QA-approved definitions that bypass the Phase 3 LLM call
+# ---------------------------------------------------------------------------
+
+# Fields that represent reusable clinical knowledge (everything except population
+# meta like weight, min_age, max_age, sex_bias which come from Phase 1).
+_CLINICAL_FIELDS = (
+    "diagnoses", "comorbidities", "medications", "labs", "observations",
+    "procedures", "illness_history_templates", "social_history_templates",
+    "family_history_templates", "document_templates", "rad_order_templates",
+    "encounter_pattern",
+)
+
+_CATALOG_PATH = Path(__file__).parent.parent / "config" / "cohort_catalog.json"
+
+
+def load_cohort_catalog(path: str | None = None) -> dict:
+    """Load cohort_catalog.json. Returns empty dict if missing."""
+    p = Path(path) if path else _CATALOG_PATH
+    if not p.exists():
+        return {}
+    try:
+        data = json.loads(p.read_text(encoding="utf-8"))
+        n = len(data.get("cohorts", {}))
+        print(f"  Loaded cohort catalog: {n} QA-approved cohorts from {p}", flush=True)
+        return data
+    except Exception as e:
+        print(f"  [WARN] Could not load cohort catalog {p}: {e}", flush=True)
+        return {}
+
+
+def _find_catalog_match(cohort_name: str, catalog: dict) -> dict | None:
+    """Return the first catalog entry whose keywords match cohort_name, else None."""
+    name_lower = cohort_name.lower()
+    for entry in catalog.get("cohorts", {}).values():
+        if any(kw in name_lower for kw in entry.get("keywords", [])):
+            return entry
+    return None
+
+
+def _cohort_slug(cohort: dict) -> str:
+    """Derive a stable catalog key from a cohort dict (id field preferred)."""
+    cid = cohort.get("id") or cohort.get("cohort_id", "")
+    if cid:
+        return str(cid)
+    import re
+    return re.sub(r"[^a-z0-9]+", "_", cohort.get("name", "unknown").lower()).strip("_")
+
+
+def update_catalog_from_template(
+    template_path: str,
+    catalog_path: str | None = None,
+    cohort_hints_lib: dict | None = None,
+) -> None:
+    """
+    Extract all cohort clinical definitions from a QA-approved template and
+    save them to the cohort catalog. Existing entries are overwritten so the
+    catalog always reflects the most recently approved version.
+    """
+    tpath = Path(template_path)
+    if not tpath.exists():
+        print(f"[ERROR] Template not found: {tpath}", flush=True)
+        return
+
+    cpath = Path(catalog_path) if catalog_path else _CATALOG_PATH
+
+    catalog = (
+        json.loads(cpath.read_text(encoding="utf-8"))
+        if cpath.exists() else {"version": "1.0", "cohorts": {}}
+    )
+
+    template = json.loads(tpath.read_text(encoding="utf-8"))
+    added, updated = 0, 0
+
+    for cohort in template.get("cohorts", []):
+        slug = _cohort_slug(cohort)
+        clinical = {f: cohort[f] for f in _CLINICAL_FIELDS if f in cohort}
+
+        # Keywords: use hints-library entry if found, else derive from cohort name
+        import re
+        hints_entry = None
+        if cohort_hints_lib:
+            name_lower = cohort.get("name", "").lower()
+            for h in cohort_hints_lib.get("cohort_hints", []):
+                if any(kw in name_lower for kw in h.get("keywords", [])):
+                    hints_entry = h
+                    break
+        if hints_entry:
+            keywords = hints_entry["keywords"]
+        else:
+            # Use the full name phrase and the id phrase as keywords.
+            # Single-word tokens are too broad (e.g. "chronic" would match COPD);
+            # require the full phrase so only near-identical cohort names reuse this entry.
+            name_phrase = re.sub(r"[^a-z0-9 ]+", " ",
+                                 cohort.get("name", "").lower()).strip()
+            id_phrase = slug.replace("_", " ")
+            keywords = list(dict.fromkeys([name_phrase, id_phrase]))
+
+        action = "updated" if slug in catalog["cohorts"] else "added"
+        if action == "added":
+            added += 1
+        else:
+            updated += 1
+
+        catalog["cohorts"][slug] = {
+            "canonical_name": cohort.get("name", slug),
+            "keywords": keywords,
+            "qa_status": "approved",
+            "source_template": tpath.name,
+            "clinical_catalog": clinical,
+        }
+        print(f"  [{action}] {cohort.get('name', slug)}", flush=True)
+
+    cpath.write_text(json.dumps(catalog, indent=2, ensure_ascii=False), encoding="utf-8")
+    print(f"\n  Catalog saved → {cpath}", flush=True)
+    print(f"  {added} added, {updated} updated | total: {len(catalog['cohorts'])} cohorts",
+          flush=True)
+
+
+async def _resolve_cohort(
+    client, model: str, cohort: dict, description: str,
+    library: dict, cohort_hints_lib: dict, catalog: dict,
+) -> dict:
+    """
+    Return clinical catalog for a cohort. Checks the catalog first (no LLM cost);
+    falls back to a Phase 3 LLM call when no approved definition exists.
+    """
+    entry = _find_catalog_match(cohort["name"], catalog)
+    if entry:
+        return entry["clinical_catalog"]
+    return await phase3_cohort(client, model, cohort, description,
+                                library=library, cohort_hints_lib=cohort_hints_lib)
+
+
 def apply_library_overrides(cohort_catalog: dict, library: dict, cohort_name: str) -> dict:
     """
     Replace LLM-generated result_items with library versions where order_code matches.
@@ -883,14 +1017,20 @@ async def run(args):
     # Phase 2
     names = await phase2_names(client, args.model)
 
-    # Phase 3 — concurrent (one call per cohort)
+    # Phase 3 — concurrent (catalog hits skip the LLM entirely)
     library = load_lab_library(getattr(args, "library", None))
     cohort_hints_lib = load_cohort_hints()
+    catalog = load_cohort_catalog()
     cohorts = structure.get("cohorts", [])
-    print(f"Phase 3: Clinical catalogs for {len(cohorts)} cohorts (concurrent)...", flush=True)
+    _catalog_hits = {c["name"]: _find_catalog_match(c["name"], catalog) for c in cohorts}
+    n_cached = sum(1 for v in _catalog_hits.values() if v)
+    print(
+        f"Phase 3: Clinical catalogs for {len(cohorts)} cohorts "
+        f"({n_cached} from catalog, {len(cohorts) - n_cached} via LLM)...",
+        flush=True,
+    )
     results = await asyncio.gather(
-        *[phase3_cohort(client, args.model, c, description,
-                        library=library, cohort_hints_lib=cohort_hints_lib)
+        *[_resolve_cohort(client, args.model, c, description, library, cohort_hints_lib, catalog)
           for c in cohorts],
         return_exceptions=True,
     )
@@ -900,7 +1040,9 @@ async def run(args):
             print(f"  [WARN] Cohort '{cohorts[i]['name']}' failed: {r}", flush=True)
             cohort_catalogs.append({})
         else:
-            print(f"  ✓ {cohorts[i]['name']}", flush=True)
+            hit = _catalog_hits.get(cohorts[i]["name"])
+            source = f"[catalog: {hit['canonical_name']}]" if hit else "[LLM]"
+            print(f"  ✓ {cohorts[i]['name']} {source}", flush=True)
             cohort_catalogs.append(r)
 
     # Phase 4
@@ -926,8 +1068,9 @@ def main():
     parser = argparse.ArgumentParser(
         description="Convert a population text description into a rich JSON template."
     )
-    parser.add_argument("input",
-                        help="Path to the .txt file describing the population")
+    parser.add_argument("input", nargs="?",
+                        help="Path to the .txt file describing the population "
+                             "(not required when --update-catalog is used)")
     parser.add_argument("--output",
                         help="Output path for the template JSON "
                              "(default: <input>.template.json)")
@@ -940,7 +1083,24 @@ def main():
                         help="Path to lab_panels_library.json. "
                              "Defaults to lab_panels_library.json in the script directory "
                              "if present. Pass 'none' to disable.")
+    parser.add_argument("--update-catalog", metavar="TEMPLATE",
+                        help="Extract QA-approved cohort definitions from TEMPLATE into "
+                             "config/cohort_catalog.json and exit. Run this after every "
+                             "successful QA pass to feed learning back into future "
+                             "template generation. "
+                             "Example: --update-catalog templates/ohio_demo.template.json")
     args = parser.parse_args()
+
+    # --update-catalog mode: seed/refresh the catalog from a QA-approved template
+    if args.update_catalog:
+        print(f"Updating cohort catalog from {args.update_catalog}...", flush=True)
+        hints = load_cohort_hints()
+        update_catalog_from_template(args.update_catalog, cohort_hints_lib=hints)
+        return
+
+    if not args.input:
+        parser.error("input is required unless --update-catalog is specified")
+
     if getattr(args, "library", None) and args.library.lower() == "none":
         args.library = ""  # disable
     asyncio.run(run(args))
