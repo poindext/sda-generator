@@ -1,0 +1,73 @@
+{
+  "compliance": [
+    "good medication compliance",
+    "taking all medications as prescribed",
+    "generally good adherence to the medication regimen",
+    "some difficulty with medication adherence recently but improving",
+    "improved medication compliance compared to last visit",
+    "inconsistent with medications at times but doing better",
+    "adherent to most medications; occasional missed doses",
+    "following the medication regimen as directed"
+  ],
+  "general_exam": [
+    "Well-appearing, no acute distress.",
+    "Well-nourished and in no acute distress.",
+    "Alert and oriented, comfortable-appearing.",
+    "Well-appearing adult in no distress.",
+    "Alert, cooperative, no acute distress.",
+    "Pleasant, well-appearing, in no distress."
+  ],
+  "symptom_denial_cardiovascular": [
+    "Denies chest pain, exertional dyspnea, or palpitations.",
+    "Reports no chest discomfort, orthopnea, or lower extremity edema.",
+    "Denies angina, shortness of breath at rest, or presyncope.",
+    "No recent chest pain, dyspnea on exertion, or leg swelling.",
+    "Denies chest tightness, worsening shortness of breath, or syncope.",
+    "Denies exertional chest pressure, paroxysmal nocturnal dyspnea, or palpitations."
+  ],
+  "symptom_denial_diabetes": [
+    "Denies polyuria, polydipsia, or blurred vision.",
+    "Reports no excessive thirst, frequent urination, or tingling in feet.",
+    "Denies hypoglycemic episodes, visual changes, or lower extremity numbness.",
+    "No complaints of polydipsia, nocturia, or foot discomfort.",
+    "Denies blurred vision, excessive fatigue, or foot sores.",
+    "Denies dizziness, diaphoresis, or symptoms of hypoglycemia."
+  ],
+  "symptom_denial_hypertension": [
+    "Denies headache, visual changes, or chest pain.",
+    "Reports no headaches, dizziness, or shortness of breath.",
+    "Denies epistaxis, blurred vision, or chest tightness.",
+    "No complaints of headache, palpitations, or shortness of breath.",
+    "Denies morning headaches, visual disturbances, or dyspnea on exertion.",
+    "Denies occipital headache, tinnitus, or chest discomfort."
+  ],
+  "symptom_denial_asthma": [
+    "Denies wheezing, shortness of breath, or nocturnal symptoms.",
+    "Reports no recent exacerbations or nighttime awakenings.",
+    "Denies cough, chest tightness, or exercise limitation.",
+    "No recent episodes of wheezing or dyspnea at rest.",
+    "Denies worsening shortness of breath, cough, or chest tightness.",
+    "Denies nocturnal cough, rescue inhaler overuse, or dyspnea."
+  ],
+  "symptom_denial_pregnancy": [
+    "Denies contractions, vaginal bleeding, or leakage of fluid.",
+    "Reports no contractions, spotting, or rupture of membranes.",
+    "Denies uterine tightening, vaginal discharge, or decreased fetal movement.",
+    "No complaints of contractions, bleeding, or abdominal pain.",
+    "Denies preterm contractions, spotting, or fluid leakage."
+  ],
+  "symptom_denial_reportable": [
+    "Denies fever, night sweats, or weight loss.",
+    "Reports no fever, chills, or unintentional weight loss.",
+    "Denies hemoptysis, night sweats, or new pulmonary symptoms.",
+    "No complaints of fever, fatigue, or productive cough.",
+    "Denies systemic symptoms including fever, night sweats, or anorexia."
+  ],
+  "symptom_denial_default": [
+    "Denies chest pain, shortness of breath, or dizziness.",
+    "Reports no chest discomfort, dyspnea, or lightheadedness.",
+    "Denies chest pain, dyspnea on exertion, or syncope.",
+    "No complaints of chest pain, shortness of breath, or palpitations.",
+    "Denies significant cardiopulmonary symptoms."
+  ]
+}

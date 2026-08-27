@@ -1,0 +1,165 @@
+[
+  {
+    "icd_prefixes": ["O80", "O26", "Z34"],
+    "chief_complaints": ["active labor", "scheduled delivery", "rupture of membranes"],
+    "admission_dx": "Normal term delivery",
+    "hospital_course": "Patient presented at 39–40 weeks gestation in active labor. Continuous electronic fetal monitoring maintained throughout labor. Spontaneous vaginal delivery without complications. Apgar scores 8 and 9. Maternal vital signs stable postpartum. Mother and newborn in stable condition.",
+    "ed_course": null,
+    "ed_variants": [],
+    "discharge_plan": "Postpartum care initiated. Lactation consultation provided. Postpartum depression screening scheduled. Follow-up with obstetrician in 2 weeks.",
+    "bp_sys_range": [100, 130],
+    "bp_dia_range": [60, 85],
+    "hr_range": [70, 95],
+    "los_days_range": [1, 2]
+  },
+  {
+    "icd_prefixes": ["I50"],
+    "chief_complaints": ["shortness of breath and leg swelling", "worsening dyspnea and weight gain"],
+    "admission_dx": "Acute decompensated heart failure",
+    "hospital_course": "Patient admitted with acute decompensated heart failure. IV diuresis initiated with furosemide. Strict fluid restriction and daily weights implemented. BNP and renal function monitored closely. Patient responded well to diuresis over 2–3 days with improvement in dyspnea and reduction in lower extremity edema. Transitioned to oral diuretics prior to discharge.",
+    "ed_course": "IV furosemide administered in the ED with brisk diuretic response. Dyspnea and oxygen requirements improved significantly within 2–3 hours. BNP obtained; chest X-ray showed pulmonary vascular congestion. Vital signs stabilized. Decision to admit for further IV diuresis and monitoring.",
+    "ed_variants": [
+      "Acute dyspnea with hypoxia requiring supplemental oxygen. IV furosemide given; symptoms partially improved. Admitted for continued diuresis and cardiac monitoring.",
+      "Presentation with dyspnea and bilateral crackles. BNP markedly elevated. IV diuretics initiated; patient improved over several hours and admitted for observation."
+    ],
+    "discharge_plan": "Continue oral furosemide. Low-sodium diet (<2 g/day). Daily weights at home; call if weight increases >3 lb in 2 days. Follow-up with cardiology in 1–2 weeks.",
+    "bp_sys_range": [140, 180],
+    "bp_dia_range": [85, 110],
+    "hr_range": [90, 115],
+    "los_days_range": [2, 3],
+    "scenario_medications": [
+      {
+        "drug_code": "313988",
+        "drug_description": "Furosemide 40 MG Oral Tablet",
+        "dose_qty": 40,
+        "dose_uom": "mg",
+        "frequency_code": "QD",
+        "frequency_desc": "Once daily",
+        "route_code": "PO",
+        "route_desc": "Oral",
+        "dosage_form_code": "TAB",
+        "dosage_form_desc": "Tablet"
+      }
+    ]
+  },
+  {
+    "icd_prefixes": ["I48"],
+    "chief_complaints": ["palpitations and shortness of breath", "rapid irregular heartbeat"],
+    "admission_dx": "Atrial fibrillation with rapid ventricular response",
+    "hospital_course": "Patient presented with symptomatic palpitations. ECG confirmed atrial fibrillation with ventricular response in the 130–140s. IV metoprolol administered with transition to oral rate control. Anticoagulation continued and confirmed therapeutic. Continuous cardiac monitoring throughout hospitalization. Ventricular rate controlled to 70–80 bpm by discharge.",
+    "ed_course": "ECG confirmed atrial fibrillation with rapid ventricular response. IV metoprolol boluses given with rate reduction to 90–100 bpm within 2 hours. Anticoagulation assessed and initiated. Patient remained hemodynamically stable throughout ED stay. Admitted for continued rate control and monitoring.",
+    "ed_variants": [
+      "New-onset palpitations with irregular rhythm on telemetry. Rate-control medication administered in ED; rhythm and rate improved. Discharged with cardiology follow-up.",
+      "AF with moderate ventricular response. Oral rate-control medication adjusted; patient monitored in ED for 4 hours and discharged in stable condition."
+    ],
+    "discharge_plan": "Continue anticoagulation and rate-control medications. Outpatient cardiology follow-up in 1–2 weeks for rhythm assessment.",
+    "bp_sys_range": [105, 145],
+    "bp_dia_range": [65, 95],
+    "hr_range": [130, 145],
+    "los_days_range": [2, 3],
+    "scenario_medications": [
+      {
+        "drug_code": "1599538",
+        "drug_description": "Apixaban 5 MG Oral Tablet",
+        "dose_qty": 5,
+        "dose_uom": "mg",
+        "frequency_code": "BID",
+        "frequency_desc": "Twice daily",
+        "route_code": "PO",
+        "route_desc": "Oral",
+        "dosage_form_code": "TAB",
+        "dosage_form_desc": "Tablet"
+      }
+    ]
+  },
+  {
+    "icd_prefixes": ["I25", "I20", "I21", "I22"],
+    "chief_complaints": ["chest pressure with exertion", "chest pain and diaphoresis"],
+    "admission_dx": "Chest pain evaluation, rule out acute coronary syndrome",
+    "hospital_course": "Patient admitted for evaluation of chest discomfort. Serial troponins x3 obtained and remained negative. Continuous telemetry monitoring; no significant ST changes. Cardiology consulted; pharmacologic stress test performed showing no significant ischemia. Antiplatelet therapy and statin continued throughout.",
+    "ed_course": "Serial troponins drawn and remained negative x2. Continuous telemetry; no ST changes. Chest X-ray unremarkable. Pain improved with nitroglycerin and aspirin. Admitted for repeat troponin and further evaluation per cardiology.",
+    "ed_variants": [
+      "Chest pain with atypical features. Troponin negative, ECG unchanged from baseline. Symptoms attributed to musculoskeletal etiology. Discharged with NSAIDs and PCP follow-up.",
+      "Chest discomfort consistent with GERD vs. musculoskeletal pain. Troponin negative, ECG normal. GI cocktail given with relief. Discharged with PPI and follow-up.",
+      "Chest tightness in setting of exertion. Troponin negative. Stress test performed showing no ischemia. Discharged with cardiology outpatient follow-up."
+    ],
+    "discharge_plan": "Continue aspirin, statin, and beta-blocker. Optimize medical management. Outpatient cardiology follow-up in 2 weeks.",
+    "bp_sys_range": [140, 190],
+    "bp_dia_range": [85, 115],
+    "hr_range": [85, 110],
+    "los_days_range": [2, 4]
+  },
+  {
+    "icd_prefixes": ["I10", "I11", "I12", "I13"],
+    "chief_complaints": ["severe headache and elevated blood pressure", "headache with blurred vision"],
+    "admission_dx": "Hypertensive urgency",
+    "hospital_course": "Patient admitted with hypertensive urgency. Neurologic exam unremarkable. Renal function and urinalysis obtained with no evidence of end-organ damage. Oral antihypertensive regimen adjusted and titrated. BP improved gradually to acceptable range over 24 hours.",
+    "ed_course": "Neurological exam intact. Labs obtained; no evidence of acute end-organ damage. Oral antihypertensive given in ED with BP trending down from peak over 3–4 hours. Patient monitored and discharged once BP consistently below 160/100.",
+    "ed_variants": [
+      "Severely elevated BP with headache. Neurologic exam normal. Oral labetalol given; BP improved over 2 hours. Discharged with medication adjustment and close follow-up.",
+      "Hypertensive urgency without end-organ damage. Antihypertensive medication administered; BP responded. Observed for 4 hours and discharged."
+    ],
+    "discharge_plan": "Antihypertensive regimen adjusted. Home BP log requested. Follow-up within 1 week.",
+    "bp_sys_range": [180, 230],
+    "bp_dia_range": [110, 140],
+    "hr_range": [80, 100],
+    "los_days_range": [1, 2]
+  },
+  {
+    "icd_prefixes": ["E10", "E11", "E12", "E13"],
+    "chief_complaints": ["markedly elevated blood sugar", "nausea, vomiting, and hyperglycemia"],
+    "admission_dx": "Hyperglycemic crisis",
+    "hospital_course": "Patient admitted with markedly elevated blood glucose. Aggressive IV fluid hydration and insulin protocol initiated with hourly glucose monitoring. Electrolytes monitored and repleted. Endocrinology consulted for diabetes management optimization. Glucose normalized over 24–36 hours.",
+    "ed_course": "IV fluids and subcutaneous insulin administered in the ED. Glucose decreased from critical level to an acceptable range within 4–6 hours of treatment. Anion gap resolved. Patient tolerating oral fluids. Admitted for continued monitoring and diabetes management optimization.",
+    "ed_variants": [
+      "Hyperglycemia without ketoacidosis. IV fluids given; glucose trending down after 3 hours of treatment. Discharged with insulin regimen adjustment and endocrinology follow-up.",
+      "Moderate hyperglycemia with nausea. Antiemetics and IV fluids administered; glucose improved. Oral intake tolerated. Discharged with diabetes medication adjustment."
+    ],
+    "discharge_plan": "Diabetes regimen adjusted. Diabetes education reinforced. Follow-up with PCP in 3–5 days and endocrinology within 2 weeks for A1c recheck.",
+    "bp_sys_range": [130, 175],
+    "bp_dia_range": [80, 110],
+    "hr_range": [95, 115],
+    "los_days_range": [2, 3],
+    "acute_dx_map": {
+      "E10": {"code": "E10.65", "description": "Type 1 diabetes mellitus with hyperglycemia"},
+      "E11": {"code": "E11.65", "description": "Type 2 diabetes mellitus with hyperglycemia"},
+      "E12": {"code": "E11.65", "description": "Type 2 diabetes mellitus with hyperglycemia"},
+      "E13": {"code": "E13.65", "description": "Other specified diabetes mellitus with hyperglycemia"}
+    }
+  },
+  {
+    "icd_prefixes": ["J45", "J44"],
+    "chief_complaints": ["acute shortness of breath and wheezing", "asthma attack"],
+    "admission_dx": "Acute asthma / COPD exacerbation",
+    "hospital_course": "Patient admitted for acute respiratory exacerbation. Continuous nebulized bronchodilators administered. Systemic corticosteroids initiated. O2 saturation monitored; supplemental oxygen as needed. Respiratory status improved progressively over 48 hours. Discharged when breathing comfortable on room air.",
+    "ed_course": "Nebulized albuterol and ipratropium administered; oral corticosteroids given. O2 saturation improved from low 90s to mid-90s on room air within 2 hours. Peak flow and respiratory exam improved. Admitted for continued respiratory monitoring.",
+    "ed_variants": [
+      "Mild-to-moderate exacerbation treated with nebulizers and oral steroids in the ED. Symptoms significantly improved after two treatments. Discharged with steroid taper and rescue inhaler prescription.",
+      "Wheezing and dyspnea with decreased air entry. Responded well to back-to-back albuterol treatments. O2 saturation normalized. Discharged after 4-hour observation."
+    ],
+    "discharge_plan": "Continue controller and rescue inhalers. Oral steroid taper. Follow-up with pulmonology in 2 weeks.",
+    "bp_sys_range": [110, 145],
+    "bp_dia_range": [70, 90],
+    "hr_range": [95, 115],
+    "los_days_range": [2, 4]
+  },
+  {
+    "icd_prefixes": ["A15", "B20", "B18", "A16"],
+    "chief_complaints": [
+      "productive cough with hemoptysis",
+      "persistent night sweats and significant weight loss",
+      "fever, fatigue, and productive cough for several weeks"
+    ],
+    "admission_dx": "Active pulmonary tuberculosis",
+    "hospital_course": "Patient admitted for initiation of RIPE therapy (rifampin, isoniazid, pyrazinamide, ethambutol) under respiratory isolation. Sputum AFB smears obtained on admission; culture pending. Chest imaging revealed upper lobe infiltrates consistent with active disease. Infectious disease consulted. Patient tolerated therapy without significant adverse effects. Negative pressure room maintained throughout stay. Discharged after clinical improvement with directly observed therapy arrangements confirmed.",
+    "ed_course": "Patient evaluated for respiratory symptoms. Chest X-ray showed upper lobe infiltrate. Placed in respiratory isolation. Sputum samples collected. Infectious disease notified. Admitted for full work-up, culture results, and initiation of anti-tuberculosis therapy.",
+    "ed_variants": [
+      "Hemoptysis and productive cough noted. CXR performed, results reviewed with radiology. TB protocol initiated; patient placed in negative-pressure room. Admitted for further evaluation and culture results."
+    ],
+    "discharge_plan": "Directly observed therapy (DOT) arranged through county health department. Follow-up at TB clinic in 2 weeks. Remain in respiratory isolation at home until sputum cultures show no growth. Family members referred for TB testing.",
+    "bp_sys_range": [100, 130],
+    "bp_dia_range": [60, 85],
+    "hr_range": [75, 105],
+    "los_days_range": [5, 10]
+  }
+]
