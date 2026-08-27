@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SDA3 Population Generator</title>
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body>
+
+<!-- ── Sidebar ──────────────────────────────────────────── -->
+<aside id="sidebar">
+  <div class="logo">
+    <h1>Population Generator</h1>
+    <p>SDA3 Synthetic Data</p>
+  </div>
+  <nav>
+    <a href="#" data-page="dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+    <a href="#" data-page="new">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      New Population
+    </a>
+    <a href="#" data-page="templates">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Templates
+    </a>
+  </nav>
+</aside>
+
+<!-- ── Main ─────────────────────────────────────────────── -->
+<main id="content">
+
+  <!-- Dashboard -->
+  <div id="page-dashboard" class="page">
+    <div class="page-header">
+      <h2>Dashboard</h2>
+      <button class="btn btn-primary" onclick="navigate('#new')">+ New Population</button>
+    </div>
+    <div id="dash-stats" class="stat-row"></div>
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Population</th><th>Count</th><th>QA Status</th>
+              <th>Download</th><th>Date</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="pop-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Population -->
+  <div id="page-new" class="page">
+    <div class="page-header"><h2>New Population</h2></div>
+
+    <!-- Step indicator -->
+    <div class="step-indicator">
+      <div class="step" id="step-ind-1"><span class="num">1</span>Describe</div>
+      <div class="step-sep"></div>
+      <div class="step" id="step-ind-2"><span class="num">2</span>Design</div>
+      <div class="step-sep"></div>
+      <div class="step" id="step-ind-3"><span class="num">3</span>Generate</div>
+      <div class="step-sep"></div>
+      <div class="step" id="step-ind-4"><span class="num">4</span>Results</div>
+    </div>
+
+    <!-- Step 1: Cohort selection + chat -->
+    <div id="wiz-step-1">
+      <div class="card mb-16">
+        <h3>Select from Approved Cohorts <span class="text-muted text-sm">(optional — these are pre-loaded from the QA catalog)</span></h3>
+        <div id="cohort-grid" class="cohort-grid"></div>
+        <button id="btn-start-interview" class="btn btn-primary">Start Interview</button>
+      </div>
+      <div class="card">
+        <h3>Population Design Interview</h3>
+        <div id="chat-panel">
+          <div id="chat-messages"></div>
+          <div id="chat-input-row" class="hidden">
+            <textarea id="chat-input" placeholder="Type your response…" rows="1"></textarea>
+            <button id="btn-send-chat" class="btn btn-primary">Send</button>
+          </div>
+        </div>
+        <div id="chat-ready-msg" class="alert alert-success mt-8 hidden">
+          All information collected. Click "Generate Document" to produce the description.
+        </div>
+        <div class="mt-8">
+          <button id="btn-synthesize" class="btn btn-primary hidden">Generate Document →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Review + Design template -->
+    <div id="wiz-step-2" class="hidden">
+      <div class="card mb-16">
+        <h3>Population Description Document</h3>
+        <p class="text-muted text-sm mb-8">Review the generated description, then click "Design Template" to build the JSON template.</p>
+        <textarea id="txt-preview" class="txt-preview" readonly></textarea>
+      </div>
+      <div class="card">
+        <h3>Template Design</h3>
+        <div class="flex items-c gap-8 mb-8">
+          <button id="btn-design-template" class="btn btn-primary">Design Template →</button>
+        </div>
+        <div id="design-log-wrap" class="hidden">
+          <div id="design-log" class="log-box"></div>
+        </div>
+        <div id="wiz-editor-section" class="hidden mt-16">
+          <div class="split-view">
+            <div class="split-pane">
+              <label>Description</label>
+              <textarea id="txt-preview-2" class="txt-preview" readonly></textarea>
+            </div>
+            <div class="split-pane">
+              <label>Template JSON — editable</label>
+              <textarea id="template-json-ta" class="txt-preview mono" spellcheck="false"></textarea>
+            </div>
+          </div>
+          <div class="flex gap-8 mt-12">
+            <button id="btn-save-template" class="btn btn-secondary">Save Template</button>
+            <button id="btn-proceed-to-generate" class="btn btn-primary" disabled>Proceed to Generate →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Generate config -->
+    <div id="wiz-step-3" class="hidden">
+      <div class="card">
+        <h3>Generation Settings</h3>
+        <form id="gen-form">
+          <div class="form-group">
+            <label>Template</label>
+            <select id="gen-template-select">
+              <option value="">— select a template —</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Population Name</label>
+            <input type="text" id="gen-pop-name" placeholder="e.g. ohio_demo_500" required>
+          </div>
+          <div class="form-group">
+            <label>Patient Count</label>
+            <input type="number" id="gen-count" value="100" min="1" max="500000" required>
+          </div>
+          <div class="form-group">
+            <label>History Months</label>
+            <input type="number" id="gen-history-months" value="24" min="1" max="60" required>
+          </div>
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="gen-run-qa">
+              Run clinical QA after generation (required before download)
+            </label>
+          </div>
+          <button type="submit" id="btn-start-gen" class="btn btn-primary">Start Generation →</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Step 4: Progress + Results -->
+    <div id="wiz-step-4" class="hidden">
+      <div class="card mb-16">
+        <h3>Generation Progress</h3>
+        <div class="progress-bar-wrap"><div id="gen-progress-fill" class="progress-bar-fill"></div></div>
+        <div id="gen-log" class="log-box mt-8"></div>
+      </div>
+      <div id="gen-results" class="card hidden">
+        <h3>Results — <span id="result-pop-name"></span></h3>
+        <div class="flex gap-16 mt-8 mb-16">
+          <div><span class="text-muted text-sm">QA Status: </span><span id="result-qa-status"></span></div>
+          <div><span class="text-muted text-sm">Patients: </span><strong id="result-patient-count"></strong></div>
+        </div>
+        <div id="result-qa-issues" class="mb-16"></div>
+        <div id="result-chunks"></div>
+        <div class="mt-16">
+          <button class="btn btn-secondary" onclick="navigate('#dashboard')">← Back to Dashboard</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Templates -->
+  <div id="page-templates" class="page">
+    <div class="page-header">
+      <h2>Templates</h2>
+      <div class="flex gap-8">
+        <button id="tmpl-import-btn" class="btn btn-secondary">Import JSON</button>
+        <input type="file" id="tmpl-import-file" accept=".json" class="hidden">
+      </div>
+    </div>
+    <div class="card mb-16">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Name</th><th>State</th><th>Target Patients</th><th>Modified</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="tmpl-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+    <div id="tmpl-editor-panel" class="card hidden">
+      <div class="flex items-c gap-16 mb-12" style="justify-content:space-between">
+        <h3>Editing: <span id="tmpl-editor-title"></span></h3>
+        <div class="flex gap-8">
+          <button id="tmpl-save-btn" class="btn btn-primary">Save</button>
+          <button class="btn btn-secondary" onclick="hide('tmpl-editor-panel')">Close</button>
+        </div>
+      </div>
+      <textarea id="tmpl-editor-ta" class="txt-preview mono" style="height:560px" spellcheck="false"></textarea>
+    </div>
+  </div>
+
+  <!-- Population Detail -->
+  <div id="page-population" class="page">
+    <div class="page-header">
+      <h2 id="pop-detail-title"></h2>
+      <div class="flex gap-8">
+        <button class="btn btn-secondary" onclick="navigate('#dashboard')">← Dashboard</button>
+        <button id="pop-del-btn" class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+    <div id="pop-detail-body"></div>
+  </div>
+
+</main>
+
+<script src="/static/js/app.js"></script>
+<script>
+  // Populate template select in the generate form
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      const resp = await fetch('/api/templates');
+      const data = await resp.json();
+      const sel = document.getElementById('gen-template-select');
+      data.templates.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t.id;
+        opt.textContent = t.name || t.id;
+        sel.appendChild(opt);
+      });
+    } catch (_) {}
+  });
+
+  // Sync txt-preview-2 when step 2 shows
+  const origShow = showWizStep;
+  async function showWizStep(step) {
+    await origShow(step);
+    if (step === 2) {
+      const ta = document.getElementById('txt-preview-2');
+      const main = document.getElementById('txt-preview');
+      if (ta && main) ta.value = main.value;
+
+      // Ask for population name if not set
+      if (!wizState.templateId) {
+        const name = prompt('Give this population a name (used for file names):', 'my_population');
+        if (name) {
+          wizState.templateId = name.toLowerCase().replace(/[^a-z0-9_-]/g, '_');
+          try {
+            await fetch('/api/templates/description', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ name: wizState.templateId, document: wizState.document }),
+            });
+          } catch (_) {}
+        }
+      }
+    }
+  }
+</script>
+</body>
+</html>
