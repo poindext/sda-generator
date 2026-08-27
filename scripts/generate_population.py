@@ -5306,8 +5306,6 @@ def main():
                         help="Number of patients to generate (default: 10)")
     parser.add_argument("--output", default="Population",
                         help="Output directory (default: Population/)")
-    parser.add_argument("--mode", choices=["template"], default="template",
-                        help="Generation mode (default: template)")
     parser.add_argument("--template",
                         help="Path to template JSON produced by design_population.py (required)")
     parser.add_argument("--concurrency", type=int, default=10,
