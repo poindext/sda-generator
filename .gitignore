@@ -30,3 +30,7 @@ sample_data/
 
 # Web app runtime job queue
 jobs/
+
+# Runtime logs and debug artifacts (changelog.jsonl is intentional history)
+logs/*.log
+debug_*.json

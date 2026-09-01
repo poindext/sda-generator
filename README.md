@@ -214,16 +214,6 @@ python3 scripts/extract_cohort_csvs.py \
 
 ---
 
-### `scripts/expand_facilities.py` — Expand facility catalog
-
-One-time utility that patches the Ohio demo template to expand from 8 to ~46 facilities, adds matching providers, and extends geographic coverage. Run once before regenerating the Ohio population.
-
-```bash
-python3 scripts/expand_facilities.py
-```
-
----
-
 ## Automated QA Loop (`/auto-qa`)
 
 The `/auto-qa` Claude Code slash command runs the full generate → review → fix → regenerate loop autonomously until the population achieves a clean pass or reaches 5 rounds.
