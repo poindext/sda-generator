@@ -1,6 +1,0 @@
-{
-  "description": "Florida 1000-patient demo population — cohorts: preventive_wellness, diabetes_t2, hypertension, asthma, copd, tick_borne_diseases",
-  "clarifications": [
-    "HbA1c values showing 100% abnormal rate — in this dataset HbA1c is only ordered for patients with a confirmed diabetes diagnosis, so every A1c result comes from a diabetic patient and 100% of values will be in the diabetic/pre-diabetic range (>=5.7%). This reflects correct selective ordering by the generator, not a data quality issue."
-  ]
-}

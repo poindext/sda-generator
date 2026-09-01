@@ -1,0 +1,106 @@
+**Synthetic Patient Population for Ohio Maternal Health Dashboard Demonstration**
+
+**Purpose & Scope**
+
+This synthetic patient population is designed for a dashboard demonstration focused on maternal and pregnancy-related public health surveillance across Ohio. The dataset aims to illustrate how statewide Health Information Exchange (HIE) data can be used to identify pregnant and postpartum patients, monitor maternal health risks and outcomes, identify care gaps, and analyze trends across populations and geographic areas. The population consists of 25,000 patients with longitudinal data spanning 36 months, supporting both routine and high-risk pregnancies, along with clinically realistic overlaps with hypertension, diabetes, behavioral health conditions, opioid use disorder, social determinants of health, and severe maternal morbidity.
+
+**Geography**
+
+The population includes all 88 counties in Ohio, grouped into five regions for dashboard-friendly analysis:
+
+- **NE Ohio**: Adjacent to Central Ohio and NW Ohio
+- **Central Ohio**: Adjacent to NE Ohio, NW Ohio, SW Ohio, and SE Ohio/Appalachian
+- **SW Ohio**: Adjacent to Central Ohio and SE Ohio/Appalachian
+- **SE Ohio/Appalachian**: Adjacent to Central Ohio and SW Ohio
+- **NW Ohio**: Adjacent to NE Ohio and Central Ohio
+
+The distribution is non-uniform, with urban regions (NE, Central, SW Ohio) having higher patient and facility densities, while SE/Appalachian Ohio features lower population density, longer travel distances, and fewer high-acuity facilities.
+
+**Facilities & Health Systems**
+
+The population includes 48 facilities distributed across Ohio, categorized as follows:
+
+- **6 Academic/Tertiary Medical Centers**: High-risk obstetrics, MFM, NICU, and maternal transfers
+- **14 Community Hospitals**: Routine obstetric deliveries and emergency care
+- **8 FQHC/Community Health Centers**: Prenatal, primary, and postpartum care
+- **6 OB/GYN or Maternal-Fetal Medicine Clinics**: General OB and high-risk specialty care
+- **6 Urgent Care Centers**: Fragmented-care stories during pregnancy
+- **4 Independent/Regional Laboratories**: Prenatal testing and laboratory results
+- **4 Rural/Critical-Access Hospitals**: Limited services and referral/transfer scenarios
+
+Fictional health systems include:
+
+- **Lake Erie Health**: 2 academic centers, 3 community hospitals
+- **Buckeye Regional Health**: 1 academic center, 4 community hospitals, 2 FQHCs
+- **Central Ohio Medical Network**: 1 academic center, 3 community hospitals, 1 OB/GYN clinic
+- **Miami Valley Health Alliance**: 1 academic center, 2 community hospitals, 1 urgent care
+- **Appalachian Ohio Health Network**: 1 academic center, 2 rural hospitals, 1 FQHC
+- **Northwest Ohio Health System**: 1 academic center, 2 community hospitals, 1 laboratory
+- **Independent Facilities**: 4 community hospitals, 6 OB/GYN clinics, 5 urgent care centers, 3 laboratories
+
+**Providers**
+
+The dataset includes approximately 180 providers, distributed across specialties:
+
+- **OB/GYN**: 40 providers
+- **Primary Care/Family Medicine**: 30 providers
+- **Emergency Medicine**: 20 providers
+- **Maternal-Fetal Medicine**: 12 providers
+- **Behavioral Health/Psychiatry**: 15 providers
+- **Addiction Medicine**: 8 providers
+- **Pediatrics/Neonatology**: 12 providers
+- **Internal Medicine**: 10 providers
+- **Endocrinology**: 7 providers
+- **Cardiology**: 6 providers
+- **Nephrology**: 5 providers
+- **Hematology**: 5 providers
+- **Other/Hospitalist**: 10 providers
+
+**Disease Cohorts**
+
+- **Pregnancies**: 3,500 (14% of total), with 65% routine and 35% high-risk
+- **Hypertension**: 18% of total population; 5% chronic HTN in pregnancy, 7% gestational HTN, 5% preeclampsia
+- **Type 2 Diabetes**: 9% of total population; 3% pre-existing in pregnancy, 9% gestational diabetes
+- **Behavioral Health**: 15% of pregnancies
+- **Opioid Use Disorder**: 3% of pregnancies
+- **Significant SDOH Risk**: 25% of pregnancies
+- **CKD Stages 3–5**: 1% of pregnancies
+- **Sickle Cell Disease**: 0.5% of pregnancies
+- **Sepsis**: 0.5% during pregnancy/postpartum
+- **Severe Maternal Morbidity**: 1.5–2% of pregnancies
+- **Preterm Delivery**: 10% of pregnancies
+- **Postpartum ED Utilization**: 6% of pregnancies
+- **Postpartum Readmission**: 2–3% of pregnancies
+
+**Demographics**
+
+- **Age Distribution**: 0–14 years (8%), 15–19 years (5%), 20–39 years (32%), 40–64 years (35%), 65+ years (20%)
+- **Sex Distribution**: Female (55%), Male (45%)
+- **Race/Ethnicity**: White, non-Hispanic (70%), Black/African American, non-Hispanic (16%), Hispanic/Latino (7%), Asian (3%), Multiracial (3%), American Indian/Alaska Native/Other (1%)
+- **Insurance/Payer Mix**: Ohio Medicaid (30% overall, 45% pregnancy), Commercial (42% overall, 45% pregnancy), Medicare (20% overall, ~2% pregnancy), Uninsured/Self-pay (6% overall, 7% pregnancy), Other (2% overall, 1% pregnancy)
+
+**Multi-Facility HIE Configuration**
+
+- **Multi-Facility Records**: 35% of patients
+- **Pregnancy Multi-Facility Records**: 50%
+- **Regional Movement**: 80% within home region, 20% cross-region
+- **ED-to-Inpatient Transfers**: 85–90% same facility, 10–15% transfers
+
+**Special Scenarios & Deliberate Imperfections**
+
+- **Maternal Hypertension Hotspot**: Increasing gestational hypertension/preeclampsia in one SE/Appalachian and one urban county over the final 12 months.
+- **Improving County**: 20–25% reduction in inadequate prenatal care over 18 months, with fewer preventable ED visits.
+- **Deteriorating County**: Increasing late prenatal care, hypertensive complications, and preterm deliveries.
+- **Prenatal Care Gaps**: 8% inadequate prenatal care, with some lacking first-trimester visits.
+- **Postpartum Follow-Up Gaps**: 15% miss recommended follow-up, enriched among SDOH barriers.
+- **Hypertension Follow-Up Gap**: Some with elevated postpartum BP lack timely follow-up.
+- **Gestational Diabetes Gap**: Delayed or absent follow-up for abnormal screenings.
+- **Behavioral Health Gap**: Postpartum depression/anxiety signals with delayed follow-up.
+- **OUD Treatment Gap**: Fragmented or absent treatment for some pregnant/postpartum patients.
+- **Maternal Transfer Cluster**: Rural/SE facilities with transfers for severe conditions.
+- **Postpartum Acute Events**: Clusters involving hypertension, infection/sepsis, and hemorrhage.
+- **Incomplete HIE Feed**: One community hospital stops sending lab results for ~45 days.
+- **Delayed Feed**: One facility with a 2–3 day reporting delay.
+- **Identity Imperfections**: Different MRNs, surname changes, address variations, and duplicate identifiers across organizations.
+
+This configuration ensures a robust and realistic synthetic population that highlights the value of HIE data in maternal health surveillance.

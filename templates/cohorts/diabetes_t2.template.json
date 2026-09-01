@@ -1,0 +1,3226 @@
+{
+  "meta": {
+    "name": "Type 2 Diabetes \u2014 Synthetic Population",
+    "description": "Patients with type 2 diabetes, managed with oral agents and/or insulin",
+    "state": "Ohio",
+    "state_code": "OH",
+    "medicaid_field": "Ohio Medicaid",
+    "medicaid_id_prefix": "OH-MEDICAID-",
+    "total_patients": 200,
+    "history_months": 24
+  },
+  "geography": {
+    "locations": [
+      {
+        "county": "Cuyahoga",
+        "county_fips": "39035",
+        "state_code": "OH",
+        "weight": 0.15,
+        "rurality": "urban",
+        "cities": [
+          {
+            "name": "Cleveland",
+            "zips": [
+              "44114",
+              "44115",
+              "44103"
+            ]
+          },
+          {
+            "name": "Parma",
+            "zips": [
+              "44129",
+              "44134"
+            ]
+          }
+        ],
+        "region": "NE Ohio"
+      },
+      {
+        "county": "Franklin",
+        "county_fips": "39049",
+        "state_code": "OH",
+        "weight": 0.14,
+        "rurality": "urban",
+        "cities": [
+          {
+            "name": "Columbus",
+            "zips": [
+              "43215",
+              "43201",
+              "43203"
+            ]
+          },
+          {
+            "name": "Dublin",
+            "zips": [
+              "43017",
+              "43016"
+            ]
+          }
+        ],
+        "region": "Central Ohio"
+      },
+      {
+        "county": "Hamilton",
+        "county_fips": "39061",
+        "state_code": "OH",
+        "weight": 0.12,
+        "rurality": "urban",
+        "cities": [
+          {
+            "name": "Cincinnati",
+            "zips": [
+              "45202",
+              "45220",
+              "45215"
+            ]
+          },
+          {
+            "name": "Norwood",
+            "zips": [
+              "45212"
+            ]
+          }
+        ],
+        "region": "SW Ohio"
+      },
+      {
+        "county": "Summit",
+        "county_fips": "39153",
+        "state_code": "OH",
+        "weight": 0.1,
+        "rurality": "urban",
+        "cities": [
+          {
+            "name": "Akron",
+            "zips": [
+              "44308",
+              "44310",
+              "44311"
+            ]
+          },
+          {
+            "name": "Cuyahoga Falls",
+            "zips": [
+              "44221",
+              "44223"
+            ]
+          }
+        ],
+        "region": "NE Ohio"
+      },
+      {
+        "county": "Montgomery",
+        "county_fips": "39113",
+        "state_code": "OH",
+        "weight": 0.09,
+        "rurality": "urban",
+        "cities": [
+          {
+            "name": "Dayton",
+            "zips": [
+              "45402",
+              "45403",
+              "45406"
+            ]
+          },
+          {
+            "name": "Kettering",
+            "zips": [
+              "45429",
+              "45440"
+            ]
+          }
+        ],
+        "region": "SW Ohio"
+      },
+      {
+        "county": "Lucas",
+        "county_fips": "39095",
+        "state_code": "OH",
+        "weight": 0.08,
+        "rurality": "urban",
+        "cities": [
+          {
+            "name": "Toledo",
+            "zips": [
+              "43604",
+              "43605",
+              "43606"
+            ]
+          },
+          {
+            "name": "Oregon",
+            "zips": [
+              "43616"
+            ]
+          }
+        ],
+        "region": "NW Ohio"
+      },
+      {
+        "county": "Stark",
+        "county_fips": "39151",
+        "state_code": "OH",
+        "weight": 0.07,
+        "rurality": "suburban",
+        "cities": [
+          {
+            "name": "Canton",
+            "zips": [
+              "44702",
+              "44703",
+              "44704"
+            ]
+          },
+          {
+            "name": "Massillon",
+            "zips": [
+              "44646",
+              "44647"
+            ]
+          }
+        ],
+        "region": "NE Ohio"
+      },
+      {
+        "county": "Lorain",
+        "county_fips": "39093",
+        "state_code": "OH",
+        "weight": 0.06,
+        "rurality": "suburban",
+        "cities": [
+          {
+            "name": "Lorain",
+            "zips": [
+              "44052",
+              "44053"
+            ]
+          },
+          {
+            "name": "Elyria",
+            "zips": [
+              "44035",
+              "44036"
+            ]
+          }
+        ],
+        "region": "NE Ohio"
+      },
+      {
+        "county": "Butler",
+        "county_fips": "39017",
+        "state_code": "OH",
+        "weight": 0.05,
+        "rurality": "suburban",
+        "cities": [
+          {
+            "name": "Hamilton",
+            "zips": [
+              "45011",
+              "45013"
+            ]
+          },
+          {
+            "name": "Middletown",
+            "zips": [
+              "45042",
+              "45044"
+            ]
+          }
+        ],
+        "region": "SW Ohio"
+      },
+      {
+        "county": "Mahoning",
+        "county_fips": "39099",
+        "state_code": "OH",
+        "weight": 0.04,
+        "rurality": "urban",
+        "cities": [
+          {
+            "name": "Youngstown",
+            "zips": [
+              "44501",
+              "44502",
+              "44503"
+            ]
+          },
+          {
+            "name": "Boardman",
+            "zips": [
+              "44512",
+              "44513"
+            ]
+          }
+        ],
+        "region": "NE Ohio"
+      },
+      {
+        "county": "Lake",
+        "county_fips": "39085",
+        "state_code": "OH",
+        "weight": 0.04,
+        "rurality": "suburban",
+        "region": "NE Ohio",
+        "cities": [
+          {
+            "name": "Painesville",
+            "zips": [
+              "44077"
+            ]
+          },
+          {
+            "name": "Mentor",
+            "zips": [
+              "44060",
+              "44061"
+            ]
+          }
+        ]
+      },
+      {
+        "county": "Trumbull",
+        "county_fips": "39155",
+        "state_code": "OH",
+        "weight": 0.03,
+        "rurality": "suburban",
+        "region": "NE Ohio",
+        "cities": [
+          {
+            "name": "Warren",
+            "zips": [
+              "44483",
+              "44484"
+            ]
+          },
+          {
+            "name": "Niles",
+            "zips": [
+              "44446"
+            ]
+          }
+        ]
+      },
+      {
+        "county": "Licking",
+        "county_fips": "39089",
+        "state_code": "OH",
+        "weight": 0.025,
+        "rurality": "suburban",
+        "region": "Central Ohio",
+        "cities": [
+          {
+            "name": "Newark",
+            "zips": [
+              "43055",
+              "43056"
+            ]
+          },
+          {
+            "name": "Heath",
+            "zips": [
+              "43056"
+            ]
+          }
+        ]
+      },
+      {
+        "county": "Fairfield",
+        "county_fips": "39045",
+        "state_code": "OH",
+        "weight": 0.02,
+        "rurality": "suburban",
+        "region": "Central Ohio",
+        "cities": [
+          {
+            "name": "Lancaster",
+            "zips": [
+              "43130",
+              "43140"
+            ]
+          },
+          {
+            "name": "Pickerington",
+            "zips": [
+              "43147"
+            ]
+          }
+        ]
+      },
+      {
+        "county": "Clark",
+        "county_fips": "39023",
+        "state_code": "OH",
+        "weight": 0.025,
+        "rurality": "suburban",
+        "region": "SW Ohio",
+        "cities": [
+          {
+            "name": "Springfield",
+            "zips": [
+              "45502",
+              "45503",
+              "45504"
+            ]
+          }
+        ]
+      },
+      {
+        "county": "Warren",
+        "county_fips": "39165",
+        "state_code": "OH",
+        "weight": 0.028,
+        "rurality": "suburban",
+        "region": "SW Ohio",
+        "cities": [
+          {
+            "name": "Mason",
+            "zips": [
+              "45040"
+            ]
+          },
+          {
+            "name": "Lebanon",
+            "zips": [
+              "45036"
+            ]
+          }
+        ]
+      },
+      {
+        "county": "Greene",
+        "county_fips": "39057",
+        "state_code": "OH",
+        "weight": 0.022,
+        "rurality": "suburban",
+        "region": "SW Ohio",
+        "cities": [
+          {
+            "name": "Beavercreek",
+            "zips": [
+              "45430",
+              "45431"
+            ]
+          },
+          {
+            "name": "Xenia",
+            "zips": [
+              "45385"
+            ]
+          }
+        ]
+      },
+      {
+        "county": "Wood",
+        "county_fips": "39173",
+        "state_code": "OH",
+        "weight": 0.025,
+        "rurality": "suburban",
+        "region": "NW Ohio",
+        "cities": [
+          {
+            "name": "Bowling Green",
+            "zips": [
+              "43402"
+            ]
+          },
+          {
+            "name": "Perrysburg",
+            "zips": [
+              "43551"
+            ]
+          }
+        ]
+      },
+      {
+        "county": "Hancock",
+        "county_fips": "39063",
+        "state_code": "OH",
+        "weight": 0.02,
+        "rurality": "suburban",
+        "region": "NW Ohio",
+        "cities": [
+          {
+            "name": "Findlay",
+            "zips": [
+              "45840",
+              "45839"
+            ]
+          }
+        ]
+      },
+      {
+        "county": "Allen",
+        "county_fips": "39003",
+        "state_code": "OH",
+        "weight": 0.02,
+        "rurality": "suburban",
+        "region": "NW Ohio",
+        "cities": [
+          {
+            "name": "Lima",
+            "zips": [
+              "45801",
+              "45804",
+              "45805"
+            ]
+          }
+        ]
+      },
+      {
+        "county": "Ross",
+        "county_fips": "39141",
+        "state_code": "OH",
+        "weight": 0.018,
+        "rurality": "rural",
+        "region": "SE Ohio",
+        "cities": [
+          {
+            "name": "Chillicothe",
+            "zips": [
+              "45601",
+              "45601"
+            ]
+          }
+        ]
+      },
+      {
+        "county": "Muskingum",
+        "county_fips": "39119",
+        "state_code": "OH",
+        "weight": 0.016,
+        "rurality": "rural",
+        "region": "SE Ohio",
+        "cities": [
+          {
+            "name": "Zanesville",
+            "zips": [
+              "43701",
+              "43702"
+            ]
+          }
+        ]
+      },
+      {
+        "county": "Athens",
+        "county_fips": "39009",
+        "state_code": "OH",
+        "weight": 0.012,
+        "rurality": "rural",
+        "region": "SE Ohio",
+        "cities": [
+          {
+            "name": "Athens",
+            "zips": [
+              "45701"
+            ]
+          },
+          {
+            "name": "The Plains",
+            "zips": [
+              "45780"
+            ]
+          }
+        ]
+      },
+      {
+        "county": "Gallia",
+        "county_fips": "39053",
+        "state_code": "OH",
+        "weight": 0.01,
+        "rurality": "rural",
+        "region": "SE Ohio",
+        "cities": [
+          {
+            "name": "Gallipolis",
+            "zips": [
+              "45631"
+            ]
+          }
+        ]
+      },
+      {
+        "county": "Scioto",
+        "county_fips": "39145",
+        "state_code": "OH",
+        "weight": 0.012,
+        "rurality": "rural",
+        "region": "SE Ohio",
+        "cities": [
+          {
+            "name": "Portsmouth",
+            "zips": [
+              "45662"
+            ]
+          }
+        ]
+      },
+      {
+        "county": "Coshocton",
+        "county_fips": "39031",
+        "state_code": "OH",
+        "weight": 0.01,
+        "rurality": "rural",
+        "region": "SE Ohio",
+        "cities": [
+          {
+            "name": "Coshocton",
+            "zips": [
+              "43812"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "demographics": {
+    "age_distribution": [
+      {
+        "min": 18,
+        "max": 34,
+        "weight": 0.2,
+        "label": "Young Adult"
+      },
+      {
+        "min": 35,
+        "max": 49,
+        "weight": 0.25,
+        "label": "Middle Age"
+      },
+      {
+        "min": 50,
+        "max": 64,
+        "weight": 0.3,
+        "label": "Older Adult"
+      },
+      {
+        "min": 65,
+        "max": 85,
+        "weight": 0.25,
+        "label": "Senior"
+      }
+    ],
+    "sex_distribution": [
+      {
+        "sex": "F",
+        "weight": 0.51
+      },
+      {
+        "sex": "M",
+        "weight": 0.49
+      }
+    ],
+    "race_distribution": [
+      {
+        "race_code": "2106-3",
+        "race_description": "White",
+        "ethnicity_code": "2186-5",
+        "ethnicity_description": "Not Hispanic or Latino",
+        "weight": 0.7
+      },
+      {
+        "race_code": "2054-5",
+        "race_description": "Black or African American",
+        "ethnicity_code": "2186-5",
+        "ethnicity_description": "Not Hispanic or Latino",
+        "weight": 0.15
+      },
+      {
+        "race_code": "2131-1",
+        "race_description": "Asian",
+        "ethnicity_code": "2186-5",
+        "ethnicity_description": "Not Hispanic or Latino",
+        "weight": 0.05
+      },
+      {
+        "race_code": "2076-8",
+        "race_description": "Native Hawaiian or Other Pacific Islander",
+        "ethnicity_code": "2186-5",
+        "ethnicity_description": "Not Hispanic or Latino",
+        "weight": 0.02
+      },
+      {
+        "race_code": "1002-5",
+        "race_description": "American Indian or Alaska Native",
+        "ethnicity_code": "2186-5",
+        "ethnicity_description": "Not Hispanic or Latino",
+        "weight": 0.01
+      },
+      {
+        "race_code": "2135-2",
+        "race_description": "Hispanic or Latino",
+        "ethnicity_code": "2135-2",
+        "ethnicity_description": "Hispanic or Latino",
+        "weight": 0.07
+      }
+    ],
+    "insurance_distribution": [
+      {
+        "plan_code": "OHMED",
+        "weight": 0.35
+      },
+      {
+        "plan_code": "OHPRIV",
+        "weight": 0.4
+      },
+      {
+        "plan_code": "OHUNINS",
+        "weight": 0.25
+      }
+    ]
+  },
+  "facilities": [
+    {
+      "code": "CLECLINIC",
+      "name": "Cleveland Clinic Main Campus",
+      "health_system_code": "CLEVCLINIC_SYS",
+      "health_system_name": "Cleveland Clinic Health System",
+      "type": "hospital",
+      "city": "Cleveland",
+      "county_fips": "39035",
+      "address": "9500 Euclid Ave",
+      "zip": "44195",
+      "weight": 0.12,
+      "region": "NE Ohio"
+    },
+    {
+      "code": "OSUHC",
+      "name": "Ohio State University Wexner Medical Center",
+      "health_system_code": "OSU_SYS",
+      "health_system_name": "Ohio State University Health System",
+      "type": "hospital",
+      "city": "Columbus",
+      "county_fips": "39049",
+      "address": "410 W 10th Ave",
+      "zip": "43210",
+      "weight": 0.1,
+      "region": "Central Ohio"
+    },
+    {
+      "code": "UCHEALTH",
+      "name": "University of Cincinnati Medical Center",
+      "health_system_code": "UCHEALTH_SYS",
+      "health_system_name": "UC Health",
+      "type": "hospital",
+      "city": "Cincinnati",
+      "county_fips": "39061",
+      "address": "234 Goodman St",
+      "zip": "45219",
+      "weight": 0.08,
+      "region": "SW Ohio"
+    },
+    {
+      "code": "SUMMAHC",
+      "name": "Summa Health System - Akron City Hospital",
+      "health_system_code": "SUMMA_SYS",
+      "health_system_name": "Summa Health",
+      "type": "hospital",
+      "city": "Akron",
+      "county_fips": "39153",
+      "address": "525 E Market St",
+      "zip": "44304",
+      "weight": 0.07,
+      "region": "NE Ohio"
+    },
+    {
+      "code": "DAYTONHC",
+      "name": "Dayton Children's Hospital",
+      "health_system_code": "DAYTON_SYS",
+      "health_system_name": "Dayton Children's Hospital Network",
+      "type": "hospital",
+      "city": "Dayton",
+      "county_fips": "39113",
+      "address": "1 Children's Plaza",
+      "zip": "45404",
+      "weight": 0.06,
+      "max_patient_age": 17,
+      "region": "SW Ohio"
+    },
+    {
+      "code": "TOLEDOHC",
+      "name": "ProMedica Toledo Hospital",
+      "health_system_code": "PROMEDICA_SYS",
+      "health_system_name": "ProMedica Health System",
+      "type": "hospital",
+      "city": "Toledo",
+      "county_fips": "39095",
+      "address": "2142 N Cove Blvd",
+      "zip": "43606",
+      "weight": 0.05,
+      "region": "NW Ohio"
+    },
+    {
+      "code": "AKRONCH",
+      "name": "Akron Children's Hospital",
+      "health_system_code": "AKRON_SYS",
+      "health_system_name": "Akron Children's Hospital Network",
+      "type": "hospital",
+      "city": "Akron",
+      "county_fips": "39153",
+      "address": "1 Perkins Square",
+      "zip": "44308",
+      "weight": 0.04,
+      "max_patient_age": 17,
+      "region": "NE Ohio"
+    },
+    {
+      "code": "MERCYHC",
+      "name": "Mercy Health - St. Elizabeth Youngstown Hospital",
+      "health_system_code": "MERCY_SYS",
+      "health_system_name": "Mercy Health (Bon Secours Mercy Health)",
+      "type": "hospital",
+      "city": "Youngstown",
+      "county_fips": "39099",
+      "address": "1044 Belmont Ave",
+      "zip": "44501",
+      "weight": 0.03,
+      "region": "NE Ohio"
+    },
+    {
+      "code": "UHCLEVMAIN",
+      "name": "University Hospitals Cleveland Medical Center",
+      "health_system_code": "UH_SYS",
+      "health_system_name": "University Hospitals Health System",
+      "type": "hospital",
+      "city": "Cleveland",
+      "county_fips": "39035",
+      "address": "11100 Euclid Ave",
+      "zip": "44106",
+      "weight": 0.09,
+      "region": "NE Ohio"
+    },
+    {
+      "code": "METRHLT",
+      "name": "MetroHealth Medical Center",
+      "health_system_code": "METRO_SYS",
+      "health_system_name": "MetroHealth System",
+      "type": "hospital",
+      "city": "Cleveland",
+      "county_fips": "39035",
+      "address": "2500 MetroHealth Drive",
+      "zip": "44109",
+      "weight": 0.065,
+      "region": "NE Ohio"
+    },
+    {
+      "code": "HILLCRHC",
+      "name": "Hillcrest Hospital",
+      "health_system_code": "CLEVCLINIC_SYS",
+      "health_system_name": "Cleveland Clinic Health System",
+      "type": "community_hospital",
+      "city": "Mayfield Heights",
+      "county_fips": "39035",
+      "address": "6780 Mayfield Road",
+      "zip": "44124",
+      "weight": 0.022,
+      "region": "NE Ohio"
+    },
+    {
+      "code": "EUCLIDHS",
+      "name": "Euclid Hospital",
+      "health_system_code": "CLEVCLINIC_SYS",
+      "health_system_name": "Cleveland Clinic Health System",
+      "type": "community_hospital",
+      "city": "Euclid",
+      "county_fips": "39035",
+      "address": "18901 Lake Shore Blvd",
+      "zip": "44119",
+      "weight": 0.018,
+      "region": "NE Ohio"
+    },
+    {
+      "code": "LAKEHLT",
+      "name": "Lake Health Tripoint Medical Center",
+      "health_system_code": "UH_SYS",
+      "health_system_name": "University Hospitals Health System",
+      "type": "community_hospital",
+      "city": "Concord Township",
+      "county_fips": "39085",
+      "address": "7590 Auburn Road",
+      "zip": "44077",
+      "weight": 0.028,
+      "region": "NE Ohio"
+    },
+    {
+      "code": "UHELYRIA",
+      "name": "UH Elyria Medical Center",
+      "health_system_code": "UH_SYS",
+      "health_system_name": "University Hospitals Health System",
+      "type": "community_hospital",
+      "city": "Elyria",
+      "county_fips": "39093",
+      "address": "630 East River Street",
+      "zip": "44035",
+      "weight": 0.025,
+      "region": "NE Ohio"
+    },
+    {
+      "code": "STRNBRD",
+      "name": "St. Elizabeth Boardman Hospital",
+      "health_system_code": "MERCY_SYS",
+      "health_system_name": "Mercy Health (Bon Secours Mercy Health)",
+      "type": "community_hospital",
+      "city": "Boardman",
+      "county_fips": "39099",
+      "address": "8401 Market Street",
+      "zip": "44512",
+      "weight": 0.022,
+      "region": "NE Ohio"
+    },
+    {
+      "code": "TRUMBHC",
+      "name": "Trumbull Regional Medical Center",
+      "health_system_code": "STEWARD_SYS",
+      "health_system_name": "Steward Health Care",
+      "type": "community_hospital",
+      "city": "Warren",
+      "county_fips": "39155",
+      "address": "1350 East Market Street",
+      "zip": "44483",
+      "weight": 0.018,
+      "region": "NE Ohio"
+    },
+    {
+      "code": "AULTMHC",
+      "name": "Aultman Hospital",
+      "health_system_code": "AULTMAN_SYS",
+      "health_system_name": "Aultman Health Foundation",
+      "type": "community_hospital",
+      "city": "Canton",
+      "county_fips": "39151",
+      "address": "2600 Sixth Street SW",
+      "zip": "44710",
+      "weight": 0.025,
+      "region": "NE Ohio"
+    },
+    {
+      "code": "CLEFQHC",
+      "name": "Care Alliance Health Center",
+      "health_system_code": "CAREALL_SYS",
+      "health_system_name": "Care Alliance Health Center (FQHC)",
+      "type": "fqhc",
+      "city": "Cleveland",
+      "county_fips": "39035",
+      "address": "2030 Ontario Street",
+      "zip": "44115",
+      "weight": 0.012,
+      "region": "NE Ohio"
+    },
+    {
+      "code": "NEOFAM1",
+      "name": "Family Health Services of Lorain County",
+      "health_system_code": "NEOFAM_SYS",
+      "health_system_name": "Family Health Services",
+      "type": "family_practice",
+      "city": "Lorain",
+      "county_fips": "39093",
+      "address": "1001 Broadway Ave",
+      "zip": "44052",
+      "weight": 0.01,
+      "region": "NE Ohio"
+    },
+    {
+      "code": "GRANTOH",
+      "name": "OhioHealth Grant Medical Center",
+      "health_system_code": "OHIOHLTH_SYS",
+      "health_system_name": "OhioHealth",
+      "type": "hospital",
+      "city": "Columbus",
+      "county_fips": "39049",
+      "address": "111 South Grant Avenue",
+      "zip": "43215",
+      "weight": 0.07,
+      "region": "Central Ohio"
+    },
+    {
+      "code": "RIVSIDE",
+      "name": "OhioHealth Riverside Methodist Hospital",
+      "health_system_code": "OHIOHLTH_SYS",
+      "health_system_name": "OhioHealth",
+      "type": "hospital",
+      "city": "Columbus",
+      "county_fips": "39049",
+      "address": "3535 Olentangy River Road",
+      "zip": "43214",
+      "weight": 0.065,
+      "region": "Central Ohio"
+    },
+    {
+      "code": "MTCARML",
+      "name": "Mount Carmel St. Ann's",
+      "health_system_code": "MTCARML_SYS",
+      "health_system_name": "Mount Carmel Health System",
+      "type": "hospital",
+      "city": "Columbus",
+      "county_fips": "39049",
+      "address": "500 South Cleveland Avenue",
+      "zip": "43081",
+      "weight": 0.055,
+      "region": "Central Ohio"
+    },
+    {
+      "code": "NATNWID",
+      "name": "Nationwide Children's Hospital",
+      "health_system_code": "NATNWID_SYS",
+      "health_system_name": "Nationwide Children's Hospital",
+      "type": "hospital",
+      "city": "Columbus",
+      "county_fips": "39049",
+      "address": "700 Children's Drive",
+      "zip": "43205",
+      "weight": 0.04,
+      "max_patient_age": 21,
+      "region": "Central Ohio"
+    },
+    {
+      "code": "OHIODOC",
+      "name": "OhioHealth Doctors Hospital",
+      "health_system_code": "OHIOHLTH_SYS",
+      "health_system_name": "OhioHealth",
+      "type": "community_hospital",
+      "city": "Columbus",
+      "county_fips": "39049",
+      "address": "5100 West Broad Street",
+      "zip": "43228",
+      "weight": 0.028,
+      "region": "Central Ohio"
+    },
+    {
+      "code": "COLFQHC",
+      "name": "PrimaryOne Health",
+      "health_system_code": "PRIMONE_SYS",
+      "health_system_name": "PrimaryOne Health (FQHC)",
+      "type": "fqhc",
+      "city": "Columbus",
+      "county_fips": "39049",
+      "address": "1390 East Broad Street",
+      "zip": "43205",
+      "weight": 0.014,
+      "region": "Central Ohio"
+    },
+    {
+      "code": "LANCHOS",
+      "name": "Fairfield Medical Center",
+      "health_system_code": "FAIRMDC_SYS",
+      "health_system_name": "Fairfield Medical Center",
+      "type": "community_hospital",
+      "city": "Lancaster",
+      "county_fips": "39045",
+      "address": "401 North Ewing Street",
+      "zip": "43130",
+      "weight": 0.02,
+      "region": "Central Ohio"
+    },
+    {
+      "code": "NEWARKLH",
+      "name": "Licking Memorial Hospital",
+      "health_system_code": "LICKMEM_SYS",
+      "health_system_name": "Licking Memorial Health Systems",
+      "type": "community_hospital",
+      "city": "Newark",
+      "county_fips": "39089",
+      "address": "1320 West Main Street",
+      "zip": "43055",
+      "weight": 0.018,
+      "region": "Central Ohio"
+    },
+    {
+      "code": "TRIHLTH",
+      "name": "TriHealth Good Samaritan Hospital",
+      "health_system_code": "TRIHLTH_SYS",
+      "health_system_name": "TriHealth",
+      "type": "hospital",
+      "city": "Cincinnati",
+      "county_fips": "39061",
+      "address": "375 Dixmyth Avenue",
+      "zip": "45220",
+      "weight": 0.055,
+      "region": "SW Ohio"
+    },
+    {
+      "code": "BETHNRTH",
+      "name": "Bethesda North Hospital",
+      "health_system_code": "TRIHLTH_SYS",
+      "health_system_name": "TriHealth",
+      "type": "hospital",
+      "city": "Montgomery",
+      "county_fips": "39061",
+      "address": "10500 Montgomery Road",
+      "zip": "45242",
+      "weight": 0.045,
+      "region": "SW Ohio"
+    },
+    {
+      "code": "KTHNET",
+      "name": "Kettering Health Main Campus",
+      "health_system_code": "KTHNET_SYS",
+      "health_system_name": "Kettering Health",
+      "type": "hospital",
+      "city": "Kettering",
+      "county_fips": "39113",
+      "address": "3535 Southern Blvd",
+      "zip": "45429",
+      "weight": 0.05,
+      "region": "SW Ohio"
+    },
+    {
+      "code": "MIAVLHS",
+      "name": "Miami Valley Hospital",
+      "health_system_code": "PREMIER_SYS",
+      "health_system_name": "Premier Health",
+      "type": "hospital",
+      "city": "Dayton",
+      "county_fips": "39113",
+      "address": "1 Wyoming Street",
+      "zip": "45409",
+      "weight": 0.045,
+      "region": "SW Ohio"
+    },
+    {
+      "code": "SPFLDMC",
+      "name": "Springfield Regional Medical Center",
+      "health_system_code": "MERCY_SYS",
+      "health_system_name": "Mercy Health (Bon Secours Mercy Health)",
+      "type": "community_hospital",
+      "city": "Springfield",
+      "county_fips": "39023",
+      "address": "100 Medical Center Drive",
+      "zip": "45504",
+      "weight": 0.022,
+      "region": "SW Ohio"
+    },
+    {
+      "code": "HAMILTOH",
+      "name": "Fort Hamilton Hospital",
+      "health_system_code": "PREMIER_SYS",
+      "health_system_name": "Premier Health",
+      "type": "community_hospital",
+      "city": "Hamilton",
+      "county_fips": "39017",
+      "address": "630 Eaton Avenue",
+      "zip": "45013",
+      "weight": 0.02,
+      "region": "SW Ohio"
+    },
+    {
+      "code": "CINCIFD",
+      "name": "Cincinnati Health Department - Clement Health Center",
+      "health_system_code": "CINCIHD_SYS",
+      "health_system_name": "Cincinnati Health Department (FQHC)",
+      "type": "fqhc",
+      "city": "Cincinnati",
+      "county_fips": "39061",
+      "address": "3101 Burnet Avenue",
+      "zip": "45229",
+      "weight": 0.012,
+      "region": "SW Ohio"
+    },
+    {
+      "code": "SWOFAM1",
+      "name": "Dayton Family Health Center",
+      "health_system_code": "DAYTONFC_SYS",
+      "health_system_name": "Dayton Family Health Center",
+      "type": "family_practice",
+      "city": "Dayton",
+      "county_fips": "39113",
+      "address": "2611 Wayne Avenue",
+      "zip": "45420",
+      "weight": 0.01,
+      "region": "SW Ohio"
+    },
+    {
+      "code": "PROMSTL",
+      "name": "ProMedica St. Luke's Hospital",
+      "health_system_code": "PROMEDICA_SYS",
+      "health_system_name": "ProMedica Health System",
+      "type": "community_hospital",
+      "city": "Maumee",
+      "county_fips": "39173",
+      "address": "5901 Monclova Road",
+      "zip": "43537",
+      "weight": 0.028,
+      "region": "NW Ohio"
+    },
+    {
+      "code": "BLANCVL",
+      "name": "Blanchard Valley Regional Health Center",
+      "health_system_code": "BVHS_SYS",
+      "health_system_name": "Blanchard Valley Health System",
+      "type": "community_hospital",
+      "city": "Findlay",
+      "county_fips": "39063",
+      "address": "145 West Wallace Street",
+      "zip": "45840",
+      "weight": 0.022,
+      "region": "NW Ohio"
+    },
+    {
+      "code": "LIMALML",
+      "name": "Lima Memorial Health System",
+      "health_system_code": "LIMAMEM_SYS",
+      "health_system_name": "Lima Memorial Health System",
+      "type": "community_hospital",
+      "city": "Lima",
+      "county_fips": "39003",
+      "address": "1001 Bellefontaine Avenue",
+      "zip": "45804",
+      "weight": 0.02,
+      "region": "NW Ohio"
+    },
+    {
+      "code": "MERCLIMA",
+      "name": "Mercy Health St. Rita's Medical Center",
+      "health_system_code": "MERCY_SYS",
+      "health_system_name": "Mercy Health (Bon Secours Mercy Health)",
+      "type": "community_hospital",
+      "city": "Lima",
+      "county_fips": "39003",
+      "address": "730 West Market Street",
+      "zip": "45801",
+      "weight": 0.018,
+      "region": "NW Ohio"
+    },
+    {
+      "code": "NWOFQHC",
+      "name": "CHP - The Center for Health and Prevention",
+      "health_system_code": "CHPNWO_SYS",
+      "health_system_name": "CHP Northwest Ohio (FQHC)",
+      "type": "fqhc",
+      "city": "Toledo",
+      "county_fips": "39095",
+      "address": "600 Jefferson Avenue",
+      "zip": "43604",
+      "weight": 0.01,
+      "region": "NW Ohio"
+    },
+    {
+      "code": "ADENAHC",
+      "name": "Adena Regional Medical Center",
+      "health_system_code": "ADENA_SYS",
+      "health_system_name": "Adena Health System",
+      "type": "hospital",
+      "city": "Chillicothe",
+      "county_fips": "39141",
+      "address": "272 Hospital Road",
+      "zip": "45601",
+      "weight": 0.025,
+      "region": "SE Ohio"
+    },
+    {
+      "code": "ZANESHC",
+      "name": "Genesis Healthcare System",
+      "health_system_code": "GENESIS_SYS",
+      "health_system_name": "Genesis Healthcare System",
+      "type": "community_hospital",
+      "city": "Zanesville",
+      "county_fips": "39119",
+      "address": "2951 Maple Avenue",
+      "zip": "43701",
+      "weight": 0.02,
+      "region": "SE Ohio"
+    },
+    {
+      "code": "OBLENHC",
+      "name": "OhioHealth O'Bleness Hospital",
+      "health_system_code": "OHIOHLTH_SYS",
+      "health_system_name": "OhioHealth",
+      "type": "community_hospital",
+      "city": "Athens",
+      "county_fips": "39009",
+      "address": "55 Hospital Drive",
+      "zip": "45701",
+      "weight": 0.018,
+      "region": "SE Ohio"
+    },
+    {
+      "code": "HOLZERH",
+      "name": "Holzer Medical Center",
+      "health_system_code": "HOLZER_SYS",
+      "health_system_name": "Holzer Health System",
+      "type": "community_hospital",
+      "city": "Gallipolis",
+      "county_fips": "39053",
+      "address": "100 Jackson Pike",
+      "zip": "45631",
+      "weight": 0.015,
+      "region": "SE Ohio"
+    },
+    {
+      "code": "LAWRNCH",
+      "name": "SOMC - Southern Ohio Medical Center",
+      "health_system_code": "SOMC_SYS",
+      "health_system_name": "Southern Ohio Medical Center",
+      "type": "community_hospital",
+      "city": "Portsmouth",
+      "county_fips": "39145",
+      "address": "1805 27th Street",
+      "zip": "45662",
+      "weight": 0.012,
+      "region": "SE Ohio"
+    },
+    {
+      "code": "SEOHFQHC",
+      "name": "Muskingum Valley Health Centers",
+      "health_system_code": "MVHC_SYS",
+      "health_system_name": "Muskingum Valley Health Centers (FQHC)",
+      "type": "fqhc",
+      "city": "Coshocton",
+      "county_fips": "39031",
+      "address": "825 Walnut Street",
+      "zip": "43812",
+      "weight": 0.01,
+      "region": "SE Ohio"
+    }
+  ],
+  "providers": [
+    {
+      "code": "DR001",
+      "name": "Dr. Jane Smith",
+      "specialty": "Internal Medicine",
+      "facility_code": "CLECLINIC"
+    },
+    {
+      "code": "DR009",
+      "name": "Dr. Marcus Rivera",
+      "specialty": "Cardiology",
+      "facility_code": "CLECLINIC"
+    },
+    {
+      "code": "DR010",
+      "name": "Dr. Patricia Nguyen",
+      "specialty": "Family Medicine",
+      "facility_code": "CLECLINIC"
+    },
+    {
+      "code": "DR002",
+      "name": "Dr. Raymond Kowalski",
+      "specialty": "Cardiology",
+      "facility_code": "OSUHC"
+    },
+    {
+      "code": "DR011",
+      "name": "Dr. Aisha Washington",
+      "specialty": "Internal Medicine",
+      "facility_code": "OSUHC"
+    },
+    {
+      "code": "DR012",
+      "name": "Dr. Thomas Brennan",
+      "specialty": "Pulmonology",
+      "facility_code": "OSUHC"
+    },
+    {
+      "code": "DR003",
+      "name": "Dr. Emily Johnson",
+      "specialty": "Internal Medicine",
+      "facility_code": "UCHEALTH"
+    },
+    {
+      "code": "DR013",
+      "name": "Dr. Carlos Mendoza",
+      "specialty": "Cardiology",
+      "facility_code": "UCHEALTH"
+    },
+    {
+      "code": "DR014",
+      "name": "Dr. Sandra Pierce",
+      "specialty": "Family Medicine",
+      "facility_code": "UCHEALTH"
+    },
+    {
+      "code": "DR004",
+      "name": "Dr. Michael Brown",
+      "specialty": "Internal Medicine",
+      "facility_code": "SUMMAHC"
+    },
+    {
+      "code": "DR015",
+      "name": "Dr. Yuki Tanaka",
+      "specialty": "Pulmonology",
+      "facility_code": "SUMMAHC"
+    },
+    {
+      "code": "DR016",
+      "name": "Dr. Robert Okafor",
+      "specialty": "Family Medicine",
+      "facility_code": "SUMMAHC"
+    },
+    {
+      "code": "DR005",
+      "name": "Dr. Sarah Davis",
+      "specialty": "Pediatric Endocrinology",
+      "facility_code": "DAYTONHC"
+    },
+    {
+      "code": "DR017",
+      "name": "Dr. Christine Hall",
+      "specialty": "Pediatrics",
+      "facility_code": "DAYTONHC"
+    },
+    {
+      "code": "DR006",
+      "name": "Dr. William Wilson",
+      "specialty": "Internal Medicine",
+      "facility_code": "TOLEDOHC"
+    },
+    {
+      "code": "DR018",
+      "name": "Dr. Keisha Thornton",
+      "specialty": "Cardiology",
+      "facility_code": "TOLEDOHC"
+    },
+    {
+      "code": "DR019",
+      "name": "Dr. James O'Brien",
+      "specialty": "Family Medicine",
+      "facility_code": "TOLEDOHC"
+    },
+    {
+      "code": "DR007",
+      "name": "Dr. Jessica Martinez",
+      "specialty": "Pediatric Neurology",
+      "facility_code": "AKRONCH"
+    },
+    {
+      "code": "DR020",
+      "name": "Dr. Eli Goldstein",
+      "specialty": "Pediatrics",
+      "facility_code": "AKRONCH"
+    },
+    {
+      "code": "DR008",
+      "name": "Dr. David Lee",
+      "specialty": "Oncology",
+      "facility_code": "MERCYHC"
+    },
+    {
+      "code": "DR021",
+      "name": "Dr. Monique Adams",
+      "specialty": "Internal Medicine",
+      "facility_code": "MERCYHC"
+    },
+    {
+      "code": "DR022",
+      "name": "Dr. Paul Gutierrez",
+      "specialty": "Cardiology",
+      "facility_code": "MERCYHC"
+    },
+    {
+      "code": "DR023",
+      "name": "Dr. Patricia Nguyen",
+      "specialty": "Internal Medicine",
+      "facility_code": "UHCLEVMAIN"
+    },
+    {
+      "code": "DR024",
+      "name": "Dr. James Kowalczyk",
+      "specialty": "Cardiology",
+      "facility_code": "UHCLEVMAIN"
+    },
+    {
+      "code": "DR025",
+      "name": "Dr. Fatima Al-Hassan",
+      "specialty": "Endocrinology",
+      "facility_code": "UHCLEVMAIN"
+    },
+    {
+      "code": "DR026",
+      "name": "Dr. Carlos Rivera",
+      "specialty": "Family Medicine",
+      "facility_code": "METRHLT"
+    },
+    {
+      "code": "DR027",
+      "name": "Dr. Kesha Williams",
+      "specialty": "Internal Medicine",
+      "facility_code": "METRHLT"
+    },
+    {
+      "code": "DR028",
+      "name": "Dr. Igor Petrov",
+      "specialty": "Nephrology",
+      "facility_code": "METRHLT"
+    },
+    {
+      "code": "DR029",
+      "name": "Dr. Linda Park",
+      "specialty": "Internal Medicine",
+      "facility_code": "HILLCRHC"
+    },
+    {
+      "code": "DR030",
+      "name": "Dr. Michael Brennan",
+      "specialty": "Family Medicine",
+      "facility_code": "HILLCRHC"
+    },
+    {
+      "code": "DR031",
+      "name": "Dr. Yolanda Torres",
+      "specialty": "Internal Medicine",
+      "facility_code": "EUCLIDHS"
+    },
+    {
+      "code": "DR032",
+      "name": "Dr. Kenneth Marsh",
+      "specialty": "Family Medicine",
+      "facility_code": "EUCLIDHS"
+    },
+    {
+      "code": "DR033",
+      "name": "Dr. Rebecca Simmons",
+      "specialty": "Internal Medicine",
+      "facility_code": "LAKEHLT"
+    },
+    {
+      "code": "DR034",
+      "name": "Dr. Omar Khalil",
+      "specialty": "Family Medicine",
+      "facility_code": "LAKEHLT"
+    },
+    {
+      "code": "DR035",
+      "name": "Dr. Svetlana Volkov",
+      "specialty": "Internal Medicine",
+      "facility_code": "UHELYRIA"
+    },
+    {
+      "code": "DR036",
+      "name": "Dr. Dennis Achebe",
+      "specialty": "Family Medicine",
+      "facility_code": "UHELYRIA"
+    },
+    {
+      "code": "DR037",
+      "name": "Dr. Nancy Fitzgerald",
+      "specialty": "Internal Medicine",
+      "facility_code": "STRNBRD"
+    },
+    {
+      "code": "DR038",
+      "name": "Dr. Rashid Okonkwo",
+      "specialty": "Family Medicine",
+      "facility_code": "STRNBRD"
+    },
+    {
+      "code": "DR039",
+      "name": "Dr. Helen Ziegler",
+      "specialty": "Internal Medicine",
+      "facility_code": "TRUMBHC"
+    },
+    {
+      "code": "DR040",
+      "name": "Dr. Marcus Webb",
+      "specialty": "Family Medicine",
+      "facility_code": "TRUMBHC"
+    },
+    {
+      "code": "DR041",
+      "name": "Dr. Joan Carrington",
+      "specialty": "Internal Medicine",
+      "facility_code": "AULTMHC"
+    },
+    {
+      "code": "DR042",
+      "name": "Dr. Phillip Adeyemi",
+      "specialty": "Family Medicine",
+      "facility_code": "AULTMHC"
+    },
+    {
+      "code": "DR043",
+      "name": "Dr. Maria Santos",
+      "specialty": "Family Medicine",
+      "facility_code": "CLEFQHC"
+    },
+    {
+      "code": "DR044",
+      "name": "Dr. Jerome Butler",
+      "specialty": "Internal Medicine",
+      "facility_code": "CLEFQHC"
+    },
+    {
+      "code": "DR045",
+      "name": "Dr. Sarah Kowalski",
+      "specialty": "Family Medicine",
+      "facility_code": "NEOFAM1"
+    },
+    {
+      "code": "DR046",
+      "name": "Dr. Andrew Sullivan",
+      "specialty": "Cardiology",
+      "facility_code": "GRANTOH"
+    },
+    {
+      "code": "DR047",
+      "name": "Dr. Tina Nakamura",
+      "specialty": "Internal Medicine",
+      "facility_code": "GRANTOH"
+    },
+    {
+      "code": "DR048",
+      "name": "Dr. Victor Oduya",
+      "specialty": "Endocrinology",
+      "facility_code": "GRANTOH"
+    },
+    {
+      "code": "DR049",
+      "name": "Dr. Christine Delacroix",
+      "specialty": "Internal Medicine",
+      "facility_code": "RIVSIDE"
+    },
+    {
+      "code": "DR050",
+      "name": "Dr. Samuel Okafor",
+      "specialty": "Family Medicine",
+      "facility_code": "RIVSIDE"
+    },
+    {
+      "code": "DR051",
+      "name": "Dr. Beth Hartmann",
+      "specialty": "Cardiology",
+      "facility_code": "RIVSIDE"
+    },
+    {
+      "code": "DR052",
+      "name": "Dr. Ricardo Espinoza",
+      "specialty": "Internal Medicine",
+      "facility_code": "MTCARML"
+    },
+    {
+      "code": "DR053",
+      "name": "Dr. Donna Claypool",
+      "specialty": "Family Medicine",
+      "facility_code": "MTCARML"
+    },
+    {
+      "code": "DR054",
+      "name": "Dr. Babatunde Adewale",
+      "specialty": "Hospitalist",
+      "facility_code": "MTCARML"
+    },
+    {
+      "code": "DR055",
+      "name": "Dr. Nicole Huang",
+      "specialty": "Pediatric Endocrinology",
+      "facility_code": "NATNWID"
+    },
+    {
+      "code": "DR056",
+      "name": "Dr. William Rios",
+      "specialty": "Pediatrics",
+      "facility_code": "NATNWID"
+    },
+    {
+      "code": "DR057",
+      "name": "Dr. Angela Freeman",
+      "specialty": "Internal Medicine",
+      "facility_code": "OHIODOC"
+    },
+    {
+      "code": "DR058",
+      "name": "Dr. Patrick Nyamweya",
+      "specialty": "Family Medicine",
+      "facility_code": "OHIODOC"
+    },
+    {
+      "code": "DR059",
+      "name": "Dr. Rosa Gutierrez",
+      "specialty": "Family Medicine",
+      "facility_code": "COLFQHC"
+    },
+    {
+      "code": "DR060",
+      "name": "Dr. David Anand",
+      "specialty": "Internal Medicine",
+      "facility_code": "COLFQHC"
+    },
+    {
+      "code": "DR061",
+      "name": "Dr. Constance MacPherson",
+      "specialty": "Family Medicine",
+      "facility_code": "LANCHOS"
+    },
+    {
+      "code": "DR062",
+      "name": "Dr. Emeka Eze",
+      "specialty": "Internal Medicine",
+      "facility_code": "LANCHOS"
+    },
+    {
+      "code": "DR063",
+      "name": "Dr. Sandra Beaumont",
+      "specialty": "Family Medicine",
+      "facility_code": "NEWARKLH"
+    },
+    {
+      "code": "DR064",
+      "name": "Dr. Frank Anyanwu",
+      "specialty": "Internal Medicine",
+      "facility_code": "NEWARKLH"
+    },
+    {
+      "code": "DR065",
+      "name": "Dr. Laura Whitfield",
+      "specialty": "Cardiology",
+      "facility_code": "TRIHLTH"
+    },
+    {
+      "code": "DR066",
+      "name": "Dr. Kwame Asante",
+      "specialty": "Internal Medicine",
+      "facility_code": "TRIHLTH"
+    },
+    {
+      "code": "DR067",
+      "name": "Dr. Diana Bergmann",
+      "specialty": "Endocrinology",
+      "facility_code": "TRIHLTH"
+    },
+    {
+      "code": "DR068",
+      "name": "Dr. Steven Chukwu",
+      "specialty": "Internal Medicine",
+      "facility_code": "BETHNRTH"
+    },
+    {
+      "code": "DR069",
+      "name": "Dr. Jennifer Malone",
+      "specialty": "Family Medicine",
+      "facility_code": "BETHNRTH"
+    },
+    {
+      "code": "DR070",
+      "name": "Dr. Raj Krishnamurthy",
+      "specialty": "Hospitalist",
+      "facility_code": "BETHNRTH"
+    },
+    {
+      "code": "DR071",
+      "name": "Dr. Olivia Schreiber",
+      "specialty": "Internal Medicine",
+      "facility_code": "KTHNET"
+    },
+    {
+      "code": "DR072",
+      "name": "Dr. Maurice Benson",
+      "specialty": "Family Medicine",
+      "facility_code": "KTHNET"
+    },
+    {
+      "code": "DR073",
+      "name": "Dr. Amy Watanabe",
+      "specialty": "Cardiology",
+      "facility_code": "KTHNET"
+    },
+    {
+      "code": "DR074",
+      "name": "Dr. Charles Mbeki",
+      "specialty": "Internal Medicine",
+      "facility_code": "MIAVLHS"
+    },
+    {
+      "code": "DR075",
+      "name": "Dr. Allison Drake",
+      "specialty": "Family Medicine",
+      "facility_code": "MIAVLHS"
+    },
+    {
+      "code": "DR076",
+      "name": "Dr. Tobias Hoffmann",
+      "specialty": "Hospitalist",
+      "facility_code": "MIAVLHS"
+    },
+    {
+      "code": "DR077",
+      "name": "Dr. Pamela Owens",
+      "specialty": "Family Medicine",
+      "facility_code": "SPFLDMC"
+    },
+    {
+      "code": "DR078",
+      "name": "Dr. Hassan Musa",
+      "specialty": "Internal Medicine",
+      "facility_code": "SPFLDMC"
+    },
+    {
+      "code": "DR079",
+      "name": "Dr. Beverly Crandall",
+      "specialty": "Family Medicine",
+      "facility_code": "HAMILTOH"
+    },
+    {
+      "code": "DR080",
+      "name": "Dr. Nnamdi Obi",
+      "specialty": "Internal Medicine",
+      "facility_code": "HAMILTOH"
+    },
+    {
+      "code": "DR081",
+      "name": "Dr. Veronica Salinas",
+      "specialty": "Family Medicine",
+      "facility_code": "CINCIFD"
+    },
+    {
+      "code": "DR082",
+      "name": "Dr. Terrence Boateng",
+      "specialty": "Internal Medicine",
+      "facility_code": "CINCIFD"
+    },
+    {
+      "code": "DR083",
+      "name": "Dr. Wendy Carmichael",
+      "specialty": "Family Medicine",
+      "facility_code": "SWOFAM1"
+    },
+    {
+      "code": "DR084",
+      "name": "Dr. Gregory Papadopoulos",
+      "specialty": "Internal Medicine",
+      "facility_code": "PROMSTL"
+    },
+    {
+      "code": "DR085",
+      "name": "Dr. Suzanne Mbatha",
+      "specialty": "Family Medicine",
+      "facility_code": "PROMSTL"
+    },
+    {
+      "code": "DR086",
+      "name": "Dr. Harold Greenfield",
+      "specialty": "Family Medicine",
+      "facility_code": "BLANCVL"
+    },
+    {
+      "code": "DR087",
+      "name": "Dr. Ifunaya Nwosu",
+      "specialty": "Internal Medicine",
+      "facility_code": "BLANCVL"
+    },
+    {
+      "code": "DR088",
+      "name": "Dr. Kathleen Strickland",
+      "specialty": "Family Medicine",
+      "facility_code": "LIMALML"
+    },
+    {
+      "code": "DR089",
+      "name": "Dr. Emmanuel Abara",
+      "specialty": "Internal Medicine",
+      "facility_code": "LIMALML"
+    },
+    {
+      "code": "DR090",
+      "name": "Dr. Florence Nzeka",
+      "specialty": "Internal Medicine",
+      "facility_code": "MERCLIMA"
+    },
+    {
+      "code": "DR091",
+      "name": "Dr. Brian Kowalczyk",
+      "specialty": "Family Medicine",
+      "facility_code": "MERCLIMA"
+    },
+    {
+      "code": "DR092",
+      "name": "Dr. Amara Diallo",
+      "specialty": "Family Medicine",
+      "facility_code": "NWOFQHC"
+    },
+    {
+      "code": "DR093",
+      "name": "Dr. Calvin Hutchins",
+      "specialty": "Internal Medicine",
+      "facility_code": "ADENAHC"
+    },
+    {
+      "code": "DR094",
+      "name": "Dr. Miriam Osei",
+      "specialty": "Family Medicine",
+      "facility_code": "ADENAHC"
+    },
+    {
+      "code": "DR095",
+      "name": "Dr. Leonard Pryor",
+      "specialty": "Hospitalist",
+      "facility_code": "ADENAHC"
+    },
+    {
+      "code": "DR096",
+      "name": "Dr. Agnes Kamara",
+      "specialty": "Internal Medicine",
+      "facility_code": "ZANESHC"
+    },
+    {
+      "code": "DR097",
+      "name": "Dr. Timothy Brewster",
+      "specialty": "Family Medicine",
+      "facility_code": "ZANESHC"
+    },
+    {
+      "code": "DR098",
+      "name": "Dr. Leila Mousavi",
+      "specialty": "Family Medicine",
+      "facility_code": "OBLENHC"
+    },
+    {
+      "code": "DR099",
+      "name": "Dr. George Abubakar",
+      "specialty": "Internal Medicine",
+      "facility_code": "OBLENHC"
+    },
+    {
+      "code": "DR100",
+      "name": "Dr. Ruth Eberhart",
+      "specialty": "Internal Medicine",
+      "facility_code": "HOLZERH"
+    },
+    {
+      "code": "DR101",
+      "name": "Dr. Samuel Dieterle",
+      "specialty": "Family Medicine",
+      "facility_code": "HOLZERH"
+    },
+    {
+      "code": "DR102",
+      "name": "Dr. Christine Nwokem",
+      "specialty": "Family Medicine",
+      "facility_code": "LAWRNCH"
+    },
+    {
+      "code": "DR103",
+      "name": "Dr. Arthur Schaefer",
+      "specialty": "Internal Medicine",
+      "facility_code": "LAWRNCH"
+    },
+    {
+      "code": "DR104",
+      "name": "Dr. Gloria Mensah",
+      "specialty": "Family Medicine",
+      "facility_code": "SEOHFQHC"
+    }
+  ],
+  "insurance_plans": [
+    {
+      "code": "OHMED",
+      "name": "Ohio Medicaid",
+      "coding_standard": "QD_HealthPlanCodeList",
+      "type": "Medicaid",
+      "plan_code": "OH-MED-PLAN",
+      "plan_name": "Ohio Medicaid Managed Care Plan",
+      "group_name": "State of Ohio Medicaid Program",
+      "priority": 1
+    },
+    {
+      "code": "OHPRIV",
+      "name": "Ohio Private Insurance",
+      "coding_standard": "QD_HealthPlanCodeList",
+      "type": "Private",
+      "plan_code": "OH-PRIV-PLAN",
+      "plan_name": "Ohio Private Health Plan",
+      "group_name": "Ohio Private Insurance Group",
+      "priority": 2
+    },
+    {
+      "code": "OHUNINS",
+      "name": "Ohio Uninsured",
+      "coding_standard": "QD_HealthPlanCodeList",
+      "type": "Uninsured",
+      "plan_code": "OH-UNINS-PLAN",
+      "plan_name": "Ohio Uninsured Plan",
+      "group_name": "Ohio Uninsured Group",
+      "priority": 3
+    }
+  ],
+  "sending_facility": "CLECLINIC",
+  "multi_facility": {
+    "enabled": true,
+    "_comment_distribution": "Proportion of patients using 1, 2, or 3+ distinct facilities. Must sum to 1.0.",
+    "distribution": {
+      "one_facility_pct": 0.55,
+      "two_facility_pct": 0.3,
+      "three_plus_facility_pct": 0.15,
+      "max_facilities": 3
+    },
+    "_comment_outside_prob": "Per encounter-type probability of the encounter occurring outside the patient's primary facility.",
+    "encounter_type_outside_prob": {
+      "O": 0.08,
+      "E": 0.4,
+      "I": 0.2
+    },
+    "_comment_geo_affinity": "When an outside-facility encounter is generated, these weights control how strongly geographic proximity is preferred.",
+    "geographic_affinity": {
+      "same_region_weight": 0.7,
+      "adjacent_region_weight": 0.2,
+      "other_region_weight": 0.1
+    },
+    "_comment_adjacent_regions": "Regions considered geographically adjacent for facility-selection affinity weighting.",
+    "adjacent_regions": {
+      "NE Ohio": [
+        "Central Ohio",
+        "NW Ohio"
+      ],
+      "Central Ohio": [
+        "NE Ohio",
+        "SW Ohio",
+        "SE Ohio"
+      ],
+      "SW Ohio": [
+        "Central Ohio",
+        "SE Ohio"
+      ],
+      "NW Ohio": [
+        "NE Ohio"
+      ],
+      "SE Ohio": [
+        "Central Ohio",
+        "SW Ohio"
+      ]
+    },
+    "_comment_ed_ip_lock": "ED\u2192inpatient admission always stays at the same facility as the admitting ED (MF-008). Set false only for explicit interfacility-transfer modeling.",
+    "ed_ip_same_facility_lock": true,
+    "_comment_mrn_prefix": "Each facility MRN is prefixed with the facility code to make cross-facility collisions structurally impossible.",
+    "facility_mrn_prefix": true
+  },
+  "name_pools": {
+    "male_first": {
+      "White": [
+        "James",
+        "John",
+        "Robert",
+        "Michael",
+        "William",
+        "David",
+        "Richard",
+        "Joseph",
+        "Thomas",
+        "Charles",
+        "Christopher",
+        "Daniel",
+        "Matthew",
+        "Anthony",
+        "Mark",
+        "Donald",
+        "Steven",
+        "Paul",
+        "Andrew",
+        "Joshua"
+      ],
+      "Black": [
+        "Marcus",
+        "Darius",
+        "Andre",
+        "Jamal",
+        "Tyrone",
+        "Malik",
+        "DeShawn",
+        "Trevon",
+        "Jerome",
+        "Lamar",
+        "Terrence",
+        "Darnell",
+        "Demetrius",
+        "Maurice",
+        "Jalen",
+        "Kareem",
+        "Rashad",
+        "Marquis",
+        "Tyriek",
+        "Javon"
+      ],
+      "Hispanic": [
+        "Carlos",
+        "Miguel",
+        "Jose",
+        "Juan",
+        "Luis",
+        "Jorge",
+        "Pedro",
+        "Rafael",
+        "Fernando",
+        "Alejandro",
+        "Diego",
+        "Manuel",
+        "Ricardo",
+        "Hector",
+        "Francisco",
+        "Mario",
+        "Raul",
+        "Santiago",
+        "Pablo",
+        "Antonio"
+      ],
+      "Asian": [
+        "Kevin",
+        "Daniel",
+        "Wei",
+        "Hiroshi",
+        "Jin",
+        "Min-Jun",
+        "Sung",
+        "Yong",
+        "Kenji",
+        "Takeshi",
+        "Hao",
+        "An",
+        "Jiro",
+        "Kenta",
+        "Ryu",
+        "Yuto",
+        "Kai",
+        "Jun",
+        "Liang",
+        "Zhi"
+      ],
+      "Native American": [
+        "Joseph",
+        "Raymond",
+        "Thomas",
+        "Elijah",
+        "Gabriel",
+        "Isaiah",
+        "Logan",
+        "Hunter",
+        "Dakota",
+        "Cody",
+        "Chase",
+        "Skyler",
+        "Tristan",
+        "Wyatt",
+        "Levi"
+      ],
+      "Other": [
+        "Alex",
+        "Jordan",
+        "Chris",
+        "Taylor",
+        "Morgan",
+        "Casey",
+        "Riley",
+        "Cameron",
+        "Dylan",
+        "Blake",
+        "Avery",
+        "Parker",
+        "Reese",
+        "Quinn",
+        "Hayden"
+      ]
+    },
+    "female_first": {
+      "White": [
+        "Mary",
+        "Patricia",
+        "Jennifer",
+        "Linda",
+        "Elizabeth",
+        "Barbara",
+        "Susan",
+        "Jessica",
+        "Sarah",
+        "Karen",
+        "Nancy",
+        "Lisa",
+        "Margaret",
+        "Betty",
+        "Sandra",
+        "Ashley",
+        "Kimberly",
+        "Emily",
+        "Donna",
+        "Michelle"
+      ],
+      "Black": [
+        "Aaliyah",
+        "Keisha",
+        "Tamara",
+        "Imani",
+        "Jasmine",
+        "Nia",
+        "Tiana",
+        "Shanice",
+        "Latoya",
+        "Monique",
+        "Ebony",
+        "Kiara",
+        "Tasha",
+        "Brianna",
+        "Chantel",
+        "Shayla",
+        "Zaria",
+        "Destiny",
+        "Aisha",
+        "Kendra"
+      ],
+      "Hispanic": [
+        "Maria",
+        "Sofia",
+        "Isabella",
+        "Ana",
+        "Gabriela",
+        "Valeria",
+        "Camila",
+        "Lucia",
+        "Elena",
+        "Carla",
+        "Paula",
+        "Mariana",
+        "Rosa",
+        "Adriana",
+        "Natalia",
+        "Diana",
+        "Laura",
+        "Andrea",
+        "Claudia",
+        "Veronica"
+      ],
+      "Asian": [
+        "Mei",
+        "Yuki",
+        "Ji-Young",
+        "Hana",
+        "Sakura",
+        "Min",
+        "Yuna",
+        "Aya",
+        "Rina",
+        "Suki",
+        "Linh",
+        "Jia",
+        "Xiao",
+        "Ying",
+        "Ming",
+        "Hui",
+        "Chun",
+        "Fang",
+        "Ling",
+        "Ting"
+      ],
+      "Native American": [
+        "Sarah",
+        "Rebecca",
+        "Angela",
+        "Cheyenne",
+        "Dakota",
+        "Shania",
+        "Tala",
+        "Aiyana",
+        "Kaya",
+        "Nina",
+        "Zuni",
+        "Mika",
+        "Tala",
+        "Asha",
+        "Kiona"
+      ],
+      "Other": [
+        "Taylor",
+        "Morgan",
+        "Quinn",
+        "Avery",
+        "Jordan",
+        "Riley",
+        "Peyton",
+        "Casey",
+        "Skylar",
+        "Reagan",
+        "Harper",
+        "Sydney",
+        "Rowan",
+        "Emerson",
+        "Finley"
+      ]
+    },
+    "last_names": {
+      "White": [
+        "Smith",
+        "Johnson",
+        "Williams",
+        "Brown",
+        "Jones",
+        "Miller",
+        "Davis",
+        "Garcia",
+        "Rodriguez",
+        "Wilson",
+        "Martinez",
+        "Anderson",
+        "Taylor",
+        "Thomas",
+        "Hernandez",
+        "Moore",
+        "Martin",
+        "Jackson",
+        "Thompson",
+        "White",
+        "Lopez",
+        "Lee",
+        "Gonzalez",
+        "Harris",
+        "Clark"
+      ],
+      "Black": [
+        "Washington",
+        "Jackson",
+        "Robinson",
+        "Harris",
+        "Davis",
+        "Johnson",
+        "Brown",
+        "Jones",
+        "Williams",
+        "Wilson",
+        "Moore",
+        "Taylor",
+        "Anderson",
+        "Thomas",
+        "White",
+        "Lewis",
+        "Walker",
+        "Hall",
+        "Allen",
+        "Young",
+        "King",
+        "Wright",
+        "Scott",
+        "Green",
+        "Adams"
+      ],
+      "Hispanic": [
+        "Garcia",
+        "Martinez",
+        "Rodriguez",
+        "Lopez",
+        "Hernandez",
+        "Gonzalez",
+        "Perez",
+        "Sanchez",
+        "Ramirez",
+        "Torres",
+        "Flores",
+        "Rivera",
+        "Gomez",
+        "Diaz",
+        "Reyes",
+        "Cruz",
+        "Morales",
+        "Ortiz",
+        "Gutierrez",
+        "Chavez",
+        "Ramos",
+        "Santiago",
+        "Vargas",
+        "Castillo",
+        "Mendoza"
+      ],
+      "Asian": [
+        "Kim",
+        "Chen",
+        "Nguyen",
+        "Wong",
+        "Lee",
+        "Zhang",
+        "Liu",
+        "Wang",
+        "Yang",
+        "Huang",
+        "Lin",
+        "Zhao",
+        "Xu",
+        "Li",
+        "Choi",
+        "Park",
+        "Tanaka",
+        "Ito",
+        "Suzuki",
+        "Yamamoto",
+        "Kobayashi",
+        "Matsumoto",
+        "Sharma",
+        "Patel",
+        "Gupta"
+      ],
+      "Native American": [
+        "Runningwater",
+        "Littlefeather",
+        "Bearcloud",
+        "Redhawk",
+        "Swiftwater",
+        "Thunderhawk",
+        "Whitefeather",
+        "Eagleman",
+        "Buffalospirit",
+        "Nightwolf",
+        "Sequoia",
+        "Rainwater",
+        "Spiritwalker",
+        "Sunbear",
+        "Wolfchild",
+        "Morningstar",
+        "Skywalker",
+        "Firewalker",
+        "Moonshadow",
+        "Starfire"
+      ],
+      "Other": [
+        "Brown",
+        "Taylor",
+        "Davis",
+        "Miller",
+        "Wilson",
+        "Moore",
+        "Anderson",
+        "Thomas",
+        "Jackson",
+        "White",
+        "Harris",
+        "Martin",
+        "Thompson",
+        "Garcia",
+        "Martinez",
+        "Robinson",
+        "Clark",
+        "Rodriguez",
+        "Lewis",
+        "Lee"
+      ]
+    },
+    "middle_initials": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "J",
+      "K",
+      "L",
+      "M",
+      "N",
+      "P",
+      "R",
+      "S",
+      "T",
+      "W"
+    ]
+  },
+  "cohorts": [
+    {
+      "id": "diabetes_t2",
+      "name": "Type 2 Diabetes",
+      "weight": 1.0,
+      "min_age": 30,
+      "max_age": 85,
+      "sex_bias": null,
+      "diagnoses": [
+        {
+          "code": "E11.9",
+          "description": "Type 2 diabetes mellitus without complications",
+          "is_primary": true,
+          "onset_age_min": 30,
+          "onset_age_max": 85
+        },
+        {
+          "code": "E11.65",
+          "description": "Type 2 diabetes mellitus with hyperglycemia",
+          "is_primary": false,
+          "onset_age_min": 30,
+          "onset_age_max": 85
+        },
+        {
+          "code": "E11.21",
+          "description": "Type 2 diabetes mellitus with diabetic nephropathy",
+          "is_primary": false,
+          "onset_age_min": 30,
+          "onset_age_max": 85
+        },
+        {
+          "code": "E11.42",
+          "description": "Type 2 diabetes mellitus with diabetic polyneuropathy",
+          "is_primary": false,
+          "onset_age_min": 30,
+          "onset_age_max": 85
+        },
+        {
+          "code": "E11.621",
+          "description": "Type 2 diabetes mellitus with foot ulcer",
+          "is_primary": false,
+          "onset_age_min": 40,
+          "onset_age_max": 85
+        },
+        {
+          "code": "Z89.512",
+          "description": "Acquired absence of left foot",
+          "is_primary": false,
+          "onset_age_min": 45,
+          "onset_age_max": 85
+        },
+        {
+          "code": "Z89.611",
+          "description": "Acquired absence of right leg below knee",
+          "is_primary": false,
+          "onset_age_min": 45,
+          "onset_age_max": 85
+        }
+      ],
+      "comorbidities": [
+        {
+          "code": "E78.5",
+          "description": "Hyperlipidemia, unspecified",
+          "prevalence_pct": 0.45
+        },
+        {
+          "code": "N18.3",
+          "description": "Chronic kidney disease, stage 3 (moderate)",
+          "prevalence_pct": 0.2
+        }
+      ],
+      "medications": [
+        {
+          "drug_code": "860975",
+          "drug_description": "Metformin 500 MG Oral Tablet",
+          "dose_quantity": "500",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "BID",
+          "frequency_description": "Twice daily",
+          "status": "active",
+          "for_diagnosis_code": "E11.9",
+          "weight": 0.3
+        },
+        {
+          "drug_code": "1049630",
+          "drug_description": "Lisinopril 10 MG Oral Tablet",
+          "dose_quantity": "10",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "I10",
+          "weight": 0.25
+        },
+        {
+          "drug_code": "197361",
+          "drug_description": "Atorvastatin 20 MG Oral Tablet",
+          "dose_quantity": "20",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "E78.5",
+          "weight": 0.2
+        },
+        {
+          "drug_code": "617314",
+          "drug_description": "Glipizide 5 MG Oral Tablet",
+          "dose_quantity": "5",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "BID",
+          "frequency_description": "Twice daily",
+          "status": "active",
+          "for_diagnosis_code": "E11.9",
+          "weight": 0.15
+        },
+        {
+          "drug_code": "1110240",
+          "drug_description": "Insulin Glargine 100 UNT/ML Subcutaneous Solution",
+          "dose_quantity": "10",
+          "dose_uom": "units",
+          "dosage_form_code": "SOL",
+          "dosage_form_description": "Solution",
+          "route_code": "SQ",
+          "route_description": "Subcutaneous",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "E11.9",
+          "weight": 0.1
+        }
+      ],
+      "labs": [
+        {
+          "order_code": "17855-8",
+          "order_description": "Hemoglobin A1c panel",
+          "specimen": "Blood",
+          "weight": 0.35,
+          "abnormal_pct": 0.55,
+          "result_items": [
+            {
+              "code": "4548-4",
+              "description": "Hemoglobin A1c/Hemoglobin.total in Blood",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 0,
+              "normal_max": 5.6,
+              "abnormal_min": 5.7,
+              "abnormal_max": 14.0
+            }
+          ]
+        },
+        {
+          "order_code": "51990-0",
+          "order_description": "Basic metabolic panel",
+          "specimen": "Blood",
+          "weight": 0.3,
+          "abnormal_pct": 0.3,
+          "result_items": [
+            {
+              "code": "2951-2",
+              "description": "Sodium",
+              "units": "mEq/L",
+              "is_numeric": true,
+              "normal_min": 136,
+              "normal_max": 145,
+              "abnormal_min": 129,
+              "abnormal_max": 152
+            },
+            {
+              "code": "2823-3",
+              "description": "Potassium",
+              "units": "mEq/L",
+              "is_numeric": true,
+              "normal_min": 3.5,
+              "normal_max": 5.0,
+              "abnormal_min": 2.8,
+              "abnormal_max": 6.2
+            },
+            {
+              "code": "2075-0",
+              "description": "Chloride",
+              "units": "mEq/L",
+              "is_numeric": true,
+              "normal_min": 98,
+              "normal_max": 107,
+              "abnormal_min": 90,
+              "abnormal_max": 115
+            },
+            {
+              "code": "2028-9",
+              "description": "CO2 (Bicarbonate)",
+              "units": "mEq/L",
+              "is_numeric": true,
+              "normal_min": 22,
+              "normal_max": 29,
+              "abnormal_min": 16,
+              "abnormal_max": 34
+            },
+            {
+              "code": "2339-0",
+              "description": "Glucose",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 70,
+              "normal_max": 99,
+              "abnormal_min": 50,
+              "abnormal_max": 450
+            },
+            {
+              "code": "3094-0",
+              "description": "BUN",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 6,
+              "normal_max": 20,
+              "abnormal_min": 2,
+              "abnormal_max": 50
+            },
+            {
+              "code": "2160-0",
+              "description": "Creatinine",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 0.6,
+              "normal_max": 1.2,
+              "abnormal_min": 0.4,
+              "abnormal_max": 3.5
+            },
+            {
+              "code": "17861-6",
+              "description": "Calcium",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 8.5,
+              "normal_max": 10.5,
+              "abnormal_min": 7.0,
+              "abnormal_max": 12.0
+            }
+          ]
+        },
+        {
+          "order_code": "57698-3",
+          "order_description": "Lipid panel",
+          "specimen": "Blood",
+          "weight": 0.15,
+          "abnormal_pct": 0.45,
+          "result_items": [
+            {
+              "code": "2093-3",
+              "description": "Total Cholesterol",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 130,
+              "normal_max": 200,
+              "abnormal_min": 201,
+              "abnormal_max": 340
+            },
+            {
+              "code": "2571-8",
+              "description": "Triglycerides",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 40,
+              "normal_max": 150,
+              "abnormal_min": 151,
+              "abnormal_max": 400
+            },
+            {
+              "code": "2085-9",
+              "description": "HDL Cholesterol",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 40,
+              "normal_max": 90,
+              "abnormal_min": 15,
+              "abnormal_max": 39
+            },
+            {
+              "code": "13457-7",
+              "description": "LDL Cholesterol",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 50,
+              "normal_max": 100,
+              "abnormal_min": 101,
+              "abnormal_max": 220
+            }
+          ]
+        },
+        {
+          "order_code": "14959-1",
+          "order_description": "Urine Albumin/Creatinine ratio",
+          "specimen": "Urine",
+          "weight": 0.1,
+          "abnormal_pct": 0.45,
+          "result_items": [
+            {
+              "code": "14959-1",
+              "description": "Microalbumin/Creatinine [Ratio] in Urine",
+              "units": "mg/g",
+              "is_numeric": true,
+              "normal_min": 0,
+              "normal_max": 30,
+              "abnormal_min": 31,
+              "abnormal_max": 300
+            }
+          ]
+        },
+        {
+          "order_code": "88294-4",
+          "order_description": "Glomerular filtration rate panel",
+          "specimen": "Blood",
+          "weight": 0.1,
+          "abnormal_pct": 0.35,
+          "result_items": [
+            {
+              "code": "88294-4",
+              "description": "Glomerular filtration rate/1.73 sq M.predicted [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (CKD-EPI 2021)",
+              "units": "mL/min/1.73m2",
+              "is_numeric": true,
+              "normal_min": 60,
+              "normal_max": 135,
+              "abnormal_min": 0,
+              "abnormal_max": 59
+            }
+          ]
+        },
+        {
+          "order_code": "59574-4",
+          "order_description": "Ankle-Brachial Index",
+          "specimen": "Vascular",
+          "weight": 0.15,
+          "abnormal_pct": 0.25,
+          "result_items": [
+            {
+              "code": "59574-4",
+              "description": "Ankle-Brachial Index",
+              "units": "ratio",
+              "is_numeric": true,
+              "normal_min": 0.9,
+              "normal_max": 1.3,
+              "abnormal_min": 0.4,
+              "abnormal_max": 0.89,
+              "abnormal_flag": "L"
+            }
+          ]
+        }
+      ],
+      "observations": [
+        {
+          "code": "8480-6",
+          "description": "Systolic blood pressure",
+          "units": "mmHg",
+          "normal_min": 90,
+          "normal_max": 119,
+          "abnormal_min": 130,
+          "abnormal_max": 175,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.45,
+          "weight": 0.285714
+        },
+        {
+          "code": "8462-4",
+          "description": "Diastolic blood pressure",
+          "units": "mmHg",
+          "normal_min": 60,
+          "normal_max": 79,
+          "abnormal_min": 80,
+          "abnormal_max": 110,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.35,
+          "weight": 0.285714
+        },
+        {
+          "code": "8302-2",
+          "description": "Body height",
+          "units": "cm",
+          "normal_min": 150,
+          "normal_max": 190,
+          "abnormal_min": 140,
+          "abnormal_max": 200,
+          "abnormal_flag": "N",
+          "abnormal_pct": 0.1,
+          "weight": 0.142857
+        },
+        {
+          "code": "29463-7",
+          "description": "Body weight",
+          "units": "kg",
+          "normal_min": 50,
+          "normal_max": 100,
+          "abnormal_min": 101,
+          "abnormal_max": 150,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.4,
+          "weight": 0.285714
+        }
+      ],
+      "procedures": [
+        {
+          "code": "99213",
+          "description": "Office or other outpatient visit, moderate complexity",
+          "encounter_type": "O",
+          "weight": 0.5
+        },
+        {
+          "code": "83036",
+          "description": "Hemoglobin A1c",
+          "encounter_type": "O",
+          "weight": 0.3
+        },
+        {
+          "code": "93000",
+          "description": "Electrocardiogram, routine ECG with at least 12 leads; with interpretation and report",
+          "encounter_type": "O",
+          "weight": 0.2
+        },
+        {
+          "code": "27880",
+          "description": "Amputation, leg, below knee",
+          "encounter_type": "I",
+          "weight": 0.08
+        },
+        {
+          "code": "97597",
+          "description": "Debridement, open wound; first 20 sq cm",
+          "encounter_type": "O",
+          "weight": 0.15
+        },
+        {
+          "code": "97605",
+          "description": "Negative pressure wound therapy",
+          "encounter_type": "O",
+          "weight": 0.1
+        }
+      ],
+      "encounter_pattern": {
+        "encounters_per_year": 4.0,
+        "encounter_type_weights": {
+          "O": 0.9,
+          "E": 0.05,
+          "I": 0.05
+        },
+        "lab_encounter_rate": 0.75,
+        "rad_encounter_rate": 0.15
+      },
+      "document_templates": [
+        {
+          "type_code": "PN",
+          "type_description": "Progress Note",
+          "encounter_type": "O",
+          "chief_complaints": [
+            "Follow-up for diabetes management",
+            "Routine monitoring of type 2 diabetes",
+            "Diabetes follow-up with medication review"
+          ],
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Denies chest pain, shortness of breath, or dizziness.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n\nFOLLOW-UP: Return in 3 months."
+        },
+        {
+          "type_code": "PN",
+          "type_description": "Progress Note",
+          "encounter_type": "O",
+          "chief_complaints": [
+            "Check-up for blood pressure management",
+            "Hypertension follow-up",
+            "Blood pressure monitoring"
+          ],
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for blood pressure management. Patient reports {compliance_statement}. No recent episodes of dizziness or headaches.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Alert and oriented, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n\nFOLLOW-UP: Return in 6 months."
+        }
+      ],
+      "illness_history_templates": [
+        {
+          "condition": "Type 2 diabetes mellitus, diagnosed at age 45",
+          "onset_at_age_min": 40,
+          "onset_at_age_max": 55,
+          "is_resolved": false,
+          "weight": 0.555556
+        },
+        {
+          "condition": "Hypertension, diagnosed at age 50",
+          "onset_at_age_min": 45,
+          "onset_at_age_max": 60,
+          "is_resolved": false,
+          "weight": 0.444444
+        }
+      ],
+      "social_history_templates": [
+        {
+          "habit_code": "NS",
+          "habit_description": "Non Smoker",
+          "comments": [
+            "Patient has never smoked.",
+            "Former smoker, quit 10 years ago."
+          ],
+          "weight": 0.6
+        },
+        {
+          "habit_code": "ETOH",
+          "habit_description": "Alcohol use",
+          "comments": [
+            "Social drinker, 1-2 drinks per week.",
+            "Occasional alcohol use, less than 3 drinks per month."
+          ],
+          "weight": 0.4
+        }
+      ],
+      "family_history_templates": [
+        {
+          "condition": "Type 2 diabetes mellitus",
+          "relationship": "Mother",
+          "weight": 0.5
+        },
+        {
+          "condition": "Hypertension",
+          "relationship": "Father",
+          "weight": 0.5
+        }
+      ],
+      "rad_order_templates": [
+        {
+          "order_code": "CXR-PA-LAT",
+          "order_description": "Chest X-Ray PA and Lateral",
+          "reason_description": "Evaluate for cardiac enlargement and pulmonary edema",
+          "result_texts": [
+            "No acute cardiopulmonary process. Mild cardiomegaly noted.",
+            "Lungs are clear. No pleural effusion. Heart size upper limits of normal."
+          ],
+          "weight": 0.6
+        },
+        {
+          "order_code": "US-ABD",
+          "order_description": "Ultrasound of the abdomen",
+          "reason_description": "Evaluate for liver and kidney function",
+          "result_texts": [
+            "Liver appears normal in size and echotexture. No focal lesions.",
+            "Kidneys are normal in size with no hydronephrosis."
+          ],
+          "weight": 0.4
+        }
+      ]
+    }
+  ],
+  "catalogs": {
+    "allergies": [
+      {
+        "allergen_code": "372687004",
+        "allergen_description": "Amoxicillin",
+        "category_code": "DA",
+        "category_description": "Drug Allergy",
+        "reaction_code": "247472004",
+        "reaction_description": "Hives",
+        "severity_code": "MO",
+        "severity_description": "Moderate",
+        "weight": 0.091954
+      },
+      {
+        "allergen_code": "91936005",
+        "allergen_description": "Peanut",
+        "category_code": "FA",
+        "category_description": "Food Allergy",
+        "reaction_code": "39579001",
+        "reaction_description": "Anaphylaxis",
+        "severity_code": "SE",
+        "severity_description": "Severe",
+        "weight": 0.08046
+      },
+      {
+        "allergen_code": "232347008",
+        "allergen_description": "Pollen",
+        "category_code": "EA",
+        "category_description": "Environmental Allergy",
+        "reaction_code": "418689008",
+        "reaction_description": "Sneezing",
+        "severity_code": "MI",
+        "severity_description": "Mild",
+        "weight": 0.068966
+      },
+      {
+        "allergen_code": "79899007",
+        "allergen_description": "Penicillin",
+        "category_code": "DA",
+        "category_description": "Drug Allergy",
+        "reaction_code": "39579001",
+        "reaction_description": "Anaphylaxis",
+        "severity_code": "SE",
+        "severity_description": "Severe",
+        "weight": 0.103448
+      },
+      {
+        "allergen_code": "91930004",
+        "allergen_description": "Egg",
+        "category_code": "FA",
+        "category_description": "Food Allergy",
+        "reaction_code": "247472004",
+        "reaction_description": "Hives",
+        "severity_code": "MO",
+        "severity_description": "Moderate",
+        "weight": 0.057471
+      },
+      {
+        "allergen_code": "300913006",
+        "allergen_description": "Dust mite",
+        "category_code": "EA",
+        "category_description": "Environmental Allergy",
+        "reaction_code": "418689008",
+        "reaction_description": "Sneezing",
+        "severity_code": "MI",
+        "severity_description": "Mild",
+        "weight": 0.068966
+      },
+      {
+        "allergen_code": "91934008",
+        "allergen_description": "Shellfish",
+        "category_code": "FA",
+        "category_description": "Food Allergy",
+        "reaction_code": "39579001",
+        "reaction_description": "Anaphylaxis",
+        "severity_code": "SE",
+        "severity_description": "Severe",
+        "weight": 0.08046
+      },
+      {
+        "allergen_code": "294954003",
+        "allergen_description": "Latex",
+        "category_code": "EA",
+        "category_description": "Environmental Allergy",
+        "reaction_code": "247472004",
+        "reaction_description": "Hives",
+        "severity_code": "MO",
+        "severity_description": "Moderate",
+        "weight": 0.057471
+      },
+      {
+        "allergen_code": "91935009",
+        "allergen_description": "Tree nuts",
+        "category_code": "FA",
+        "category_description": "Food Allergy",
+        "reaction_code": "39579001",
+        "reaction_description": "Anaphylaxis",
+        "severity_code": "SE",
+        "severity_description": "Severe",
+        "weight": 0.08046
+      },
+      {
+        "allergen_code": "409137002",
+        "allergen_description": "Cat dander",
+        "category_code": "EA",
+        "category_description": "Environmental Allergy",
+        "reaction_code": "418689008",
+        "reaction_description": "Sneezing",
+        "severity_code": "MI",
+        "severity_description": "Mild",
+        "weight": 0.068966
+      },
+      {
+        "allergen_code": "91932007",
+        "allergen_description": "Milk",
+        "category_code": "FA",
+        "category_description": "Food Allergy",
+        "reaction_code": "247472004",
+        "reaction_description": "Hives",
+        "severity_code": "MO",
+        "severity_description": "Moderate",
+        "weight": 0.057471
+      },
+      {
+        "allergen_code": "232350006",
+        "allergen_description": "Grass pollen",
+        "category_code": "EA",
+        "category_description": "Environmental Allergy",
+        "reaction_code": "418689008",
+        "reaction_description": "Sneezing",
+        "severity_code": "MI",
+        "severity_description": "Mild",
+        "weight": 0.068966
+      },
+      {
+        "allergen_code": "91931008",
+        "allergen_description": "Soy",
+        "category_code": "FA",
+        "category_description": "Food Allergy",
+        "reaction_code": "247472004",
+        "reaction_description": "Hives",
+        "severity_code": "MO",
+        "severity_description": "Moderate",
+        "weight": 0.057471
+      },
+      {
+        "allergen_code": "91933003",
+        "allergen_description": "Wheat",
+        "category_code": "FA",
+        "category_description": "Food Allergy",
+        "reaction_code": "247472004",
+        "reaction_description": "Hives",
+        "severity_code": "MO",
+        "severity_description": "Moderate",
+        "weight": 0.057471
+      }
+    ],
+    "vaccinations": [
+      {
+        "cvx_code": "141",
+        "description": "Influenza, seasonal, injectable",
+        "min_age_years": 0,
+        "max_age_years": 120,
+        "weight": 0.25
+      },
+      {
+        "cvx_code": "03",
+        "description": "MMR",
+        "min_age_years": 1,
+        "max_age_years": 120,
+        "weight": 0.15
+      },
+      {
+        "cvx_code": "08",
+        "description": "Hepatitis B",
+        "min_age_years": 0,
+        "max_age_years": 120,
+        "weight": 0.1
+      },
+      {
+        "cvx_code": "10",
+        "description": "Polio",
+        "min_age_years": 0,
+        "max_age_years": 120,
+        "weight": 0.1
+      },
+      {
+        "cvx_code": "21",
+        "description": "Varicella",
+        "min_age_years": 1,
+        "max_age_years": 120,
+        "weight": 0.1
+      },
+      {
+        "cvx_code": "48",
+        "description": "Hib",
+        "min_age_years": 0,
+        "max_age_years": 5,
+        "weight": 0.05
+      },
+      {
+        "cvx_code": "50",
+        "description": "DTaP",
+        "min_age_years": 0,
+        "max_age_years": 7,
+        "weight": 0.1
+      },
+      {
+        "cvx_code": "133",
+        "description": "Pneumococcal conjugate",
+        "min_age_years": 0,
+        "max_age_years": 120,
+        "weight": 0.15
+      }
+    ],
+    "encounter_patterns": [
+      {
+        "id": "routine_outpatient",
+        "label": "Routine Outpatient Visit",
+        "encounter_type": "O",
+        "duration_days": 0,
+        "encounters_per_year": 3.0,
+        "weight": 0.5
+      },
+      {
+        "id": "emergency_visit",
+        "label": "Emergency Room Visit",
+        "encounter_type": "E",
+        "duration_days": 1,
+        "encounters_per_year": 0.5,
+        "weight": 0.15
+      },
+      {
+        "id": "inpatient_stay",
+        "label": "Inpatient Hospital Stay",
+        "encounter_type": "I",
+        "duration_days": 5,
+        "encounters_per_year": 0.2,
+        "weight": 0.1
+      },
+      {
+        "id": "urgent_care_visit",
+        "label": "Urgent Care Visit",
+        "encounter_type": "U",
+        "duration_days": 0,
+        "encounters_per_year": 1.0,
+        "weight": 0.15
+      },
+      {
+        "id": "telehealth_visit",
+        "label": "Telehealth Visit",
+        "encounter_type": "T",
+        "duration_days": 0,
+        "encounters_per_year": 2.0,
+        "weight": 0.1
+      }
+    ]
+  }
+}

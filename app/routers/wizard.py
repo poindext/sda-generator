@@ -48,7 +48,7 @@ async def create_session(body: StartSession):
     return {"session_id": session_id}
 
 
-@router.get("/wizard/sessions/{session_id}/opening")
+@router.post("/wizard/sessions/{session_id}/opening")
 async def stream_opening(session_id: str):
     """Stream the wizard's opening question."""
     async def _gen():

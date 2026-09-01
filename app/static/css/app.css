@@ -587,3 +587,107 @@ input[type=checkbox] { width: auto; margin-right: 6px; }
 .alert-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #14532d; }
 .alert-warning { background: #fff7ed; border: 1px solid #fed7aa; color: #7c2d12; }
 .alert-error   { background: #fef2f2; border: 1px solid #fecaca; color: #7f1d1d; }
+
+/* ── Template Preview Modal ───────────────────────────────── */
+
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.45);
+  display: flex; align-items: flex-start; justify-content: center;
+  z-index: 1000;
+  padding: 32px 16px;
+  overflow-y: auto;
+}
+.modal-overlay.hidden { display: none; }
+
+.modal-box {
+  background: var(--clr-surface);
+  border-radius: var(--radius);
+  width: 100%; max-width: 860px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  display: flex; flex-direction: column;
+}
+
+.modal-header {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 16px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--clr-border);
+  position: sticky; top: 0;
+  background: var(--clr-surface);
+  border-radius: var(--radius) var(--radius) 0 0;
+  z-index: 1;
+}
+
+.modal-body { padding: 24px; overflow-y: auto; }
+
+/* Preview sections */
+.preview-section { margin-bottom: 28px; }
+.preview-section h3 {
+  font-size: 11px; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--clr-muted);
+  margin-bottom: 12px; padding-bottom: 6px;
+  border-bottom: 1px solid var(--clr-border);
+}
+
+/* Distribution bars — grid keeps all bars starting at the same column */
+.dist-row {
+  display: grid;
+  grid-template-columns: 180px 90px 1fr 44px;
+  align-items: center; gap: 8px;
+  margin-bottom: 6px; font-size: 13px;
+}
+/* When there is no sub-label column, collapse it */
+.dist-row.no-sub {
+  grid-template-columns: 180px 1fr 44px;
+}
+/* Narrow variant for use inside multi-column card layouts */
+.dist-row.narrow {
+  grid-template-columns: 90px 1fr 36px;
+}
+.dist-label {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  color: var(--clr-text);
+}
+.dist-sub   { font-size: 12px; color: var(--clr-muted); white-space: nowrap; }
+.dist-bar-wrap {
+  height: 8px; background: #e2e8f0;
+  border-radius: 4px; overflow: hidden;
+}
+.dist-bar { height: 100%; background: var(--clr-primary); border-radius: 4px; }
+.dist-pct { text-align: right; font-size: 12px;
+            color: var(--clr-muted); font-variant-numeric: tabular-nums; }
+
+/* Cohort cards */
+.cohort-preview-card {
+  border: 1px solid var(--clr-border); border-radius: 6px;
+  padding: 14px 16px; margin-bottom: 12px;
+}
+.cohort-preview-header {
+  display: flex; align-items: baseline;
+  justify-content: space-between; gap: 8px; margin-bottom: 8px;
+}
+.cohort-preview-name { font-weight: 600; font-size: 15px; }
+.cohort-preview-pct  {
+  font-size: 13px; font-weight: 700; color: var(--clr-primary);
+  white-space: nowrap;
+}
+.cohort-preview-meta { font-size: 12px; color: var(--clr-muted); margin-bottom: 8px; }
+.cohort-preview-desc { font-size: 13px; margin-bottom: 10px; color: var(--clr-text); }
+.cohort-preview-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+}
+.cohort-preview-block { background: #f8fafc; border-radius: 4px; padding: 8px 10px; }
+.cohort-preview-block .block-title {
+  font-size: 10px; font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--clr-muted); margin-bottom: 4px;
+}
+.cohort-preview-block ul {
+  list-style: none; font-size: 12px; color: var(--clr-text);
+}
+.cohort-preview-block ul li { margin-bottom: 2px; }
+.cohort-enc-row {
+  display: flex; gap: 16px; flex-wrap: wrap;
+  font-size: 12px; color: var(--clr-muted); margin-top: 8px;
+}
+.cohort-enc-row span { color: var(--clr-text); font-weight: 500; }

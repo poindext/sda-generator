@@ -1,0 +1,39 @@
+{
+  "description": "Opioid Use Disorder / MAT population — three mutually exclusive treatment pathways. Buprenorphine/naloxone (45% of patients): monthly outpatient MAT visits, F11.20 as outpatient primary. Methadone (30%): daily observed dosing clinic, F11.20 as outpatient primary. Extended-release naltrexone (25%): monthly IM injection, F11.21 (in sustained remission) as outpatient primary. F32.9 (major depressive disorder) is the principal diagnosis for all ED and inpatient encounters — psychiatric crisis is the leading acute presentation in OUD. SSTI/abscess, overdose, and withdrawal are the expected inpatient scenarios. No patient should receive more than one MAT agent concurrently — naltrexone requires opioid-free washout and cannot be co-administered with buprenorphine or methadone.",
+  "do_not_flag": [
+    "No patient receiving both buprenorphine AND methadone — these are mutually exclusive treatment pathways; concurrent use is a critical prescribing error that should NEVER occur",
+    "No patient receiving buprenorphine AND naltrexone — naltrexone precipitates withdrawal in buprenorphine patients; concurrent use is clinically contraindicated",
+    "No patient receiving methadone AND naltrexone — same contraindication; opioid-free washout is required before naltrexone initiation",
+    "Different patients receiving different MAT agents (buprenorphine vs. methadone vs. naltrexone) — this is correct; each patient is on exactly one treatment pathway",
+    "F32.9 Major depressive disorder as primary diagnosis for all ED and inpatient encounters — psychiatric crisis (suicidal ideation, acute depression) is the leading acute presentation for OUD patients; F11.20/F11.21 appears as secondary on these encounters",
+    "F11.20 or F11.21 as primary diagnosis for outpatient encounters only — this is the intended design; MAT clinic visits are the routine outpatient reason for visit",
+    "F11.21 (in remission) as primary for naltrexone cohort outpatient encounters — naltrexone requires opioid-free status; F11.21 correctly represents sustained remission maintained by naltrexone",
+    "Multiple F11.x codes coexisting in a patient record — F11.20 and F11.21 may appear together to represent evolving treatment status or different encounter contexts",
+    "Opiates screen result as Positive or Negative (qualitative) — UDS in MAT programs is reported qualitatively (above/below cutoff), not as a numeric concentration",
+    "Positive opiate screen in buprenorphine or methadone patients — buprenorphine and methadone are opioids that trigger positive opiate screens; this is expected and not a sign of illicit use",
+    "SSTI (L02.91 abscess/cellulitis), overdose (F11.120), and withdrawal (F11.23) as inpatient secondary diagnoses — these are the three canonical OUD inpatient scenarios replacing unrealistic TB admissions",
+    "High frequency of outpatient visits (monthly) — MAT regulations require monthly visits minimum; buprenorphine/methadone patients have 12-13 visits/year",
+    "Naltrexone patients having fewer annual visits (6-7) — monthly injection schedule generates fewer visits than daily buprenorphine or methadone dispensing",
+    "Elevated liver enzymes (ALT/AST 57-300 U/L) in patients with HCV — chronic hepatitis C (18% comorbidity prevalence) causes transaminase elevation",
+    "Prazosin in patients without hypertension — used off-label for PTSD-related nightmares in this population",
+    "Trazodone in patients without major depression — commonly used for insomnia management",
+    "Nicotine dependence (F17.x) co-occurring — smoking rates in OUD are 3-5x general population",
+    "Rare TB inpatient encounter (A15) in a minority of patients — 18% Hep C comorbidity can trigger the TB/reportable disease inpatient scenario; 3-5 TB admissions in 200 OUD patients is clinically plausible in high-incidence regions"
+  ],
+  "required_drug_classes": [
+    {
+      "class_name": "MAT medication (buprenorphine/naltrexone/methadone)",
+      "keywords": ["buprenorphine", "naltrexone", "methadone", "suboxone", "vivitrol"],
+      "minimum_patient_pct": 65,
+      "rationale": "This is a MAT cohort — the defining feature is medication-assisted treatment for OUD. At least 65% of patients should have a MAT medication documented (some patients may have no recorded medication encounter in a given time window)."
+    }
+  ],
+  "required_checks": [
+    "VERIFY MAT exclusivity: NO patient should have buprenorphine AND methadone, buprenorphine AND naltrexone, OR methadone AND naltrexone concurrently. Flag CRITICAL if any patient has more than one MAT agent simultaneously — this is a patient safety concern.",
+    "VERIFY that at least one MAT medication (buprenorphine, naltrexone, or methadone) appears in the medication analysis. If none present, flag CRITICAL.",
+    "VERIFY that hepatic function labs (ALT, AST) appear in the population given 18% HCV comorbidity prevalence. If no liver function labs at all, flag MEDIUM.",
+    "VERIFY that urine drug screen results appear as qualitative (Positive/Negative), not as numeric concentrations. If UDS results are numeric (e.g. 0.9, 1998), flag HIGH.",
+    "CHECK that outpatient encounters represent approximately 85-90% of all encounters — this is a MAT population with predominantly outpatient clinic visits.",
+    "VERIFY that no patient receives naloxone (rescue) as their only opioid-related medication without a MAT agent also being documented — naloxone-only with no MAT suggests incomplete medication capture rather than a treatment pathway."
+  ]
+}

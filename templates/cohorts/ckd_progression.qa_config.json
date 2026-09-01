@@ -1,0 +1,37 @@
+{
+  "description": "CKD Stages 3-5 population. Clinical context: CKD staging is based on eGFR \u2014 Stage 3 (eGFR 30-59), Stage 4 (eGFR 15-29), Stage 5 (eGFR <15). Anemia of CKD (target Hgb 10-12 g/dL) is managed with EPO agents. Hyperphosphatemia and secondary hyperparathyroidism (elevated PTH) are hallmark complications. Metformin is contraindicated when eGFR <30.",
+  "do_not_flag": [
+    "Creatinine values 1.5-10.0 mg/dL \u2014 this is expected in CKD stages 3-5; not implausible",
+    "BUN values 21-100 mg/dL \u2014 uremia expected in advanced CKD",
+    "Potassium 5.1-7.0 mEq/L \u2014 hyperkalemia is a major CKD complication requiring management",
+    "Hemoglobin 7.0-11.4 g/dL \u2014 anemia of CKD; target Hgb on EPO is 10-12 g/dL",
+    "PTH 66-600 pg/mL \u2014 secondary hyperparathyroidism is near-universal in CKD stages 4-5",
+    "Phosphate 4.6-10.0 mg/dL \u2014 hyperphosphatemia expected in CKD; treated with phosphate binders",
+    "CO2/bicarbonate 14-21 mEq/L \u2014 metabolic acidosis is a hallmark of advanced CKD",
+    "Calcium 7.0-8.4 mg/dL \u2014 hypocalcemia in CKD due to impaired vitamin D activation",
+    "Both lisinopril AND furosemide in same patient \u2014 standard combination for CKD with hypertension and fluid overload",
+    "Epoetin alfa injection frequency (3x/week) \u2014 this is standard dosing for anemia of CKD",
+    "Mean creatinine of 1.5-6.0 mg/dL across the population \u2014 elevated creatinine is the defining laboratory finding of CKD; it is expected and correct, not a data quality issue",
+    "Absence of metformin in diabetic CKD patients \u2014 metformin is contraindicated in advanced CKD (eGFR <30 / creatinine >1.5); it has been intentionally excluded from this template"
+  ],
+  "required_drug_classes": [
+    {
+      "class_name": "ACE inhibitor or ARB",
+      "keywords": [
+        "lisinopril",
+        "enalapril",
+        "losartan",
+        "valsartan",
+        "ramipril",
+        "benazepril"
+      ],
+      "minimum_patient_pct": 40,
+      "rationale": "ACE inhibitors/ARBs are first-line in CKD to reduce proteinuria and slow progression. Expected in majority of CKD patients."
+    }
+  ],
+  "required_checks": [
+    "VERIFY that mean creatinine across the population is above 1.5 mg/dL. A mean creatinine of 3.0+ mg/dL is expected and correct for CKD stages 3-5. Do NOT flag elevated creatinine as a problem \u2014 elevation IS the disease.",
+    "VERIFY that anemia-related labs (hemoglobin, hematocrit) appear in the population given 45% anemia prevalence. If no CBC results at all, flag HIGH.",
+    "VERIFY phosphate and/or PTH labs appear in the population. If absent entirely, flag MEDIUM."
+  ]
+}

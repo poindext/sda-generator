@@ -12,7 +12,7 @@
         "glycemic"
       ],
       "qa_status": "approved",
-      "source_template": "ohio_demo.template.json",
+      "source_template": "cohorts/diabetes_t2.template.json",
       "clinical_catalog": {
         "diagnoses": [
           {
@@ -421,6 +421,16 @@
             "weight": 0.285714
           }
         ],
+        "encounter_pattern": {
+          "encounters_per_year": 4.0,
+          "encounter_type_weights": {
+            "O": 0.9,
+            "E": 0.05,
+            "I": 0.05
+          },
+          "lab_encounter_rate": 0.75,
+          "rad_encounter_rate": 0.15
+        },
         "procedures": [
           {
             "code": "99213",
@@ -458,111 +468,7 @@
             "encounter_type": "O",
             "weight": 0.1
           }
-        ],
-        "illness_history_templates": [
-          {
-            "condition": "Type 2 diabetes mellitus, diagnosed at age 45",
-            "onset_at_age_min": 40,
-            "onset_at_age_max": 55,
-            "is_resolved": false,
-            "weight": 0.555556
-          },
-          {
-            "condition": "Hypertension, diagnosed at age 50",
-            "onset_at_age_min": 45,
-            "onset_at_age_max": 60,
-            "is_resolved": false,
-            "weight": 0.444444
-          }
-        ],
-        "social_history_templates": [
-          {
-            "habit_code": "NS",
-            "habit_description": "Non Smoker",
-            "comments": [
-              "Patient has never smoked.",
-              "Former smoker, quit 10 years ago."
-            ],
-            "weight": 0.6
-          },
-          {
-            "habit_code": "ETOH",
-            "habit_description": "Alcohol use",
-            "comments": [
-              "Social drinker, 1-2 drinks per week.",
-              "Occasional alcohol use, less than 3 drinks per month."
-            ],
-            "weight": 0.4
-          }
-        ],
-        "family_history_templates": [
-          {
-            "condition": "Type 2 diabetes mellitus",
-            "relationship": "Mother",
-            "weight": 0.5
-          },
-          {
-            "condition": "Hypertension",
-            "relationship": "Father",
-            "weight": 0.5
-          }
-        ],
-        "document_templates": [
-          {
-            "type_code": "PN",
-            "type_description": "Progress Note",
-            "encounter_type": "O",
-            "chief_complaints": [
-              "Follow-up for diabetes management",
-              "Routine monitoring of type 2 diabetes",
-              "Diabetes follow-up with medication review"
-            ],
-            "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Denies chest pain, shortness of breath, or dizziness.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 3 months."
-          },
-          {
-            "type_code": "PN",
-            "type_description": "Progress Note",
-            "encounter_type": "O",
-            "chief_complaints": [
-              "Check-up for blood pressure management",
-              "Hypertension follow-up",
-              "Blood pressure monitoring"
-            ],
-            "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for blood pressure management. Patient reports {compliance_statement}. No recent episodes of dizziness or headaches.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Alert and oriented, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 6 months."
-          }
-        ],
-        "rad_order_templates": [
-          {
-            "order_code": "CXR-PA-LAT",
-            "order_description": "Chest X-Ray PA and Lateral",
-            "reason_description": "Evaluate for cardiac enlargement and pulmonary edema",
-            "result_texts": [
-              "No acute cardiopulmonary process. Mild cardiomegaly noted.",
-              "Lungs are clear. No pleural effusion. Heart size upper limits of normal."
-            ],
-            "weight": 0.6
-          },
-          {
-            "order_code": "US-ABD",
-            "order_description": "Ultrasound of the abdomen",
-            "reason_description": "Evaluate for liver and kidney function",
-            "result_texts": [
-              "Liver appears normal in size and echotexture. No focal lesions.",
-              "Kidneys are normal in size with no hydronephrosis."
-            ],
-            "weight": 0.4
-          }
-        ],
-        "encounter_pattern": {
-          "encounters_per_year": 4.0,
-          "encounter_type_weights": {
-            "O": 0.9,
-            "E": 0.05,
-            "I": 0.05
-          },
-          "lab_encounter_rate": 0.75,
-          "rad_encounter_rate": 0.15
-        }
+        ]
       }
     },
     "hypertension": {
@@ -574,7 +480,7 @@
         "htn"
       ],
       "qa_status": "approved",
-      "source_template": "ohio_demo.template.json",
+      "source_template": "cohorts/hypertension.template.json",
       "clinical_catalog": {
         "diagnoses": [
           {
@@ -935,7 +841,7 @@
           {
             "code": "8310-5",
             "description": "Body temperature",
-            "units": "°F",
+            "units": "\u00b0F",
             "normal_min": 97.0,
             "normal_max": 99.0,
             "abnormal_min": 100.0,
@@ -957,6 +863,16 @@
             "weight": 0.166667
           }
         ],
+        "encounter_pattern": {
+          "encounters_per_year": 4.0,
+          "encounter_type_weights": {
+            "O": 0.9,
+            "E": 0.05,
+            "I": 0.05
+          },
+          "lab_encounter_rate": 0.75,
+          "rad_encounter_rate": 0.15
+        },
         "procedures": [
           {
             "code": "99213",
@@ -976,90 +892,7 @@
             "encounter_type": "O",
             "weight": 0.2
           }
-        ],
-        "illness_history_templates": [
-          {
-            "condition": "Hypertension diagnosed at age 35",
-            "onset_at_age_min": 30,
-            "onset_at_age_max": 40,
-            "is_resolved": false,
-            "weight": 0.7
-          },
-          {
-            "condition": "Type 2 diabetes mellitus diagnosed at age 50",
-            "onset_at_age_min": 45,
-            "onset_at_age_max": 55,
-            "is_resolved": false,
-            "weight": 0.3
-          }
-        ],
-        "social_history_templates": [
-          {
-            "habit_code": "NS",
-            "habit_description": "Non Smoker",
-            "comments": [
-              "Patient has never smoked.",
-              "Former smoker, quit 10 years ago."
-            ],
-            "weight": 0.6
-          },
-          {
-            "habit_code": "ETOH",
-            "habit_description": "Alcohol use",
-            "comments": [
-              "Social drinker, 1-2 drinks per week.",
-              "Occasional alcohol consumption."
-            ],
-            "weight": 0.4
-          }
-        ],
-        "family_history_templates": [
-          {
-            "condition": "Hypertension",
-            "relationship": "Father",
-            "weight": 0.6
-          },
-          {
-            "condition": "Type 2 diabetes mellitus",
-            "relationship": "Mother",
-            "weight": 0.4
-          }
-        ],
-        "document_templates": [
-          {
-            "type_code": "PN",
-            "type_description": "Progress Note",
-            "encounter_type": "O",
-            "chief_complaints": [
-              "Follow-up for hypertension management",
-              "Routine monitoring of blood pressure",
-              "Hypertension follow-up with medication review"
-            ],
-            "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Denies chest pain, shortness of breath, or dizziness.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 3 months."
-          }
-        ],
-        "rad_order_templates": [
-          {
-            "order_code": "CXR-PA-LAT",
-            "order_description": "Chest X-Ray PA and Lateral",
-            "reason_description": "Evaluate for cardiac enlargement and pulmonary edema",
-            "result_texts": [
-              "No acute cardiopulmonary process. Mild cardiomegaly noted.",
-              "Lungs are clear. No pleural effusion. Heart size upper limits of normal."
-            ],
-            "weight": 1.0
-          }
-        ],
-        "encounter_pattern": {
-          "encounters_per_year": 4.0,
-          "encounter_type_weights": {
-            "O": 0.9,
-            "E": 0.05,
-            "I": 0.05
-          },
-          "lab_encounter_rate": 0.75,
-          "rad_encounter_rate": 0.15
-        }
+        ]
       }
     },
     "asthma": {
@@ -1068,7 +901,7 @@
         "asthma"
       ],
       "qa_status": "approved",
-      "source_template": "ohio_demo.template.json",
+      "source_template": "cohorts/asthma.template.json",
       "clinical_catalog": {
         "diagnoses": [
           {
@@ -1339,7 +1172,7 @@
           {
             "code": "8310-5",
             "description": "Body temperature",
-            "units": "°F",
+            "units": "\u00b0F",
             "normal_min": 97.0,
             "normal_max": 99.0,
             "abnormal_min": 100.0,
@@ -1385,6 +1218,16 @@
             "weight": 0.375
           }
         ],
+        "encounter_pattern": {
+          "encounters_per_year": 3.0,
+          "encounter_type_weights": {
+            "O": 0.85,
+            "E": 0.1,
+            "I": 0.05
+          },
+          "lab_encounter_rate": 0.6,
+          "rad_encounter_rate": 0.1
+        },
         "procedures": [
           {
             "code": "94010",
@@ -1398,90 +1241,7 @@
             "encounter_type": "O",
             "weight": 0.4
           }
-        ],
-        "illness_history_templates": [
-          {
-            "condition": "Asthma diagnosed at age 10",
-            "onset_at_age_min": 5,
-            "onset_at_age_max": 15,
-            "is_resolved": false,
-            "weight": 0.7
-          },
-          {
-            "condition": "Asthma diagnosed at age 30",
-            "onset_at_age_min": 25,
-            "onset_at_age_max": 35,
-            "is_resolved": false,
-            "weight": 0.3
-          }
-        ],
-        "social_history_templates": [
-          {
-            "habit_code": "NS",
-            "habit_description": "Non Smoker",
-            "comments": [
-              "Patient has never smoked.",
-              "Former smoker, quit 5 years ago."
-            ],
-            "weight": 0.7
-          },
-          {
-            "habit_code": "EXER",
-            "habit_description": "Regular exercise",
-            "comments": [
-              "Engages in regular physical activity.",
-              "Exercises 3 times a week."
-            ],
-            "weight": 0.3
-          }
-        ],
-        "family_history_templates": [
-          {
-            "condition": "Asthma",
-            "relationship": "Father",
-            "weight": 0.6
-          },
-          {
-            "condition": "Allergic rhinitis",
-            "relationship": "Mother",
-            "weight": 0.4
-          }
-        ],
-        "document_templates": [
-          {
-            "type_code": "PN",
-            "type_description": "Progress Note",
-            "encounter_type": "O",
-            "chief_complaints": [
-              "Follow-up for asthma management",
-              "Routine asthma check-up",
-              "Asthma follow-up with medication review"
-            ],
-            "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Denies chest pain, shortness of breath, or wheezing.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 3 months."
-          }
-        ],
-        "rad_order_templates": [
-          {
-            "order_code": "CXR-PA-LAT",
-            "order_description": "Chest X-Ray PA and Lateral",
-            "reason_description": "Evaluate for asthma exacerbation",
-            "result_texts": [
-              "No acute cardiopulmonary process. Mild hyperinflation noted.",
-              "Lungs are clear. No pleural effusion. Heart size normal."
-            ],
-            "weight": 1.0
-          }
-        ],
-        "encounter_pattern": {
-          "encounters_per_year": 3.0,
-          "encounter_type_weights": {
-            "O": 0.85,
-            "E": 0.1,
-            "I": 0.05
-          },
-          "lab_encounter_rate": 0.6,
-          "rad_encounter_rate": 0.1
-        }
+        ]
       }
     },
     "cardiovascular": {
@@ -1497,7 +1257,7 @@
         "peripheral artery"
       ],
       "qa_status": "approved",
-      "source_template": "ohio_demo.template.json",
+      "source_template": "cohorts/cardiovascular.template.json",
       "clinical_catalog": {
         "diagnoses": [
           {
@@ -1918,6 +1678,16 @@
             "weight": 0.214286
           }
         ],
+        "encounter_pattern": {
+          "encounters_per_year": 6.0,
+          "encounter_type_weights": {
+            "O": 0.7,
+            "E": 0.2,
+            "I": 0.1
+          },
+          "lab_encounter_rate": 0.8,
+          "rad_encounter_rate": 0.2
+        },
         "procedures": [
           {
             "code": "99213",
@@ -1937,90 +1707,7 @@
             "encounter_type": "O",
             "weight": 0.2
           }
-        ],
-        "illness_history_templates": [
-          {
-            "condition": "Coronary artery disease, diagnosed at age 60",
-            "onset_at_age_min": 55,
-            "onset_at_age_max": 65,
-            "is_resolved": false,
-            "weight": 0.5
-          },
-          {
-            "condition": "Heart failure, diagnosed at age 70",
-            "onset_at_age_min": 65,
-            "onset_at_age_max": 75,
-            "is_resolved": false,
-            "weight": 0.5
-          }
-        ],
-        "social_history_templates": [
-          {
-            "habit_code": "TOBA",
-            "habit_description": "Tobacco use",
-            "comments": [
-              "Current smoker, 1 pack per day.",
-              "Former smoker, quit 5 years ago."
-            ],
-            "weight": 0.4
-          },
-          {
-            "habit_code": "EXER",
-            "habit_description": "Exercise",
-            "comments": [
-              "Exercises regularly, 3 times a week.",
-              "Sedentary lifestyle, no regular exercise."
-            ],
-            "weight": 0.6
-          }
-        ],
-        "family_history_templates": [
-          {
-            "condition": "Coronary artery disease",
-            "relationship": "Father",
-            "weight": 0.5
-          },
-          {
-            "condition": "Heart failure",
-            "relationship": "Mother",
-            "weight": 0.5
-          }
-        ],
-        "document_templates": [
-          {
-            "type_code": "PN",
-            "type_description": "Progress Note",
-            "encounter_type": "O",
-            "chief_complaints": [
-              "Follow-up for heart disease management",
-              "Routine monitoring of coronary artery disease",
-              "Heart failure follow-up with medication review"
-            ],
-            "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Denies chest pain, shortness of breath, or dizziness.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 3 months."
-          }
-        ],
-        "rad_order_templates": [
-          {
-            "order_code": "CXR-PA-LAT",
-            "order_description": "Chest X-Ray PA and Lateral",
-            "reason_description": "Evaluate for cardiac enlargement and pulmonary edema",
-            "result_texts": [
-              "No acute cardiopulmonary process. Mild cardiomegaly noted.",
-              "Lungs are clear. No pleural effusion. Heart size upper limits of normal."
-            ],
-            "weight": 1.0
-          }
-        ],
-        "encounter_pattern": {
-          "encounters_per_year": 6.0,
-          "encounter_type_weights": {
-            "O": 0.7,
-            "E": 0.2,
-            "I": 0.1
-          },
-          "lab_encounter_rate": 0.8,
-          "rad_encounter_rate": 0.2
-        }
+        ]
       }
     },
     "pregnancy": {
@@ -2036,7 +1723,7 @@
         "obgyn"
       ],
       "qa_status": "approved",
-      "source_template": "ohio_demo.template.json",
+      "source_template": "cohorts/pregnancy.template.json",
       "clinical_catalog": {
         "diagnoses": [
           {
@@ -2295,7 +1982,7 @@
           },
           {
             "order_code": "58410-2",
-            "order_description": "CBC panel — Blood by Automated count",
+            "order_description": "CBC panel \u2014 Blood by Automated count",
             "specimen": "Blood",
             "result_items": [
               {
@@ -2489,6 +2176,16 @@
             "weight": 0.15
           }
         ],
+        "encounter_pattern": {
+          "encounters_per_year": 8.0,
+          "encounter_type_weights": {
+            "O": 0.82,
+            "E": 0.1,
+            "I": 0.08
+          },
+          "lab_encounter_rate": 0.7,
+          "rad_encounter_rate": 0.45
+        },
         "procedures": [
           {
             "code": "76805",
@@ -2526,176 +2223,7 @@
             "encounter_type": "O",
             "weight": 0.1
           }
-        ],
-        "illness_history_templates": [
-          {
-            "condition": "Previous uncomplicated vaginal delivery at full term",
-            "onset_at_age_min": 20,
-            "onset_at_age_max": 36,
-            "is_resolved": true,
-            "weight": 0.25
-          },
-          {
-            "condition": "Previous cesarean delivery due to fetal malpresentation or failure to progress",
-            "onset_at_age_min": 22,
-            "onset_at_age_max": 38,
-            "is_resolved": true,
-            "weight": 0.2
-          },
-          {
-            "condition": "Previous pregnancy complicated by pre-eclampsia requiring hospitalization and early delivery",
-            "onset_at_age_min": 20,
-            "onset_at_age_max": 36,
-            "is_resolved": true,
-            "weight": 0.15
-          },
-          {
-            "condition": "Previous gestational diabetes mellitus, managed with dietary modification and insulin during prior pregnancy, resolved postpartum",
-            "onset_at_age_min": 24,
-            "onset_at_age_max": 38,
-            "is_resolved": true,
-            "weight": 0.2
-          },
-          {
-            "condition": "Previous first trimester spontaneous abortion",
-            "onset_at_age_min": 18,
-            "onset_at_age_max": 34,
-            "is_resolved": true,
-            "weight": 0.15
-          },
-          {
-            "condition": "Previous preterm delivery at 34 weeks gestation; newborn required NICU admission",
-            "onset_at_age_min": 20,
-            "onset_at_age_max": 35,
-            "is_resolved": true,
-            "weight": 0.05
-          }
-        ],
-        "social_history_templates": [
-          {
-            "habit_code": "NS",
-            "habit_description": "Non Smoker",
-            "comments": [
-              "Patient has never smoked.",
-              "Former smoker, quit prior to becoming pregnant."
-            ],
-            "weight": 0.75
-          },
-          {
-            "habit_code": "TOBA",
-            "habit_description": "Tobacco use",
-            "comments": [
-              "Smoker prior to pregnancy; currently attempting cessation."
-            ],
-            "weight": 0.05
-          },
-          {
-            "habit_code": "NOALC",
-            "habit_description": "No Alcohol Use",
-            "comments": [
-              "Abstains completely from alcohol during pregnancy.",
-              "Social drinker prior to pregnancy; currently abstaining."
-            ],
-            "weight": 0.2
-          }
-        ],
-        "family_history_templates": [
-          {
-            "condition": "Gestational diabetes mellitus",
-            "relationship": "Mother",
-            "weight": 0.35
-          },
-          {
-            "condition": "Essential hypertension",
-            "relationship": "Father",
-            "weight": 0.35
-          },
-          {
-            "condition": "Pre-eclampsia during pregnancy",
-            "relationship": "Sister",
-            "weight": 0.3
-          }
-        ],
-        "document_templates": [
-          {
-            "type_code": "PN",
-            "type_description": "Prenatal Progress Note",
-            "encounter_type": "O",
-            "chief_complaints": [
-              "Routine prenatal visit — first trimester",
-              "Prenatal follow-up — second trimester",
-              "Third trimester prenatal visit",
-              "High-risk OB monitoring — pre-eclampsia",
-              "Gestational diabetes management and prenatal follow-up"
-            ],
-            "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for prenatal care. Patient reports {compliance_statement}. Denies contractions, vaginal bleeding, leakage of fluid, or decreased fetal movement.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress. Gravid abdomen consistent with stated gestational age.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 4 weeks for routine prenatal visit."
-          },
-          {
-            "type_code": "PN",
-            "type_description": "Postpartum Follow-Up Note",
-            "encounter_type": "O",
-            "chief_complaints": [
-              "6-week postpartum visit after vaginal delivery",
-              "6-week postpartum visit after cesarean delivery",
-              "Postpartum follow-up — blood pressure monitoring",
-              "Postpartum visit — gestational diabetes follow-up"
-            ],
-            "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for postpartum follow-up. Patient reports {compliance_statement}. Denies fever, excessive lochia, breast pain, or wound concerns.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress. Uterus involuted to normal size.\n\nASSESSMENT AND PLAN:\n1. Postpartum care — {plan}\n2. Contraception counseling provided.\n3. Postpartum depression screening completed.\n\nFOLLOW-UP: Return as needed or in 1 year for well-woman visit."
-          },
-          {
-            "type_code": "DS",
-            "type_description": "Delivery Summary",
-            "encounter_type": "I",
-            "chief_complaints": [
-              "Vaginal delivery of viable term infant",
-              "Cesarean delivery of term infant",
-              "Delivery complicated by pre-eclampsia with severe features"
-            ],
-            "note_template": "DELIVERY SUMMARY\n\nPatient: {patient_name}, {age}-year-old {sex}\nAdmission Diagnosis: {diagnosis}\n\nDelivery proceeded with appropriate obstetric management. Newborn transitioned to nursery in stable condition. Postpartum care initiated per protocol.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n2. Postpartum hemorrhage precautions in place.\n\nFOLLOW-UP: 6-week postpartum visit scheduled."
-          }
-        ],
-        "rad_order_templates": [
-          {
-            "order_code": "US-OB-1ST",
-            "order_description": "Obstetric ultrasound — first trimester dating scan",
-            "reason_description": "Establish gestational age and viability",
-            "result_texts": [
-              "Single live intrauterine pregnancy, estimated gestational age 10 weeks 3 days by crown-rump length. No abnormalities identified.",
-              "Single viable intrauterine pregnancy consistent with 12 weeks gestation. Normal nuchal translucency 1.4mm. Fetal heart rate 162 bpm."
-            ],
-            "weight": 0.25
-          },
-          {
-            "order_code": "US-OB-ANATOMY",
-            "order_description": "Obstetric ultrasound — second trimester anatomy survey",
-            "reason_description": "Fetal anatomy survey at approximately 20 weeks",
-            "result_texts": [
-              "Single live intrauterine pregnancy, estimated gestational age 20 weeks 1 day. Normal fetal anatomy survey. No structural abnormalities identified. Normal amniotic fluid volume.",
-              "Single viable intrauterine pregnancy at 22 weeks. Normal fetal anatomy. Appropriate interval growth for gestational age. Posterior placenta, no previa. Normal umbilical artery Doppler."
-            ],
-            "weight": 0.4
-          },
-          {
-            "order_code": "US-OB-GROWTH",
-            "order_description": "Obstetric ultrasound — third trimester growth and biophysical profile",
-            "reason_description": "Fetal growth assessment and biophysical profile",
-            "result_texts": [
-              "Single live intrauterine pregnancy at 36 weeks vertex presentation. Estimated fetal weight 2,650g (55th percentile). Biophysical profile 8/8. Normal amniotic fluid index 12cm.",
-              "Single viable vertex-presenting fetus at 38 weeks. Estimated fetal weight 3,150g. Normal placental location. Reactive non-stress test. Adequate amniotic fluid volume."
-            ],
-            "weight": 0.35
-          }
-        ],
-        "encounter_pattern": {
-          "encounters_per_year": 8.0,
-          "encounter_type_weights": {
-            "O": 0.82,
-            "E": 0.1,
-            "I": 0.08
-          },
-          "lab_encounter_rate": 0.7,
-          "rad_encounter_rate": 0.45
-        }
+        ]
       }
     },
     "reportable_disease": {
@@ -2707,7 +2235,7 @@
         "communicable disease"
       ],
       "qa_status": "approved",
-      "source_template": "ohio_demo.template.json",
+      "source_template": "cohorts/reportable_disease.template.json",
       "clinical_catalog": {
         "diagnoses": [
           {
@@ -2983,6 +2511,16 @@
             "weight": 0.5
           }
         ],
+        "encounter_pattern": {
+          "encounters_per_year": 6.0,
+          "encounter_type_weights": {
+            "O": 0.8,
+            "E": 0.1,
+            "I": 0.1
+          },
+          "lab_encounter_rate": 0.85,
+          "rad_encounter_rate": 0.25
+        },
         "procedures": [
           {
             "code": "99213",
@@ -2996,90 +2534,7 @@
             "encounter_type": "O",
             "weight": 0.375
           }
-        ],
-        "illness_history_templates": [
-          {
-            "condition": "Tuberculosis of lung, diagnosed at age 35",
-            "onset_at_age_min": 30,
-            "onset_at_age_max": 40,
-            "is_resolved": false,
-            "weight": 0.5
-          },
-          {
-            "condition": "HIV disease, diagnosed at age 28",
-            "onset_at_age_min": 25,
-            "onset_at_age_max": 35,
-            "is_resolved": false,
-            "weight": 0.5
-          }
-        ],
-        "social_history_templates": [
-          {
-            "habit_code": "TOBA",
-            "habit_description": "Tobacco use",
-            "comments": [
-              "Current smoker, 1 pack per day.",
-              "Former smoker, quit 5 years ago."
-            ],
-            "weight": 0.571429
-          },
-          {
-            "habit_code": "ETOH",
-            "habit_description": "Alcohol use",
-            "comments": [
-              "Social drinker, 1-2 drinks per week.",
-              "Heavy drinker, 5-6 drinks per day."
-            ],
-            "weight": 0.428571
-          }
-        ],
-        "family_history_templates": [
-          {
-            "condition": "Tuberculosis",
-            "relationship": "Father",
-            "weight": 0.5
-          },
-          {
-            "condition": "HIV disease",
-            "relationship": "Brother",
-            "weight": 0.5
-          }
-        ],
-        "document_templates": [
-          {
-            "type_code": "PN",
-            "type_description": "Progress Note",
-            "encounter_type": "O",
-            "chief_complaints": [
-              "Follow-up for tuberculosis treatment",
-              "Routine monitoring of HIV status",
-              "Tuberculosis follow-up with medication review"
-            ],
-            "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Denies fever, night sweats, or weight loss.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 1 month."
-          }
-        ],
-        "rad_order_templates": [
-          {
-            "order_code": "CXR-PA-LAT",
-            "order_description": "Chest X-Ray PA and Lateral",
-            "reason_description": "Evaluate for pulmonary tuberculosis",
-            "result_texts": [
-              "No acute pulmonary process. Evidence of old granulomatous disease.",
-              "Lungs are clear. No active tuberculosis noted."
-            ],
-            "weight": 1.0
-          }
-        ],
-        "encounter_pattern": {
-          "encounters_per_year": 6.0,
-          "encounter_type_weights": {
-            "O": 0.8,
-            "E": 0.1,
-            "I": 0.1
-          },
-          "lab_encounter_rate": 0.85,
-          "rad_encounter_rate": 0.25
-        }
+        ]
       }
     },
     "multi_chronic": {
@@ -3092,7 +2547,7 @@
         "multiple comorbid"
       ],
       "qa_status": "approved",
-      "source_template": "ohio_demo.template.json",
+      "source_template": "cohorts/multi_chronic.template.json",
       "clinical_catalog": {
         "diagnoses": [
           {
@@ -3529,6 +2984,16 @@
             "weight": 0.5
           }
         ],
+        "encounter_pattern": {
+          "encounters_per_year": 4.0,
+          "encounter_type_weights": {
+            "O": 0.9,
+            "E": 0.05,
+            "I": 0.05
+          },
+          "lab_encounter_rate": 0.75,
+          "rad_encounter_rate": 0.15
+        },
         "procedures": [
           {
             "code": "99213",
@@ -3542,90 +3007,7 @@
             "encounter_type": "O",
             "weight": 0.375
           }
-        ],
-        "illness_history_templates": [
-          {
-            "condition": "Type 2 diabetes mellitus, diagnosed at age 45",
-            "onset_at_age_min": 40,
-            "onset_at_age_max": 55,
-            "is_resolved": false,
-            "weight": 0.555556
-          },
-          {
-            "condition": "Hypertension, diagnosed at age 50",
-            "onset_at_age_min": 45,
-            "onset_at_age_max": 60,
-            "is_resolved": false,
-            "weight": 0.444444
-          }
-        ],
-        "social_history_templates": [
-          {
-            "habit_code": "NS",
-            "habit_description": "Non Smoker",
-            "comments": [
-              "Patient has never smoked.",
-              "Former smoker, quit 10 years ago."
-            ],
-            "weight": 0.6
-          },
-          {
-            "habit_code": "ETOH",
-            "habit_description": "Alcohol Use",
-            "comments": [
-              "Occasional social drinker.",
-              "Consumes 1-2 drinks per week."
-            ],
-            "weight": 0.4
-          }
-        ],
-        "family_history_templates": [
-          {
-            "condition": "Type 2 diabetes mellitus",
-            "relationship": "Mother",
-            "weight": 0.555556
-          },
-          {
-            "condition": "Hypertension",
-            "relationship": "Father",
-            "weight": 0.444444
-          }
-        ],
-        "document_templates": [
-          {
-            "type_code": "PN",
-            "type_description": "Progress Note",
-            "encounter_type": "O",
-            "chief_complaints": [
-              "Follow-up for diabetes management",
-              "Routine monitoring of type 2 diabetes",
-              "Diabetes follow-up with medication review"
-            ],
-            "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Denies chest pain, shortness of breath, or dizziness.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 3 months."
-          }
-        ],
-        "rad_order_templates": [
-          {
-            "order_code": "CXR-PA-LAT",
-            "order_description": "Chest X-Ray PA and Lateral",
-            "reason_description": "Evaluate for cardiac enlargement and pulmonary edema",
-            "result_texts": [
-              "No acute cardiopulmonary process. Mild cardiomegaly noted.",
-              "Lungs are clear. No pleural effusion. Heart size upper limits of normal."
-            ],
-            "weight": 1.0
-          }
-        ],
-        "encounter_pattern": {
-          "encounters_per_year": 4.0,
-          "encounter_type_weights": {
-            "O": 0.9,
-            "E": 0.05,
-            "I": 0.05
-          },
-          "lab_encounter_rate": 0.75,
-          "rad_encounter_rate": 0.15
-        }
+        ]
       }
     },
     "htn_type_2_diabetes": {
@@ -3639,7 +3021,7 @@
         "glycemic"
       ],
       "qa_status": "approved",
-      "source_template": "ohio_demo.template.json",
+      "source_template": "cohorts/htn_type_2_diabetes.template.json",
       "clinical_catalog": {
         "diagnoses": [
           {
@@ -3979,7 +3361,7 @@
           {
             "code": "8310-5",
             "description": "Body temperature",
-            "units": "°F",
+            "units": "\u00b0F",
             "normal_min": 97.0,
             "normal_max": 99.0,
             "abnormal_min": 100.0,
@@ -4001,20 +3383,6 @@
             "weight": 0.166667
           }
         ],
-        "document_templates": [
-          {
-            "type_code": "PN",
-            "type_description": "Progress Note",
-            "encounter_type": "O",
-            "chief_complaints": [
-              "Follow-up for hypertension management",
-              "Routine monitoring of blood pressure",
-              "Hypertension follow-up with medication review"
-            ],
-            "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Denies chest pain, shortness of breath, or dizziness.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 3 months."
-          }
-        ],
-        "rad_order_templates": [],
         "encounter_pattern": {
           "encounters_per_year": 4.5,
           "encounter_type_weights": {
@@ -4040,7 +3408,7 @@
         "screening"
       ],
       "qa_status": "approved",
-      "source_template": "ohio_demo.template.json",
+      "source_template": "cohorts/low_risk_preventive.template.json",
       "clinical_catalog": {
         "diagnoses": [
           {
@@ -4368,7 +3736,7 @@
           {
             "code": "8310-5",
             "description": "Body temperature",
-            "units": "°F",
+            "units": "\u00b0F",
             "normal_min": 97.0,
             "normal_max": 99.0,
             "abnormal_min": 100.0,
@@ -4390,23 +3758,6 @@
             "weight": 0.166667
           }
         ],
-        "document_templates": [
-          {
-            "type_code": "PN",
-            "type_description": "Progress Note",
-            "encounter_type": "O",
-            "weight": 1.0,
-            "chief_complaints": [
-              "Annual wellness visit",
-              "Preventive health exam",
-              "Routine physical exam",
-              "Health maintenance visit",
-              "Annual health examination"
-            ],
-            "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for {chief_complaint}. Patient reports {compliance_statement}. Denies chest pain, shortness of breath, or other acute complaints.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 3 months."
-          }
-        ],
-        "rad_order_templates": [],
         "encounter_pattern": {
           "encounters_per_year": 1.5,
           "encounter_type_weights": {
@@ -4427,7 +3778,7 @@
         "bronchitis"
       ],
       "qa_status": "approved",
-      "source_template": "ohio_demo.template.json",
+      "source_template": "cohorts/copd.template.json",
       "clinical_catalog": {
         "diagnoses": [
           {
@@ -4699,6 +4050,16 @@
             "weight": 0.25
           }
         ],
+        "encounter_pattern": {
+          "encounters_per_year": 4.0,
+          "encounter_type_weights": {
+            "O": 0.7,
+            "E": 0.2,
+            "I": 0.1
+          },
+          "lab_encounter_rate": 0.65,
+          "rad_encounter_rate": 0.35
+        },
         "procedures": [
           {
             "code": "94010",
@@ -4718,115 +4079,7 @@
             "encounter_type": "I",
             "weight": 0.2
           }
-        ],
-        "illness_history_templates": [
-          {
-            "condition": "COPD diagnosed after years of smoking",
-            "onset_at_age_min": 45,
-            "onset_at_age_max": 65,
-            "is_resolved": false,
-            "weight": 0.6
-          },
-          {
-            "condition": "COPD with recurrent exacerbations requiring hospitalization",
-            "onset_at_age_min": 55,
-            "onset_at_age_max": 75,
-            "is_resolved": false,
-            "weight": 0.4
-          }
-        ],
-        "social_history_templates": [
-          {
-            "habit_code": "SMOKE",
-            "habit_description": "Current smoker",
-            "comments": [
-              "Patient reports smoking 1 pack per day for 30+ years.",
-              "Long-term smoker, approximately 40 pack-year history."
-            ],
-            "weight": 0.55
-          },
-          {
-            "habit_code": "FMRSMK",
-            "habit_description": "Former smoker",
-            "comments": [
-              "Quit smoking 5 years ago after 20-year history.",
-              "Former smoker, quit upon COPD diagnosis."
-            ],
-            "weight": 0.35
-          },
-          {
-            "habit_code": "NS",
-            "habit_description": "Non Smoker",
-            "comments": [
-              "Denies tobacco use; COPD related to occupational dust exposure."
-            ],
-            "weight": 0.1
-          }
-        ],
-        "family_history_templates": [
-          {
-            "condition": "COPD",
-            "relationship": "Father",
-            "weight": 0.5
-          },
-          {
-            "condition": "Lung cancer",
-            "relationship": "Parent",
-            "weight": 0.3
-          },
-          {
-            "condition": "Emphysema",
-            "relationship": "Sibling",
-            "weight": 0.2
-          }
-        ],
-        "document_templates": [
-          {
-            "type_code": "PN",
-            "type_description": "Progress Note",
-            "encounter_type": "O",
-            "chief_complaints": [
-              "Follow-up for COPD management",
-              "COPD exacerbation — increased dyspnea",
-              "Routine COPD check-up and medication review",
-              "Worsening shortness of breath and productive cough"
-            ],
-            "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Reports dyspnea on exertion. Productive cough with whitish sputum. Denies fever.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, in mild respiratory distress.\nLungs: Decreased breath sounds bilaterally. Prolonged expiratory phase. No acute wheezing.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 3 months or sooner if symptoms worsen."
-          }
-        ],
-        "rad_order_templates": [
-          {
-            "order_code": "CXR-PA-LAT",
-            "order_description": "Chest X-Ray PA and Lateral",
-            "reason_description": "Evaluate for COPD exacerbation or pneumonia",
-            "result_texts": [
-              "Hyperinflation of the lungs with flattening of the diaphragms consistent with COPD. No acute infiltrate or effusion.",
-              "Increased AP diameter consistent with emphysema. No acute cardiopulmonary process identified.",
-              "Barrel-shaped chest noted. Mild perihilar vascular congestion. No focal pneumonia."
-            ],
-            "weight": 0.6
-          },
-          {
-            "order_code": "CT-CHEST-WOUT",
-            "order_description": "CT Chest without contrast",
-            "reason_description": "Evaluate extent of emphysema and rule out pulmonary embolism",
-            "result_texts": [
-              "Severe centrilobular emphysema predominantly in the upper lobes. No pulmonary embolism identified.",
-              "Moderate panlobular emphysema. Mild bronchial wall thickening consistent with chronic bronchitis. No mass lesion."
-            ],
-            "weight": 0.4
-          }
-        ],
-        "encounter_pattern": {
-          "encounters_per_year": 4.0,
-          "encounter_type_weights": {
-            "O": 0.7,
-            "E": 0.2,
-            "I": 0.1
-          },
-          "lab_encounter_rate": 0.65,
-          "rad_encounter_rate": 0.35
-        }
+        ]
       }
     },
     "heart_failure": {
@@ -4841,7 +4094,7 @@
         "hfpef"
       ],
       "qa_status": "approved",
-      "source_template": "ohio_demo.template.json",
+      "source_template": "cohorts/heart_failure.template.json",
       "clinical_catalog": {
         "diagnoses": [
           {
@@ -4978,10 +4231,10 @@
                 "description": "Natriuretic peptide B [Mass/volume] in Blood",
                 "units": "pg/mL",
                 "is_numeric": true,
-                "normal_min": 0,
+                "normal_min": 5,
                 "normal_max": 100,
                 "abnormal_min": 101,
-                "abnormal_max": 5000,
+                "abnormal_max": 1800,
                 "abnormal_flag": "H",
                 "text_values": []
               }
@@ -5097,6 +4350,63 @@
                 "text_values": []
               }
             ]
+          },
+          {
+            "order_code": "57698-3",
+            "order_description": "Lipid panel with direct LDL",
+            "specimen": "Blood",
+            "abnormal_pct": 0.55,
+            "weight": 0.4,
+            "result_items": [
+              {
+                "code": "2093-3",
+                "description": "Cholesterol [Mass/volume] in Serum or Plasma",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 130,
+                "normal_max": 200,
+                "abnormal_min": 201,
+                "abnormal_max": 340,
+                "abnormal_flag": "H",
+                "text_values": []
+              },
+              {
+                "code": "13457-7",
+                "description": "LDL Cholesterol [Mass/volume] in Serum or Plasma",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 50,
+                "normal_max": 100,
+                "abnormal_min": 101,
+                "abnormal_max": 220,
+                "abnormal_flag": "H",
+                "text_values": []
+              },
+              {
+                "code": "2085-9",
+                "description": "HDL Cholesterol [Mass/volume] in Serum or Plasma",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 40,
+                "normal_max": 90,
+                "abnormal_min": 15,
+                "abnormal_max": 39,
+                "abnormal_flag": "L",
+                "text_values": []
+              },
+              {
+                "code": "2571-8",
+                "description": "Triglycerides [Mass/volume] in Serum or Plasma",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 40,
+                "normal_max": 150,
+                "abnormal_min": 151,
+                "abnormal_max": 400,
+                "abnormal_flag": "H",
+                "text_values": []
+              }
+            ]
           }
         ],
         "observations": [
@@ -5149,6 +4459,16 @@
             "weight": 0.2
           }
         ],
+        "encounter_pattern": {
+          "encounters_per_year": 5.0,
+          "encounter_type_weights": {
+            "O": 0.65,
+            "E": 0.15,
+            "I": 0.2
+          },
+          "lab_encounter_rate": 0.75,
+          "rad_encounter_rate": 0.4
+        },
         "procedures": [
           {
             "code": "93306",
@@ -5168,116 +4488,7 @@
             "encounter_type": "I",
             "weight": 0.2
           }
-        ],
-        "illness_history_templates": [
-          {
-            "condition": "Congestive heart failure first diagnosed",
-            "onset_at_age_min": 55,
-            "onset_at_age_max": 75,
-            "is_resolved": false,
-            "weight": 0.6
-          },
-          {
-            "condition": "Heart failure with prior hospitalization for acute decompensation",
-            "onset_at_age_min": 60,
-            "onset_at_age_max": 80,
-            "is_resolved": false,
-            "weight": 0.4
-          }
-        ],
-        "social_history_templates": [
-          {
-            "habit_code": "LOWNA",
-            "habit_description": "Low sodium diet",
-            "comments": [
-              "Patient reports adherence to a 2g sodium diet.",
-              "Following low-sodium diet as directed."
-            ],
-            "weight": 0.5
-          },
-          {
-            "habit_code": "FMRSMK",
-            "habit_description": "Former smoker",
-            "comments": [
-              "Former smoker, quit 10 years ago.",
-              "Tobacco cessation achieved prior to heart failure diagnosis."
-            ],
-            "weight": 0.3
-          },
-          {
-            "habit_code": "NS",
-            "habit_description": "Non Smoker",
-            "comments": [
-              "Denies tobacco use."
-            ],
-            "weight": 0.2
-          }
-        ],
-        "family_history_templates": [
-          {
-            "condition": "Coronary artery disease",
-            "relationship": "Father",
-            "weight": 0.4
-          },
-          {
-            "condition": "Heart failure",
-            "relationship": "Parent",
-            "weight": 0.35
-          },
-          {
-            "condition": "Hypertension",
-            "relationship": "Sibling",
-            "weight": 0.25
-          }
-        ],
-        "document_templates": [
-          {
-            "type_code": "PN",
-            "type_description": "Progress Note",
-            "encounter_type": "O",
-            "chief_complaints": [
-              "Follow-up for heart failure management",
-              "CHF — worsening edema and dyspnea",
-              "Routine heart failure check-up and weight monitoring",
-              "Shortness of breath on exertion — CHF follow-up"
-            ],
-            "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Reports daily weight monitoring. Notes 2 lb weight gain over 2 days. Bilateral lower extremity edema present. Dyspnea on exertion at 1 flight of stairs.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, in no acute distress.\nCardiovascular: Irregular rhythm. 2+ pitting edema bilateral lower extremities.\nLungs: Bibasilar crackles.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 2 weeks for weight and fluid status reassessment."
-          }
-        ],
-        "rad_order_templates": [
-          {
-            "order_code": "ECHO-TTE",
-            "order_description": "Echocardiogram Transthoracic",
-            "reason_description": "Evaluate ejection fraction and cardiac function in heart failure",
-            "result_texts": [
-              "Left ventricular ejection fraction estimated at 35-40%. Diffuse hypokinesis. Moderate mitral regurgitation. Dilated left ventricle.",
-              "EF 45-50%. Diastolic dysfunction grade II. Left atrial enlargement. No significant valvular disease.",
-              "Severely reduced EF at 25-30%. Global systolic dysfunction. Elevated filling pressures. Mild to moderate mitral regurgitation."
-            ],
-            "weight": 0.5
-          },
-          {
-            "order_code": "CXR-PA-LAT",
-            "order_description": "Chest X-Ray PA and Lateral",
-            "reason_description": "Evaluate for pulmonary edema and cardiomegaly in heart failure",
-            "result_texts": [
-              "Cardiomegaly with pulmonary vascular congestion. Bilateral pleural effusions. Findings consistent with acute decompensated heart failure.",
-              "Mild cardiomegaly. No acute pulmonary edema. No pleural effusion. Stable appearance compared to prior.",
-              "Moderate cardiomegaly. Bilateral lower zone airspace opacities consistent with pulmonary edema. Blunting of costophrenic angles."
-            ],
-            "weight": 0.5
-          }
-        ],
-        "encounter_pattern": {
-          "encounters_per_year": 5.0,
-          "encounter_type_weights": {
-            "O": 0.65,
-            "E": 0.15,
-            "I": 0.2
-          },
-          "lab_encounter_rate": 0.75,
-          "rad_encounter_rate": 0.4
-        }
+        ]
       }
     },
     "sickle_cell": {
@@ -5290,7 +4501,7 @@
         "hemoglobin sc"
       ],
       "qa_status": "approved",
-      "source_template": "ohio_demo.template.json",
+      "source_template": "cohorts/sickle_cell.template.json",
       "clinical_catalog": {
         "diagnoses": [
           {
@@ -5558,8 +4769,8 @@
                 "abnormal_max": null,
                 "abnormal_flag": "A",
                 "text_values": [
-                  "Hemoglobin S present — consistent with sickle cell disease",
-                  "Hemoglobin S detected — Hb-SS pattern on electrophoresis"
+                  "Hemoglobin S present \u2014 consistent with sickle cell disease",
+                  "Hemoglobin S detected \u2014 Hb-SS pattern on electrophoresis"
                 ]
               }
             ]
@@ -5615,6 +4826,16 @@
             "weight": 0.2
           }
         ],
+        "encounter_pattern": {
+          "encounters_per_year": 6.0,
+          "encounter_type_weights": {
+            "O": 0.55,
+            "E": 0.25,
+            "I": 0.2
+          },
+          "lab_encounter_rate": 0.8,
+          "rad_encounter_rate": 0.3
+        },
         "procedures": [
           {
             "code": "36430",
@@ -5634,108 +4855,7 @@
             "encounter_type": "O",
             "weight": 0.3
           }
-        ],
-        "illness_history_templates": [
-          {
-            "condition": "Sickle cell disease diagnosed at birth via newborn screening",
-            "onset_at_age_min": 0,
-            "onset_at_age_max": 2,
-            "is_resolved": false,
-            "weight": 0.7
-          },
-          {
-            "condition": "Recurrent vaso-occlusive pain crises requiring hospitalization",
-            "onset_at_age_min": 5,
-            "onset_at_age_max": 25,
-            "is_resolved": false,
-            "weight": 0.3
-          }
-        ],
-        "social_history_templates": [
-          {
-            "habit_code": "NS",
-            "habit_description": "Non Smoker",
-            "comments": [
-              "Denies tobacco use.",
-              "Non-smoker; avoids respiratory irritants due to sickle cell disease."
-            ],
-            "weight": 0.8
-          },
-          {
-            "habit_code": "HYDRAT",
-            "habit_description": "High fluid intake",
-            "comments": [
-              "Patient reports drinking 8-10 glasses of water daily to prevent crisis.",
-              "Maintains high hydration as advised to reduce sickling episodes."
-            ],
-            "weight": 0.2
-          }
-        ],
-        "family_history_templates": [
-          {
-            "condition": "Sickle cell disease",
-            "relationship": "Parent",
-            "weight": 0.6
-          },
-          {
-            "condition": "Sickle cell trait",
-            "relationship": "Sibling",
-            "weight": 0.3
-          },
-          {
-            "condition": "Hemolytic anemia",
-            "relationship": "Parent",
-            "weight": 0.1
-          }
-        ],
-        "document_templates": [
-          {
-            "type_code": "PN",
-            "type_description": "Progress Note",
-            "encounter_type": "O",
-            "chief_complaints": [
-              "Sickle cell disease — routine hematology follow-up",
-              "Vaso-occlusive pain crisis — chest and back pain",
-              "Sickle cell check-up with hydroxyurea monitoring",
-              "Fever in patient with sickle cell disease"
-            ],
-            "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} with known sickle cell disease presenting for {chief_complaint}. Patient reports {compliance_statement}. Pain scale 7/10 in bilateral lower extremities and lower back. Denies chest pain or shortness of breath at rest.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Appears uncomfortable, in moderate pain. Icteric sclerae noted.\nAbdomen: Mild left upper quadrant tenderness. Spleen not palpable (autosplenectomy).\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n2. Pain management — IV hydration, analgesics as needed.\n\nFOLLOW-UP: Return in 4-6 weeks or sooner if fever develops or pain escalates."
-          }
-        ],
-        "rad_order_templates": [
-          {
-            "order_code": "CXR-PA-LAT",
-            "order_description": "Chest X-Ray PA and Lateral",
-            "reason_description": "Evaluate for acute chest syndrome in sickle cell disease",
-            "result_texts": [
-              "New bilateral lower lobe opacities consistent with acute chest syndrome. Recommend hematology consult.",
-              "No acute cardiopulmonary process. No pleural effusion. Cardiac silhouette mildly enlarged.",
-              "Patchy airspace opacities in right lower lobe. Clinical correlation with fever and pain crisis advised."
-            ],
-            "weight": 0.6
-          },
-          {
-            "order_code": "MRI-BRAIN-WOUT",
-            "order_description": "MRI Brain without contrast",
-            "reason_description": "Evaluate for stroke or CNS vasculopathy in sickle cell disease",
-            "result_texts": [
-              "Multiple small foci of T2/FLAIR signal abnormality in bilateral subcortical white matter consistent with prior small vessel infarcts.",
-              "No acute intracranial abnormality. No diffusion restriction to suggest acute infarct.",
-              "Mild diffuse cerebral atrophy. Small chronic lacunar infarcts noted in the basal ganglia bilaterally."
-            ],
-            "weight": 0.4
-          }
-        ],
-        "encounter_pattern": {
-          "encounters_per_year": 6.0,
-          "encounter_type_weights": {
-            "O": 0.55,
-            "E": 0.25,
-            "I": 0.2
-          },
-          "lab_encounter_rate": 0.8,
-          "rad_encounter_rate": 0.3
-        }
+        ]
       }
     },
     "behavioral_health": {
@@ -5751,7 +4871,7 @@
         "mood disorder"
       ],
       "qa_status": "approved",
-      "source_template": "ohio_demo.template.json",
+      "source_template": "cohorts/behavioral_health.template.json",
       "clinical_catalog": {
         "diagnoses": [
           {
@@ -6013,7 +5133,7 @@
           {
             "code": "8310-5",
             "description": "Body temperature",
-            "units": "°F",
+            "units": "\u00b0F",
             "normal_min": 97.0,
             "normal_max": 99.0,
             "abnormal_min": 100.0,
@@ -6035,6 +5155,16 @@
             "weight": 0.25
           }
         ],
+        "encounter_pattern": {
+          "encounters_per_year": 4.0,
+          "encounter_type_weights": {
+            "O": 0.9,
+            "E": 0.07,
+            "I": 0.03
+          },
+          "lab_encounter_rate": 0.5,
+          "rad_encounter_rate": 0.1
+        },
         "procedures": [
           {
             "code": "90837",
@@ -6054,112 +5184,7 @@
             "encounter_type": "O",
             "weight": 0.2
           }
-        ],
-        "illness_history_templates": [
-          {
-            "condition": "Major depressive disorder, first episode",
-            "onset_at_age_min": 18,
-            "onset_at_age_max": 35,
-            "is_resolved": false,
-            "weight": 0.5
-          },
-          {
-            "condition": "Generalized anxiety disorder",
-            "onset_at_age_min": 20,
-            "onset_at_age_max": 45,
-            "is_resolved": false,
-            "weight": 0.35
-          },
-          {
-            "condition": "Post-traumatic stress disorder",
-            "onset_at_age_min": 18,
-            "onset_at_age_max": 50,
-            "is_resolved": false,
-            "weight": 0.15
-          }
-        ],
-        "social_history_templates": [
-          {
-            "habit_code": "NS",
-            "habit_description": "Non Smoker",
-            "comments": [
-              "Denies tobacco use.",
-              "Non-smoker."
-            ],
-            "weight": 0.6
-          },
-          {
-            "habit_code": "SMOKE",
-            "habit_description": "Current smoker",
-            "comments": [
-              "Reports smoking 0.5 pack per day.",
-              "Current smoker, interested in cessation."
-            ],
-            "weight": 0.2
-          },
-          {
-            "habit_code": "ETOH",
-            "habit_description": "Alcohol use",
-            "comments": [
-              "Reports occasional alcohol use, 2-3 drinks per week.",
-              "Social drinker; denies heavy alcohol use."
-            ],
-            "weight": 0.2
-          }
-        ],
-        "family_history_templates": [
-          {
-            "condition": "Major depressive disorder",
-            "relationship": "Parent",
-            "weight": 0.5
-          },
-          {
-            "condition": "Anxiety disorder",
-            "relationship": "Sibling",
-            "weight": 0.3
-          },
-          {
-            "condition": "Bipolar disorder",
-            "relationship": "Parent",
-            "weight": 0.2
-          }
-        ],
-        "document_templates": [
-          {
-            "type_code": "PN",
-            "type_description": "Progress Note",
-            "encounter_type": "O",
-            "chief_complaints": [
-              "Follow-up for depression management",
-              "Anxiety and mood disorder check-up",
-              "Medication management for major depressive disorder",
-              "Worsening depression — increased isolation and low mood"
-            ],
-            "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for follow-up of {diagnosis}. Patient reports {compliance_statement}. Reports persistent low mood and fatigue over the past 2 weeks. Sleep disturbance noted. Denies suicidal ideation or intent.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-groomed, cooperative, appropriate affect.\nPsych: Alert and oriented. Speech regular rate and rhythm. Mood: 'down'. Affect: constricted. No psychotic features.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n2. Safety plan reviewed. Patient denies active suicidal ideation.\n\nFOLLOW-UP: Return in 4 weeks for medication response assessment."
-          }
-        ],
-        "rad_order_templates": [
-          {
-            "order_code": "CXR-PA-LAT",
-            "order_description": "Chest X-Ray PA and Lateral",
-            "reason_description": "Routine chest screening for comorbid cardiovascular risk",
-            "result_texts": [
-              "No acute cardiopulmonary process. Lungs are clear. Heart size normal.",
-              "Normal chest X-ray. No active disease identified."
-            ],
-            "weight": 1.0
-          }
-        ],
-        "encounter_pattern": {
-          "encounters_per_year": 4.0,
-          "encounter_type_weights": {
-            "O": 0.9,
-            "E": 0.07,
-            "I": 0.03
-          },
-          "lab_encounter_rate": 0.5,
-          "rad_encounter_rate": 0.1
-        }
+        ]
       }
     },
     "opioid_use_disorder": {
@@ -6175,7 +5200,7 @@
         "mat"
       ],
       "qa_status": "approved",
-      "source_template": "ohio_demo.template.json",
+      "source_template": "cohorts/opioid_use_disorder.template.json",
       "clinical_catalog": {
         "diagnoses": [
           {
@@ -6450,6 +5475,16 @@
             "weight": 0.5
           }
         ],
+        "encounter_pattern": {
+          "encounters_per_year": 6.0,
+          "encounter_type_weights": {
+            "O": 0.6,
+            "E": 0.3,
+            "I": 0.1
+          },
+          "lab_encounter_rate": 0.7,
+          "rad_encounter_rate": 0.05
+        },
         "procedures": [
           {
             "code": "99213",
@@ -6469,114 +5504,7 @@
             "encounter_type": "O",
             "weight": 0.25
           }
-        ],
-        "illness_history_templates": [
-          {
-            "condition": "Opioid use disorder, first diagnosed at age 25",
-            "onset_at_age_min": 18,
-            "onset_at_age_max": 40,
-            "is_resolved": false,
-            "weight": 0.5
-          },
-          {
-            "condition": "Opioid overdose event requiring emergency treatment",
-            "onset_at_age_min": 20,
-            "onset_at_age_max": 55,
-            "is_resolved": true,
-            "weight": 0.35
-          },
-          {
-            "condition": "Chronic opioid dependency with multiple prior treatment attempts",
-            "onset_at_age_min": 22,
-            "onset_at_age_max": 50,
-            "is_resolved": false,
-            "weight": 0.15
-          }
-        ],
-        "social_history_templates": [
-          {
-            "habit_code": "SUBST",
-            "habit_description": "Substance use",
-            "comments": [
-              "Active opioid use disorder; currently enrolled in medication-assisted treatment.",
-              "History of IV drug use; currently on buprenorphine.",
-              "Polysubstance use history including opioids and benzodiazepines."
-            ],
-            "weight": 0.5
-          },
-          {
-            "habit_code": "SMOKE",
-            "habit_description": "Current smoker",
-            "comments": [
-              "Reports smoking 1 pack per day.",
-              "Current smoker, approximately 10 pack-year history."
-            ],
-            "weight": 0.3
-          },
-          {
-            "habit_code": "UNEMP",
-            "habit_description": "Unemployment",
-            "comments": [
-              "Currently unemployed; receiving disability benefits.",
-              "Unemployed; reports difficulty maintaining employment due to substance use disorder."
-            ],
-            "weight": 0.2
-          }
-        ],
-        "family_history_templates": [
-          {
-            "condition": "Substance use disorder",
-            "relationship": "Parent",
-            "weight": 0.5
-          },
-          {
-            "condition": "Opioid use disorder",
-            "relationship": "Sibling",
-            "weight": 0.3
-          },
-          {
-            "condition": "Depression",
-            "relationship": "Parent",
-            "weight": 0.2
-          }
-        ],
-        "document_templates": [
-          {
-            "type_code": "PN",
-            "type_description": "Progress Note",
-            "encounter_type": "O",
-            "chief_complaints": [
-              "Medication-assisted treatment follow-up for opioid use disorder",
-              "Buprenorphine/naloxone medication management",
-              "Opioid use disorder — monthly check-in",
-              "Post-overdose follow-up and harm reduction counseling"
-            ],
-            "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for follow-up of {diagnosis}. Patient reports {compliance_statement}. Denies recent illicit opioid use. Reports compliance with prescribed medication-assisted treatment. No recent overdose events.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, RR {rr} /min, Weight {weight} lbs\nGeneral: Alert and oriented, no acute distress.\nSkin: No track marks or signs of active IV drug use noted.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n2. Naloxone rescue kit prescribed and patient educated on use.\n3. Urine drug screen obtained.\n\nFOLLOW-UP: Return in 1 month for medication monitoring."
-          }
-        ],
-        "rad_order_templates": [
-          {
-            "order_code": "CXR-PA-LAT",
-            "order_description": "Chest X-Ray PA and Lateral",
-            "reason_description": "Evaluate for aspiration pneumonia following overdose event",
-            "result_texts": [
-              "Right lower lobe infiltrate consistent with aspiration pneumonia.",
-              "No acute cardiopulmonary process. Lungs are clear.",
-              "Bilateral lower lobe haziness, may represent early aspiration pneumonitis."
-            ],
-            "weight": 1.0
-          }
-        ],
-        "encounter_pattern": {
-          "encounters_per_year": 6.0,
-          "encounter_type_weights": {
-            "O": 0.6,
-            "E": 0.3,
-            "I": 0.1
-          },
-          "lab_encounter_rate": 0.7,
-          "rad_encounter_rate": 0.05
-        }
+        ]
       }
     },
     "respiratory_illness": {
@@ -6591,7 +5519,7 @@
         "respiratory infection"
       ],
       "qa_status": "approved",
-      "source_template": "ohio_demo.template.json",
+      "source_template": "cohorts/respiratory_illness.template.json",
       "clinical_catalog": {
         "diagnoses": [
           {
@@ -6978,7 +5906,7 @@
           {
             "code": "8310-5",
             "description": "Body temperature",
-            "units": "°F",
+            "units": "\u00b0F",
             "normal_min": 97.0,
             "normal_max": 99.0,
             "abnormal_min": 100.4,
@@ -7024,6 +5952,16 @@
             "weight": 0.25
           }
         ],
+        "encounter_pattern": {
+          "encounters_per_year": 3.0,
+          "encounter_type_weights": {
+            "O": 0.55,
+            "E": 0.3,
+            "I": 0.15
+          },
+          "lab_encounter_rate": 0.7,
+          "rad_encounter_rate": 0.5
+        },
         "procedures": [
           {
             "code": "71046",
@@ -7043,101 +5981,7 @@
             "encounter_type": "O",
             "weight": 0.4
           }
-        ],
-        "illness_history_templates": [
-          {
-            "condition": "Recurrent upper respiratory infections",
-            "onset_at_age_min": 1,
-            "onset_at_age_max": 70,
-            "is_resolved": false,
-            "weight": 0.5
-          },
-          {
-            "condition": "Community-acquired pneumonia",
-            "onset_at_age_min": 10,
-            "onset_at_age_max": 80,
-            "is_resolved": true,
-            "weight": 0.5
-          }
-        ],
-        "social_history_templates": [
-          {
-            "habit_code": "SMOK",
-            "habit_description": "Smoker",
-            "comments": [
-              "Current smoker, approximately 1 pack per day.",
-              "Smoker for 10 years."
-            ],
-            "weight": 0.25
-          },
-          {
-            "habit_code": "NS",
-            "habit_description": "Non Smoker",
-            "comments": [
-              "Patient has never smoked.",
-              "Former smoker, quit 5 years ago."
-            ],
-            "weight": 0.75
-          }
-        ],
-        "family_history_templates": [
-          {
-            "condition": "Asthma",
-            "relationship": "Mother",
-            "weight": 0.5
-          },
-          {
-            "condition": "Chronic respiratory conditions",
-            "relationship": "Father",
-            "weight": 0.5
-          }
-        ],
-        "document_templates": [
-          {
-            "type_code": "PN",
-            "type_description": "Progress Note",
-            "encounter_type": "O",
-            "chief_complaints": [
-              "Fever and productive cough",
-              "Shortness of breath and wheezing",
-              "Upper respiratory symptoms"
-            ],
-            "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting with {chief_complaint}. Symptoms began approximately 3 days ago. Patient reports {compliance_statement}.\n\nPHYSICAL EXAMINATION:\nVitals: Temp {temp} °F, O2 Sat {o2sat}%, RR {rr} breaths/min, HR {hr} bpm\nGeneral: Ill-appearing, in mild to moderate distress.\nRespiratory: Decreased breath sounds, crackles noted at bases.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return if symptoms worsen or in 5-7 days."
-          },
-          {
-            "type_code": "PN",
-            "type_description": "Emergency Note",
-            "encounter_type": "E",
-            "chief_complaints": [
-              "Severe difficulty breathing",
-              "High fever with cough",
-              "Worsening respiratory distress"
-            ],
-            "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting to the emergency department with {chief_complaint}. Onset of symptoms {compliance_statement}.\n\nPHYSICAL EXAMINATION:\nVitals: Temp {temp} °F, O2 Sat {o2sat}%, RR {rr} breaths/min, HR {hr} bpm\nGeneral: Acute respiratory distress.\nLungs: Decreased aeration, bilateral rales.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nDISPOSITION: Admitted for further management."
-          }
-        ],
-        "rad_order_templates": [
-          {
-            "order_code": "CXR-2V",
-            "order_description": "Chest X-Ray 2 views",
-            "reason_description": "Evaluate for pneumonia and pulmonary infiltrates",
-            "result_texts": [
-              "Bilateral lower lobe consolidation consistent with pneumonia.",
-              "No acute cardiopulmonary process identified."
-            ],
-            "weight": 1.0
-          }
-        ],
-        "encounter_pattern": {
-          "encounters_per_year": 3.0,
-          "encounter_type_weights": {
-            "O": 0.55,
-            "E": 0.3,
-            "I": 0.15
-          },
-          "lab_encounter_rate": 0.7,
-          "rad_encounter_rate": 0.5
-        }
+        ]
       }
     },
     "stroke": {
@@ -7152,7 +5996,7 @@
         "hemorrhagic stroke"
       ],
       "qa_status": "approved",
-      "source_template": "ohio_demo.template.json",
+      "source_template": "cohorts/stroke.template.json",
       "clinical_catalog": {
         "diagnoses": [
           {
@@ -7591,6 +6435,16 @@
             "weight": 0.15
           }
         ],
+        "encounter_pattern": {
+          "encounters_per_year": 4.5,
+          "encounter_type_weights": {
+            "O": 0.65,
+            "E": 0.2,
+            "I": 0.15
+          },
+          "lab_encounter_rate": 0.75,
+          "rad_encounter_rate": 0.6
+        },
         "procedures": [
           {
             "code": "70553",
@@ -7616,106 +6470,3033 @@
             "encounter_type": "O",
             "weight": 0.4
           }
-        ],
-        "illness_history_templates": [
+        ]
+      }
+    },
+    "covid19": {
+      "canonical_name": "COVID-19",
+      "keywords": [
+        "covid",
+        "covid-19",
+        "coronavirus",
+        "sars-cov-2",
+        "covid19",
+        "covid pneumonia",
+        "remdesivir",
+        "dexamethasone covid"
+      ],
+      "qa_status": "approved",
+      "source_template": "cohorts/covid19.template.json",
+      "clinical_catalog": {
+        "diagnoses": [
           {
-            "condition": "Prior ischemic stroke",
-            "onset_at_age_min": 40,
-            "onset_at_age_max": 80,
-            "is_resolved": false,
-            "weight": 0.5
+            "code": "U07.1",
+            "description": "COVID-19, virus identified",
+            "is_primary": true,
+            "onset_age_min": 0,
+            "onset_age_max": 120
           },
           {
-            "condition": "Transient ischemic attack (TIA)",
-            "onset_at_age_min": 40,
-            "onset_at_age_max": 80,
-            "is_resolved": true,
-            "weight": 0.5
+            "code": "J12.82",
+            "description": "Pneumonia due to coronavirus disease 2019",
+            "is_primary": false,
+            "onset_age_min": 0,
+            "onset_age_max": 120,
+            "only_encounter_types": [
+              "I"
+            ]
           }
         ],
-        "social_history_templates": [
+        "comorbidities": [
           {
-            "habit_code": "SMOK",
-            "habit_description": "Smoker",
-            "comments": [
-              "Current smoker, approximately 1 pack per day.",
-              "Smoker, 20 pack-year history."
-            ],
-            "weight": 0.35
+            "code": "E66.9",
+            "description": "Obesity, unspecified",
+            "prevalence_pct": 0.3
           },
           {
-            "habit_code": "SED",
-            "habit_description": "Sedentary lifestyle",
-            "comments": [
-              "Patient reports minimal physical activity.",
-              "Sedentary lifestyle, no regular exercise."
-            ],
-            "weight": 0.65
+            "code": "J45.909",
+            "description": "Unspecified asthma, uncomplicated",
+            "prevalence_pct": 0.2
+          },
+          {
+            "code": "I10",
+            "description": "Essential hypertension",
+            "prevalence_pct": 0.25
           }
         ],
-        "family_history_templates": [
+        "medications": [
           {
-            "condition": "Stroke",
-            "relationship": "Father",
-            "weight": 0.4
+            "drug_code": "1234567",
+            "drug_description": "Remdesivir 100 MG Injection",
+            "dose_quantity": "100",
+            "dose_uom": "mg",
+            "dosage_form_code": "INJ",
+            "dosage_form_description": "Injection",
+            "route_code": "IV",
+            "route_description": "Intravenous",
+            "frequency_code": "QD",
+            "frequency_description": "Once daily",
+            "status": "active",
+            "for_diagnosis_code": "U07",
+            "weight": 0.428571
           },
           {
-            "condition": "Hypertension",
-            "relationship": "Mother",
-            "weight": 0.35
+            "drug_code": "987654",
+            "drug_description": "Dexamethasone 6 MG Oral Tablet",
+            "dose_quantity": "6",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "QD",
+            "frequency_description": "Once daily",
+            "status": "active",
+            "for_diagnosis_code": "U07",
+            "weight": 0.285714
           },
           {
-            "condition": "Atrial fibrillation",
-            "relationship": "Sibling",
+            "drug_code": "7654321",
+            "drug_description": "Albuterol 90 MCG/ACT Inhalation Aerosol",
+            "dose_quantity": "90",
+            "dose_uom": "mcg",
+            "dosage_form_code": "INH",
+            "dosage_form_description": "Inhalation",
+            "route_code": "INH",
+            "route_description": "Inhalation",
+            "frequency_code": "PRN",
+            "frequency_description": "As needed",
+            "status": "active",
+            "for_diagnosis_code": "U07",
+            "weight": 0.285714
+          }
+        ],
+        "labs": [
+          {
+            "order_code": "1988-5",
+            "order_description": "C-reactive protein (CRP) panel",
+            "specimen": "Blood",
+            "abnormal_pct": 0.4,
+            "weight": 0.3,
+            "result_items": [
+              {
+                "code": "1988-5",
+                "description": "C reactive protein [Mass/volume] in Serum or Plasma",
+                "is_numeric": true,
+                "units": "mg/L",
+                "normal_min": 0.0,
+                "normal_max": 10.5,
+                "abnormal_min": 1.1,
+                "abnormal_max": 10.5
+              }
+            ]
+          },
+          {
+            "order_code": "58410-2",
+            "order_description": "CBC panel - Blood by Automated count",
+            "specimen": "Blood",
+            "abnormal_pct": 0.5,
+            "weight": 0.4,
+            "result_items": [
+              {
+                "code": "6690-2",
+                "description": "WBC",
+                "units": "K/uL",
+                "is_numeric": true,
+                "normal_min": 4.5,
+                "normal_max": 11.0,
+                "abnormal_min": 1.5,
+                "abnormal_max": 18.0,
+                "normal_range_text": "4.5-11.0"
+              },
+              {
+                "code": "789-8",
+                "description": "RBC",
+                "units": "M/uL",
+                "is_numeric": true,
+                "normal_min": 3.9,
+                "normal_max": 5.9,
+                "abnormal_min": 2.0,
+                "abnormal_max": 7.0
+              },
+              {
+                "code": "718-7",
+                "description": "Hemoglobin",
+                "units": "g/dL",
+                "is_numeric": true,
+                "normal_min": 11.5,
+                "normal_max": 17.5,
+                "abnormal_min": 6.0,
+                "abnormal_max": 20.0
+              },
+              {
+                "code": "4544-3",
+                "description": "Hematocrit",
+                "units": "%",
+                "is_numeric": true,
+                "normal_min": 35,
+                "normal_max": 52,
+                "abnormal_min": 20,
+                "abnormal_max": 60
+              },
+              {
+                "code": "777-3",
+                "description": "Platelets",
+                "units": "K/uL",
+                "is_numeric": true,
+                "normal_min": 150,
+                "normal_max": 400,
+                "abnormal_min": 50,
+                "abnormal_max": 600
+              },
+              {
+                "code": "731-0",
+                "description": "Lymphocytes",
+                "units": "%",
+                "is_numeric": true,
+                "normal_min": 20,
+                "normal_max": 45,
+                "abnormal_min": 5,
+                "abnormal_max": 80
+              },
+              {
+                "code": "752-6",
+                "description": "Neutrophils",
+                "units": "%",
+                "is_numeric": true,
+                "normal_min": 40,
+                "normal_max": 75,
+                "abnormal_min": 5,
+                "abnormal_max": 95
+              }
+            ]
+          },
+          {
+            "order_code": "24323-8",
+            "order_description": "Comprehensive metabolic panel",
+            "specimen": "Blood",
+            "abnormal_pct": 0.35,
+            "weight": 0.3,
+            "result_items": [
+              {
+                "code": "2951-2",
+                "description": "Sodium",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 136,
+                "normal_max": 145,
+                "abnormal_min": 129,
+                "abnormal_max": 152
+              },
+              {
+                "code": "2823-3",
+                "description": "Potassium",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 3.5,
+                "normal_max": 5.0,
+                "abnormal_min": 2.8,
+                "abnormal_max": 6.2
+              },
+              {
+                "code": "2075-0",
+                "description": "Chloride",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 98,
+                "normal_max": 107,
+                "abnormal_min": 90,
+                "abnormal_max": 115
+              },
+              {
+                "code": "2028-9",
+                "description": "CO2 (Bicarbonate)",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 22,
+                "normal_max": 29,
+                "abnormal_min": 16,
+                "abnormal_max": 34
+              },
+              {
+                "code": "2339-0",
+                "description": "Glucose",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 70,
+                "normal_max": 99,
+                "abnormal_min": 50,
+                "abnormal_max": 450
+              },
+              {
+                "code": "3094-0",
+                "description": "BUN",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 6,
+                "normal_max": 20,
+                "abnormal_min": 2,
+                "abnormal_max": 50
+              },
+              {
+                "code": "2160-0",
+                "description": "Creatinine",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 0.6,
+                "normal_max": 1.2,
+                "abnormal_min": 0.4,
+                "abnormal_max": 3.5
+              },
+              {
+                "code": "17861-6",
+                "description": "Calcium",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 8.5,
+                "normal_max": 10.5,
+                "abnormal_min": 7.0,
+                "abnormal_max": 12.0
+              },
+              {
+                "code": "2885-2",
+                "description": "Total Protein",
+                "units": "g/dL",
+                "is_numeric": true,
+                "normal_min": 6.3,
+                "normal_max": 8.2,
+                "abnormal_min": 4.5,
+                "abnormal_max": 10.0
+              },
+              {
+                "code": "1751-7",
+                "description": "Albumin",
+                "units": "g/dL",
+                "is_numeric": true,
+                "normal_min": 3.5,
+                "normal_max": 5.0,
+                "abnormal_min": 2.0,
+                "abnormal_max": 6.0
+              },
+              {
+                "code": "1742-6",
+                "description": "ALT",
+                "units": "U/L",
+                "is_numeric": true,
+                "normal_min": 7,
+                "normal_max": 56,
+                "abnormal_min": 57,
+                "abnormal_max": 200
+              },
+              {
+                "code": "1920-8",
+                "description": "AST",
+                "units": "U/L",
+                "is_numeric": true,
+                "normal_min": 10,
+                "normal_max": 40,
+                "abnormal_min": 41,
+                "abnormal_max": 200
+              },
+              {
+                "code": "6768-6",
+                "description": "Alkaline Phosphatase",
+                "units": "U/L",
+                "is_numeric": true,
+                "normal_min": 44,
+                "normal_max": 147,
+                "abnormal_min": 148,
+                "abnormal_max": 350
+              },
+              {
+                "code": "1975-2",
+                "description": "Total Bilirubin",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 0.1,
+                "normal_max": 1.2,
+                "abnormal_min": 1.3,
+                "abnormal_max": 5.0
+              }
+            ]
+          }
+        ],
+        "observations": [
+          {
+            "code": "8480-6",
+            "description": "Systolic blood pressure",
+            "units": "mmHg",
+            "normal_min": 90,
+            "normal_max": 119,
+            "abnormal_min": 130,
+            "abnormal_max": 180,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.3,
+            "weight": 0.25
+          },
+          {
+            "code": "8462-4",
+            "description": "Diastolic blood pressure",
+            "units": "mmHg",
+            "normal_min": 60,
+            "normal_max": 79,
+            "abnormal_min": 80,
+            "abnormal_max": 120,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.25,
+            "weight": 0.25
+          },
+          {
+            "code": "8310-5",
+            "description": "Body temperature",
+            "units": "\u00b0F",
+            "normal_min": 97.0,
+            "normal_max": 99.0,
+            "abnormal_min": 100.4,
+            "abnormal_max": 105.0,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.15,
+            "weight": 0.25
+          },
+          {
+            "code": "8867-4",
+            "description": "Heart rate",
+            "units": "bpm",
+            "normal_min": 60,
+            "normal_max": 100,
+            "abnormal_min": 101,
+            "abnormal_max": 150,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.2,
             "weight": 0.25
           }
         ],
-        "document_templates": [
+        "encounter_pattern": {
+          "encounters_per_year": 6.0,
+          "encounter_type_weights": {
+            "O": 0.7,
+            "E": 0.2,
+            "I": 0.1
+          },
+          "lab_encounter_rate": 0.8,
+          "rad_encounter_rate": 0.2
+        },
+        "procedures": [
           {
-            "type_code": "PN",
-            "type_description": "Emergency Note",
-            "encounter_type": "E",
-            "chief_complaints": [
-              "Sudden onset left-sided weakness",
-              "Facial droop and slurred speech",
-              "Acute neurological deficits"
-            ],
-            "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting with {chief_complaint}. Symptom onset approximately {compliance_statement}. Last known well time documented.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm\nNeurological: NIH Stroke Scale score assessed. Focal neurological deficits noted.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nDISPOSITION: Admitted to stroke unit for monitoring and management."
+            "code": "99223",
+            "description": "Initial hospital care, high complexity",
+            "encounter_type": "I",
+            "weight": 0.571429
           },
           {
-            "type_code": "PN",
-            "type_description": "Progress Note",
-            "encounter_type": "O",
-            "chief_complaints": [
-              "Post-stroke follow-up",
-              "Neurological rehabilitation progress",
-              "Stroke management and secondary prevention"
+            "code": "94660",
+            "description": "Continuous positive airway pressure ventilation",
+            "encounter_type": "I",
+            "weight": 0.428571
+          }
+        ]
+      }
+    },
+    "long_covid": {
+      "canonical_name": "Long COVID / PASC",
+      "keywords": [
+        "long covid",
+        "post covid",
+        "pasc",
+        "post-acute sequelae",
+        "post-covid",
+        "long hauler",
+        "U09.9",
+        "fatigue post covid",
+        "cognitive dysfunction covid",
+        "brain fog covid"
+      ],
+      "qa_status": "approved",
+      "source_template": "cohorts/long_covid.template.json",
+      "clinical_catalog": {
+        "diagnoses": [
+          {
+            "code": "U09.9",
+            "description": "Post-COVID condition, unspecified",
+            "is_primary": true,
+            "only_encounter_types": [
+              "O"
             ],
-            "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for {chief_complaint}. Patient reports {compliance_statement}. On antiplatelet/anticoagulation therapy.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm\nNeurological: Residual deficits assessed.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 3 months."
+            "onset_age_min": 18,
+            "onset_age_max": 80
+          },
+          {
+            "code": "R06.00",
+            "description": "Dyspnea, unspecified",
+            "is_primary": true,
+            "only_encounter_types": [
+              "E",
+              "I"
+            ],
+            "onset_age_min": 18,
+            "onset_age_max": 80
+          },
+          {
+            "code": "R53.83",
+            "description": "Other fatigue",
+            "is_primary": false,
+            "onset_age_min": 18,
+            "onset_age_max": 80
+          },
+          {
+            "code": "R41.3",
+            "description": "Other amnesia (cognitive dysfunction)",
+            "is_primary": false,
+            "onset_age_min": 18,
+            "onset_age_max": 80
+          },
+          {
+            "code": "Z86.16",
+            "description": "Personal history of COVID-19",
+            "is_primary": false,
+            "force_secondary": true,
+            "onset_age_min": 18,
+            "onset_age_max": 80
           }
         ],
-        "rad_order_templates": [
+        "comorbidities": [
           {
-            "order_code": "CT-HEAD-NC",
-            "order_description": "CT Head without contrast",
-            "reason_description": "Evaluate for acute intracranial hemorrhage or ischemic infarct",
-            "result_texts": [
-              "No acute intracranial hemorrhage. Hypodense area in left MCA territory consistent with acute ischemic infarct.",
-              "No acute intracranial abnormality identified."
-            ],
-            "weight": 1.0
+            "code": "F32.9",
+            "description": "Major depressive disorder, single episode, unspecified",
+            "prevalence_pct": 0.35
+          },
+          {
+            "code": "F41.1",
+            "description": "Generalized anxiety disorder",
+            "prevalence_pct": 0.4
+          },
+          {
+            "code": "R00.2",
+            "description": "Palpitations",
+            "prevalence_pct": 0.35
+          },
+          {
+            "code": "G93.3",
+            "description": "Postviral fatigue syndrome",
+            "prevalence_pct": 0.15
+          },
+          {
+            "code": "I10",
+            "description": "Essential hypertension",
+            "prevalence_pct": 0.25
+          },
+          {
+            "code": "E11.9",
+            "description": "Type 2 diabetes mellitus without complications",
+            "prevalence_pct": 0.2
+          },
+          {
+            "code": "J45.909",
+            "description": "Unspecified asthma, uncomplicated",
+            "prevalence_pct": 0.15
+          }
+        ],
+        "medications": [
+          {
+            "drug_code": "1860483",
+            "drug_description": "Low-dose naltrexone 4.5 MG Oral Tablet",
+            "dose_quantity": "4.5",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "QD",
+            "frequency_description": "Once daily",
+            "status": "active",
+            "for_diagnosis_code": "G93",
+            "weight": 0.92
+          },
+          {
+            "drug_code": "312940",
+            "drug_description": "Sertraline 50 MG Oral Tablet",
+            "dose_quantity": "50",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "QD",
+            "frequency_description": "Once daily",
+            "status": "active",
+            "for_diagnosis_code": "F32",
+            "weight": 0.92
+          },
+          {
+            "drug_code": "905169",
+            "drug_description": "Buspirone 10 MG Oral Tablet",
+            "dose_quantity": "10",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "BID",
+            "frequency_description": "Twice daily",
+            "status": "active",
+            "for_diagnosis_code": "F41",
+            "weight": 0.92
+          },
+          {
+            "drug_code": "866514",
+            "drug_description": "Metoprolol succinate 25 MG Extended Release Oral Tablet",
+            "dose_quantity": "25",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "QD",
+            "frequency_description": "Once daily",
+            "status": "active",
+            "for_diagnosis_code": "R00",
+            "weight": 0.92
+          }
+        ],
+        "labs": [
+          {
+            "order_code": "58410-2",
+            "order_description": "CBC panel - Blood by Automated count",
+            "specimen": "Blood",
+            "abnormal_pct": 0.3,
+            "weight": 0.3,
+            "result_items": [
+              {
+                "code": "6690-2",
+                "description": "WBC",
+                "units": "K/uL",
+                "is_numeric": true,
+                "normal_min": 4.5,
+                "normal_max": 11.0,
+                "abnormal_min": 1.5,
+                "abnormal_max": 18.0
+              },
+              {
+                "code": "789-8",
+                "description": "RBC",
+                "units": "M/uL",
+                "is_numeric": true,
+                "normal_min": 3.9,
+                "normal_max": 5.9,
+                "abnormal_min": 2.0,
+                "abnormal_max": 7.0
+              },
+              {
+                "code": "718-7",
+                "description": "Hemoglobin",
+                "units": "g/dL",
+                "is_numeric": true,
+                "normal_min": 11.5,
+                "normal_max": 17.5,
+                "abnormal_min": 6.0,
+                "abnormal_max": 20.0
+              },
+              {
+                "code": "4544-3",
+                "description": "Hematocrit",
+                "units": "%",
+                "is_numeric": true,
+                "normal_min": 35,
+                "normal_max": 52,
+                "abnormal_min": 20,
+                "abnormal_max": 60
+              },
+              {
+                "code": "777-3",
+                "description": "Platelets",
+                "units": "K/uL",
+                "is_numeric": true,
+                "normal_min": 150,
+                "normal_max": 400,
+                "abnormal_min": 50,
+                "abnormal_max": 600
+              }
+            ]
+          },
+          {
+            "order_code": "24323-8",
+            "order_description": "Comprehensive metabolic panel",
+            "specimen": "Blood",
+            "abnormal_pct": 0.25,
+            "weight": 0.3,
+            "result_items": [
+              {
+                "code": "2951-2",
+                "description": "Sodium",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 136,
+                "normal_max": 145,
+                "abnormal_min": 129,
+                "abnormal_max": 152
+              },
+              {
+                "code": "2823-3",
+                "description": "Potassium",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 3.5,
+                "normal_max": 5.0,
+                "abnormal_min": 2.8,
+                "abnormal_max": 6.2
+              },
+              {
+                "code": "2339-0",
+                "description": "Glucose",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 70,
+                "normal_max": 99,
+                "abnormal_min": 50,
+                "abnormal_max": 250
+              },
+              {
+                "code": "3094-0",
+                "description": "BUN",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 6,
+                "normal_max": 20,
+                "abnormal_min": 2,
+                "abnormal_max": 50
+              },
+              {
+                "code": "2160-0",
+                "description": "Creatinine",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 0.6,
+                "normal_max": 1.2,
+                "abnormal_min": 0.4,
+                "abnormal_max": 3.5
+              },
+              {
+                "code": "1742-6",
+                "description": "ALT",
+                "units": "U/L",
+                "is_numeric": true,
+                "normal_min": 7,
+                "normal_max": 56,
+                "abnormal_min": 57,
+                "abnormal_max": 200
+              },
+              {
+                "code": "1920-8",
+                "description": "AST",
+                "units": "U/L",
+                "is_numeric": true,
+                "normal_min": 10,
+                "normal_max": 40,
+                "abnormal_min": 41,
+                "abnormal_max": 200
+              },
+              {
+                "code": "1975-2",
+                "description": "Total Bilirubin",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 0.1,
+                "normal_max": 1.2,
+                "abnormal_min": 1.3,
+                "abnormal_max": 5.0
+              }
+            ]
+          },
+          {
+            "order_code": "1988-5",
+            "order_description": "CRP + Ferritin panel",
+            "specimen": "Blood",
+            "abnormal_pct": 0.45,
+            "weight": 0.6,
+            "result_items": [
+              {
+                "code": "1988-5",
+                "description": "C reactive protein [Mass/volume] in Serum or Plasma",
+                "units": "mg/L",
+                "is_numeric": true,
+                "normal_min": 0.0,
+                "normal_max": 10.5,
+                "abnormal_min": 1.1,
+                "abnormal_max": 85.0
+              },
+              {
+                "code": "2276-4",
+                "description": "Ferritin",
+                "units": "ng/mL",
+                "is_numeric": true,
+                "normal_min": 12,
+                "normal_max": 300,
+                "abnormal_min": 301,
+                "abnormal_max": 1500
+              }
+            ]
+          }
+        ],
+        "observations": [
+          {
+            "code": "8480-6",
+            "description": "Systolic blood pressure",
+            "units": "mmHg",
+            "normal_min": 90,
+            "normal_max": 119,
+            "abnormal_min": 130,
+            "abnormal_max": 180,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.25,
+            "weight": 0.25
+          },
+          {
+            "code": "8462-4",
+            "description": "Diastolic blood pressure",
+            "units": "mmHg",
+            "normal_min": 60,
+            "normal_max": 79,
+            "abnormal_min": 80,
+            "abnormal_max": 120,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.2,
+            "weight": 0.25
+          },
+          {
+            "code": "2708-6",
+            "description": "Oxygen saturation (SpO2)",
+            "units": "%",
+            "normal_min": 95,
+            "normal_max": 100,
+            "abnormal_min": 88,
+            "abnormal_max": 94,
+            "abnormal_flag": "L",
+            "abnormal_pct": 0.3,
+            "weight": 0.25
+          },
+          {
+            "code": "8867-4",
+            "description": "Heart rate",
+            "units": "bpm",
+            "normal_min": 60,
+            "normal_max": 100,
+            "abnormal_min": 101,
+            "abnormal_max": 140,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.25,
+            "weight": 0.25
           }
         ],
         "encounter_pattern": {
-          "encounters_per_year": 4.5,
+          "encounters_per_year": 6.0,
           "encounter_type_weights": {
-            "O": 0.65,
-            "E": 0.2,
-            "I": 0.15
+            "O": 0.89,
+            "E": 0.08,
+            "I": 0.03
           },
-          "lab_encounter_rate": 0.75,
-          "rad_encounter_rate": 0.6
+          "lab_encounter_rate": 0.7,
+          "rad_encounter_rate": 0.1
+        },
+        "procedures": [
+          {
+            "code": "99214",
+            "description": "Office or other outpatient visit, moderate complexity",
+            "encounter_type": "O",
+            "weight": 0.7
+          },
+          {
+            "code": "90837",
+            "description": "Psychotherapy, 60 minutes",
+            "encounter_type": "O",
+            "weight": 0.3
+          }
+        ]
+      }
+    },
+    "oud_mat": {
+      "canonical_name": "Opioid Use Disorder \u2014 Medication-Assisted Treatment",
+      "keywords": [
+        "opioid use disorder",
+        "OUD",
+        "MAT",
+        "buprenorphine",
+        "suboxone",
+        "methadone",
+        "naltrexone",
+        "vivitrol",
+        "medication assisted treatment",
+        "F11",
+        "substance use disorder",
+        "opioid dependence",
+        "addiction"
+      ],
+      "qa_status": "approved",
+      "source_template": "cohorts/oud_mat.template.json",
+      "clinical_catalog": {
+        "diagnoses": [
+          {
+            "code": "F11.20",
+            "description": "Opioid use disorder, uncomplicated",
+            "is_primary": true,
+            "only_encounter_types": [
+              "O"
+            ]
+          },
+          {
+            "code": "F32.9",
+            "description": "Major depressive disorder, unspecified",
+            "is_primary": true,
+            "only_encounter_types": [
+              "E",
+              "I"
+            ]
+          },
+          {
+            "code": "F11.21",
+            "description": "Opioid use disorder, in remission",
+            "is_primary": false
+          },
+          {
+            "code": "F43.10",
+            "description": "Post-traumatic stress disorder, unspecified",
+            "is_primary": false
+          },
+          {
+            "code": "G47.00",
+            "description": "Insomnia, unspecified",
+            "is_primary": false
+          }
+        ],
+        "comorbidities": [
+          {
+            "code": "F41.1",
+            "description": "Generalized anxiety disorder",
+            "prevalence_pct": 0.4,
+            "is_primary": false
+          },
+          {
+            "code": "F14.10",
+            "description": "Cocaine use disorder, uncomplicated",
+            "prevalence_pct": 0.22,
+            "is_primary": false
+          },
+          {
+            "code": "F17.210",
+            "description": "Nicotine dependence, cigarettes, uncomplicated",
+            "prevalence_pct": 0.52,
+            "is_primary": false
+          },
+          {
+            "code": "I10",
+            "description": "Essential (primary) hypertension",
+            "prevalence_pct": 0.22,
+            "is_primary": false
+          },
+          {
+            "code": "B18.2",
+            "description": "Chronic viral hepatitis C without delta-agent",
+            "prevalence_pct": 0.18,
+            "is_primary": false
+          },
+          {
+            "code": "N18.3",
+            "description": "Chronic kidney disease, stage 3",
+            "prevalence_pct": 0.1,
+            "is_primary": false
+          },
+          {
+            "code": "A15.0",
+            "description": "Tuberculosis of lung",
+            "prevalence_pct": 0.015,
+            "is_primary": false
+          }
+        ],
+        "medications": [
+          {
+            "drug_code": "2105765",
+            "drug_description": "Buprenorphine/Naloxone 8 MG/2 MG sublingual tablet",
+            "drug_class": "MAT \u2014 Partial Opioid Agonist",
+            "weight": 0.92,
+            "for_diagnosis_code": "",
+            "dose_options": [
+              {
+                "amount": "8",
+                "unit": "mg",
+                "route": "SL",
+                "frequency": "BID"
+              }
+            ]
+          },
+          {
+            "drug_code": "1659929",
+            "drug_description": "Naloxone HCl 4 MG/0.1 mL nasal spray",
+            "drug_class": "Opioid Antagonist / Rescue",
+            "weight": 0.82,
+            "for_diagnosis_code": "",
+            "dose_options": [
+              {
+                "amount": "4",
+                "unit": "mg",
+                "route": "Intranasal",
+                "frequency": "PRN"
+              }
+            ]
+          },
+          {
+            "drug_code": "2108769",
+            "drug_description": "Sertraline 50 MG Oral Tablet",
+            "drug_class": "SSRI Antidepressant",
+            "weight": 0.45,
+            "for_diagnosis_code": "F32",
+            "dose_options": [
+              {
+                "amount": "50",
+                "unit": "mg",
+                "route": "PO",
+                "frequency": "QD"
+              }
+            ]
+          },
+          {
+            "drug_code": "835564",
+            "drug_description": "Prazosin 1 MG Oral Capsule",
+            "drug_class": "Alpha-1 Antagonist / PTSD nightmares",
+            "weight": 0.3,
+            "for_diagnosis_code": "F43",
+            "dose_options": [
+              {
+                "amount": "1",
+                "unit": "mg",
+                "route": "PO",
+                "frequency": "QHS"
+              }
+            ]
+          },
+          {
+            "drug_code": "898179",
+            "drug_description": "Trazodone 50 MG Oral Tablet",
+            "drug_class": "Sedating Antidepressant",
+            "weight": 0.35,
+            "for_diagnosis_code": "G47",
+            "dose_options": [
+              {
+                "amount": "50",
+                "unit": "mg",
+                "route": "PO",
+                "frequency": "QHS"
+              }
+            ]
+          },
+          {
+            "drug_code": "864978",
+            "drug_description": "Methadone HCl 40 MG dispersible tablet",
+            "drug_class": "MAT \u2014 Full Opioid Agonist",
+            "weight": 0.92,
+            "for_diagnosis_code": "",
+            "dose_options": [
+              {
+                "amount": "40-120",
+                "unit": "mg",
+                "route": "PO",
+                "frequency": "QD"
+              }
+            ]
+          },
+          {
+            "drug_code": "314076",
+            "drug_description": "Lisinopril 10 MG Oral Tablet",
+            "drug_class": "ACE inhibitor",
+            "weight": 0.4,
+            "for_diagnosis_code": "I10",
+            "dose_options": [
+              {
+                "amount": "10",
+                "unit": "mg",
+                "route": "PO",
+                "frequency": "QD"
+              }
+            ]
+          },
+          {
+            "drug_code": "1113834",
+            "drug_description": "Naltrexone 380 MG IM extended-release injectable",
+            "drug_class": "MAT \u2014 Opioid Antagonist",
+            "weight": 0.92,
+            "for_diagnosis_code": "",
+            "dose_options": [
+              {
+                "amount": "380",
+                "unit": "mg",
+                "route": "IM",
+                "frequency": "Monthly"
+              }
+            ]
+          }
+        ],
+        "labs": [
+          {
+            "order_code": "24323-8",
+            "order_description": "Hepatic Function Panel",
+            "specimen": "Blood",
+            "abnormal_pct": 0.35,
+            "weight": 0.4,
+            "result_items": [
+              {
+                "code": "1742-6",
+                "description": "ALT",
+                "is_numeric": true,
+                "units": "U/L",
+                "normal_min": 7,
+                "normal_max": 56,
+                "abnormal_min": 57,
+                "abnormal_max": 300
+              },
+              {
+                "code": "1920-8",
+                "description": "AST",
+                "is_numeric": true,
+                "units": "U/L",
+                "normal_min": 10,
+                "normal_max": 40,
+                "abnormal_min": 41,
+                "abnormal_max": 300
+              },
+              {
+                "code": "6768-6",
+                "description": "Alkaline Phosphatase",
+                "is_numeric": true,
+                "units": "U/L",
+                "normal_min": 44,
+                "normal_max": 147,
+                "abnormal_min": 148,
+                "abnormal_max": 400
+              },
+              {
+                "code": "1975-2",
+                "description": "Total Bilirubin",
+                "is_numeric": true,
+                "units": "mg/dL",
+                "normal_min": 0.1,
+                "normal_max": 1.2,
+                "abnormal_min": 1.3,
+                "abnormal_max": 8.0
+              }
+            ]
+          },
+          {
+            "order_code": "58410-2",
+            "order_description": "CBC panel - Blood by Automated count",
+            "specimen": "Blood",
+            "abnormal_pct": 0.3,
+            "weight": 0.4,
+            "result_items": [
+              {
+                "code": "6690-2",
+                "description": "WBC",
+                "is_numeric": true,
+                "units": "K/uL",
+                "normal_min": 4.5,
+                "normal_max": 11.0,
+                "abnormal_min": 1.5,
+                "abnormal_max": 18.0
+              },
+              {
+                "code": "789-8",
+                "description": "RBC",
+                "is_numeric": true,
+                "units": "M/uL",
+                "normal_min": 3.9,
+                "normal_max": 5.9,
+                "abnormal_min": 2.0,
+                "abnormal_max": 7.0
+              },
+              {
+                "code": "718-7",
+                "description": "Hemoglobin",
+                "is_numeric": true,
+                "units": "g/dL",
+                "normal_min": 11.5,
+                "normal_max": 17.5,
+                "abnormal_min": 6.0,
+                "abnormal_max": 14.0
+              },
+              {
+                "code": "777-3",
+                "description": "Platelets",
+                "is_numeric": true,
+                "units": "K/uL",
+                "normal_min": 150,
+                "normal_max": 400,
+                "abnormal_min": 50,
+                "abnormal_max": 600
+              }
+            ]
+          },
+          {
+            "order_code": "3426-4",
+            "order_description": "Drugs of abuse screen - Urine",
+            "specimen": "Urine",
+            "abnormal_pct": 0.0,
+            "weight": 0.55,
+            "result_items": [
+              {
+                "code": "3426-4",
+                "description": "Opiates screen [Presence] in Urine",
+                "is_numeric": false,
+                "units": "",
+                "text_values": [
+                  "Positive",
+                  "Negative"
+                ]
+              }
+            ]
+          }
+        ],
+        "observations": [
+          {
+            "code": "8480-6",
+            "description": "Systolic blood pressure",
+            "units": "mmHg",
+            "normal_min": 90,
+            "normal_max": 119,
+            "abnormal_min": 130,
+            "abnormal_max": 180,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.22,
+            "weight": 0.35
+          },
+          {
+            "code": "8462-4",
+            "description": "Diastolic blood pressure",
+            "units": "mmHg",
+            "normal_min": 60,
+            "normal_max": 79,
+            "abnormal_min": 80,
+            "abnormal_max": 120,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.2,
+            "weight": 0.35
+          },
+          {
+            "code": "8867-4",
+            "description": "Heart rate",
+            "units": "bpm",
+            "normal_min": 60,
+            "normal_max": 100,
+            "abnormal_min": 40,
+            "abnormal_max": 59,
+            "abnormal_flag": "L",
+            "abnormal_pct": 0.15,
+            "weight": 0.3
+          }
+        ],
+        "encounter_pattern": {
+          "encounters_per_year": 13.0,
+          "encounter_type_weights": {
+            "O": 0.87,
+            "E": 0.09,
+            "I": 0.04
+          },
+          "lab_encounter_rate": 0.5,
+          "rad_encounter_rate": 0.04
+        },
+        "procedures": [
+          {
+            "code": "H0020",
+            "description": "Methadone administration",
+            "weight": 0.1
+          },
+          {
+            "code": "99213",
+            "description": "Office visit, established patient, moderate complexity",
+            "weight": 0.6
+          },
+          {
+            "code": "90837",
+            "description": "Psychotherapy, 60 min",
+            "weight": 0.3
+          }
+        ]
+      }
+    },
+    "ckd_progression": {
+      "canonical_name": "Chronic Kidney Disease \u2014 Stages 3\u20135",
+      "keywords": [
+        "CKD",
+        "chronic kidney disease",
+        "kidney failure",
+        "renal failure",
+        "N18",
+        "dialysis",
+        "eGFR",
+        "creatinine elevated",
+        "stage 3 CKD",
+        "stage 4 CKD",
+        "stage 5 CKD",
+        "renal anemia",
+        "ESRD"
+      ],
+      "qa_status": "approved",
+      "source_template": "cohorts/ckd_progression.template.json",
+      "clinical_catalog": {
+        "diagnoses": [
+          {
+            "code": "N18.3",
+            "description": "Chronic kidney disease, stage 3 (moderate)",
+            "is_primary": true,
+            "onset_age_min": 40,
+            "onset_age_max": 85
+          }
+        ],
+        "comorbidities": [
+          {
+            "code": "E11.9",
+            "description": "Type 2 diabetes mellitus without complications",
+            "prevalence_pct": 0.65
+          },
+          {
+            "code": "I10",
+            "description": "Essential (primary) hypertension",
+            "prevalence_pct": 0.7
+          },
+          {
+            "code": "D63.1",
+            "description": "Anemia in chronic kidney disease",
+            "prevalence_pct": 0.45
+          },
+          {
+            "code": "I50.9",
+            "description": "Heart failure, unspecified",
+            "prevalence_pct": 0.25
+          },
+          {
+            "code": "E78.5",
+            "description": "Hyperlipidemia, unspecified",
+            "prevalence_pct": 0.5
+          },
+          {
+            "code": "I25.10",
+            "description": "Atherosclerotic heart disease of native coronary artery without angina pectoris",
+            "prevalence_pct": 0.2
+          },
+          {
+            "code": "I48.91",
+            "description": "Unspecified atrial fibrillation",
+            "prevalence_pct": 0.15
+          },
+          {
+            "code": "E83.39",
+            "description": "Other disorders of phosphorus metabolism",
+            "prevalence_pct": 0.35
+          },
+          {
+            "code": "E21.1",
+            "description": "Secondary hyperparathyroidism, not elsewhere classified",
+            "prevalence_pct": 0.3
+          }
+        ],
+        "medications": [
+          {
+            "drug_code": "104375",
+            "drug_description": "Lisinopril 10 MG Oral Tablet",
+            "dose_quantity": "10",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "QD",
+            "frequency_description": "Once daily",
+            "status": "active",
+            "for_diagnosis_code": "N18",
+            "weight": 0.88
+          },
+          {
+            "drug_code": "197361",
+            "drug_description": "Amlodipine 5 MG Oral Tablet",
+            "dose_quantity": "5",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "QD",
+            "frequency_description": "Once daily",
+            "status": "active",
+            "for_diagnosis_code": "I10",
+            "weight": 0.9
+          },
+          {
+            "drug_code": "310138",
+            "drug_description": "Epoetin alfa 4000 UNT/ML Injection",
+            "dose_quantity": "4000",
+            "dose_uom": "UNT/ML",
+            "dosage_form_code": "INJ",
+            "dosage_form_description": "Injection",
+            "route_code": "SC",
+            "route_description": "Subcutaneous",
+            "frequency_code": "3XWKLY",
+            "frequency_description": "Three times weekly",
+            "status": "active",
+            "for_diagnosis_code": "D63",
+            "weight": 0.9
+          },
+          {
+            "drug_code": "310430",
+            "drug_description": "Ferric gluconate 62.5 MG/5 mL Intravenous Solution",
+            "dose_quantity": "62.5",
+            "dose_uom": "mg",
+            "dosage_form_code": "SOL",
+            "dosage_form_description": "Solution",
+            "route_code": "IV",
+            "route_description": "Intravenous",
+            "frequency_code": "PRN",
+            "frequency_description": "As needed",
+            "status": "active",
+            "for_diagnosis_code": "D63",
+            "weight": 0.7
+          },
+          {
+            "drug_code": "896664",
+            "drug_description": "Sevelamer carbonate 800 MG Oral Tablet",
+            "dose_quantity": "800",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "TID",
+            "frequency_description": "Three times daily with meals",
+            "status": "active",
+            "for_diagnosis_code": "E83",
+            "weight": 0.88
+          },
+          {
+            "drug_code": "200483",
+            "drug_description": "Calcitriol 0.25 MCG Oral Capsule",
+            "dose_quantity": "0.25",
+            "dose_uom": "mcg",
+            "dosage_form_code": "CAP",
+            "dosage_form_description": "Capsule",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "QD",
+            "frequency_description": "Once daily",
+            "status": "active",
+            "for_diagnosis_code": "E21",
+            "weight": 0.9
+          },
+          {
+            "drug_code": "310429",
+            "drug_description": "Furosemide 40 MG Oral Tablet",
+            "dose_quantity": "40",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "QD",
+            "frequency_description": "Once daily",
+            "status": "active",
+            "for_diagnosis_code": "I50",
+            "weight": 0.9
+          },
+          {
+            "drug_code": "860975",
+            "drug_description": "Metformin 500 MG Oral Tablet",
+            "dose_quantity": "500",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "BID",
+            "frequency_description": "Twice daily",
+            "status": "active",
+            "for_diagnosis_code": "E11",
+            "weight": 0.75
+          },
+          {
+            "drug_code": "617310",
+            "drug_description": "Atorvastatin 40 MG Oral Tablet",
+            "dose_quantity": "40",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "QD",
+            "frequency_description": "Once daily",
+            "status": "active",
+            "for_diagnosis_code": "E78",
+            "weight": 0.88
+          }
+        ],
+        "labs": [
+          {
+            "order_code": "33914-3",
+            "order_description": "eGFR (CKD-EPI)",
+            "specimen": "Blood",
+            "abnormal_pct": 1.0,
+            "weight": 0.95,
+            "result_items": [
+              {
+                "code": "33914-3",
+                "description": "Glomerular filtration rate/1.73 sq M predicted",
+                "units": "mL/min/1.73m2",
+                "is_numeric": true,
+                "normal_min": 60,
+                "normal_max": 120,
+                "abnormal_min": 5,
+                "abnormal_max": 59
+              }
+            ]
+          },
+          {
+            "order_code": "51990-0",
+            "order_description": "Basic metabolic panel",
+            "specimen": "Blood",
+            "abnormal_pct": 0.65,
+            "weight": 0.4,
+            "result_items": [
+              {
+                "code": "2951-2",
+                "description": "Sodium",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 136,
+                "normal_max": 145,
+                "abnormal_min": 129,
+                "abnormal_max": 152
+              },
+              {
+                "code": "2823-3",
+                "description": "Potassium",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 3.5,
+                "normal_max": 5.0,
+                "abnormal_min": 5.1,
+                "abnormal_max": 7.0
+              },
+              {
+                "code": "2028-9",
+                "description": "CO2 (Bicarbonate)",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 22,
+                "normal_max": 29,
+                "abnormal_min": 14,
+                "abnormal_max": 21
+              },
+              {
+                "code": "3094-0",
+                "description": "BUN",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 6,
+                "normal_max": 20,
+                "abnormal_min": 21,
+                "abnormal_max": 100
+              },
+              {
+                "code": "2160-0",
+                "description": "Creatinine",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 0.6,
+                "normal_max": 1.2,
+                "abnormal_min": 1.5,
+                "abnormal_max": 10.0
+              },
+              {
+                "code": "17861-6",
+                "description": "Calcium",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 8.5,
+                "normal_max": 10.5,
+                "abnormal_min": 7.0,
+                "abnormal_max": 8.4
+              },
+              {
+                "code": "2339-0",
+                "description": "Glucose",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 70,
+                "normal_max": 99,
+                "abnormal_min": 100,
+                "abnormal_max": 400
+              },
+              {
+                "code": "2132-9",
+                "description": "Phosphate",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 2.5,
+                "normal_max": 4.5,
+                "abnormal_min": 4.6,
+                "abnormal_max": 10.0
+              },
+              {
+                "code": "2731-8",
+                "description": "Parathyrin intact (PTH)",
+                "units": "pg/mL",
+                "is_numeric": true,
+                "normal_min": 15,
+                "normal_max": 65,
+                "abnormal_min": 66,
+                "abnormal_max": 600
+              }
+            ]
+          },
+          {
+            "order_code": "58410-2",
+            "order_description": "CBC panel - Blood by Automated count",
+            "specimen": "Blood",
+            "abnormal_pct": 0.55,
+            "weight": 0.7,
+            "result_items": [
+              {
+                "code": "6690-2",
+                "description": "WBC",
+                "units": "K/uL",
+                "is_numeric": true,
+                "normal_min": 4.5,
+                "normal_max": 11.0,
+                "abnormal_min": 1.5,
+                "abnormal_max": 18.0
+              },
+              {
+                "code": "789-8",
+                "description": "RBC",
+                "units": "M/uL",
+                "is_numeric": true,
+                "normal_min": 3.9,
+                "normal_max": 5.9,
+                "abnormal_min": 2.0,
+                "abnormal_max": 4.5
+              },
+              {
+                "code": "718-7",
+                "description": "Hemoglobin",
+                "units": "g/dL",
+                "is_numeric": true,
+                "normal_min": 11.5,
+                "normal_max": 17.5,
+                "abnormal_min": 6.0,
+                "abnormal_max": 11.4
+              },
+              {
+                "code": "4544-3",
+                "description": "Hematocrit",
+                "units": "%",
+                "is_numeric": true,
+                "normal_min": 35,
+                "normal_max": 52,
+                "abnormal_min": 20,
+                "abnormal_max": 34
+              },
+              {
+                "code": "777-3",
+                "description": "Platelets",
+                "units": "K/uL",
+                "is_numeric": true,
+                "normal_min": 150,
+                "normal_max": 400,
+                "abnormal_min": 50,
+                "abnormal_max": 600
+              }
+            ]
+          },
+          {
+            "order_code": "5767-9",
+            "order_description": "Urinalysis",
+            "specimen": "Urine",
+            "abnormal_pct": 0.6,
+            "weight": 0.15,
+            "result_items": [
+              {
+                "code": "5767-9",
+                "description": "Protein [Mass/volume] in Urine",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 0,
+                "normal_max": 20,
+                "abnormal_min": 21,
+                "abnormal_max": 500
+              }
+            ]
+          }
+        ],
+        "observations": [
+          {
+            "code": "8480-6",
+            "description": "Systolic blood pressure",
+            "units": "mmHg",
+            "normal_min": 90,
+            "normal_max": 129,
+            "abnormal_min": 130,
+            "abnormal_max": 190,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.55,
+            "weight": 0.35
+          },
+          {
+            "code": "8462-4",
+            "description": "Diastolic blood pressure",
+            "units": "mmHg",
+            "normal_min": 60,
+            "normal_max": 79,
+            "abnormal_min": 80,
+            "abnormal_max": 120,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.45,
+            "weight": 0.35
+          },
+          {
+            "code": "29463-7",
+            "description": "Body weight",
+            "units": "lbs",
+            "normal_min": 110,
+            "normal_max": 250,
+            "abnormal_min": 251,
+            "abnormal_max": 400,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.2,
+            "weight": 0.3
+          }
+        ],
+        "encounter_pattern": {
+          "encounters_per_year": 8.0,
+          "encounter_type_weights": {
+            "O": 0.82,
+            "E": 0.12,
+            "I": 0.06
+          },
+          "lab_encounter_rate": 0.9,
+          "rad_encounter_rate": 0.1
+        },
+        "procedures": [
+          {
+            "code": "99214",
+            "description": "Office visit moderate complexity",
+            "encounter_type": "O",
+            "weight": 0.6
+          },
+          {
+            "code": "90935",
+            "description": "Hemodialysis one evaluation",
+            "encounter_type": "O",
+            "weight": 0.2
+          },
+          {
+            "code": "36832",
+            "description": "Arteriovenous fistula revision",
+            "encounter_type": "O",
+            "weight": 0.2
+          }
+        ],
+        "ckd_progression": true,
+        "initial_egfr_min": 20,
+        "initial_egfr_max": 55,
+        "progression_trajectories": [
+          {
+            "name": "stable",
+            "rate_min": 0.0,
+            "rate_max": 0.5,
+            "weight": 0.2
+          },
+          {
+            "name": "slow",
+            "rate_min": -3.0,
+            "rate_max": -0.5,
+            "weight": 0.35
+          },
+          {
+            "name": "moderate",
+            "rate_min": -6.0,
+            "rate_max": -3.1,
+            "weight": 0.3
+          },
+          {
+            "name": "rapid",
+            "rate_min": -12.0,
+            "rate_max": -6.1,
+            "weight": 0.15
+          }
+        ]
+      }
+    },
+    "maternal_morbidity": {
+      "canonical_name": "High-Risk Maternal / Obstetric Morbidity",
+      "keywords": [
+        "maternal",
+        "obstetric",
+        "pregnancy",
+        "preeclampsia",
+        "gestational diabetes",
+        "postpartum hemorrhage",
+        "O24",
+        "O14",
+        "O72",
+        "high risk pregnancy",
+        "maternal morbidity",
+        "prenatal",
+        "antepartum",
+        "perinatal"
+      ],
+      "qa_status": "approved",
+      "source_template": "cohorts/maternal_morbidity.template.json",
+      "clinical_catalog": {
+        "diagnoses": [
+          {
+            "code": "Z34.00",
+            "description": "Encounter for supervision of normal pregnancy, first trimester",
+            "is_primary": false,
+            "onset_age_min": 18,
+            "onset_age_max": 45
+          },
+          {
+            "code": "O24.419",
+            "description": "Gestational diabetes mellitus in pregnancy, unspecified trimester",
+            "is_primary": true,
+            "only_encounter_types": [
+              "O",
+              "I"
+            ],
+            "onset_age_min": 18,
+            "onset_age_max": 45
+          },
+          {
+            "code": "O13.9",
+            "description": "Gestational hypertension, unspecified trimester",
+            "is_primary": true,
+            "only_encounter_types": [
+              "O"
+            ],
+            "onset_age_min": 18,
+            "onset_age_max": 45
+          },
+          {
+            "code": "O14.00",
+            "description": "Mild to moderate pre-eclampsia, unspecified trimester",
+            "is_primary": false,
+            "only_encounter_types": [
+              "I",
+              "E"
+            ],
+            "onset_age_min": 18,
+            "onset_age_max": 45
+          },
+          {
+            "code": "O14.10",
+            "description": "Severe pre-eclampsia, unspecified trimester",
+            "is_primary": true,
+            "onset_age_min": 18,
+            "onset_age_max": 45
+          },
+          {
+            "code": "O15.02",
+            "description": "Eclampsia in labor",
+            "is_primary": false,
+            "only_encounter_types": [
+              "I"
+            ],
+            "onset_age_min": 18,
+            "onset_age_max": 45
+          },
+          {
+            "code": "O72.1",
+            "description": "Other immediate postpartum hemorrhage",
+            "is_primary": true,
+            "only_encounter_types": [
+              "I"
+            ],
+            "onset_age_min": 18,
+            "onset_age_max": 45
+          }
+        ],
+        "comorbidities": [
+          {
+            "code": "E66.9",
+            "description": "Obesity, unspecified",
+            "prevalence_pct": 0.4
+          },
+          {
+            "code": "F32.9",
+            "description": "Major depressive disorder, single episode, unspecified",
+            "prevalence_pct": 0.15
+          }
+        ],
+        "medications": [
+          {
+            "drug_code": "261551",
+            "drug_description": "Insulin glargine 100 UNT/ML Injectable Solution",
+            "dose_quantity": "100",
+            "dose_uom": "UNT/ML",
+            "dosage_form_code": "SOL",
+            "dosage_form_description": "Injectable Solution",
+            "route_code": "SC",
+            "route_description": "Subcutaneous",
+            "frequency_code": "QHS",
+            "frequency_description": "Every bedtime",
+            "status": "active",
+            "for_diagnosis_code": "O24",
+            "weight": 0.65
+          },
+          {
+            "drug_code": "854882",
+            "drug_description": "Prenatal vitamins",
+            "dose_quantity": "1",
+            "dose_uom": "tablet",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "QD",
+            "frequency_description": "Once daily",
+            "status": "active",
+            "for_diagnosis_code": "Z34",
+            "weight": 0.92
+          },
+          {
+            "drug_code": "310798",
+            "drug_description": "Labetalol 200 MG Oral Tablet",
+            "dose_quantity": "200",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "BID",
+            "frequency_description": "Twice daily",
+            "status": "active",
+            "for_diagnosis_code": "O13",
+            "weight": 0.7
+          },
+          {
+            "drug_code": "203549",
+            "drug_description": "Methyldopa 250 MG Oral Tablet",
+            "dose_quantity": "250",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "BID",
+            "frequency_description": "Twice daily",
+            "status": "active",
+            "for_diagnosis_code": "O13",
+            "weight": 0.5
+          },
+          {
+            "drug_code": "310429",
+            "drug_description": "Nifedipine 10 MG Oral Capsule",
+            "dose_quantity": "10",
+            "dose_uom": "mg",
+            "dosage_form_code": "CAP",
+            "dosage_form_description": "Capsule",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "PRN",
+            "frequency_description": "As needed",
+            "status": "active",
+            "for_diagnosis_code": "O14",
+            "weight": 0.45
+          },
+          {
+            "drug_code": "308167",
+            "drug_description": "Magnesium sulfate 50% Injection",
+            "dose_quantity": "50",
+            "dose_uom": "%",
+            "dosage_form_code": "INJ",
+            "dosage_form_description": "Injection",
+            "route_code": "IV",
+            "route_description": "Intravenous",
+            "frequency_code": "INFUSION",
+            "frequency_description": "Continuous infusion",
+            "status": "active",
+            "for_diagnosis_code": "O14",
+            "weight": 0.9,
+            "is_acute": true
+          },
+          {
+            "drug_code": "310463",
+            "drug_description": "Ferrous sulfate 325 MG Oral Tablet",
+            "dose_quantity": "325",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "BID",
+            "frequency_description": "Twice daily",
+            "status": "active",
+            "for_diagnosis_code": "O72",
+            "weight": 0.7
+          }
+        ],
+        "labs": [
+          {
+            "order_code": "14749-6",
+            "order_description": "Glucose tolerance panel",
+            "specimen": "Blood",
+            "abnormal_pct": 0.6,
+            "weight": 0.35,
+            "result_items": [
+              {
+                "code": "14749-6",
+                "description": "Glucose 2h post-dose [Mass/volume] in Serum or Plasma",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 70,
+                "normal_max": 139,
+                "abnormal_min": 140,
+                "abnormal_max": 400
+              },
+              {
+                "code": "2339-0",
+                "description": "Fasting glucose [Mass/volume] in Serum or Plasma",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 70,
+                "normal_max": 95,
+                "abnormal_min": 96,
+                "abnormal_max": 300
+              }
+            ]
+          },
+          {
+            "order_code": "58410-2",
+            "order_description": "CBC panel - Blood by Automated count",
+            "specimen": "Blood",
+            "abnormal_pct": 0.2,
+            "weight": 0.3,
+            "result_items": [
+              {
+                "code": "718-7",
+                "description": "Hemoglobin [Mass/volume] in Blood",
+                "units": "g/dL",
+                "is_numeric": true,
+                "normal_min": 10.0,
+                "normal_max": 16.0,
+                "abnormal_min": 6.0,
+                "abnormal_max": 9.9
+              },
+              {
+                "code": "4544-3",
+                "description": "Hematocrit [Volume Fraction] of Blood by Automated count",
+                "units": "%",
+                "is_numeric": true,
+                "normal_min": 30,
+                "normal_max": 50,
+                "abnormal_min": 18,
+                "abnormal_max": 29
+              },
+              {
+                "code": "777-3",
+                "description": "Platelets [#/volume] in Blood by Automated count",
+                "units": "K/uL",
+                "is_numeric": true,
+                "normal_min": 150,
+                "normal_max": 400,
+                "abnormal_min": 50,
+                "abnormal_max": 149
+              }
+            ]
+          },
+          {
+            "order_code": "5767-9",
+            "order_description": "Pre-eclampsia labs",
+            "specimen": "Blood/Urine",
+            "abnormal_pct": 0.15,
+            "weight": 0.35,
+            "result_items": [
+              {
+                "code": "5767-9",
+                "description": "Protein [Mass/volume] in Urine",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 0,
+                "normal_max": 20,
+                "abnormal_min": 21,
+                "abnormal_max": 500
+              },
+              {
+                "code": "1742-6",
+                "description": "Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+                "units": "U/L",
+                "is_numeric": true,
+                "normal_min": 7,
+                "normal_max": 56,
+                "abnormal_min": 57,
+                "abnormal_max": 300
+              },
+              {
+                "code": "1920-8",
+                "description": "Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+                "units": "U/L",
+                "is_numeric": true,
+                "normal_min": 10,
+                "normal_max": 40,
+                "abnormal_min": 41,
+                "abnormal_max": 300
+              },
+              {
+                "code": "777-3",
+                "description": "Platelets [#/volume] in Blood by Automated count",
+                "units": "K/uL",
+                "is_numeric": true,
+                "normal_min": 150,
+                "normal_max": 400,
+                "abnormal_min": 50,
+                "abnormal_max": 149
+              }
+            ]
+          },
+          {
+            "order_code": "89247-1",
+            "order_description": "Iron panel",
+            "specimen": "Blood",
+            "abnormal_pct": 0.5,
+            "weight": 0.25,
+            "result_items": [
+              {
+                "code": "2498-4",
+                "description": "Iron [Mass/volume] in Serum or Plasma",
+                "units": "mcg/dL",
+                "is_numeric": true,
+                "normal_min": 60,
+                "normal_max": 170,
+                "abnormal_min": 20,
+                "abnormal_max": 59
+              },
+              {
+                "code": "2276-4",
+                "description": "Ferritin [Mass/volume] in Serum or Plasma",
+                "units": "ng/mL",
+                "is_numeric": true,
+                "normal_min": 12,
+                "normal_max": 150,
+                "abnormal_min": 5,
+                "abnormal_max": 11
+              }
+            ]
+          }
+        ],
+        "encounter_pattern": {
+          "encounters_per_year": 10,
+          "encounter_type_weights": {
+            "O": 0.88,
+            "E": 0.06,
+            "I": 0.06
+          },
+          "lab_encounter_rate": 0.7,
+          "rad_encounter_rate": 0.1
         }
+      }
+    },
+    "sdoh": {
+      "canonical_name": "Social Determinants of Health",
+      "keywords": [
+        "SDOH",
+        "social determinants",
+        "homelessness",
+        "housing instability",
+        "food insecurity",
+        "poverty",
+        "Z59",
+        "Z56",
+        "Z63",
+        "social needs",
+        "housing",
+        "food access",
+        "unemployment",
+        "social risk"
+      ],
+      "qa_status": "approved",
+      "source_template": "cohorts/sdoh.template.json",
+      "clinical_catalog": {
+        "diagnoses": [
+          {
+            "code": "Z59.0",
+            "description": "Homelessness",
+            "is_primary": true,
+            "only_encounter_types": [
+              "O"
+            ],
+            "onset_age_min": 18,
+            "onset_age_max": 85
+          },
+          {
+            "code": "F32.9",
+            "description": "Major depressive disorder, single episode, unspecified",
+            "is_primary": true,
+            "only_encounter_types": [
+              "E",
+              "I"
+            ],
+            "onset_age_min": 18,
+            "onset_age_max": 85
+          },
+          {
+            "code": "Z59.4",
+            "description": "Lack of adequate food and safe drinking water",
+            "is_primary": false,
+            "onset_age_min": 18,
+            "onset_age_max": 85
+          },
+          {
+            "code": "Z59.8",
+            "description": "Other problems related to housing and economic circumstances",
+            "is_primary": false,
+            "onset_age_min": 18,
+            "onset_age_max": 85
+          },
+          {
+            "code": "Z63.0",
+            "description": "Problems in relationship with spouse or partner",
+            "is_primary": false,
+            "onset_age_min": 18,
+            "onset_age_max": 85
+          },
+          {
+            "code": "Z56.0",
+            "description": "Unemployment, unspecified",
+            "is_primary": false,
+            "onset_age_min": 18,
+            "onset_age_max": 85
+          }
+        ],
+        "comorbidities": [
+          {
+            "code": "E11.9",
+            "description": "Type 2 diabetes mellitus without complications",
+            "prevalence_pct": 0.6
+          },
+          {
+            "code": "E11.65",
+            "description": "Type 2 diabetes mellitus with hyperglycemia",
+            "prevalence_pct": 0.35
+          },
+          {
+            "code": "I10",
+            "description": "Essential (primary) hypertension",
+            "prevalence_pct": 0.65
+          },
+          {
+            "code": "F41.1",
+            "description": "Generalized anxiety disorder",
+            "prevalence_pct": 0.45
+          },
+          {
+            "code": "F10.20",
+            "description": "Alcohol use disorder, uncomplicated",
+            "prevalence_pct": 0.3
+          },
+          {
+            "code": "Z59.5",
+            "description": "Extreme poverty",
+            "prevalence_pct": 0.4
+          },
+          {
+            "code": "N18.3",
+            "description": "Chronic kidney disease, stage 3 (moderate)",
+            "prevalence_pct": 0.15
+          },
+          {
+            "code": "I25.10",
+            "description": "Atherosclerotic heart disease, native coronary artery",
+            "prevalence_pct": 0.1
+          },
+          {
+            "code": "J44.1",
+            "description": "Chronic obstructive pulmonary disease with exacerbation",
+            "prevalence_pct": 0.12
+          },
+          {
+            "code": "I50.9",
+            "description": "Heart failure, unspecified",
+            "prevalence_pct": 0.08
+          },
+          {
+            "code": "J45.909",
+            "description": "Unspecified asthma, uncomplicated",
+            "prevalence_pct": 0.08
+          },
+          {
+            "code": "I48.0",
+            "description": "Paroxysmal atrial fibrillation",
+            "prevalence_pct": 0.06
+          }
+        ],
+        "medications": [
+          {
+            "drug_code": "312940",
+            "drug_description": "Sertraline 50 MG Oral Tablet",
+            "dose_quantity": "50",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "QD",
+            "frequency_description": "Once daily",
+            "status": "active",
+            "for_diagnosis_code": "F32",
+            "weight": 0.4
+          },
+          {
+            "drug_code": "104375",
+            "drug_description": "Lisinopril 10 MG Oral Tablet",
+            "dose_quantity": "10",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "QD",
+            "frequency_description": "Once daily",
+            "status": "active",
+            "for_diagnosis_code": "I10",
+            "weight": 0.35
+          },
+          {
+            "drug_code": "861007",
+            "drug_description": "Metformin 500 MG Oral Tablet",
+            "dose_quantity": "500",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "BID",
+            "frequency_description": "Twice daily",
+            "status": "active",
+            "for_diagnosis_code": "E11",
+            "weight": 0.3
+          },
+          {
+            "drug_code": "197361",
+            "drug_description": "Amlodipine 5 MG Oral Tablet",
+            "dose_quantity": "5",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "QD",
+            "frequency_description": "Once daily",
+            "status": "active",
+            "for_diagnosis_code": "I10",
+            "weight": 0.2
+          },
+          {
+            "drug_code": "1655047",
+            "drug_description": "Naltrexone 50 MG Oral Tablet",
+            "dose_quantity": "50",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "QD",
+            "frequency_description": "Once daily",
+            "status": "active",
+            "for_diagnosis_code": "F10",
+            "weight": 0.25
+          },
+          {
+            "drug_code": "238100",
+            "drug_description": "Lorazepam 0.5 MG Oral Tablet",
+            "dose_quantity": "0.5",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "BID PRN",
+            "frequency_description": "Twice daily as needed",
+            "status": "active",
+            "for_diagnosis_code": "F41",
+            "weight": 0.2
+          }
+        ],
+        "labs": [
+          {
+            "order_code": "24323-8",
+            "order_description": "Comprehensive metabolic panel",
+            "specimen": "Blood",
+            "abnormal_pct": 0.55,
+            "weight": 0.45,
+            "result_items": [
+              {
+                "code": "2951-2",
+                "description": "Sodium",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 136,
+                "normal_max": 145,
+                "abnormal_min": 129,
+                "abnormal_max": 152
+              },
+              {
+                "code": "2823-3",
+                "description": "Potassium",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 3.5,
+                "normal_max": 5.0,
+                "abnormal_min": 2.8,
+                "abnormal_max": 6.5
+              },
+              {
+                "code": "2339-0",
+                "description": "Glucose",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 70,
+                "normal_max": 99,
+                "abnormal_min": 100,
+                "abnormal_max": 500
+              },
+              {
+                "code": "2160-0",
+                "description": "Creatinine",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 0.6,
+                "normal_max": 1.2,
+                "abnormal_min": 1.3,
+                "abnormal_max": 4.0
+              },
+              {
+                "code": "1742-6",
+                "description": "ALT",
+                "units": "U/L",
+                "is_numeric": true,
+                "normal_min": 7,
+                "normal_max": 56,
+                "abnormal_min": 57,
+                "abnormal_max": 300
+              },
+              {
+                "code": "1920-8",
+                "description": "AST",
+                "units": "U/L",
+                "is_numeric": true,
+                "normal_min": 10,
+                "normal_max": 40,
+                "abnormal_min": 41,
+                "abnormal_max": 300
+              }
+            ]
+          },
+          {
+            "order_code": "4548-4",
+            "order_description": "Hemoglobin A1c panel",
+            "specimen": "Blood",
+            "abnormal_pct": 0.65,
+            "weight": 0.3,
+            "result_items": [
+              {
+                "code": "4548-4",
+                "description": "Hemoglobin A1c",
+                "units": "%",
+                "is_numeric": true,
+                "normal_min": 4.0,
+                "normal_max": 5.6,
+                "abnormal_min": 7.0,
+                "abnormal_max": 14.0
+              }
+            ]
+          },
+          {
+            "order_code": "58410-2",
+            "order_description": "CBC panel - Blood by Automated count",
+            "specimen": "Blood",
+            "abnormal_pct": 0.35,
+            "weight": 0.25,
+            "result_items": [
+              {
+                "code": "6690-2",
+                "description": "WBC",
+                "units": "K/uL",
+                "is_numeric": true,
+                "normal_min": 4.5,
+                "normal_max": 11.0,
+                "abnormal_min": 1.5,
+                "abnormal_max": 18.0
+              },
+              {
+                "code": "718-7",
+                "description": "Hemoglobin",
+                "units": "g/dL",
+                "is_numeric": true,
+                "normal_min": 11.5,
+                "normal_max": 17.5,
+                "abnormal_min": 7.0,
+                "abnormal_max": 11.4
+              },
+              {
+                "code": "777-3",
+                "description": "Platelets",
+                "units": "K/uL",
+                "is_numeric": true,
+                "normal_min": 150,
+                "normal_max": 400,
+                "abnormal_min": 50,
+                "abnormal_max": 600
+              }
+            ]
+          }
+        ],
+        "observations": [
+          {
+            "code": "8480-6",
+            "description": "Systolic blood pressure",
+            "units": "mmHg",
+            "normal_min": 90,
+            "normal_max": 119,
+            "abnormal_min": 130,
+            "abnormal_max": 200,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.45,
+            "weight": 0.3
+          },
+          {
+            "code": "8462-4",
+            "description": "Diastolic blood pressure",
+            "units": "mmHg",
+            "normal_min": 60,
+            "normal_max": 79,
+            "abnormal_min": 80,
+            "abnormal_max": 125,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.4,
+            "weight": 0.3
+          },
+          {
+            "code": "8867-4",
+            "description": "Heart rate",
+            "units": "bpm",
+            "normal_min": 60,
+            "normal_max": 100,
+            "abnormal_min": 101,
+            "abnormal_max": 140,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.25,
+            "weight": 0.2
+          },
+          {
+            "code": "29463-7",
+            "description": "Body weight",
+            "units": "lbs",
+            "normal_min": 100,
+            "normal_max": 200,
+            "abnormal_min": 201,
+            "abnormal_max": 400,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.3,
+            "weight": 0.2
+          }
+        ],
+        "encounter_pattern": {
+          "encounters_per_year": 6.0,
+          "encounter_type_weights": {
+            "O": 0.75,
+            "E": 0.2,
+            "I": 0.05
+          },
+          "lab_encounter_rate": 0.6,
+          "rad_encounter_rate": 0.1
+        },
+        "procedures": [
+          {
+            "code": "99213",
+            "description": "Office visit, low complexity",
+            "encounter_type": "O",
+            "weight": 0.5
+          },
+          {
+            "code": "99211",
+            "description": "Nurse visit",
+            "encounter_type": "O",
+            "weight": 0.3
+          },
+          {
+            "code": "G0442",
+            "description": "Annual alcohol misuse screening",
+            "encounter_type": "O",
+            "weight": 0.2
+          }
+        ]
+      }
+    },
+    "sepsis": {
+      "canonical_name": "Sepsis / Septic Shock",
+      "keywords": [
+        "sepsis",
+        "septic shock",
+        "A41",
+        "R65",
+        "bacteremia",
+        "septicemia",
+        "SIRS",
+        "organ dysfunction",
+        "lactate elevated",
+        "vasopressor",
+        "norepinephrine",
+        "broad spectrum antibiotics",
+        "ICU",
+        "critical care"
+      ],
+      "qa_status": "approved",
+      "source_template": "cohorts/sepsis.template.json",
+      "clinical_catalog": {
+        "diagnoses": [
+          {
+            "code": "A41.9",
+            "description": "Sepsis, unspecified organism",
+            "is_primary": true,
+            "onset_age_min": 18,
+            "onset_age_max": 90
+          },
+          {
+            "code": "R65.20",
+            "description": "Severe sepsis without septic shock",
+            "is_primary": false,
+            "onset_age_min": 18,
+            "onset_age_max": 90,
+            "only_encounter_types": [
+              "E",
+              "I"
+            ]
+          },
+          {
+            "code": "R65.21",
+            "description": "Severe sepsis with septic shock",
+            "is_primary": false,
+            "onset_age_min": 18,
+            "onset_age_max": 90,
+            "only_encounter_types": [
+              "E",
+              "I"
+            ]
+          },
+          {
+            "code": "A41.01",
+            "description": "Sepsis due to Methicillin susceptible Staphylococcus aureus",
+            "is_primary": false,
+            "onset_age_min": 18,
+            "onset_age_max": 90
+          },
+          {
+            "code": "A41.51",
+            "description": "Sepsis due to Escherichia coli",
+            "is_primary": false,
+            "onset_age_min": 18,
+            "onset_age_max": 90
+          },
+          {
+            "code": "J18.9",
+            "description": "Pneumonia unspecified organism",
+            "is_primary": false,
+            "onset_age_min": 18,
+            "onset_age_max": 90
+          },
+          {
+            "code": "N39.0",
+            "description": "Urinary tract infection unspecified",
+            "is_primary": false,
+            "onset_age_min": 18,
+            "onset_age_max": 90
+          }
+        ],
+        "comorbidities": [
+          {
+            "code": "E11.9",
+            "description": "Type 2 diabetes mellitus without complications",
+            "prevalence_pct": 0.4
+          },
+          {
+            "code": "I10",
+            "description": "Essential (primary) hypertension",
+            "prevalence_pct": 0.45
+          },
+          {
+            "code": "N18.3",
+            "description": "Chronic kidney disease, stage 3 (moderate)",
+            "prevalence_pct": 0.25
+          },
+          {
+            "code": "I50.9",
+            "description": "Heart failure, unspecified",
+            "prevalence_pct": 0.2
+          },
+          {
+            "code": "J44.1",
+            "description": "Chronic obstructive pulmonary disease with (acute) exacerbation",
+            "prevalence_pct": 0.2
+          },
+          {
+            "code": "C80.1",
+            "description": "Malignant (primary) neoplasm, unspecified",
+            "prevalence_pct": 0.1
+          },
+          {
+            "code": "I25.10",
+            "description": "Atherosclerotic heart disease of native coronary artery without angina pectoris",
+            "prevalence_pct": 0.2
+          },
+          {
+            "code": "I48.0",
+            "description": "Paroxysmal atrial fibrillation",
+            "prevalence_pct": 0.15
+          }
+        ],
+        "medications": [
+          {
+            "drug_code": "11124",
+            "drug_description": "Vancomycin 1000 MG/200 ML IV solution",
+            "dose_quantity": "1000",
+            "dose_uom": "mg",
+            "dosage_form_code": "SOL",
+            "dosage_form_description": "Solution",
+            "route_code": "IV",
+            "route_description": "Intravenous",
+            "frequency_code": "BID",
+            "frequency_description": "Twice daily",
+            "status": "active",
+            "for_diagnosis_code": "A41",
+            "weight": 0.4
+          },
+          {
+            "drug_code": "308460",
+            "drug_description": "Piperacillin-Tazobactam 3.375 GM injection",
+            "dose_quantity": "3.375",
+            "dose_uom": "gm",
+            "dosage_form_code": "INJ",
+            "dosage_form_description": "Injection",
+            "route_code": "IV",
+            "route_description": "Intravenous",
+            "frequency_code": "Q6H",
+            "frequency_description": "Every 6 hours",
+            "status": "active",
+            "for_diagnosis_code": "A41",
+            "weight": 0.45
+          },
+          {
+            "drug_code": "1806885",
+            "drug_description": "Norepinephrine bitartrate 4 MG/250 ML IV solution",
+            "dose_quantity": "4",
+            "dose_uom": "mg",
+            "dosage_form_code": "SOL",
+            "dosage_form_description": "Solution",
+            "route_code": "IV",
+            "route_description": "Intravenous",
+            "frequency_code": "CONT",
+            "frequency_description": "Continuous infusion",
+            "status": "active",
+            "for_diagnosis_code": "R65",
+            "weight": 0.3
+          },
+          {
+            "drug_code": "29561",
+            "drug_description": "Meropenem 1 GM injection",
+            "dose_quantity": "1",
+            "dose_uom": "gm",
+            "dosage_form_code": "INJ",
+            "dosage_form_description": "Injection",
+            "route_code": "IV",
+            "route_description": "Intravenous",
+            "frequency_code": "Q8H",
+            "frequency_description": "Every 8 hours",
+            "status": "active",
+            "for_diagnosis_code": "A41",
+            "weight": 0.2
+          },
+          {
+            "drug_code": "202462",
+            "drug_description": "Hydrocortisone 100 MG injection",
+            "dose_quantity": "100",
+            "dose_uom": "mg",
+            "dosage_form_code": "INJ",
+            "dosage_form_description": "Injection",
+            "route_code": "IV",
+            "route_description": "Intravenous",
+            "frequency_code": "Q8H",
+            "frequency_description": "Every 8 hours",
+            "status": "active",
+            "for_diagnosis_code": "R65",
+            "weight": 0.15
+          },
+          {
+            "drug_code": "311026",
+            "drug_description": "Insulin regular 100 UNT/ML injection",
+            "dose_quantity": "100",
+            "dose_uom": "unt/ml",
+            "dosage_form_code": "INJ",
+            "dosage_form_description": "Injection",
+            "route_code": "IV",
+            "route_description": "Intravenous",
+            "frequency_code": "CONT",
+            "frequency_description": "Continuous infusion",
+            "status": "active",
+            "for_diagnosis_code": "",
+            "weight": 0.25
+          }
+        ],
+        "labs": [
+          {
+            "order_code": "1988-5",
+            "order_description": "Sepsis marker panel",
+            "specimen": "Blood",
+            "abnormal_pct": 0.7,
+            "weight": 0.3,
+            "result_items": [
+              {
+                "code": "1988-5",
+                "description": "C reactive protein [Mass/volume] in Serum or Plasma",
+                "is_numeric": true,
+                "units": "mg/L",
+                "normal_min": 0.0,
+                "normal_max": 10.5,
+                "abnormal_min": 11.0,
+                "abnormal_max": 200.0
+              },
+              {
+                "code": "75241-0",
+                "description": "Procalcitonin [Mass/volume] in Serum or Plasma",
+                "is_numeric": true,
+                "units": "ng/mL",
+                "normal_min": 0.0,
+                "normal_max": 0.5,
+                "abnormal_min": 0.5,
+                "abnormal_max": 50.0
+              }
+            ]
+          },
+          {
+            "order_code": "59090-5",
+            "order_description": "Lactate panel",
+            "specimen": "Blood",
+            "abnormal_pct": 0.7,
+            "weight": 0.25,
+            "result_items": [
+              {
+                "code": "59090-5",
+                "description": "Lactate [Moles/volume] in Blood",
+                "is_numeric": true,
+                "units": "mmol/L",
+                "normal_min": 0.5,
+                "normal_max": 2.0,
+                "abnormal_min": 2.1,
+                "abnormal_max": 8.0
+              }
+            ]
+          },
+          {
+            "order_code": "58410-2",
+            "order_description": "CBC panel - Blood by Automated count",
+            "specimen": "Blood",
+            "abnormal_pct": 0.55,
+            "weight": 0.25,
+            "result_items": [
+              {
+                "code": "6690-2",
+                "description": "WBC [#/volume] in Blood by Automated count",
+                "is_numeric": true,
+                "units": "K/uL",
+                "normal_min": 4.5,
+                "normal_max": 11.0,
+                "abnormal_min": 12.0,
+                "abnormal_max": 18.0
+              },
+              {
+                "code": "789-8",
+                "description": "RBC [#/volume] in Blood by Automated count",
+                "is_numeric": true,
+                "units": "M/uL",
+                "normal_min": 3.9,
+                "normal_max": 5.9,
+                "abnormal_min": 2.0,
+                "abnormal_max": 6.5
+              },
+              {
+                "code": "718-7",
+                "description": "Hemoglobin [Mass/volume] in Blood",
+                "is_numeric": true,
+                "units": "g/dL",
+                "normal_min": 11.5,
+                "normal_max": 17.5,
+                "abnormal_min": 6.0,
+                "abnormal_max": 20.0
+              },
+              {
+                "code": "777-3",
+                "description": "Platelets [#/volume] in Blood by Automated count",
+                "is_numeric": true,
+                "units": "K/uL",
+                "normal_min": 150,
+                "normal_max": 400,
+                "abnormal_min": 30,
+                "abnormal_max": 149
+              }
+            ]
+          },
+          {
+            "order_code": "51990-0",
+            "order_description": "Organ function panel",
+            "specimen": "Blood",
+            "abnormal_pct": 0.6,
+            "weight": 0.2,
+            "result_items": [
+              {
+                "code": "2951-2",
+                "description": "Sodium [Moles/volume] in Serum or Plasma",
+                "is_numeric": true,
+                "units": "mEq/L",
+                "normal_min": 136,
+                "normal_max": 145,
+                "abnormal_min": 125,
+                "abnormal_max": 155
+              },
+              {
+                "code": "2823-3",
+                "description": "Potassium [Moles/volume] in Serum or Plasma",
+                "is_numeric": true,
+                "units": "mEq/L",
+                "normal_min": 3.5,
+                "normal_max": 5.0,
+                "abnormal_min": 2.5,
+                "abnormal_max": 7.0
+              },
+              {
+                "code": "2160-0",
+                "description": "Creatinine [Mass/volume] in Serum or Plasma",
+                "is_numeric": true,
+                "units": "mg/dL",
+                "normal_min": 0.6,
+                "normal_max": 1.2,
+                "abnormal_min": 1.3,
+                "abnormal_max": 4.0
+              },
+              {
+                "code": "3094-0",
+                "description": "Urea nitrogen [Mass/volume] in Serum or Plasma",
+                "is_numeric": true,
+                "units": "mg/dL",
+                "normal_min": 6,
+                "normal_max": 20,
+                "abnormal_min": 21,
+                "abnormal_max": 55
+              },
+              {
+                "code": "1742-6",
+                "description": "Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+                "is_numeric": true,
+                "units": "U/L",
+                "normal_min": 7,
+                "normal_max": 56,
+                "abnormal_min": 57,
+                "abnormal_max": 300
+              },
+              {
+                "code": "2339-0",
+                "description": "Glucose [Mass/volume] in Blood",
+                "is_numeric": true,
+                "units": "mg/dL",
+                "normal_min": 70,
+                "normal_max": 180,
+                "abnormal_min": 181,
+                "abnormal_max": 500
+              }
+            ]
+          }
+        ],
+        "observations": [
+          {
+            "code": "8480-6",
+            "description": "Systolic blood pressure",
+            "units": "mmHg",
+            "normal_min": 100,
+            "normal_max": 139,
+            "abnormal_min": 60,
+            "abnormal_max": 89,
+            "abnormal_flag": "L",
+            "abnormal_pct": 0.5,
+            "weight": 0.3
+          },
+          {
+            "code": "8867-4",
+            "description": "Heart rate",
+            "units": "bpm",
+            "normal_min": 60,
+            "normal_max": 100,
+            "abnormal_min": 101,
+            "abnormal_max": 160,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.65,
+            "weight": 0.3
+          },
+          {
+            "code": "8310-5",
+            "description": "Body temperature",
+            "units": "\u00b0F",
+            "normal_min": 97.0,
+            "normal_max": 99.0,
+            "abnormal_min": 100.4,
+            "abnormal_max": 105.0,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.55,
+            "weight": 0.2
+          },
+          {
+            "code": "2708-6",
+            "description": "Oxygen saturation",
+            "units": "%",
+            "normal_min": 94,
+            "normal_max": 100,
+            "abnormal_min": 80,
+            "abnormal_max": 93,
+            "abnormal_flag": "L",
+            "abnormal_pct": 0.45,
+            "weight": 0.2
+          }
+        ],
+        "encounter_pattern": {
+          "encounters_per_year": 1.2,
+          "encounter_type_weights": {
+            "O": 0.08,
+            "E": 0.42,
+            "I": 0.5
+          },
+          "lab_encounter_rate": 0.95,
+          "rad_encounter_rate": 0.5
+        },
+        "procedures": [
+          {
+            "code": "99291",
+            "description": "Critical care, evaluation and management of the critically ill or critically injured patient; first 30-74 minutes",
+            "encounter_type": "I",
+            "weight": 0.5
+          },
+          {
+            "code": "31500",
+            "description": "Intubation, endotracheal, emergency procedure",
+            "encounter_type": "I",
+            "weight": 0.2
+          },
+          {
+            "code": "36556",
+            "description": "Insertion of non-tunneled centrally inserted central venous catheter; age 5 years or older",
+            "encounter_type": "I",
+            "weight": 0.3
+          }
+        ]
       }
     }
   }

@@ -1,0 +1,990 @@
+[
+  {
+    "name": "Gestational Diabetes Mellitus",
+    "weight": 0.30,
+    "delivery_dx_override": {
+      "O24": {
+        "code": "O24.420",
+        "description": "Gestational diabetes mellitus in childbirth, diet controlled"
+      }
+    },
+    "diagnoses": [
+      {
+        "code": "Z34.00",
+        "description": "Encounter for supervision of normal pregnancy, first trimester",
+        "is_primary": false,
+        "onset_age_min": 18,
+        "onset_age_max": 45
+      },
+      {
+        "code": "O24.419",
+        "description": "Gestational diabetes mellitus in pregnancy, unspecified trimester",
+        "is_primary": true,
+        "only_encounter_types": ["O", "I"],
+        "onset_age_min": 18,
+        "onset_age_max": 45
+      }
+    ],
+    "comorbidities": [
+      {
+        "code": "E66.9",
+        "description": "Obesity, unspecified",
+        "prevalence_pct": 0.40
+      },
+      {
+        "code": "F32.9",
+        "description": "Major depressive disorder, single episode, unspecified",
+        "prevalence_pct": 0.15
+      }
+    ],
+    "medications": [
+      {
+        "drug_code": "261551",
+        "drug_description": "Insulin glargine 100 UNT/ML Injectable Solution",
+        "dose_quantity": "100",
+        "dose_uom": "UNT/ML",
+        "dosage_form_code": "SOL",
+        "dosage_form_description": "Injectable Solution",
+        "route_code": "SC",
+        "route_description": "Subcutaneous",
+        "frequency_code": "QHS",
+        "frequency_description": "Every bedtime",
+        "status": "active",
+        "for_diagnosis_code": "O24",
+        "weight": 0.65
+      },
+      {
+        "drug_code": "854882",
+        "drug_description": "Prenatal vitamins",
+        "dose_quantity": "1",
+        "dose_uom": "tablet",
+        "dosage_form_code": "TAB",
+        "dosage_form_description": "Tablet",
+        "route_code": "PO",
+        "route_description": "Oral",
+        "frequency_code": "QD",
+        "frequency_description": "Once daily",
+        "status": "active",
+        "for_diagnosis_code": "Z34",
+        "weight": 0.92
+      }
+    ],
+    "labs": [
+      {
+        "order_code": "14749-6",
+        "order_description": "Glucose tolerance panel",
+        "specimen": "Blood",
+        "abnormal_pct": 0.60,
+        "weight": 0.35,
+        "result_items": [
+          {
+            "code": "14749-6",
+            "description": "Glucose 2h post-dose [Mass/volume] in Serum or Plasma",
+            "units": "mg/dL",
+            "is_numeric": true,
+            "normal_min": 70,
+            "normal_max": 139,
+            "abnormal_min": 140,
+            "abnormal_max": 400
+          },
+          {
+            "code": "2339-0",
+            "description": "Fasting glucose [Mass/volume] in Serum or Plasma",
+            "units": "mg/dL",
+            "is_numeric": true,
+            "normal_min": 70,
+            "normal_max": 95,
+            "abnormal_min": 96,
+            "abnormal_max": 300
+          }
+        ]
+      },
+      {
+        "order_code": "58410-2",
+        "order_description": "CBC panel - Blood by Automated count",
+        "specimen": "Blood",
+        "abnormal_pct": 0.35,
+        "weight": 0.30,
+        "result_items": [
+          {
+            "code": "718-7",
+            "description": "Hemoglobin [Mass/volume] in Blood",
+            "units": "g/dL",
+            "is_numeric": true,
+            "normal_min": 10.0,
+            "normal_max": 16.0,
+            "abnormal_min": 6.0,
+            "abnormal_max": 9.9
+          },
+          {
+            "code": "4544-3",
+            "description": "Hematocrit [Volume Fraction] of Blood by Automated count",
+            "units": "%",
+            "is_numeric": true,
+            "normal_min": 30,
+            "normal_max": 50,
+            "abnormal_min": 18,
+            "abnormal_max": 29
+          },
+          {
+            "code": "777-3",
+            "description": "Platelets [#/volume] in Blood by Automated count",
+            "units": "K/uL",
+            "is_numeric": true,
+            "normal_min": 150,
+            "normal_max": 400,
+            "abnormal_min": 50,
+            "abnormal_max": 149
+          }
+        ]
+      }
+    ],
+    "document_templates": [
+      {
+        "type_code": "PN",
+        "type_description": "Progress Note",
+        "encounter_type": "O",
+        "chief_complaints": [
+          "Prenatal visit — gestational diabetes management",
+          "Blood glucose monitoring follow-up in pregnancy",
+          "Diabetes in pregnancy — dietary counseling",
+          "Insulin therapy adjustment for gestational diabetes"
+        ],
+        "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old female presenting for obstetric follow-up for {diagnosis}. Patient reports {compliance_statement}.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nFetal heart tones: present, regular.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 2 weeks or sooner if symptoms worsen."
+      }
+    ],
+    "encounter_patterns": {
+      "O": 0.88,
+      "E": 0.06,
+      "I": 0.06,
+      "encounters_per_year": 10
+    }
+  },
+  {
+    "name": "Gestational Hypertension / Mild Preeclampsia",
+    "weight": 0.25,
+    "delivery_dx_override": {
+      "O14": {
+        "code": "O14.04",
+        "description": "Mild to moderate pre-eclampsia, third trimester"
+      },
+      "O13": {
+        "code": "O13.3",
+        "description": "Gestational hypertension with significant proteinuria, third trimester"
+      }
+    },
+    "diagnoses": [
+      {
+        "code": "Z34.00",
+        "description": "Encounter for supervision of normal pregnancy, first trimester",
+        "is_primary": false,
+        "onset_age_min": 18,
+        "onset_age_max": 45
+      },
+      {
+        "code": "O13.9",
+        "description": "Gestational hypertension, unspecified trimester",
+        "is_primary": true,
+        "only_encounter_types": ["O"],
+        "onset_age_min": 18,
+        "onset_age_max": 45
+      },
+      {
+        "code": "O14.00",
+        "description": "Mild to moderate pre-eclampsia, unspecified trimester",
+        "is_primary": false,
+        "only_encounter_types": ["I", "E"],
+        "onset_age_min": 18,
+        "onset_age_max": 45
+      }
+    ],
+    "comorbidities": [
+      {
+        "code": "E66.9",
+        "description": "Obesity, unspecified",
+        "prevalence_pct": 0.35
+      },
+      {
+        "code": "F32.9",
+        "description": "Major depressive disorder, single episode, unspecified",
+        "prevalence_pct": 0.18
+      }
+    ],
+    "medications": [
+      {
+        "drug_code": "310798",
+        "drug_description": "Labetalol 200 MG Oral Tablet",
+        "dose_quantity": "200",
+        "dose_uom": "mg",
+        "dosage_form_code": "TAB",
+        "dosage_form_description": "Tablet",
+        "route_code": "PO",
+        "route_description": "Oral",
+        "frequency_code": "BID",
+        "frequency_description": "Twice daily",
+        "status": "active",
+        "for_diagnosis_code": "O13",
+        "weight": 0.70
+      },
+      {
+        "drug_code": "203549",
+        "drug_description": "Methyldopa 250 MG Oral Tablet",
+        "dose_quantity": "250",
+        "dose_uom": "mg",
+        "dosage_form_code": "TAB",
+        "dosage_form_description": "Tablet",
+        "route_code": "PO",
+        "route_description": "Oral",
+        "frequency_code": "BID",
+        "frequency_description": "Twice daily",
+        "status": "active",
+        "for_diagnosis_code": "O13",
+        "weight": 0.50
+      },
+      {
+        "drug_code": "310429",
+        "drug_description": "Nifedipine 10 MG Oral Capsule",
+        "dose_quantity": "10",
+        "dose_uom": "mg",
+        "dosage_form_code": "CAP",
+        "dosage_form_description": "Capsule",
+        "route_code": "PO",
+        "route_description": "Oral",
+        "frequency_code": "PRN",
+        "frequency_description": "As needed",
+        "status": "active",
+        "for_diagnosis_code": "O14",
+        "weight": 0.45
+      },
+      {
+        "drug_code": "854882",
+        "drug_description": "Prenatal vitamins",
+        "dose_quantity": "1",
+        "dose_uom": "tablet",
+        "dosage_form_code": "TAB",
+        "dosage_form_description": "Tablet",
+        "route_code": "PO",
+        "route_description": "Oral",
+        "frequency_code": "QD",
+        "frequency_description": "Once daily",
+        "status": "active",
+        "for_diagnosis_code": "Z34",
+        "weight": 0.92
+      }
+    ],
+    "labs": [
+      {
+        "order_code": "5767-9",
+        "order_description": "Pre-eclampsia labs",
+        "specimen": "Blood/Urine",
+        "abnormal_pct": 0.55,
+        "weight": 0.35,
+        "result_items": [
+          {
+            "code": "5767-9",
+            "description": "Protein [Mass/volume] in Urine",
+            "units": "mg/dL",
+            "is_numeric": true,
+            "normal_min": 0,
+            "normal_max": 20,
+            "abnormal_min": 21,
+            "abnormal_max": 500
+          },
+          {
+            "code": "1742-6",
+            "description": "Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+            "units": "U/L",
+            "is_numeric": true,
+            "normal_min": 7,
+            "normal_max": 56,
+            "abnormal_min": 57,
+            "abnormal_max": 300
+          },
+          {
+            "code": "1920-8",
+            "description": "Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+            "units": "U/L",
+            "is_numeric": true,
+            "normal_min": 10,
+            "normal_max": 40,
+            "abnormal_min": 41,
+            "abnormal_max": 300
+          },
+          {
+            "code": "777-3",
+            "description": "Platelets [#/volume] in Blood by Automated count",
+            "units": "K/uL",
+            "is_numeric": true,
+            "normal_min": 150,
+            "normal_max": 400,
+            "abnormal_min": 50,
+            "abnormal_max": 149
+          }
+        ]
+      },
+      {
+        "order_code": "58410-2",
+        "order_description": "CBC panel - Blood by Automated count",
+        "specimen": "Blood",
+        "abnormal_pct": 0.35,
+        "weight": 0.30,
+        "result_items": [
+          {
+            "code": "718-7",
+            "description": "Hemoglobin [Mass/volume] in Blood",
+            "units": "g/dL",
+            "is_numeric": true,
+            "normal_min": 10.0,
+            "normal_max": 16.0,
+            "abnormal_min": 6.0,
+            "abnormal_max": 9.9
+          },
+          {
+            "code": "4544-3",
+            "description": "Hematocrit [Volume Fraction] of Blood by Automated count",
+            "units": "%",
+            "is_numeric": true,
+            "normal_min": 30,
+            "normal_max": 50,
+            "abnormal_min": 18,
+            "abnormal_max": 29
+          },
+          {
+            "code": "777-3",
+            "description": "Platelets [#/volume] in Blood by Automated count",
+            "units": "K/uL",
+            "is_numeric": true,
+            "normal_min": 150,
+            "normal_max": 400,
+            "abnormal_min": 50,
+            "abnormal_max": 149
+          }
+        ]
+      }
+    ],
+    "document_templates": [
+      {
+        "type_code": "PN",
+        "type_description": "Progress Note",
+        "encounter_type": "O",
+        "chief_complaints": [
+          "Prenatal visit — gestational hypertension monitoring",
+          "Blood pressure management in pregnancy",
+          "Preeclampsia surveillance visit",
+          "Antihypertensive medication review in pregnancy"
+        ],
+        "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old female presenting for obstetric follow-up for {diagnosis}. Patient reports {compliance_statement}.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nFetal heart tones: present, regular.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 1-2 weeks or sooner if blood pressure worsens."
+      }
+    ],
+    "encounter_patterns": {
+      "O": 0.87,
+      "E": 0.08,
+      "I": 0.05,
+      "encounters_per_year": 11
+    }
+  },
+  {
+    "name": "Severe Preeclampsia / HELLP Syndrome",
+    "weight": 0.20,
+    "prenatal_dx_override": {
+      "O14": {
+        "code": "O14.10",
+        "description": "Severe pre-eclampsia, unspecified trimester"
+      }
+    },
+    "delivery_dx_override": {
+      "O14": {
+        "code": "O14.14",
+        "description": "Severe pre-eclampsia, third trimester"
+      }
+    },
+    "diagnoses": [
+      {
+        "code": "Z34.00",
+        "description": "Encounter for supervision of normal pregnancy, first trimester",
+        "is_primary": false,
+        "onset_age_min": 18,
+        "onset_age_max": 45
+      },
+      {
+        "code": "O14.10",
+        "description": "Severe pre-eclampsia, unspecified trimester",
+        "is_primary": true,
+        "onset_age_min": 18,
+        "onset_age_max": 45
+      },
+      {
+        "code": "O15.02",
+        "description": "Eclampsia in labor",
+        "is_primary": false,
+        "only_encounter_types": ["I"],
+        "onset_age_min": 18,
+        "onset_age_max": 45
+      }
+    ],
+    "comorbidities": [
+      {
+        "code": "E66.9",
+        "description": "Obesity, unspecified",
+        "prevalence_pct": 0.35
+      },
+      {
+        "code": "F32.9",
+        "description": "Major depressive disorder, single episode, unspecified",
+        "prevalence_pct": 0.20
+      }
+    ],
+    "medications": [
+      {
+        "drug_code": "310798",
+        "drug_description": "Labetalol 200 MG Oral Tablet",
+        "dose_quantity": "200",
+        "dose_uom": "mg",
+        "dosage_form_code": "TAB",
+        "dosage_form_description": "Tablet",
+        "route_code": "PO",
+        "route_description": "Oral",
+        "frequency_code": "BID",
+        "frequency_description": "Twice daily",
+        "status": "active",
+        "for_diagnosis_code": "O14",
+        "weight": 0.85
+      },
+      {
+        "drug_code": "308167",
+        "drug_description": "Magnesium sulfate 50% Injection",
+        "dose_quantity": "50",
+        "dose_uom": "%",
+        "dosage_form_code": "INJ",
+        "dosage_form_description": "Injection",
+        "route_code": "IV",
+        "route_description": "Intravenous",
+        "frequency_code": "INFUSION",
+        "frequency_description": "Continuous infusion",
+        "status": "active",
+        "for_diagnosis_code": "O14",
+        "weight": 0.90,
+        "is_acute": true
+      },
+      {
+        "drug_code": "854882",
+        "drug_description": "Prenatal vitamins",
+        "dose_quantity": "1",
+        "dose_uom": "tablet",
+        "dosage_form_code": "TAB",
+        "dosage_form_description": "Tablet",
+        "route_code": "PO",
+        "route_description": "Oral",
+        "frequency_code": "QD",
+        "frequency_description": "Once daily",
+        "status": "active",
+        "for_diagnosis_code": "Z34",
+        "weight": 0.92
+      }
+    ],
+    "labs": [
+      {
+        "order_code": "5767-9",
+        "order_description": "Pre-eclampsia labs",
+        "specimen": "Blood/Urine",
+        "abnormal_pct": 0.75,
+        "weight": 0.35,
+        "result_items": [
+          {
+            "code": "5767-9",
+            "description": "Protein [Mass/volume] in Urine",
+            "units": "mg/dL",
+            "is_numeric": true,
+            "normal_min": 0,
+            "normal_max": 20,
+            "abnormal_min": 21,
+            "abnormal_max": 500
+          },
+          {
+            "code": "1742-6",
+            "description": "Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+            "units": "U/L",
+            "is_numeric": true,
+            "normal_min": 7,
+            "normal_max": 56,
+            "abnormal_min": 57,
+            "abnormal_max": 300
+          },
+          {
+            "code": "1920-8",
+            "description": "Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+            "units": "U/L",
+            "is_numeric": true,
+            "normal_min": 10,
+            "normal_max": 40,
+            "abnormal_min": 41,
+            "abnormal_max": 300
+          },
+          {
+            "code": "777-3",
+            "description": "Platelets [#/volume] in Blood by Automated count",
+            "units": "K/uL",
+            "is_numeric": true,
+            "normal_min": 150,
+            "normal_max": 400,
+            "abnormal_min": 50,
+            "abnormal_max": 149
+          }
+        ]
+      },
+      {
+        "order_code": "58410-2",
+        "order_description": "CBC panel - Blood by Automated count",
+        "specimen": "Blood",
+        "abnormal_pct": 0.60,
+        "weight": 0.30,
+        "result_items": [
+          {
+            "code": "718-7",
+            "description": "Hemoglobin [Mass/volume] in Blood",
+            "units": "g/dL",
+            "is_numeric": true,
+            "normal_min": 10.0,
+            "normal_max": 16.0,
+            "abnormal_min": 6.0,
+            "abnormal_max": 9.9
+          },
+          {
+            "code": "4544-3",
+            "description": "Hematocrit [Volume Fraction] of Blood by Automated count",
+            "units": "%",
+            "is_numeric": true,
+            "normal_min": 30,
+            "normal_max": 50,
+            "abnormal_min": 18,
+            "abnormal_max": 29
+          },
+          {
+            "code": "777-3",
+            "description": "Platelets [#/volume] in Blood by Automated count",
+            "units": "K/uL",
+            "is_numeric": true,
+            "normal_min": 150,
+            "normal_max": 400,
+            "abnormal_min": 50,
+            "abnormal_max": 149
+          }
+        ]
+      }
+    ],
+    "document_templates": [
+      {
+        "type_code": "PN",
+        "type_description": "Progress Note",
+        "encounter_type": "O",
+        "chief_complaints": [
+          "Prenatal visit — severe preeclampsia monitoring",
+          "High-risk OB visit — HELLP syndrome surveillance",
+          "Blood pressure and lab follow-up — severe preeclampsia",
+          "Magnesium prophylaxis management in pregnancy"
+        ],
+        "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old female presenting for high-risk obstetric follow-up for {diagnosis}. Patient reports {compliance_statement}.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nFetal heart tones: present, regular.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return within 1 week or to ED immediately if severe-range BP, headache, or visual changes."
+      }
+    ],
+    "encounter_patterns": {
+      "O": 0.85,
+      "E": 0.09,
+      "I": 0.06,
+      "encounters_per_year": 12
+    }
+  },
+  {
+    "name": "Postpartum Hemorrhage",
+    "weight": 0.15,
+    "delivery_dx_override": {
+      "O72": {
+        "code": "O72.1",
+        "description": "Other immediate postpartum hemorrhage"
+      }
+    },
+    "diagnoses": [
+      {
+        "code": "Z34.00",
+        "description": "Encounter for supervision of normal pregnancy, first trimester",
+        "is_primary": false,
+        "onset_age_min": 18,
+        "onset_age_max": 45
+      },
+      {
+        "code": "O72.1",
+        "description": "Other immediate postpartum hemorrhage",
+        "is_primary": true,
+        "only_encounter_types": ["I"],
+        "onset_age_min": 18,
+        "onset_age_max": 45
+      }
+    ],
+    "comorbidities": [
+      {
+        "code": "E66.9",
+        "description": "Obesity, unspecified",
+        "prevalence_pct": 0.30
+      },
+      {
+        "code": "F32.9",
+        "description": "Major depressive disorder, single episode, unspecified",
+        "prevalence_pct": 0.15
+      }
+    ],
+    "medications": [
+      {
+        "drug_code": "310463",
+        "drug_description": "Ferrous sulfate 325 MG Oral Tablet",
+        "dose_quantity": "325",
+        "dose_uom": "mg",
+        "dosage_form_code": "TAB",
+        "dosage_form_description": "Tablet",
+        "route_code": "PO",
+        "route_description": "Oral",
+        "frequency_code": "BID",
+        "frequency_description": "Twice daily",
+        "status": "active",
+        "for_diagnosis_code": "O72",
+        "weight": 0.70
+      },
+      {
+        "drug_code": "854882",
+        "drug_description": "Prenatal vitamins",
+        "dose_quantity": "1",
+        "dose_uom": "tablet",
+        "dosage_form_code": "TAB",
+        "dosage_form_description": "Tablet",
+        "route_code": "PO",
+        "route_description": "Oral",
+        "frequency_code": "QD",
+        "frequency_description": "Once daily",
+        "status": "active",
+        "for_diagnosis_code": "Z34",
+        "weight": 0.92
+      }
+    ],
+    "labs": [
+      {
+        "order_code": "58410-2",
+        "order_description": "CBC panel - Blood by Automated count",
+        "specimen": "Blood",
+        "abnormal_pct": 0.65,
+        "weight": 0.30,
+        "result_items": [
+          {
+            "code": "718-7",
+            "description": "Hemoglobin [Mass/volume] in Blood",
+            "units": "g/dL",
+            "is_numeric": true,
+            "normal_min": 10.0,
+            "normal_max": 16.0,
+            "abnormal_min": 6.0,
+            "abnormal_max": 9.9
+          },
+          {
+            "code": "4544-3",
+            "description": "Hematocrit [Volume Fraction] of Blood by Automated count",
+            "units": "%",
+            "is_numeric": true,
+            "normal_min": 30,
+            "normal_max": 50,
+            "abnormal_min": 18,
+            "abnormal_max": 29
+          },
+          {
+            "code": "777-3",
+            "description": "Platelets [#/volume] in Blood by Automated count",
+            "units": "K/uL",
+            "is_numeric": true,
+            "normal_min": 150,
+            "normal_max": 400,
+            "abnormal_min": 50,
+            "abnormal_max": 149
+          }
+        ]
+      },
+      {
+        "order_code": "89247-1",
+        "order_description": "Iron panel",
+        "specimen": "Blood",
+        "abnormal_pct": 0.50,
+        "weight": 0.25,
+        "result_items": [
+          {
+            "code": "2498-4",
+            "description": "Iron [Mass/volume] in Serum or Plasma",
+            "units": "mcg/dL",
+            "is_numeric": true,
+            "normal_min": 60,
+            "normal_max": 170,
+            "abnormal_min": 20,
+            "abnormal_max": 59
+          },
+          {
+            "code": "2276-4",
+            "description": "Ferritin [Mass/volume] in Serum or Plasma",
+            "units": "ng/mL",
+            "is_numeric": true,
+            "normal_min": 12,
+            "normal_max": 150,
+            "abnormal_min": 5,
+            "abnormal_max": 11
+          }
+        ]
+      }
+    ],
+    "document_templates": [
+      {
+        "type_code": "PN",
+        "type_description": "Progress Note",
+        "encounter_type": "O",
+        "chief_complaints": [
+          "Postpartum visit — hemorrhage recovery follow-up",
+          "Anemia management following postpartum hemorrhage",
+          "Iron supplementation follow-up after delivery complication",
+          "Postpartum 6-week check — blood loss recovery"
+        ],
+        "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old female presenting for postpartum follow-up following {diagnosis}. Patient reports {compliance_statement}.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return in 2 weeks or sooner if increased bleeding, dizziness, or fatigue."
+      }
+    ],
+    "encounter_patterns": {
+      "O": 0.88,
+      "E": 0.07,
+      "I": 0.05,
+      "encounters_per_year": 10
+    }
+  },
+  {
+    "name": "Severe Maternal Morbidity — Multiple Complications",
+    "weight": 0.10,
+    "prenatal_dx_override": {
+      "O14": {
+        "code": "O14.10",
+        "description": "Severe pre-eclampsia, unspecified trimester"
+      }
+    },
+    "delivery_dx_override": {
+      "O14": {
+        "code": "O14.14",
+        "description": "Severe pre-eclampsia, third trimester"
+      }
+    },
+    "diagnoses": [
+      {
+        "code": "Z34.00",
+        "description": "Encounter for supervision of normal pregnancy, first trimester",
+        "is_primary": false,
+        "onset_age_min": 18,
+        "onset_age_max": 45
+      },
+      {
+        "code": "O14.10",
+        "description": "Severe pre-eclampsia, unspecified trimester",
+        "is_primary": true,
+        "onset_age_min": 18,
+        "onset_age_max": 45
+      },
+      {
+        "code": "O72.1",
+        "description": "Other immediate postpartum hemorrhage",
+        "is_primary": false,
+        "only_encounter_types": ["I"],
+        "onset_age_min": 18,
+        "onset_age_max": 45
+      },
+      {
+        "code": "O15.02",
+        "description": "Eclampsia in labor",
+        "is_primary": false,
+        "only_encounter_types": ["I"],
+        "onset_age_min": 18,
+        "onset_age_max": 45
+      }
+    ],
+    "comorbidities": [
+      {
+        "code": "E66.9",
+        "description": "Obesity, unspecified",
+        "prevalence_pct": 0.40
+      },
+      {
+        "code": "F32.9",
+        "description": "Major depressive disorder, single episode, unspecified",
+        "prevalence_pct": 0.25
+      }
+    ],
+    "medications": [
+      {
+        "drug_code": "310798",
+        "drug_description": "Labetalol 200 MG Oral Tablet",
+        "dose_quantity": "200",
+        "dose_uom": "mg",
+        "dosage_form_code": "TAB",
+        "dosage_form_description": "Tablet",
+        "route_code": "PO",
+        "route_description": "Oral",
+        "frequency_code": "BID",
+        "frequency_description": "Twice daily",
+        "status": "active",
+        "for_diagnosis_code": "O14",
+        "weight": 0.85
+      },
+      {
+        "drug_code": "308167",
+        "drug_description": "Magnesium sulfate 50% Injection",
+        "dose_quantity": "50",
+        "dose_uom": "%",
+        "dosage_form_code": "INJ",
+        "dosage_form_description": "Injection",
+        "route_code": "IV",
+        "route_description": "Intravenous",
+        "frequency_code": "INFUSION",
+        "frequency_description": "Continuous infusion",
+        "status": "active",
+        "for_diagnosis_code": "O14",
+        "weight": 0.90,
+        "is_acute": true
+      },
+      {
+        "drug_code": "310463",
+        "drug_description": "Ferrous sulfate 325 MG Oral Tablet",
+        "dose_quantity": "325",
+        "dose_uom": "mg",
+        "dosage_form_code": "TAB",
+        "dosage_form_description": "Tablet",
+        "route_code": "PO",
+        "route_description": "Oral",
+        "frequency_code": "BID",
+        "frequency_description": "Twice daily",
+        "status": "active",
+        "for_diagnosis_code": "O72",
+        "weight": 0.60
+      },
+      {
+        "drug_code": "854882",
+        "drug_description": "Prenatal vitamins",
+        "dose_quantity": "1",
+        "dose_uom": "tablet",
+        "dosage_form_code": "TAB",
+        "dosage_form_description": "Tablet",
+        "route_code": "PO",
+        "route_description": "Oral",
+        "frequency_code": "QD",
+        "frequency_description": "Once daily",
+        "status": "active",
+        "for_diagnosis_code": "Z34",
+        "weight": 0.92
+      }
+    ],
+    "labs": [
+      {
+        "order_code": "5767-9",
+        "order_description": "Pre-eclampsia labs",
+        "specimen": "Blood/Urine",
+        "abnormal_pct": 0.80,
+        "weight": 0.35,
+        "result_items": [
+          {
+            "code": "5767-9",
+            "description": "Protein [Mass/volume] in Urine",
+            "units": "mg/dL",
+            "is_numeric": true,
+            "normal_min": 0,
+            "normal_max": 20,
+            "abnormal_min": 21,
+            "abnormal_max": 500
+          },
+          {
+            "code": "1742-6",
+            "description": "Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+            "units": "U/L",
+            "is_numeric": true,
+            "normal_min": 7,
+            "normal_max": 56,
+            "abnormal_min": 57,
+            "abnormal_max": 300
+          },
+          {
+            "code": "1920-8",
+            "description": "Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+            "units": "U/L",
+            "is_numeric": true,
+            "normal_min": 10,
+            "normal_max": 40,
+            "abnormal_min": 41,
+            "abnormal_max": 300
+          },
+          {
+            "code": "777-3",
+            "description": "Platelets [#/volume] in Blood by Automated count",
+            "units": "K/uL",
+            "is_numeric": true,
+            "normal_min": 150,
+            "normal_max": 400,
+            "abnormal_min": 50,
+            "abnormal_max": 149
+          }
+        ]
+      },
+      {
+        "order_code": "58410-2",
+        "order_description": "CBC panel - Blood by Automated count",
+        "specimen": "Blood",
+        "abnormal_pct": 0.65,
+        "weight": 0.30,
+        "result_items": [
+          {
+            "code": "718-7",
+            "description": "Hemoglobin [Mass/volume] in Blood",
+            "units": "g/dL",
+            "is_numeric": true,
+            "normal_min": 10.0,
+            "normal_max": 16.0,
+            "abnormal_min": 6.0,
+            "abnormal_max": 9.9
+          },
+          {
+            "code": "4544-3",
+            "description": "Hematocrit [Volume Fraction] of Blood by Automated count",
+            "units": "%",
+            "is_numeric": true,
+            "normal_min": 30,
+            "normal_max": 50,
+            "abnormal_min": 18,
+            "abnormal_max": 29
+          },
+          {
+            "code": "777-3",
+            "description": "Platelets [#/volume] in Blood by Automated count",
+            "units": "K/uL",
+            "is_numeric": true,
+            "normal_min": 150,
+            "normal_max": 400,
+            "abnormal_min": 50,
+            "abnormal_max": 149
+          }
+        ]
+      }
+    ],
+    "document_templates": [
+      {
+        "type_code": "PN",
+        "type_description": "Progress Note",
+        "encounter_type": "O",
+        "chief_complaints": [
+          "High-risk prenatal visit — severe preeclampsia with multiple complications",
+          "Multidisciplinary OB visit — eclampsia and hemorrhage history",
+          "Severe maternal morbidity — postpartum surveillance",
+          "Complex obstetric follow-up — preeclampsia, hemorrhage, and eclampsia"
+        ],
+        "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old female presenting for high-risk obstetric follow-up for {diagnosis} with multiple complications. Patient reports {compliance_statement}.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nFetal heart tones: present, regular.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} — {plan}\n\nFOLLOW-UP: Return within 1 week or to ED immediately if severe headache, visual changes, or heavy bleeding."
+      }
+    ],
+    "encounter_patterns": {
+      "O": 0.85,
+      "E": 0.08,
+      "I": 0.07,
+      "encounters_per_year": 13
+    }
+  }
+]

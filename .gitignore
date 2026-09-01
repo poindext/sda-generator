@@ -26,3 +26,7 @@ sample_data/
 
 # Claude session files (keep commands, skip session data)
 .claude/projects/
+.claude/worktrees/
+
+# Web app runtime job queue
+jobs/

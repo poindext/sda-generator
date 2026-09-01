@@ -131,5 +131,26 @@ def get_current_status(job_id: str) -> str:
     return _status.get(job_id, "unknown")
 
 
+def delete_jobs_for_population(output_dir: str) -> int:
+    """Delete all job files whose params.output_dir matches the given path.
+
+    Returns the number of jobs deleted.
+    """
+    deleted = 0
+    for p in list(JOBS_DIR.glob("job_*.json")):
+        try:
+            data = json.loads(p.read_text(encoding="utf-8"))
+            if data.get("params", {}).get("output_dir") == output_dir:
+                jid = data.get("id", "")
+                with _lock:
+                    _status.pop(jid, None)
+                    _progress.pop(jid, None)
+                p.unlink(missing_ok=True)
+                deleted += 1
+        except Exception:
+            pass
+    return deleted
+
+
 def _now() -> str:
     return datetime.now(timezone.utc).isoformat()

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SDA3 Population Generator</title>
+  <title>Genesis</title>
   <link rel="stylesheet" href="/static/css/app.css">
 </head>
 <body>
@@ -11,8 +11,8 @@
 <!-- ── Sidebar ──────────────────────────────────────────── -->
 <aside id="sidebar">
   <div class="logo">
-    <h1>Population Generator</h1>
-    <p>SDA3 Synthetic Data</p>
+    <h1>Genesis</h1>
+    <p>Synthetic Patient Populations</p>
   </div>
   <nav>
     <a href="#" data-page="dashboard">
@@ -230,48 +230,20 @@
 
 </main>
 
+<!-- Template Preview Modal -->
+<div id="tmpl-preview-modal" class="modal-overlay hidden" onclick="if(event.target===this)closeTemplatePreview()">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <h2 id="tmpl-preview-title"></h2>
+        <p id="tmpl-preview-subtitle" class="text-muted text-sm"></p>
+      </div>
+      <button class="btn btn-secondary" onclick="closeTemplatePreview()">Close</button>
+    </div>
+    <div id="tmpl-preview-body" class="modal-body"></div>
+  </div>
+</div>
+
 <script src="/static/js/app.js"></script>
-<script>
-  // Populate template select in the generate form
-  document.addEventListener('DOMContentLoaded', async () => {
-    try {
-      const resp = await fetch('/api/templates');
-      const data = await resp.json();
-      const sel = document.getElementById('gen-template-select');
-      data.templates.forEach(t => {
-        const opt = document.createElement('option');
-        opt.value = t.id;
-        opt.textContent = t.name || t.id;
-        sel.appendChild(opt);
-      });
-    } catch (_) {}
-  });
-
-  // Sync txt-preview-2 when step 2 shows
-  const origShow = showWizStep;
-  async function showWizStep(step) {
-    await origShow(step);
-    if (step === 2) {
-      const ta = document.getElementById('txt-preview-2');
-      const main = document.getElementById('txt-preview');
-      if (ta && main) ta.value = main.value;
-
-      // Ask for population name if not set
-      if (!wizState.templateId) {
-        const name = prompt('Give this population a name (used for file names):', 'my_population');
-        if (name) {
-          wizState.templateId = name.toLowerCase().replace(/[^a-z0-9_-]/g, '_');
-          try {
-            await fetch('/api/templates/description', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ name: wizState.templateId, document: wizState.document }),
-            });
-          } catch (_) {}
-        }
-      }
-    }
-  }
-</script>
 </body>
 </html>

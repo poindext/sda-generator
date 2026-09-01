@@ -1,0 +1,28 @@
+{
+  "description": "High-Risk Maternal / Obstetric population. Clinical context: All patients are female ages 18-45. Gestational diabetes (O24.419) is managed with diet/insulin — metformin is second-line. Pre-eclampsia (O14.x) diagnosis requires BP ≥140/90 plus proteinuria. HELLP syndrome is a severe pre-eclampsia variant with hemolysis, elevated liver enzymes, low platelets. Postpartum hemorrhage (O72.x) requires rapid intervention. All diagnoses use O-code prefix (obstetric complications).",
+  "do_not_flag": [
+    "Blood pressure 140-200/90-130 in pre-eclampsia patients — diagnostic threshold for pre-eclampsia is ≥140/90; this is expected, not implausible",
+    "Glucose 140-400 mg/dL in gestational diabetes patients — GDM is defined by glucose intolerance; high glucose is the defining lab finding",
+    "Hemoglobin 6.0-9.9 g/dL in postpartum hemorrhage patients — hemorrhage causes acute anemia; Hgb drop is expected",
+    "Platelets 50-149 K/uL in pre-eclampsia patients — thrombocytopenia is a feature of HELLP syndrome",
+    "ALT/AST 57-300 U/L in pre-eclampsia — liver involvement in HELLP; not a medication side effect in this cohort",
+    "Urine protein 21-500 mg/dL in pre-eclampsia — proteinuria is a defining diagnostic criterion",
+    "Magnesium sulfate IV in inpatient patients — standard seizure prophylaxis for severe pre-eclampsia during labor/delivery",
+    "Insulin use without Type 2 diabetes diagnosis — gestational diabetes (O24.419) requires insulin; O24 code is sufficient, E11 not required",
+    "High obstetric visit frequency (14/year) — prenatal guidelines recommend 12-14 visits for high-risk pregnancy"
+  ],
+  "required_drug_classes": [
+    {
+      "class_name": "Antihypertensive (obstetric)",
+      "keywords": ["labetalol", "methyldopa", "nifedipine", "hydralazine"],
+      "minimum_patient_pct": 30,
+      "rationale": "Pre-eclampsia and gestational hypertension affect 55%+ of this cohort; antihypertensives are required treatment."
+    }
+  ],
+  "required_checks": [
+    "VERIFY that only female patients appear in this cohort. If any male patients have obstetric O-code diagnoses, flag CRITICAL.",
+    "VERIFY that glucose tolerance labs appear in the population (GDM is primary diagnosis). If no glucose labs present, flag HIGH.",
+    "VERIFY that BP readings of 140+ systolic appear in at least some encounters — pre-eclampsia is a major cohort driver and requires elevated BP.",
+    "CHECK that prenatal vitamins or obstetric medications appear in the medication list. If only psychiatric medications, flag MEDIUM."
+  ]
+}

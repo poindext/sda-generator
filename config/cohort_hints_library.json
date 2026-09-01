@@ -1,9 +1,8 @@
 {
   "version": "1.0",
   "_comment": "Clinical hints injected into design_population.py Phase 3 prompts. Keywords are matched (case-insensitive substring) against the LLM-generated cohort name. disease_tag must match a tag used in lab_panels_library.json for proactive panel suggestions.",
-
   "lab_constraints": {
-    "note": "Generator enforces hard limits — violating them causes validation failures",
+    "note": "Generator enforces hard limits \u2014 violating them causes validation failures",
     "rules": [
       {
         "analyte": "Triglycerides",
@@ -28,385 +27,1551 @@
       }
     ]
   },
-
   "cohort_hints": [
-
     {
       "cohort_type": "cardiovascular",
-      "keywords": ["cardiovascular", "cardiac", "coronary", "heart disease", "cad", "angina", "atherosclerosis", "peripheral artery"],
+      "keywords": [
+        "cardiovascular",
+        "cardiac",
+        "coronary",
+        "heart disease",
+        "cad",
+        "angina",
+        "atherosclerosis",
+        "peripheral artery"
+      ],
       "disease_tag": "cardiovascular",
       "labs": [
-        {"order_code": "57698-3", "description": "Lipid panel (LDL, HDL, total cholesterol, triglycerides)"},
-        {"order_code": "4548-4",  "description": "Hemoglobin A1c"},
-        {"order_code": "58410-2", "description": "CBC with differential"},
-        {"order_code": "34714-6", "description": "INR (if on anticoagulation)"}
+        {
+          "order_code": "57698-3",
+          "description": "Lipid panel (LDL, HDL, total cholesterol, triglycerides)"
+        },
+        {
+          "order_code": "4548-4",
+          "description": "Hemoglobin A1c"
+        },
+        {
+          "order_code": "58410-2",
+          "description": "CBC with differential"
+        },
+        {
+          "order_code": "34714-6",
+          "description": "INR (if on anticoagulation)"
+        }
       ],
       "medications": [
-        {"rxnorm": "617310",  "name": "Atorvastatin 40 mg oral tablet",          "indication": "LDL reduction"},
-        {"rxnorm": "243670",  "name": "Aspirin 81 mg oral tablet",               "indication": "antiplatelet"},
-        {"rxnorm": "309362",  "name": "Clopidogrel 75 mg oral tablet",           "indication": "antiplatelet (post-stent or aspirin-intolerant)"},
-        {"rxnorm": "314076",  "name": "Lisinopril 10 mg oral tablet",            "indication": "ACE inhibitor — BP + cardiac remodeling"},
-        {"rxnorm": "200801",  "name": "Carvedilol 6.25 mg oral tablet",          "indication": "beta-blocker — post-MI or reduced EF"},
-        {"rxnorm": "1364430", "name": "Apixaban 5 mg oral tablet",              "indication": "anticoagulation (if AFib or PE)"}
+        {
+          "rxnorm": "617310",
+          "name": "Atorvastatin 40 mg oral tablet",
+          "indication": "LDL reduction"
+        },
+        {
+          "rxnorm": "243670",
+          "name": "Aspirin 81 mg oral tablet",
+          "indication": "antiplatelet"
+        },
+        {
+          "rxnorm": "309362",
+          "name": "Clopidogrel 75 mg oral tablet",
+          "indication": "antiplatelet (post-stent or aspirin-intolerant)"
+        },
+        {
+          "rxnorm": "314076",
+          "name": "Lisinopril 10 mg oral tablet",
+          "indication": "ACE inhibitor \u2014 BP + cardiac remodeling"
+        },
+        {
+          "rxnorm": "200801",
+          "name": "Carvedilol 6.25 mg oral tablet",
+          "indication": "beta-blocker \u2014 post-MI or reduced EF"
+        },
+        {
+          "rxnorm": "1364430",
+          "name": "Apixaban 5 mg oral tablet",
+          "indication": "anticoagulation (if AFib or PE)"
+        }
       ],
       "comorbidities": [
-        {"code": "E11.9", "description": "Type 2 diabetes mellitus without complications", "prevalence_pct": 0.35},
-        {"code": "I10",   "description": "Essential hypertension",                          "prevalence_pct": 0.60},
-        {"code": "E78.5", "description": "Hyperlipidemia, unspecified",                    "prevalence_pct": 0.70}
+        {
+          "code": "E11.9",
+          "description": "Type 2 diabetes mellitus without complications",
+          "prevalence_pct": 0.35
+        },
+        {
+          "code": "I10",
+          "description": "Essential hypertension",
+          "prevalence_pct": 0.6
+        },
+        {
+          "code": "E78.5",
+          "description": "Hyperlipidemia, unspecified",
+          "prevalence_pct": 0.7
+        }
       ],
       "encounter_pattern_guidance": "encounters_per_year 3-6; O:0.70 E:0.20 I:0.10"
     },
-
     {
       "cohort_type": "diabetes",
-      "keywords": ["diabetes", "diabetic", "type 2 diabetes", "type 1 diabetes", "hyperglycemia", "glycemic"],
+      "keywords": [
+        "diabetes",
+        "diabetic",
+        "type 2 diabetes",
+        "type 1 diabetes",
+        "hyperglycemia",
+        "glycemic"
+      ],
       "disease_tag": "diabetes",
       "labs": [
-        {"order_code": "4548-4",  "description": "Hemoglobin A1c — primary monitoring lab"},
-        {"order_code": "57698-3", "description": "Lipid panel"},
-        {"order_code": "24323-8", "description": "CMP (renal function, electrolytes, liver)"},
-        {"order_code": "58410-2", "description": "CBC"}
+        {
+          "order_code": "4548-4",
+          "description": "Hemoglobin A1c \u2014 primary monitoring lab"
+        },
+        {
+          "order_code": "57698-3",
+          "description": "Lipid panel"
+        },
+        {
+          "order_code": "24323-8",
+          "description": "CMP (renal function, electrolytes, liver)"
+        },
+        {
+          "order_code": "58410-2",
+          "description": "CBC"
+        }
       ],
       "medications": [
-        {"rxnorm": "860975",  "name": "Metformin 500 mg oral tablet",             "indication": "first-line T2DM"},
-        {"rxnorm": "2200644", "name": "Semaglutide 0.5 mg/0.37 mL SC injection", "indication": "GLP-1 agonist — glucose + weight"},
-        {"rxnorm": "1991302", "name": "Empagliflozin 10 mg oral tablet",          "indication": "SGLT-2 inhibitor — glucose + CV/renal protection"},
-        {"rxnorm": "311048",  "name": "Glipizide 5 mg oral tablet",               "indication": "sulfonylurea — if cost-limited"},
-        {"rxnorm": "261435",  "name": "Insulin glargine 100 units/mL SC",         "indication": "basal insulin — T2DM not at goal"},
-        {"rxnorm": "314076",  "name": "Lisinopril 10 mg oral tablet",             "indication": "ACE inhibitor — nephroprotection"}
+        {
+          "rxnorm": "860975",
+          "name": "Metformin 500 mg oral tablet",
+          "indication": "first-line T2DM"
+        },
+        {
+          "rxnorm": "2200644",
+          "name": "Semaglutide 0.5 mg/0.37 mL SC injection",
+          "indication": "GLP-1 agonist \u2014 glucose + weight"
+        },
+        {
+          "rxnorm": "1991302",
+          "name": "Empagliflozin 10 mg oral tablet",
+          "indication": "SGLT-2 inhibitor \u2014 glucose + CV/renal protection"
+        },
+        {
+          "rxnorm": "311048",
+          "name": "Glipizide 5 mg oral tablet",
+          "indication": "sulfonylurea \u2014 if cost-limited"
+        },
+        {
+          "rxnorm": "261435",
+          "name": "Insulin glargine 100 units/mL SC",
+          "indication": "basal insulin \u2014 T2DM not at goal"
+        },
+        {
+          "rxnorm": "314076",
+          "name": "Lisinopril 10 mg oral tablet",
+          "indication": "ACE inhibitor \u2014 nephroprotection"
+        }
       ],
       "comorbidities": [
-        {"code": "I10",   "description": "Essential hypertension",                        "prevalence_pct": 0.65},
-        {"code": "E78.5", "description": "Hyperlipidemia, unspecified",                  "prevalence_pct": 0.55},
-        {"code": "N18.3", "description": "Chronic kidney disease, stage 3",               "prevalence_pct": 0.25},
-        {"code": "E11.40","description": "Type 2 diabetes with diabetic neuropathy",      "prevalence_pct": 0.30}
+        {
+          "code": "I10",
+          "description": "Essential hypertension",
+          "prevalence_pct": 0.65
+        },
+        {
+          "code": "E78.5",
+          "description": "Hyperlipidemia, unspecified",
+          "prevalence_pct": 0.55
+        },
+        {
+          "code": "N18.3",
+          "description": "Chronic kidney disease, stage 3",
+          "prevalence_pct": 0.25
+        },
+        {
+          "code": "E11.40",
+          "description": "Type 2 diabetes with diabetic neuropathy",
+          "prevalence_pct": 0.3
+        }
       ],
       "encounter_pattern_guidance": "encounters_per_year 3-5; O:0.80 E:0.12 I:0.08"
     },
-
     {
       "cohort_type": "hypertension",
-      "keywords": ["hypertension", "hypertensive", "high blood pressure", "htn"],
+      "keywords": [
+        "hypertension",
+        "hypertensive",
+        "high blood pressure",
+        "htn"
+      ],
       "disease_tag": "hypertension",
       "labs": [
-        {"order_code": "24323-8", "description": "CMP (renal function baseline and monitoring)"},
-        {"order_code": "57698-3", "description": "Lipid panel"},
-        {"order_code": "4548-4",  "description": "Hemoglobin A1c (screen for diabetes)"}
+        {
+          "order_code": "24323-8",
+          "description": "CMP (renal function baseline and monitoring)"
+        },
+        {
+          "order_code": "57698-3",
+          "description": "Lipid panel"
+        },
+        {
+          "order_code": "4548-4",
+          "description": "Hemoglobin A1c (screen for diabetes)"
+        }
       ],
       "medications": [
-        {"rxnorm": "314076",  "name": "Lisinopril 10 mg oral tablet",           "indication": "ACE inhibitor — first-line"},
-        {"rxnorm": "310429",  "name": "Furosemide 40 mg oral tablet",           "indication": "loop diuretic — volume overload"},
-        {"rxnorm": "203584",  "name": "Amlodipine 5 mg oral tablet",            "indication": "CCB — second agent"},
-        {"rxnorm": "617310",  "name": "Atorvastatin 40 mg oral tablet",         "indication": "statin — concurrent cardiovascular risk"},
-        {"rxnorm": "243670",  "name": "Aspirin 81 mg oral tablet",              "indication": "antiplatelet — if 10-year ASCVD ≥ 10%"}
+        {
+          "rxnorm": "314076",
+          "name": "Lisinopril 10 mg oral tablet",
+          "indication": "ACE inhibitor \u2014 first-line"
+        },
+        {
+          "rxnorm": "310429",
+          "name": "Furosemide 40 mg oral tablet",
+          "indication": "loop diuretic \u2014 volume overload"
+        },
+        {
+          "rxnorm": "203584",
+          "name": "Amlodipine 5 mg oral tablet",
+          "indication": "CCB \u2014 second agent"
+        },
+        {
+          "rxnorm": "617310",
+          "name": "Atorvastatin 40 mg oral tablet",
+          "indication": "statin \u2014 concurrent cardiovascular risk"
+        },
+        {
+          "rxnorm": "243670",
+          "name": "Aspirin 81 mg oral tablet",
+          "indication": "antiplatelet \u2014 if 10-year ASCVD \u2265 10%"
+        }
       ],
       "comorbidities": [
-        {"code": "E11.9", "description": "Type 2 diabetes mellitus",     "prevalence_pct": 0.40},
-        {"code": "N18.3", "description": "Chronic kidney disease stage 3","prevalence_pct": 0.20},
-        {"code": "E78.5", "description": "Hyperlipidemia, unspecified",  "prevalence_pct": 0.50}
+        {
+          "code": "E11.9",
+          "description": "Type 2 diabetes mellitus",
+          "prevalence_pct": 0.4
+        },
+        {
+          "code": "N18.3",
+          "description": "Chronic kidney disease stage 3",
+          "prevalence_pct": 0.2
+        },
+        {
+          "code": "E78.5",
+          "description": "Hyperlipidemia, unspecified",
+          "prevalence_pct": 0.5
+        }
       ],
       "encounter_pattern_guidance": "encounters_per_year 2-4; O:0.85 E:0.10 I:0.05"
     },
-
     {
       "cohort_type": "copd",
-      "keywords": ["copd", "chronic obstructive", "emphysema", "pulmonary disease", "bronchitis"],
+      "keywords": [
+        "copd",
+        "chronic obstructive",
+        "emphysema",
+        "pulmonary disease",
+        "bronchitis"
+      ],
       "disease_tag": "copd",
       "labs": [
-        {"order_code": "32623-1", "description": "Spirometry — FEV1/FVC ratio (GOLD staging)"},
-        {"order_code": "1988-5",  "description": "CRP — inflammation marker"},
-        {"order_code": "58410-2", "description": "CBC with differential"}
+        {
+          "order_code": "32623-1",
+          "description": "Spirometry \u2014 FEV1/FVC ratio (GOLD staging)"
+        },
+        {
+          "order_code": "1988-5",
+          "description": "CRP \u2014 inflammation marker"
+        },
+        {
+          "order_code": "58410-2",
+          "description": "CBC with differential"
+        }
       ],
       "medications": [
-        {"rxnorm": "745679",  "name": "Albuterol 90 mcg/actuation MDI inhaler",            "indication": "SABA rescue bronchodilator"},
-        {"rxnorm": "896187",  "name": "Tiotropium bromide 18 mcg inhaler",                 "indication": "LAMA long-acting maintenance"},
-        {"rxnorm": "896206",  "name": "Fluticasone/salmeterol 250/50 mcg diskus",          "indication": "ICS/LABA combo — moderate-severe COPD"},
-        {"rxnorm": "312617",  "name": "Prednisone 40 mg oral tablet",                      "indication": "systemic corticosteroid — acute exacerbation burst"},
-        {"rxnorm": "308460",  "name": "Azithromycin 250 mg oral tablet",                   "indication": "antibiotic — exacerbation or chronic maintenance"}
+        {
+          "rxnorm": "745679",
+          "name": "Albuterol 90 mcg/actuation MDI inhaler",
+          "indication": "SABA rescue bronchodilator"
+        },
+        {
+          "rxnorm": "896187",
+          "name": "Tiotropium bromide 18 mcg inhaler",
+          "indication": "LAMA long-acting maintenance"
+        },
+        {
+          "rxnorm": "896206",
+          "name": "Fluticasone/salmeterol 250/50 mcg diskus",
+          "indication": "ICS/LABA combo \u2014 moderate-severe COPD"
+        },
+        {
+          "rxnorm": "312617",
+          "name": "Prednisone 40 mg oral tablet",
+          "indication": "systemic corticosteroid \u2014 acute exacerbation burst"
+        },
+        {
+          "rxnorm": "308460",
+          "name": "Azithromycin 250 mg oral tablet",
+          "indication": "antibiotic \u2014 exacerbation or chronic maintenance"
+        }
       ],
       "comorbidities": [
-        {"code": "F17.210", "description": "Nicotine dependence, cigarettes, uncomplicated", "prevalence_pct": 0.70},
-        {"code": "I50.9",   "description": "Heart failure, unspecified",                     "prevalence_pct": 0.20},
-        {"code": "F32.9",   "description": "Major depressive disorder, unspecified",         "prevalence_pct": 0.25}
+        {
+          "code": "F17.210",
+          "description": "Nicotine dependence, cigarettes, uncomplicated",
+          "prevalence_pct": 0.7
+        },
+        {
+          "code": "I50.9",
+          "description": "Heart failure, unspecified",
+          "prevalence_pct": 0.2
+        },
+        {
+          "code": "F32.9",
+          "description": "Major depressive disorder, unspecified",
+          "prevalence_pct": 0.25
+        }
       ],
       "encounter_pattern_guidance": "encounters_per_year 4-8; higher E/I during exacerbation seasons (O:0.65, E:0.25, I:0.10)"
     },
-
     {
       "cohort_type": "heart_failure",
-      "keywords": ["heart failure", "chf", "congestive heart failure", "cardiomyopathy", "reduced ejection fraction", "hfref", "hfpef"],
+      "keywords": [
+        "heart failure",
+        "chf",
+        "congestive heart failure",
+        "cardiomyopathy",
+        "reduced ejection fraction",
+        "hfref",
+        "hfpef"
+      ],
       "disease_tag": "heart_failure",
       "labs": [
-        {"order_code": "33762-6", "description": "NT-proBNP — heart failure severity marker"},
-        {"order_code": "14804-9", "description": "LDH — organ congestion marker"},
-        {"order_code": "24323-8", "description": "CMP (renal/electrolyte monitoring on diuretics)"},
-        {"order_code": "58410-2", "description": "CBC with differential"}
+        {
+          "order_code": "33762-6",
+          "description": "NT-proBNP \u2014 heart failure severity marker"
+        },
+        {
+          "order_code": "14804-9",
+          "description": "LDH \u2014 organ congestion marker"
+        },
+        {
+          "order_code": "24323-8",
+          "description": "CMP (renal/electrolyte monitoring on diuretics)"
+        },
+        {
+          "order_code": "58410-2",
+          "description": "CBC with differential"
+        }
       ],
       "medications": [
-        {"rxnorm": "310429",  "name": "Furosemide 40 mg oral tablet",           "indication": "loop diuretic — fluid overload"},
-        {"rxnorm": "200801",  "name": "Carvedilol 6.25 mg oral tablet",         "indication": "beta-blocker — reduce mortality HFrEF"},
-        {"rxnorm": "314076",  "name": "Lisinopril 10 mg oral tablet",           "indication": "ACE inhibitor — cardiac remodeling"},
-        {"rxnorm": "313096",  "name": "Spironolactone 25 mg oral tablet",       "indication": "aldosterone antagonist — NYHA II-IV"},
-        {"rxnorm": "1659149", "name": "Sacubitril/valsartan 49/51 mg tablet",   "indication": "ARNI — first-line HFrEF over ACE/ARB"},
-        {"rxnorm": "197604",  "name": "Digoxin 0.125 mg oral tablet",           "indication": "rate control or inotrope — refractory HF"}
+        {
+          "rxnorm": "310429",
+          "name": "Furosemide 40 mg oral tablet",
+          "indication": "loop diuretic \u2014 fluid overload"
+        },
+        {
+          "rxnorm": "200801",
+          "name": "Carvedilol 6.25 mg oral tablet",
+          "indication": "beta-blocker \u2014 reduce mortality HFrEF"
+        },
+        {
+          "rxnorm": "314076",
+          "name": "Lisinopril 10 mg oral tablet",
+          "indication": "ACE inhibitor \u2014 cardiac remodeling"
+        },
+        {
+          "rxnorm": "313096",
+          "name": "Spironolactone 25 mg oral tablet",
+          "indication": "aldosterone antagonist \u2014 NYHA II-IV"
+        },
+        {
+          "rxnorm": "1659149",
+          "name": "Sacubitril/valsartan 49/51 mg tablet",
+          "indication": "ARNI \u2014 first-line HFrEF over ACE/ARB"
+        },
+        {
+          "rxnorm": "197604",
+          "name": "Digoxin 0.125 mg oral tablet",
+          "indication": "rate control or inotrope \u2014 refractory HF"
+        }
       ],
       "comorbidities": [
-        {"code": "I10",   "description": "Essential hypertension",          "prevalence_pct": 0.65},
-        {"code": "E11.9", "description": "Type 2 diabetes mellitus",        "prevalence_pct": 0.35},
-        {"code": "I48.91","description": "Unspecified atrial fibrillation", "prevalence_pct": 0.30},
-        {"code": "N18.3", "description": "Chronic kidney disease stage 3",  "prevalence_pct": 0.35}
+        {
+          "code": "I10",
+          "description": "Essential hypertension",
+          "prevalence_pct": 0.65
+        },
+        {
+          "code": "E11.9",
+          "description": "Type 2 diabetes mellitus",
+          "prevalence_pct": 0.35
+        },
+        {
+          "code": "I48.91",
+          "description": "Unspecified atrial fibrillation",
+          "prevalence_pct": 0.3
+        },
+        {
+          "code": "N18.3",
+          "description": "Chronic kidney disease stage 3",
+          "prevalence_pct": 0.35
+        }
       ],
       "encounter_pattern_guidance": "encounters_per_year 6-10; raise E and I weights significantly (O:0.60, E:0.25, I:0.15)"
     },
-
     {
       "cohort_type": "sickle_cell",
-      "keywords": ["sickle cell", "scd", "sickle", "hemoglobin ss", "hemoglobin sc"],
+      "keywords": [
+        "sickle cell",
+        "scd",
+        "sickle",
+        "hemoglobin ss",
+        "hemoglobin sc"
+      ],
       "disease_tag": "sickle_cell",
       "labs": [
-        {"order_code": "58410-2", "description": "CBC — Hgb typically 6-10 g/dL (abnormal range)"},
-        {"order_code": "14804-9", "description": "LDH — hemolysis marker"},
-        {"order_code": "17849-1", "description": "Reticulocyte count — compensatory erythropoiesis"},
-        {"order_code": "2276-4",  "description": "Ferritin — iron stores (monitor transfusions)"},
-        {"order_code": "24323-8", "description": "CMP — renal function, liver (organ damage monitoring)"}
+        {
+          "order_code": "58410-2",
+          "description": "CBC \u2014 Hgb typically 6-10 g/dL (abnormal range)"
+        },
+        {
+          "order_code": "14804-9",
+          "description": "LDH \u2014 hemolysis marker"
+        },
+        {
+          "order_code": "17849-1",
+          "description": "Reticulocyte count \u2014 compensatory erythropoiesis"
+        },
+        {
+          "order_code": "2276-4",
+          "description": "Ferritin \u2014 iron stores (monitor transfusions)"
+        },
+        {
+          "order_code": "24323-8",
+          "description": "CMP \u2014 renal function, liver (organ damage monitoring)"
+        }
       ],
       "medications": [
-        {"rxnorm": "310831",  "name": "Hydroxyurea 500 mg oral capsule",          "indication": "disease-modifying — increases HbF, reduces crises"},
-        {"rxnorm": "221018",  "name": "Folic acid 1 mg oral tablet",              "indication": "folate supplementation — increased erythropoiesis demand"},
-        {"rxnorm": "1049502", "name": "Oxycodone 5 mg oral tablet",               "indication": "pain crisis analgesia (inpatient)"},
-        {"rxnorm": "3498",    "name": "Ibuprofen 400 mg oral tablet",             "indication": "mild-moderate pain (outpatient, use with caution in CKD)"},
-        {"rxnorm": "2169275", "name": "Voxelotor 500 mg oral tablet",             "indication": "HbS polymerization inhibitor — newer agent"}
+        {
+          "rxnorm": "310831",
+          "name": "Hydroxyurea 500 mg oral capsule",
+          "indication": "disease-modifying \u2014 increases HbF, reduces crises"
+        },
+        {
+          "rxnorm": "221018",
+          "name": "Folic acid 1 mg oral tablet",
+          "indication": "folate supplementation \u2014 increased erythropoiesis demand"
+        },
+        {
+          "rxnorm": "1049502",
+          "name": "Oxycodone 5 mg oral tablet",
+          "indication": "pain crisis analgesia (inpatient)"
+        },
+        {
+          "rxnorm": "3498",
+          "name": "Ibuprofen 400 mg oral tablet",
+          "indication": "mild-moderate pain (outpatient, use with caution in CKD)"
+        },
+        {
+          "rxnorm": "2169275",
+          "name": "Voxelotor 500 mg oral tablet",
+          "indication": "HbS polymerization inhibitor \u2014 newer agent"
+        }
       ],
       "comorbidities": [
-        {"code": "D57.1",  "description": "Sickle-cell disease without crisis",     "prevalence_pct": 1.00},
-        {"code": "N18.3",  "description": "Chronic kidney disease stage 3",         "prevalence_pct": 0.30},
-        {"code": "I27.20", "description": "Pulmonary hypertension, unspecified",    "prevalence_pct": 0.20},
-        {"code": "G89.29", "description": "Other chronic pain",                     "prevalence_pct": 0.50}
+        {
+          "code": "D57.1",
+          "description": "Sickle-cell disease without crisis",
+          "prevalence_pct": 1.0
+        },
+        {
+          "code": "N18.3",
+          "description": "Chronic kidney disease stage 3",
+          "prevalence_pct": 0.3
+        },
+        {
+          "code": "I27.20",
+          "description": "Pulmonary hypertension, unspecified",
+          "prevalence_pct": 0.2
+        },
+        {
+          "code": "G89.29",
+          "description": "Other chronic pain",
+          "prevalence_pct": 0.5
+        }
       ],
       "_note": "Do NOT include iron supplementation unless iron-deficiency anemia is explicitly co-diagnosed. Hgb normal range should be 11-16; abnormal range 6-10.",
       "encounter_pattern_guidance": "encounters_per_year 4-8; significant I weight for pain crises (O:0.65, E:0.20, I:0.15)"
     },
-
     {
       "cohort_type": "behavioral_health",
-      "keywords": ["behavioral health", "psychiatric", "mental health", "depression", "bipolar", "schizophrenia", "anxiety disorder", "mood disorder"],
+      "keywords": [
+        "behavioral health",
+        "psychiatric",
+        "mental health",
+        "depression",
+        "bipolar",
+        "schizophrenia",
+        "anxiety disorder",
+        "mood disorder"
+      ],
       "disease_tag": "behavioral_health",
       "labs": [
-        {"order_code": "24323-8", "description": "CMP — metabolic monitoring (antipsychotic side effects)"},
-        {"order_code": "57698-3", "description": "Lipid panel — metabolic syndrome monitoring"},
-        {"order_code": "3016-3",  "description": "TSH — thyroid function (lithium patients)"},
-        {"order_code": "4551-8",  "description": "Valproic acid level — trough for mood stabilizer dosing"},
-        {"order_code": "14334-7", "description": "Lithium level — trough (narrow therapeutic index 0.6-1.2 mEq/L)"}
+        {
+          "order_code": "24323-8",
+          "description": "CMP \u2014 metabolic monitoring (antipsychotic side effects)"
+        },
+        {
+          "order_code": "57698-3",
+          "description": "Lipid panel \u2014 metabolic syndrome monitoring"
+        },
+        {
+          "order_code": "3016-3",
+          "description": "TSH \u2014 thyroid function (lithium patients)"
+        },
+        {
+          "order_code": "4551-8",
+          "description": "Valproic acid level \u2014 trough for mood stabilizer dosing"
+        },
+        {
+          "order_code": "14334-7",
+          "description": "Lithium level \u2014 trough (narrow therapeutic index 0.6-1.2 mEq/L)"
+        }
       ],
       "medications": [
-        {"rxnorm": "313989",  "name": "Sertraline 50 mg oral tablet",             "indication": "SSRI — depression/anxiety first-line"},
-        {"rxnorm": "200327",  "name": "Quetiapine 25 mg oral tablet",             "indication": "atypical antipsychotic — bipolar or adjunct depression"},
-        {"rxnorm": "362193",  "name": "Aripiprazole 10 mg oral tablet",           "indication": "atypical antipsychotic — schizophrenia or bipolar"},
-        {"rxnorm": "857293",  "name": "Lithium carbonate 300 mg oral tablet",     "indication": "mood stabilizer — bipolar I"},
-        {"rxnorm": "896209",  "name": "Valproic acid 250 mg oral capsule",        "indication": "mood stabilizer / anticonvulsant"},
-        {"rxnorm": "2180906", "name": "Bupropion 150 mg oral tablet",             "indication": "antidepressant — also smoking cessation"},
-        {"rxnorm": "1009900", "name": "Benztropine 1 mg oral tablet",             "indication": "anticholinergic — antipsychotic-induced EPS"}
+        {
+          "rxnorm": "313989",
+          "name": "Sertraline 50 mg oral tablet",
+          "indication": "SSRI \u2014 depression/anxiety first-line"
+        },
+        {
+          "rxnorm": "200327",
+          "name": "Quetiapine 25 mg oral tablet",
+          "indication": "atypical antipsychotic \u2014 bipolar or adjunct depression"
+        },
+        {
+          "rxnorm": "362193",
+          "name": "Aripiprazole 10 mg oral tablet",
+          "indication": "atypical antipsychotic \u2014 schizophrenia or bipolar"
+        },
+        {
+          "rxnorm": "857293",
+          "name": "Lithium carbonate 300 mg oral tablet",
+          "indication": "mood stabilizer \u2014 bipolar I"
+        },
+        {
+          "rxnorm": "896209",
+          "name": "Valproic acid 250 mg oral capsule",
+          "indication": "mood stabilizer / anticonvulsant"
+        },
+        {
+          "rxnorm": "2180906",
+          "name": "Bupropion 150 mg oral tablet",
+          "indication": "antidepressant \u2014 also smoking cessation"
+        },
+        {
+          "rxnorm": "1009900",
+          "name": "Benztropine 1 mg oral tablet",
+          "indication": "anticholinergic \u2014 antipsychotic-induced EPS"
+        }
       ],
       "comorbidities": [
-        {"code": "F19.10", "description": "Other psychoactive substance use disorder, uncomplicated", "prevalence_pct": 0.30},
-        {"code": "E11.9",  "description": "Type 2 diabetes mellitus",                                "prevalence_pct": 0.20},
-        {"code": "E66.9",  "description": "Obesity, unspecified",                                    "prevalence_pct": 0.35}
+        {
+          "code": "F19.10",
+          "description": "Other psychoactive substance use disorder, uncomplicated",
+          "prevalence_pct": 0.3
+        },
+        {
+          "code": "E11.9",
+          "description": "Type 2 diabetes mellitus",
+          "prevalence_pct": 0.2
+        },
+        {
+          "code": "E66.9",
+          "description": "Obesity, unspecified",
+          "prevalence_pct": 0.35
+        }
       ],
       "_note": "Include BMI/weight observations for antipsychotic metabolic monitoring. Drug level labs (valproic acid, lithium) only if the corresponding mood stabilizer is in the medication list.",
       "encounter_pattern_guidance": "encounters_per_year 4-8; mostly outpatient with occasional psychiatric inpatient (O:0.80, E:0.12, I:0.08)"
     },
-
     {
       "cohort_type": "opioid_use_disorder",
-      "keywords": ["opioid use disorder", "oud", "substance use disorder", "opioid", "heroin", "addiction", "medication assisted treatment", "mat"],
+      "keywords": [
+        "opioid use disorder",
+        "oud",
+        "substance use disorder",
+        "opioid",
+        "heroin",
+        "addiction",
+        "medication assisted treatment",
+        "mat"
+      ],
       "disease_tag": "opioid_use_disorder",
       "labs": [
-        {"order_code": "10998-5", "description": "Urine drug screen — monitoring compliance and illicit use"},
-        {"order_code": "16128-1", "description": "Hepatitis C antibody — high prevalence in PWID"},
-        {"order_code": "24323-8", "description": "CMP — liver function (HCV, buprenorphine hepatotoxicity risk)"},
-        {"order_code": "58410-2", "description": "CBC — anemia, infection screening"}
+        {
+          "order_code": "10998-5",
+          "description": "Urine drug screen \u2014 monitoring compliance and illicit use"
+        },
+        {
+          "order_code": "16128-1",
+          "description": "Hepatitis C antibody \u2014 high prevalence in PWID"
+        },
+        {
+          "order_code": "24323-8",
+          "description": "CMP \u2014 liver function (HCV, buprenorphine hepatotoxicity risk)"
+        },
+        {
+          "order_code": "58410-2",
+          "description": "CBC \u2014 anemia, infection screening"
+        }
       ],
       "medications": [
-        {"rxnorm": "993755",  "name": "Buprenorphine/naloxone 8 mg/2 mg sublingual film (Suboxone)", "indication": "first-line MOUD — reduces cravings and illicit use"},
-        {"rxnorm": "1655058", "name": "Naltrexone 380 mg IM injection (Vivitrol)",                   "indication": "monthly injectable — for patients who complete detox"},
-        {"rxnorm": "1659929", "name": "Naloxone 4 mg nasal spray",                                   "indication": "overdose reversal — prescribe to ALL patients"},
-        {"rxnorm": "1665008", "name": "Methadone 10 mg oral tablet",                                 "indication": "OTP-dispensed MOUD — highly regulated"}
+        {
+          "rxnorm": "993755",
+          "name": "Buprenorphine/naloxone 8 mg/2 mg sublingual film (Suboxone)",
+          "indication": "first-line MOUD \u2014 reduces cravings and illicit use"
+        },
+        {
+          "rxnorm": "1655058",
+          "name": "Naltrexone 380 mg IM injection (Vivitrol)",
+          "indication": "monthly injectable \u2014 for patients who complete detox"
+        },
+        {
+          "rxnorm": "1659929",
+          "name": "Naloxone 4 mg nasal spray",
+          "indication": "overdose reversal \u2014 prescribe to ALL patients"
+        },
+        {
+          "rxnorm": "1665008",
+          "name": "Methadone 10 mg oral tablet",
+          "indication": "OTP-dispensed MOUD \u2014 highly regulated"
+        }
       ],
       "comorbidities": [
-        {"code": "B18.2", "description": "Chronic viral hepatitis C",              "prevalence_pct": 0.30},
-        {"code": "F32.9", "description": "Major depressive disorder, unspecified", "prevalence_pct": 0.40},
-        {"code": "F43.10","description": "Post-traumatic stress disorder, unspecified", "prevalence_pct": 0.25},
-        {"code": "B20",   "description": "Human immunodeficiency virus disease",   "prevalence_pct": 0.08}
+        {
+          "code": "B18.2",
+          "description": "Chronic viral hepatitis C",
+          "prevalence_pct": 0.3
+        },
+        {
+          "code": "F32.9",
+          "description": "Major depressive disorder, unspecified",
+          "prevalence_pct": 0.4
+        },
+        {
+          "code": "F43.10",
+          "description": "Post-traumatic stress disorder, unspecified",
+          "prevalence_pct": 0.25
+        },
+        {
+          "code": "B20",
+          "description": "Human immunodeficiency virus disease",
+          "prevalence_pct": 0.08
+        }
       ],
       "encounter_pattern_guidance": "encounters_per_year 6-12; mostly outpatient MAT visits (O:0.80, E:0.15, I:0.05)"
     },
-
     {
       "cohort_type": "respiratory_illness",
-      "keywords": ["respiratory", "pneumonia", "uri", "upper respiratory", "influenza", "bronchitis", "respiratory infection"],
+      "keywords": [
+        "respiratory",
+        "pneumonia",
+        "uri",
+        "upper respiratory",
+        "influenza",
+        "bronchitis",
+        "respiratory infection"
+      ],
       "disease_tag": "respiratory_illness",
       "labs": [
-        {"order_code": "58410-2", "description": "CBC with differential — WBC elevation in bacterial infection"},
-        {"order_code": "1988-5",  "description": "CRP — acute inflammation"}
+        {
+          "order_code": "58410-2",
+          "description": "CBC with differential \u2014 WBC elevation in bacterial infection"
+        },
+        {
+          "order_code": "1988-5",
+          "description": "CRP \u2014 acute inflammation"
+        }
       ],
       "medications": [
-        {"rxnorm": "723",     "name": "Amoxicillin 500 mg oral capsule",              "indication": "first-line antibiotic — community-acquired bacterial URI/pneumonia"},
-        {"rxnorm": "308460",  "name": "Azithromycin 250 mg oral tablet",              "indication": "atypical coverage — Mycoplasma, Chlamydia pneumoniae"},
-        {"rxnorm": "352251",  "name": "Oseltamivir 75 mg oral capsule",              "indication": "antiviral — influenza within 48 hours of symptom onset"},
-        {"rxnorm": "745679",  "name": "Albuterol 90 mcg/actuation MDI inhaler",      "indication": "bronchodilator — bronchospasm component"},
-        {"rxnorm": "312617",  "name": "Prednisone 40 mg oral tablet",                "indication": "systemic corticosteroid — severe community-acquired pneumonia"},
-        {"rxnorm": "1652674", "name": "Doxycycline 100 mg oral tablet",              "indication": "broad-spectrum antibiotic — atypical organisms"}
+        {
+          "rxnorm": "723",
+          "name": "Amoxicillin 500 mg oral capsule",
+          "indication": "first-line antibiotic \u2014 community-acquired bacterial URI/pneumonia"
+        },
+        {
+          "rxnorm": "308460",
+          "name": "Azithromycin 250 mg oral tablet",
+          "indication": "atypical coverage \u2014 Mycoplasma, Chlamydia pneumoniae"
+        },
+        {
+          "rxnorm": "352251",
+          "name": "Oseltamivir 75 mg oral capsule",
+          "indication": "antiviral \u2014 influenza within 48 hours of symptom onset"
+        },
+        {
+          "rxnorm": "745679",
+          "name": "Albuterol 90 mcg/actuation MDI inhaler",
+          "indication": "bronchodilator \u2014 bronchospasm component"
+        },
+        {
+          "rxnorm": "312617",
+          "name": "Prednisone 40 mg oral tablet",
+          "indication": "systemic corticosteroid \u2014 severe community-acquired pneumonia"
+        },
+        {
+          "rxnorm": "1652674",
+          "name": "Doxycycline 100 mg oral tablet",
+          "indication": "broad-spectrum antibiotic \u2014 atypical organisms"
+        }
       ],
       "comorbidities": [
-        {"code": "J45.20", "description": "Mild intermittent asthma, uncomplicated",  "prevalence_pct": 0.20},
-        {"code": "F17.210","description": "Nicotine dependence, cigarettes",           "prevalence_pct": 0.30},
-        {"code": "J44.1",  "description": "COPD with acute exacerbation",             "prevalence_pct": 0.15}
+        {
+          "code": "J45.20",
+          "description": "Mild intermittent asthma, uncomplicated",
+          "prevalence_pct": 0.2
+        },
+        {
+          "code": "F17.210",
+          "description": "Nicotine dependence, cigarettes",
+          "prevalence_pct": 0.3
+        },
+        {
+          "code": "J44.1",
+          "description": "COPD with acute exacerbation",
+          "prevalence_pct": 0.15
+        }
       ],
       "encounter_pattern_guidance": "encounters_per_year 2-4; higher E weight for acute episodes (O:0.65, E:0.25, I:0.10); include chest imaging in rad_order_templates"
     },
-
     {
       "cohort_type": "stroke",
-      "keywords": ["stroke", "cva", "cerebrovascular", "tia", "transient ischemic", "ischemic stroke", "hemorrhagic stroke"],
+      "keywords": [
+        "stroke",
+        "cva",
+        "cerebrovascular",
+        "tia",
+        "transient ischemic",
+        "ischemic stroke",
+        "hemorrhagic stroke"
+      ],
       "disease_tag": "stroke",
       "labs": [
-        {"order_code": "34714-6", "description": "INR — anticoagulation monitoring (warfarin patients)"},
-        {"order_code": "57698-3", "description": "Lipid panel — atherosclerotic risk management"},
-        {"order_code": "58410-2", "description": "CBC with differential"},
-        {"order_code": "24323-8", "description": "CMP — renal function for anticoagulant dosing"}
+        {
+          "order_code": "34714-6",
+          "description": "INR \u2014 anticoagulation monitoring (warfarin patients)"
+        },
+        {
+          "order_code": "57698-3",
+          "description": "Lipid panel \u2014 atherosclerotic risk management"
+        },
+        {
+          "order_code": "58410-2",
+          "description": "CBC with differential"
+        },
+        {
+          "order_code": "24323-8",
+          "description": "CMP \u2014 renal function for anticoagulant dosing"
+        }
       ],
       "medications": [
-        {"rxnorm": "243670",  "name": "Aspirin 81 mg oral tablet",           "indication": "antiplatelet — ischemic stroke secondary prevention"},
-        {"rxnorm": "309362",  "name": "Clopidogrel 75 mg oral tablet",       "indication": "antiplatelet — aspirin-intolerant or dual therapy post-TIA"},
-        {"rxnorm": "617310",  "name": "Atorvastatin 40 mg oral tablet",      "indication": "high-intensity statin — LDL < 70 target post-stroke"},
-        {"rxnorm": "1364430", "name": "Apixaban 5 mg oral tablet",           "indication": "DOAC — cardioembolic stroke (AFib)"},
-        {"rxnorm": "855332",  "name": "Warfarin 5 mg oral tablet",           "indication": "anticoagulation — valvular AFib or mechanical valve"},
-        {"rxnorm": "314076",  "name": "Lisinopril 10 mg oral tablet",        "indication": "ACE inhibitor — BP control post-stroke"}
+        {
+          "rxnorm": "243670",
+          "name": "Aspirin 81 mg oral tablet",
+          "indication": "antiplatelet \u2014 ischemic stroke secondary prevention"
+        },
+        {
+          "rxnorm": "309362",
+          "name": "Clopidogrel 75 mg oral tablet",
+          "indication": "antiplatelet \u2014 aspirin-intolerant or dual therapy post-TIA"
+        },
+        {
+          "rxnorm": "617310",
+          "name": "Atorvastatin 40 mg oral tablet",
+          "indication": "high-intensity statin \u2014 LDL < 70 target post-stroke"
+        },
+        {
+          "rxnorm": "1364430",
+          "name": "Apixaban 5 mg oral tablet",
+          "indication": "DOAC \u2014 cardioembolic stroke (AFib)"
+        },
+        {
+          "rxnorm": "855332",
+          "name": "Warfarin 5 mg oral tablet",
+          "indication": "anticoagulation \u2014 valvular AFib or mechanical valve"
+        },
+        {
+          "rxnorm": "314076",
+          "name": "Lisinopril 10 mg oral tablet",
+          "indication": "ACE inhibitor \u2014 BP control post-stroke"
+        }
       ],
       "comorbidities": [
-        {"code": "I10",   "description": "Essential hypertension",           "prevalence_pct": 0.70},
-        {"code": "I48.91","description": "Unspecified atrial fibrillation",  "prevalence_pct": 0.25},
-        {"code": "E11.9", "description": "Type 2 diabetes mellitus",         "prevalence_pct": 0.30},
-        {"code": "E78.5", "description": "Hyperlipidemia, unspecified",     "prevalence_pct": 0.65}
+        {
+          "code": "I10",
+          "description": "Essential hypertension",
+          "prevalence_pct": 0.7
+        },
+        {
+          "code": "I48.91",
+          "description": "Unspecified atrial fibrillation",
+          "prevalence_pct": 0.25
+        },
+        {
+          "code": "E11.9",
+          "description": "Type 2 diabetes mellitus",
+          "prevalence_pct": 0.3
+        },
+        {
+          "code": "E78.5",
+          "description": "Hyperlipidemia, unspecified",
+          "prevalence_pct": 0.65
+        }
       ],
       "encounter_pattern_guidance": "encounters_per_year 3-5; higher I weight for acute episodes and rehab (O:0.70, E:0.15, I:0.15)"
     },
-
     {
       "cohort_type": "stis",
-      "keywords": ["sexually transmitted", "sti", "std", "chlamydia", "gonorrhea", "syphilis", "hiv"],
+      "keywords": [
+        "sexually transmitted",
+        "sti",
+        "std",
+        "chlamydia",
+        "gonorrhea",
+        "syphilis",
+        "hiv"
+      ],
       "disease_tag": "infectious",
       "labs": [
-        {"order_code": "16128-1", "description": "Hepatitis C antibody"},
-        {"order_code": "10998-5", "description": "Urine drug screen (co-occurring substance use)"},
-        {"order_code": "20447-9", "description": "HIV-1 RNA viral load (copies/mL) — monitoring on ART"}
+        {
+          "order_code": "16128-1",
+          "description": "Hepatitis C antibody"
+        },
+        {
+          "order_code": "10998-5",
+          "description": "Urine drug screen (co-occurring substance use)"
+        },
+        {
+          "order_code": "20447-9",
+          "description": "HIV-1 RNA viral load (copies/mL) \u2014 monitoring on ART"
+        }
       ],
       "medications": [
-        {"rxnorm": "308460",  "name": "Azithromycin 1 g single-dose oral",              "indication": "chlamydia first-line treatment"},
-        {"rxnorm": "309043",  "name": "Ceftriaxone 500 mg IM injection",                "indication": "gonorrhea first-line treatment"},
-        {"rxnorm": "1652674", "name": "Doxycycline 100 mg oral tablet",                 "indication": "chlamydia alternative; PID; syphilis non-penicillin"},
-        {"rxnorm": "1665008", "name": "Penicillin G benzathine 2.4M units IM",          "indication": "primary/secondary syphilis treatment"},
-        {"rxnorm": "1747347", "name": "Bictegravir/emtricitabine/tenofovir 50/200/25 mg tablet (Biktarvy)", "indication": "HIV ART first-line single-tablet regimen"},
-        {"rxnorm": "1747286", "name": "Emtricitabine/tenofovir 200/25 mg tablet (Descovy)",                 "indication": "HIV PrEP — pre-exposure prophylaxis"}
+        {
+          "rxnorm": "308460",
+          "name": "Azithromycin 1 g single-dose oral",
+          "indication": "chlamydia first-line treatment"
+        },
+        {
+          "rxnorm": "309043",
+          "name": "Ceftriaxone 500 mg IM injection",
+          "indication": "gonorrhea first-line treatment"
+        },
+        {
+          "rxnorm": "1652674",
+          "name": "Doxycycline 100 mg oral tablet",
+          "indication": "chlamydia alternative; PID; syphilis non-penicillin"
+        },
+        {
+          "rxnorm": "1665008",
+          "name": "Penicillin G benzathine 2.4M units IM",
+          "indication": "primary/secondary syphilis treatment"
+        },
+        {
+          "rxnorm": "1747347",
+          "name": "Bictegravir/emtricitabine/tenofovir 50/200/25 mg tablet (Biktarvy)",
+          "indication": "HIV ART first-line single-tablet regimen"
+        },
+        {
+          "rxnorm": "1747286",
+          "name": "Emtricitabine/tenofovir 200/25 mg tablet (Descovy)",
+          "indication": "HIV PrEP \u2014 pre-exposure prophylaxis"
+        }
       ],
       "comorbidities": [
-        {"code": "F19.10", "description": "Other psychoactive substance use, uncomplicated", "prevalence_pct": 0.25},
-        {"code": "B18.2",  "description": "Chronic viral hepatitis C",                      "prevalence_pct": 0.20},
-        {"code": "F32.9",  "description": "Major depressive disorder, unspecified",         "prevalence_pct": 0.25}
+        {
+          "code": "F19.10",
+          "description": "Other psychoactive substance use, uncomplicated",
+          "prevalence_pct": 0.25
+        },
+        {
+          "code": "B18.2",
+          "description": "Chronic viral hepatitis C",
+          "prevalence_pct": 0.2
+        },
+        {
+          "code": "F32.9",
+          "description": "Major depressive disorder, unspecified",
+          "prevalence_pct": 0.25
+        }
       ],
       "_note": "Include culture/serology labs (chlamydia antigen, GC culture, RPR syphilis serology) as cohort-specific panels with full result_items since these are not in the vetted library.",
       "encounter_pattern_guidance": "encounters_per_year 3-6; mostly outpatient (O:0.80, E:0.15, I:0.05)"
     },
-
     {
       "cohort_type": "obstetric",
-      "keywords": ["obstetric", "pregnancy", "prenatal", "obstetrics", "maternity", "antenatal", "postpartum", "obgyn"],
+      "keywords": [
+        "obstetric",
+        "pregnancy",
+        "prenatal",
+        "obstetrics",
+        "maternity",
+        "antenatal",
+        "postpartum",
+        "obgyn"
+      ],
       "disease_tag": "obstetric",
       "labs": [
-        {"order_code": "718-7",   "description": "Hemoglobin — maternal anemia screening (normal 11-16 g/dL in pregnancy)"},
-        {"order_code": "58410-2", "description": "CBC — complete blood count"},
-        {"order_code": "2339-0",  "description": "Glucose Tolerance Test — GDM screening at 24-28 weeks"},
-        {"order_code": "5792-7",  "description": "Urinalysis — protein/glucose/leukocyte esterase monitoring"},
-        {"order_code": "17563-8", "description": "GBS culture — Group B Streptococcus at 35-37 weeks"}
+        {
+          "order_code": "718-7",
+          "description": "Hemoglobin \u2014 maternal anemia screening (normal 11-16 g/dL in pregnancy)"
+        },
+        {
+          "order_code": "58410-2",
+          "description": "CBC \u2014 complete blood count"
+        },
+        {
+          "order_code": "2339-0",
+          "description": "Glucose Tolerance Test \u2014 GDM screening at 24-28 weeks"
+        },
+        {
+          "order_code": "5792-7",
+          "description": "Urinalysis \u2014 protein/glucose/leukocyte esterase monitoring"
+        },
+        {
+          "order_code": "17563-8",
+          "description": "GBS culture \u2014 Group B Streptococcus at 35-37 weeks"
+        }
       ],
       "medications": [
-        {"rxnorm": "1940505", "name": "Prenatal multivitamin with folic acid oral tablet",         "indication": "universal supplementation throughout pregnancy"},
-        {"rxnorm": "221018",  "name": "Folic acid 1 mg oral tablet",                              "indication": "neural tube defect prevention — first trimester"},
-        {"rxnorm": "310798",  "name": "Ferrous sulfate 325 mg oral tablet",                       "indication": "iron supplementation — iron-deficiency anemia in pregnancy"},
-        {"rxnorm": "331147",  "name": "Labetalol 100 mg oral tablet",                             "indication": "antihypertensive — safe in pregnancy (preeclampsia/chronic HTN)"},
-        {"rxnorm": "310460",  "name": "Nifedipine 30 mg extended-release oral tablet",            "indication": "CCB — antihypertensive or tocolytic"},
-        {"rxnorm": "311034",  "name": "Insulin NPH 100 units/mL SC suspension",                  "indication": "insulin — gestational diabetes (preferred over oral agents)"}
+        {
+          "rxnorm": "1940505",
+          "name": "Prenatal multivitamin with folic acid oral tablet",
+          "indication": "universal supplementation throughout pregnancy"
+        },
+        {
+          "rxnorm": "221018",
+          "name": "Folic acid 1 mg oral tablet",
+          "indication": "neural tube defect prevention \u2014 first trimester"
+        },
+        {
+          "rxnorm": "310798",
+          "name": "Ferrous sulfate 325 mg oral tablet",
+          "indication": "iron supplementation \u2014 iron-deficiency anemia in pregnancy"
+        },
+        {
+          "rxnorm": "331147",
+          "name": "Labetalol 100 mg oral tablet",
+          "indication": "antihypertensive \u2014 safe in pregnancy (preeclampsia/chronic HTN)"
+        },
+        {
+          "rxnorm": "310460",
+          "name": "Nifedipine 30 mg extended-release oral tablet",
+          "indication": "CCB \u2014 antihypertensive or tocolytic"
+        },
+        {
+          "rxnorm": "311034",
+          "name": "Insulin NPH 100 units/mL SC suspension",
+          "indication": "insulin \u2014 gestational diabetes (preferred over oral agents)"
+        }
       ],
       "comorbidities": [
-        {"code": "O14.00", "description": "Mild to moderate pre-eclampsia, unspecified trimester", "prevalence_pct": 0.20},
-        {"code": "O24.419","description": "Gestational diabetes mellitus in pregnancy, unspecified", "prevalence_pct": 0.10},
-        {"code": "F41.9",  "description": "Anxiety disorder, unspecified",                         "prevalence_pct": 0.15},
-        {"code": "I10",    "description": "Essential hypertension",                                "prevalence_pct": 0.10}
+        {
+          "code": "O14.00",
+          "description": "Mild to moderate pre-eclampsia, unspecified trimester",
+          "prevalence_pct": 0.2
+        },
+        {
+          "code": "O24.419",
+          "description": "Gestational diabetes mellitus in pregnancy, unspecified",
+          "prevalence_pct": 0.1
+        },
+        {
+          "code": "F41.9",
+          "description": "Anxiety disorder, unspecified",
+          "prevalence_pct": 0.15
+        },
+        {
+          "code": "I10",
+          "description": "Essential hypertension",
+          "prevalence_pct": 0.1
+        }
       ],
       "_note": "Only assign pregnancy-related diagnoses to female patients. Delivery codes (O80, O82) must have only_encounter_types: [\"I\"]. Prenatal supervision codes (Z34.x) and postpartum codes (Z39.x) must have only_encounter_types: [\"O\"].",
       "encounter_pattern_guidance": "encounters_per_year 8-14 during active pregnancy; O:0.82 E:0.10 I:0.08; the single inpatient encounter is the delivery"
     },
-
     {
       "cohort_type": "multiple_chronic",
-      "keywords": ["multiple chronic", "multimorbidity", "complex chronic", "multi chronic", "multiple comorbid"],
+      "keywords": [
+        "multiple chronic",
+        "multimorbidity",
+        "complex chronic",
+        "multi chronic",
+        "multiple comorbid"
+      ],
       "disease_tag": "complex",
       "labs": [
-        {"order_code": "24323-8", "description": "CMP — baseline metabolic panel"},
-        {"order_code": "57698-3", "description": "Lipid panel"},
-        {"order_code": "4548-4",  "description": "Hemoglobin A1c"},
-        {"order_code": "58410-2", "description": "CBC with differential"},
-        {"order_code": "3016-3",  "description": "TSH — thyroid function"}
+        {
+          "order_code": "24323-8",
+          "description": "CMP \u2014 baseline metabolic panel"
+        },
+        {
+          "order_code": "57698-3",
+          "description": "Lipid panel"
+        },
+        {
+          "order_code": "4548-4",
+          "description": "Hemoglobin A1c"
+        },
+        {
+          "order_code": "58410-2",
+          "description": "CBC with differential"
+        },
+        {
+          "order_code": "3016-3",
+          "description": "TSH \u2014 thyroid function"
+        }
       ],
       "comorbidities": [
-        {"code": "E11.9", "description": "Type 2 diabetes mellitus",  "prevalence_pct": 0.60},
-        {"code": "I10",   "description": "Essential hypertension",     "prevalence_pct": 0.75},
-        {"code": "E78.5", "description": "Hyperlipidemia, unspecified","prevalence_pct": 0.65},
-        {"code": "N18.3", "description": "Chronic kidney disease, stage 3", "prevalence_pct": 0.30}
+        {
+          "code": "E11.9",
+          "description": "Type 2 diabetes mellitus",
+          "prevalence_pct": 0.6
+        },
+        {
+          "code": "I10",
+          "description": "Essential hypertension",
+          "prevalence_pct": 0.75
+        },
+        {
+          "code": "E78.5",
+          "description": "Hyperlipidemia, unspecified",
+          "prevalence_pct": 0.65
+        },
+        {
+          "code": "N18.3",
+          "description": "Chronic kidney disease, stage 3",
+          "prevalence_pct": 0.3
+        }
       ],
       "encounter_pattern_guidance": "encounters_per_year 6-10; moderate I weight for exacerbations (O:0.70, E:0.20, I:0.10)"
     },
-
     {
       "cohort_type": "preventive",
-      "keywords": ["preventive", "wellness", "annual physical", "low risk", "healthy adult", "routine care", "checkup", "screening"],
+      "keywords": [
+        "preventive",
+        "wellness",
+        "annual physical",
+        "low risk",
+        "healthy adult",
+        "routine care",
+        "checkup",
+        "screening"
+      ],
       "disease_tag": "preventive",
       "labs": [
-        {"order_code": "57698-3", "description": "Lipid panel — baseline cardiovascular risk"},
-        {"order_code": "4548-4",  "description": "Hemoglobin A1c — diabetes screening"},
-        {"order_code": "24323-8", "description": "CMP — baseline metabolic"},
-        {"order_code": "3016-3",  "description": "TSH — thyroid screening"}
+        {
+          "order_code": "57698-3",
+          "description": "Lipid panel \u2014 baseline cardiovascular risk"
+        },
+        {
+          "order_code": "4548-4",
+          "description": "Hemoglobin A1c \u2014 diabetes screening"
+        },
+        {
+          "order_code": "24323-8",
+          "description": "CMP \u2014 baseline metabolic"
+        },
+        {
+          "order_code": "3016-3",
+          "description": "TSH \u2014 thyroid screening"
+        }
       ],
       "medications": [
-        {"rxnorm": "243670", "name": "Aspirin 81 mg oral tablet",    "indication": "primary prevention — high-risk patients only"},
-        {"rxnorm": "617310", "name": "Atorvastatin 40 mg oral tablet","indication": "primary prevention — ASCVD risk ≥ 7.5%"}
+        {
+          "rxnorm": "243670",
+          "name": "Aspirin 81 mg oral tablet",
+          "indication": "primary prevention \u2014 high-risk patients only"
+        },
+        {
+          "rxnorm": "617310",
+          "name": "Atorvastatin 40 mg oral tablet",
+          "indication": "primary prevention \u2014 ASCVD risk \u2265 7.5%"
+        }
       ],
       "encounter_pattern_guidance": "encounters_per_year 1-2; almost entirely outpatient (O:0.95, E:0.04, I:0.01); abnormal_pct for all labs should be low (0.05-0.15)"
     },
-
     {
       "cohort_type": "reportable_disease",
-      "keywords": ["reportable disease", "hiv aids", "infectious disease surveillance", "communicable disease"],
+      "keywords": [
+        "reportable disease",
+        "hiv aids",
+        "infectious disease surveillance",
+        "communicable disease"
+      ],
       "disease_tag": "infectious",
       "labs": [
-        {"order_code": "20447-9", "description": "HIV-1 RNA viral load (copies/mL)"},
-        {"order_code": "16128-1", "description": "Hepatitis C antibody"},
-        {"order_code": "58410-2", "description": "CBC — immune function monitoring"},
-        {"order_code": "24323-8", "description": "CMP — ART hepatotoxicity monitoring"}
+        {
+          "order_code": "20447-9",
+          "description": "HIV-1 RNA viral load (copies/mL)"
+        },
+        {
+          "order_code": "16128-1",
+          "description": "Hepatitis C antibody"
+        },
+        {
+          "order_code": "58410-2",
+          "description": "CBC \u2014 immune function monitoring"
+        },
+        {
+          "order_code": "24323-8",
+          "description": "CMP \u2014 ART hepatotoxicity monitoring"
+        }
       ],
       "medications": [
-        {"rxnorm": "1747347", "name": "Bictegravir/emtricitabine/tenofovir 50/200/25 mg (Biktarvy)", "indication": "HIV ART first-line single-tablet regimen"},
-        {"rxnorm": "1747286", "name": "Emtricitabine/tenofovir 200/25 mg (Descovy)",                 "indication": "HIV PrEP"},
-        {"rxnorm": "1665008", "name": "Penicillin G benzathine 2.4M units IM",                       "indication": "syphilis treatment"},
-        {"rxnorm": "308460",  "name": "Azithromycin 1 g single-dose oral",                           "indication": "chlamydia / gonorrhea (with ceftriaxone)"}
+        {
+          "rxnorm": "1747347",
+          "name": "Bictegravir/emtricitabine/tenofovir 50/200/25 mg (Biktarvy)",
+          "indication": "HIV ART first-line single-tablet regimen"
+        },
+        {
+          "rxnorm": "1747286",
+          "name": "Emtricitabine/tenofovir 200/25 mg (Descovy)",
+          "indication": "HIV PrEP"
+        },
+        {
+          "rxnorm": "1665008",
+          "name": "Penicillin G benzathine 2.4M units IM",
+          "indication": "syphilis treatment"
+        },
+        {
+          "rxnorm": "308460",
+          "name": "Azithromycin 1 g single-dose oral",
+          "indication": "chlamydia / gonorrhea (with ceftriaxone)"
+        }
       ],
       "comorbidities": [
-        {"code": "B18.2", "description": "Chronic viral hepatitis C",         "prevalence_pct": 0.25},
-        {"code": "F32.9", "description": "Major depressive disorder",         "prevalence_pct": 0.30},
-        {"code": "F19.10","description": "Other psychoactive substance use",  "prevalence_pct": 0.20}
+        {
+          "code": "B18.2",
+          "description": "Chronic viral hepatitis C",
+          "prevalence_pct": 0.25
+        },
+        {
+          "code": "F32.9",
+          "description": "Major depressive disorder",
+          "prevalence_pct": 0.3
+        },
+        {
+          "code": "F19.10",
+          "description": "Other psychoactive substance use",
+          "prevalence_pct": 0.2
+        }
       ],
       "encounter_pattern_guidance": "encounters_per_year 3-6; mostly outpatient ART monitoring (O:0.80, E:0.15, I:0.05)"
+    },
+    {
+      "cohort_type": "asthma",
+      "keywords": [
+        "asthma",
+        "reactive airway",
+        "bronchospasm",
+        "bronchial hyperreactivity"
+      ],
+      "disease_tag": "pulmonary",
+      "labs": [
+        {
+          "order_code": "58410-2",
+          "description": "CBC with differential"
+        },
+        {
+          "order_code": "24323-8",
+          "description": "Comprehensive metabolic panel"
+        },
+        {
+          "order_code": "27898-6",
+          "description": "Pulmonary function tests (spirometry)"
+        }
+      ],
+      "medications": [
+        {
+          "rxnorm": "745679",
+          "name": "Albuterol 90 mcg/actuation inhaler",
+          "indication": "short-acting bronchodilator (rescue)"
+        },
+        {
+          "rxnorm": "2123111",
+          "name": "Fluticasone/salmeterol 250-50 mcg inhaler",
+          "indication": "ICS/LABA controller"
+        },
+        {
+          "rxnorm": "200243",
+          "name": "Montelukast 10 mg oral tablet",
+          "indication": "leukotriene modifier"
+        },
+        {
+          "rxnorm": "312615",
+          "name": "Prednisone 20 mg oral tablet",
+          "indication": "oral corticosteroid (exacerbations)"
+        }
+      ],
+      "comorbidities": [
+        {
+          "code": "J30.9",
+          "description": "Allergic rhinitis, unspecified",
+          "prevalence_pct": 0.55
+        },
+        {
+          "code": "L20.9",
+          "description": "Atopic dermatitis, unspecified",
+          "prevalence_pct": 0.25
+        },
+        {
+          "code": "E11.9",
+          "description": "Type 2 diabetes mellitus without complications",
+          "prevalence_pct": 0.15
+        }
+      ],
+      "encounter_pattern_guidance": "encounters_per_year 3-5; O:0.80 E:0.15 I:0.05"
+    },
+    {
+      "cohort_type": "covid19",
+      "keywords": [
+        "covid",
+        "covid-19",
+        "sars-cov-2",
+        "coronavirus"
+      ],
+      "disease_tag": "infectious",
+      "labs": [
+        {
+          "order_code": "94500-6",
+          "description": "SARS-CoV-2 RNA PCR"
+        },
+        {
+          "order_code": "58410-2",
+          "description": "CBC with differential"
+        },
+        {
+          "order_code": "24323-8",
+          "description": "Comprehensive metabolic panel"
+        },
+        {
+          "order_code": "34714-6",
+          "description": "INR/PT (coagulopathy monitoring)"
+        }
+      ],
+      "medications": [
+        {
+          "rxnorm": "2468235",
+          "name": "Nirmatrelvir/ritonavir (Paxlovid)",
+          "indication": "antiviral \u2014 mild to moderate COVID-19"
+        },
+        {
+          "rxnorm": "2284960",
+          "name": "Remdesivir 100 mg IV",
+          "indication": "antiviral \u2014 hospitalized patients"
+        },
+        {
+          "rxnorm": "312615",
+          "name": "Dexamethasone 6 mg oral/IV",
+          "indication": "anti-inflammatory \u2014 severe COVID-19"
+        }
+      ],
+      "comorbidities": [
+        {
+          "code": "E11.9",
+          "description": "Type 2 diabetes mellitus",
+          "prevalence_pct": 0.3
+        },
+        {
+          "code": "I10",
+          "description": "Essential hypertension",
+          "prevalence_pct": 0.4
+        },
+        {
+          "code": "E66.9",
+          "description": "Obesity, unspecified",
+          "prevalence_pct": 0.35
+        }
+      ],
+      "encounter_pattern_guidance": "encounters_per_year 4-8; O:0.60 E:0.25 I:0.15"
+    },
+    {
+      "cohort_type": "long_covid",
+      "keywords": [
+        "long covid",
+        "post-covid",
+        "pasc",
+        "post-acute sequelae",
+        "long-haul"
+      ],
+      "disease_tag": "infectious",
+      "labs": [
+        {
+          "order_code": "58410-2",
+          "description": "CBC with differential"
+        },
+        {
+          "order_code": "24323-8",
+          "description": "Comprehensive metabolic panel"
+        },
+        {
+          "order_code": "34714-6",
+          "description": "D-dimer (microclot/coagulopathy screening)"
+        },
+        {
+          "order_code": "4548-4",
+          "description": "Hemoglobin A1c (new-onset diabetes screening)"
+        }
+      ],
+      "medications": [
+        {
+          "rxnorm": "745679",
+          "name": "Albuterol inhaler",
+          "indication": "dyspnea / reactive airway"
+        },
+        {
+          "rxnorm": "200243",
+          "name": "Montelukast 10 mg",
+          "indication": "mast cell stabilization"
+        },
+        {
+          "rxnorm": "314076",
+          "name": "Lisinopril 10 mg",
+          "indication": "autonomic dysfunction / POTS"
+        }
+      ],
+      "comorbidities": [
+        {
+          "code": "G93.3",
+          "description": "Postviral fatigue syndrome",
+          "prevalence_pct": 0.6
+        },
+        {
+          "code": "R06.00",
+          "description": "Dyspnea, unspecified",
+          "prevalence_pct": 0.5
+        },
+        {
+          "code": "R41.3",
+          "description": "Cognitive impairment / brain fog",
+          "prevalence_pct": 0.45
+        }
+      ],
+      "encounter_pattern_guidance": "encounters_per_year 6-10; O:0.85 E:0.10 I:0.05"
+    },
+    {
+      "cohort_type": "ckd",
+      "keywords": [
+        "ckd",
+        "chronic kidney",
+        "renal failure",
+        "kidney disease",
+        "egfr",
+        "dialysis"
+      ],
+      "disease_tag": "renal",
+      "labs": [
+        {
+          "order_code": "33914-3",
+          "description": "eGFR CKD-EPI"
+        },
+        {
+          "order_code": "24323-8",
+          "description": "Comprehensive metabolic panel (creatinine, BUN, electrolytes)"
+        },
+        {
+          "order_code": "58410-2",
+          "description": "CBC (anemia monitoring)"
+        },
+        {
+          "order_code": "2731-8",
+          "description": "PTH (secondary hyperparathyroidism)"
+        },
+        {
+          "order_code": "2132-9",
+          "description": "Phosphate"
+        }
+      ],
+      "medications": [
+        {
+          "rxnorm": "1927864",
+          "name": "Epoetin alfa 10000 units subcutaneous",
+          "indication": "CKD anemia (eGFR < 30)"
+        },
+        {
+          "rxnorm": "310429",
+          "name": "Sevelamer carbonate 800 mg oral tablet",
+          "indication": "hyperphosphatemia"
+        },
+        {
+          "rxnorm": "200801",
+          "name": "Carvedilol 6.25 mg",
+          "indication": "CKD cardiomyopathy"
+        },
+        {
+          "rxnorm": "314076",
+          "name": "Lisinopril 10 mg",
+          "indication": "proteinuria reduction"
+        },
+        {
+          "rxnorm": "108476",
+          "name": "Furosemide 40 mg",
+          "indication": "volume overload"
+        }
+      ],
+      "comorbidities": [
+        {
+          "code": "I10",
+          "description": "Essential hypertension",
+          "prevalence_pct": 0.75
+        },
+        {
+          "code": "E11.9",
+          "description": "Type 2 diabetes mellitus",
+          "prevalence_pct": 0.45
+        },
+        {
+          "code": "D63.1",
+          "description": "Anemia in chronic kidney disease",
+          "prevalence_pct": 0.4
+        }
+      ],
+      "encounter_pattern_guidance": "encounters_per_year 6-10; O:0.82 E:0.12 I:0.06"
+    },
+    {
+      "cohort_type": "sdoh",
+      "keywords": [
+        "sdoh",
+        "social determinants",
+        "housing",
+        "food insecurity",
+        "social needs",
+        "z55",
+        "z59",
+        "z60"
+      ],
+      "disease_tag": "sdoh",
+      "labs": [
+        {
+          "order_code": "58410-2",
+          "description": "CBC (anemia from nutritional deficiency)"
+        },
+        {
+          "order_code": "24323-8",
+          "description": "Comprehensive metabolic panel"
+        },
+        {
+          "order_code": "4548-4",
+          "description": "Hemoglobin A1c (diabetes management)"
+        }
+      ],
+      "medications": [
+        {
+          "rxnorm": "860975",
+          "name": "Metformin 500 mg oral tablet",
+          "indication": "type 2 diabetes"
+        },
+        {
+          "rxnorm": "314076",
+          "name": "Lisinopril 10 mg",
+          "indication": "hypertension"
+        },
+        {
+          "rxnorm": "310429",
+          "name": "Amlodipine 5 mg",
+          "indication": "hypertension"
+        }
+      ],
+      "comorbidities": [
+        {
+          "code": "E11.9",
+          "description": "Type 2 diabetes mellitus",
+          "prevalence_pct": 0.4
+        },
+        {
+          "code": "I10",
+          "description": "Essential hypertension",
+          "prevalence_pct": 0.45
+        },
+        {
+          "code": "F32.9",
+          "description": "Major depressive disorder",
+          "prevalence_pct": 0.35
+        }
+      ],
+      "encounter_pattern_guidance": "encounters_per_year 4-6; O:0.75 E:0.18 I:0.07"
+    },
+    {
+      "cohort_type": "sepsis",
+      "keywords": [
+        "sepsis",
+        "septic shock",
+        "bacteremia",
+        "systemic infection",
+        "sirs"
+      ],
+      "disease_tag": "infectious",
+      "labs": [
+        {
+          "order_code": "58410-2",
+          "description": "CBC with differential (leukocytosis/bandemia)"
+        },
+        {
+          "order_code": "24323-8",
+          "description": "Comprehensive metabolic panel (lactate, renal function)"
+        },
+        {
+          "order_code": "34714-6",
+          "description": "INR/PT (DIC monitoring)"
+        },
+        {
+          "order_code": "6598-7",
+          "description": "Troponin (sepsis-induced cardiomyopathy)"
+        }
+      ],
+      "medications": [
+        {
+          "rxnorm": "723",
+          "name": "Vancomycin IV",
+          "indication": "empiric gram-positive coverage"
+        },
+        {
+          "rxnorm": "7454",
+          "name": "Piperacillin-tazobactam IV",
+          "indication": "broad-spectrum gram-negative coverage"
+        },
+        {
+          "rxnorm": "3616",
+          "name": "Norepinephrine IV infusion",
+          "indication": "vasopressor \u2014 septic shock"
+        },
+        {
+          "rxnorm": "7512",
+          "name": "Normal saline IV",
+          "indication": "fluid resuscitation"
+        }
+      ],
+      "comorbidities": [
+        {
+          "code": "E11.9",
+          "description": "Type 2 diabetes mellitus",
+          "prevalence_pct": 0.35
+        },
+        {
+          "code": "N18.3",
+          "description": "Chronic kidney disease, stage 3",
+          "prevalence_pct": 0.25
+        },
+        {
+          "code": "I10",
+          "description": "Essential hypertension",
+          "prevalence_pct": 0.45
+        }
+      ],
+      "encounter_pattern_guidance": "encounters_per_year 2-4; O:0.40 E:0.20 I:0.40"
     }
-
   ]
 }

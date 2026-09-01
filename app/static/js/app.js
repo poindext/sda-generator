@@ -1,5 +1,5 @@
 /* =========================================================
-   SDA3 Population Generator — SPA
+   Genesis — Synthetic Patient Population Generator
    Hash-based routing: #dashboard  #new  #templates  #populations/:id
    ========================================================= */
 
@@ -178,7 +178,9 @@ register('dashboard', async () => {
     const pops = popResp.populations;
     const jobs = jobResp.jobs;
 
-    const running = jobs.filter(j => j.status === 'running').length;
+    const popDirs = new Set(pops.map(p => p.output_dir || p.id));
+    const running = jobs.filter(j => j.status === 'running' &&
+      (!j.params?.output_dir || pops.some(p => j.params.output_dir.endsWith(p.id)))).length;
     stats.innerHTML = `
       <div class="stat"><div class="label">Populations</div><div class="value">${pops.length}</div></div>
       <div class="stat"><div class="label">Active Jobs</div><div class="value">${running}</div></div>
@@ -226,11 +228,20 @@ let wizState = {
   genJobId: null,
 };
 
+let _pendingTemplateId = null;
+
+window.generateFromTemplate = (templateId) => {
+  _pendingTemplateId = templateId;
+  navigate('#new');
+};
+
 register('new', async () => {
   el('page-new').classList.add('active');
+  const presetTemplate = _pendingTemplateId;
+  _pendingTemplateId = null;
   wizState = { step: 1, sessionId: null, selectedCohorts: [], document: null,
-                templateId: null, designJobId: null, genJobId: null };
-  await showWizStep(1);
+               templateId: presetTemplate, designJobId: null, genJobId: null };
+  await showWizStep(presetTemplate ? 3 : 1);
 });
 
 async function showWizStep(step) {
@@ -245,7 +256,34 @@ async function showWizStep(step) {
   });
 
   if (step === 1) await initCohortSelection();
-  if (step === 3) initGenerateForm();
+  if (step === 2) await initStep2();
+  if (step === 3) await initGenerateForm();
+  if (step === 4) {
+    const logBox = el('gen-log');
+    if (logBox) logBox.innerHTML = '';
+    const bar = el('gen-progress-fill');
+    if (bar) bar.style.width = '0%';
+    hide('gen-results');
+  }
+}
+
+async function initStep2() {
+  el('txt-preview').value = wizState.document || '';
+  el('txt-preview-2').value = wizState.document || '';
+
+  if (!wizState.templateId) {
+    const name = prompt('Give this population a name (used for file names):', 'my_population');
+    if (!name) return;
+    wizState.templateId = name.toLowerCase().replace(/[^a-z0-9_-]/g, '_');
+    try {
+      await api.post('/templates/description', {
+        name: wizState.templateId,
+        document: wizState.document,
+      });
+    } catch (e) {
+      console.error('Could not save description:', e);
+    }
+  }
 }
 
 // ── Step 1: Cohort Selection + Chat ────────────────────────
@@ -295,7 +333,15 @@ el('btn-start-interview') && document.getElementById('btn-start-interview').addE
     (evt) => {
       if (evt.type === 'token') appendToken(evt.content);
     },
-    () => finishAssistantMsg()
+    (evt) => {
+      if (evt.error) {
+        appendErrorMsg('Could not start interview: ' + evt.error +
+          ' — check that OPENAI_API_KEY is configured on the server.');
+        el('btn-start-interview').disabled = false;
+      } else {
+        finishAssistantMsg();
+      }
+    }
   );
 });
 
@@ -325,7 +371,19 @@ function appendToken(text) {
 }
 
 function finishAssistantMsg() {
+  document.getElementById('typing-bubble')?.remove();
   _currentBubble = null;
+}
+
+function appendErrorMsg(text) {
+  document.getElementById('typing-bubble')?.remove();
+  _currentBubble = null;
+  const div = document.createElement('div');
+  div.className = 'msg msg-assistant';
+  div.style.cssText = 'background:#fef2f2;color:#991b1b';
+  div.textContent = '⚠ ' + text;
+  el('chat-messages').appendChild(div);
+  el('chat-messages').scrollTop = el('chat-messages').scrollHeight;
 }
 
 function appendUserMsg(text) {
@@ -357,10 +415,14 @@ async function sendChatMessage() {
       if (evt.type === 'done') ready = evt.ready;
     },
     (evt) => {
-      finishAssistantMsg();
-      if (evt.ready || ready) {
-        show('btn-synthesize');
-        show('chat-ready-msg');
+      if (evt.error) {
+        appendErrorMsg('Error: ' + evt.error);
+      } else {
+        finishAssistantMsg();
+        if (evt.ready || ready) {
+          show('btn-synthesize');
+          show('chat-ready-msg');
+        }
       }
     }
   );
@@ -376,10 +438,14 @@ el('btn-synthesize') && document.getElementById('btn-synthesize').addEventListen
       if (evt.type === 'token') { appendToken(evt.content); fullDoc += evt.content; }
     },
     (evt) => {
-      finishAssistantMsg();
-      wizState.document = evt.document || fullDoc;
-      // Auto-advance to step 2 after a brief pause
-      setTimeout(() => showWizStep(2), 800);
+      if (evt.error) {
+        appendErrorMsg('Synthesis failed: ' + evt.error);
+        el('btn-synthesize').disabled = false;
+      } else {
+        finishAssistantMsg();
+        wizState.document = evt.document || fullDoc;
+        setTimeout(() => showWizStep(2), 600);
+      }
     }
   );
 });
@@ -401,9 +467,6 @@ async function showStep2Document() {
 document.addEventListener('DOMContentLoaded', () => {
   el('page-new')?.addEventListener('show-step-2', showStep2Document);
 });
-
-// Override showWizStep for step 2 to trigger doc save
-const _origShowStep = showWizStep;
 
 el('btn-design-template') && document.getElementById('btn-design-template').addEventListener('click', async () => {
   if (!wizState.templateId) return;
@@ -470,11 +533,20 @@ el('btn-proceed-to-generate') && document.getElementById('btn-proceed-to-generat
 
 // ── Step 3: Generate ───────────────────────────────────────
 
-function initGenerateForm() {
-  if (wizState.templateId) {
-    const sel = el('gen-template-select');
-    if (sel) sel.value = wizState.templateId;
-  }
+async function initGenerateForm() {
+  el('btn-start-gen').disabled = false;
+  const sel = el('gen-template-select');
+  sel.innerHTML = '<option value="">— select a template —</option>';
+  try {
+    const resp = await api.get('/templates');
+    resp.templates.forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t.id;
+      opt.textContent = t.name || t.id;
+      sel.appendChild(opt);
+    });
+  } catch (_) {}
+  if (wizState.templateId) sel.value = wizState.templateId;
 }
 
 el('gen-form') && document.getElementById('gen-form').addEventListener('submit', async (e) => {
@@ -521,6 +593,8 @@ function startGenProgress(jobId, runQa) {
       bar.style.width = '100%';
       if (status === 'completed') {
         logLine(logBox, '✓ Complete');
+        const ind4 = el('step-ind-4');
+        if (ind4) { ind4.classList.remove('active'); ind4.classList.add('done'); }
         await loadPopResults(wizState.genJobId);
       } else {
         logLine(logBox, `✗ Job ended with status: ${status}`);
@@ -565,7 +639,7 @@ function renderPopResults(pop) {
     issuesWrap.innerHTML = '<div class="text-muted text-sm">QA was not run.</div>';
   }
 
-  // Chunks
+  // Chunks / fix panel
   const chunksWrap = el('result-chunks');
   if (pop.downloadable && pop.chunks?.length) {
     chunksWrap.innerHTML = '<div class="chunk-list">' +
@@ -576,8 +650,80 @@ function renderPopResults(pop) {
           <a class="btn btn-sm btn-secondary" href="/api/populations/${pop.id}/chunks/${c.name}" download>Download</a>
         </div>`).join('') +
       '</div>';
-  } else if (pop.run_qa && pop.qa_status !== 'approved') {
-    chunksWrap.innerHTML = '<div class="alert alert-warning">Download is blocked until this population passes QA review.</div>';
+  } else if (pop.run_qa && pop.qa_status === 'needs_review') {
+    chunksWrap.innerHTML = `
+      <div class="alert alert-warning mb-12">Download is blocked until this population passes QA review.</div>
+      <div class="flex items-c gap-16" style="justify-content:space-between">
+        <div>
+          <strong>Resolve QA Issues</strong>
+          <p class="text-muted text-sm" style="margin:4px 0 0">Re-run QA if you believe the findings are false positives, or let the AI fix the template and regenerate.</p>
+        </div>
+        <div class="flex gap-8">
+          <button id="btn-reqa-results" class="btn btn-secondary" data-popid="${pop.id}">Re-run QA</button>
+          <button id="btn-fix-results" class="btn btn-primary" data-popid="${pop.id}">Fix &amp; Regenerate</button>
+        </div>
+      </div>
+      <div id="fix-results-log-wrap" class="hidden mt-12">
+        <div id="fix-results-log" class="log-box"></div>
+      </div>`;
+
+    el('btn-fix-results') && el('btn-fix-results').addEventListener('click', async () => {
+      const popId = el('btn-fix-results').dataset.popid;
+      el('btn-fix-results').disabled = true;
+      el('btn-fix-results').textContent = 'Running…';
+      show('fix-results-log-wrap');
+      const logBox = el('fix-results-log');
+      logBox.innerHTML = '';
+      try {
+        const resp = await api.post(`/populations/${popId}/fix`, {});
+        streamGet(`/jobs/${resp.job_id}/stream`,
+          (line) => logLine(logBox, line),
+          async (status) => {
+            if (status === 'completed') {
+              logLine(logBox, '');
+              logLine(logBox, '✓ Done — reloading results…');
+              const updated = await api.get(`/populations/${popId}`);
+              renderPopResults(updated);
+            } else {
+              logLine(logBox, `Fix job ended with status: ${status}`);
+              el('btn-fix-results') && (el('btn-fix-results').disabled = false);
+              el('btn-fix-results') && (el('btn-fix-results').textContent = 'Fix & Regenerate');
+            }
+          }
+        );
+      } catch (e) {
+        logLine(logBox, `Error: ${e.message}`);
+        el('btn-fix-results') && (el('btn-fix-results').disabled = false);
+        el('btn-fix-results') && (el('btn-fix-results').textContent = 'Fix & Regenerate');
+      }
+    });
+
+    el('btn-reqa-results') && el('btn-reqa-results').addEventListener('click', async () => {
+      const popId = el('btn-reqa-results').dataset.popid;
+      el('btn-reqa-results').disabled = true;
+      el('btn-reqa-results').textContent = 'Running…';
+      el('btn-fix-results').disabled = true;
+      show('fix-results-log-wrap');
+      const logBox = el('fix-results-log');
+      logBox.innerHTML = '';
+      try {
+        const resp = await api.post(`/populations/${popId}/reqa`, {});
+        streamGet(`/jobs/${resp.job_id}/stream`,
+          (line) => logLine(logBox, line),
+          async (status) => {
+            logLine(logBox, '');
+            logLine(logBox, '✓ Done — reloading results…');
+            const updated = await api.get(`/populations/${popId}`);
+            renderPopResults(updated);
+          }
+        );
+      } catch (e) {
+        logLine(logBox, `Error: ${e.message}`);
+        el('btn-reqa-results') && (el('btn-reqa-results').disabled = false);
+        el('btn-reqa-results') && (el('btn-reqa-results').textContent = 'Re-run QA');
+        el('btn-fix-results') && (el('btn-fix-results').disabled = false);
+      }
+    });
   } else {
     chunksWrap.innerHTML = '<div class="text-muted text-sm">No chunks available yet.</div>';
   }
@@ -609,6 +755,8 @@ async function loadTemplateList() {
         <td>${(t.total_patients||0).toLocaleString()}</td>
         <td class="text-muted">${fmt_date(t.modified)}</td>
         <td>
+          <button class="btn btn-sm btn-primary" onclick="generateFromTemplate('${t.id}')">Generate →</button>
+          <button class="btn btn-sm btn-secondary" onclick="openTemplatePreview('${t.id}')">View</button>
           <button class="btn btn-sm btn-secondary" onclick="openTemplateEditor('${t.id}')">Edit</button>
           <a class="btn btn-sm btn-secondary" href="/api/templates/${t.id}/export" download>Export</a>
           <button class="btn btn-sm btn-danger" onclick="deleteTemplate('${t.id}')">Delete</button>
@@ -673,52 +821,307 @@ register('populations', async (popId) => {
   if (!popId) { navigate('#dashboard'); return; }
   el('pop-detail-title').textContent = 'Loading…';
   try {
-    const pop = await api.get(`/populations/${popId}`);
-    renderPopDetail(pop);
+    const [pop, stats] = await Promise.all([
+      api.get(`/populations/${popId}`),
+      api.get(`/populations/${popId}/stats`).catch(() => null),
+    ]);
+    renderPopDetail(pop, stats);
   } catch (e) {
     el('pop-detail-body').innerHTML = `<div class="alert alert-error">${e.message}</div>`;
   }
 });
 
-function renderPopDetail(pop) {
+function renderPopDetail(pop, stats) {
   el('pop-detail-title').textContent = pop.population_name;
   el('pop-del-btn').dataset.id = pop.id;
 
-  // Status + counts
-  el('pop-detail-body').innerHTML = `
+  const sp = stats?.patients  || {};
+  const se = stats?.encounters || {};
+  const sm = stats?.medications || {};
+  const sl = stats?.labs       || {};
+
+  // ── Stat cards ──────────────────────────────────────────────
+  const statCards = `
     <div class="stat-row">
-      <div class="stat"><div class="label">QA Status</div><div class="value" style="font-size:18px">${badge(pop.qa_status)}</div></div>
-      <div class="stat"><div class="label">Patients</div><div class="value">${(pop.patient_count||0).toLocaleString()}</div></div>
-      <div class="stat"><div class="label">Validation Warnings</div><div class="value">${pop.validation_warnings||0}</div></div>
-      <div class="stat"><div class="label">Download</div><div class="value" style="font-size:16px">${pop.downloadable ? '<span class="text-success">Available</span>' : '<span class="text-muted">Locked</span>'}</div></div>
-    </div>
-
-    ${pop.qa_issues?.length ? `
-    <div class="card mt-16">
-      <h3>QA Issues (${pop.qa_issues.length})</h3>
-      ${pop.qa_issues.map(i => `
-        <div class="qa-issue ${i.severity}">
-          <div class="flex items-c gap-8">
-            <span class="qi-sev">${i.severity}</span>
-            <span class="qi-title">${i.title || i.category}</span>
-          </div>
-          <div class="qi-evidence">${i.evidence || i.recommendation || ''}</div>
-        </div>`).join('')}
-    </div>` : pop.run_qa ? '<div class="alert alert-success mt-16">QA passed — no issues found.</div>' : ''}
-
-    <div class="card mt-16">
-      <h3>Download Chunks (XML, 10k records each)</h3>
-      ${pop.downloadable && pop.chunks?.length
-        ? '<div class="chunk-list">' + pop.chunks.map(c => `
-            <div class="chunk-item">
-              <span class="chunk-name">${c.name}</span>
-              <span class="chunk-size">${c.size_mb} MB</span>
-              <a class="btn btn-sm btn-secondary" href="/api/populations/${pop.id}/chunks/${c.name}" download>Download</a>
-            </div>`).join('') + '</div>'
-        : pop.run_qa && pop.qa_status !== 'approved'
-          ? '<div class="alert alert-warning">Downloads are locked until QA is approved.</div>'
-          : '<div class="text-muted text-sm">No chunks available.</div>'}
+      <div class="stat">
+        <div class="label">QA Status</div>
+        <div class="value" style="font-size:18px">${badge(pop.qa_status)}</div>
+      </div>
+      <div class="stat">
+        <div class="label">Patients</div>
+        <div class="value">${(sp.total || pop.patient_count || 0).toLocaleString()}</div>
+      </div>
+      <div class="stat">
+        <div class="label">Encounters</div>
+        <div class="value">${(se.total || 0).toLocaleString()}</div>
+      </div>
+      <div class="stat">
+        <div class="label">Medications</div>
+        <div class="value">${(sm.total_events || 0).toLocaleString()}</div>
+      </div>
+      <div class="stat">
+        <div class="label">Lab Results</div>
+        <div class="value">${(sl.total_results || 0).toLocaleString()}</div>
+      </div>
     </div>`;
+
+  // ── Secondary stat row (rates / percentages) ─────────────────
+  let rateCards = '';
+  if (stats) {
+    rateCards = `
+      <div class="stat-row">
+        <div class="stat">
+          <div class="label">Avg Encounters / Patient</div>
+          <div class="value">${se.avg_per_patient || '—'}</div>
+        </div>
+        <div class="stat">
+          <div class="label">Acute Encounters</div>
+          <div class="value">${se.acute_pct != null ? se.acute_pct + '%' : '—'}</div>
+        </div>
+        <div class="stat">
+          <div class="label">Abnormal Labs</div>
+          <div class="value">${sl.abnormal_pct != null ? sl.abnormal_pct + '%' : '—'}</div>
+        </div>
+        <div class="stat">
+          <div class="label">Multi-Facility Patients</div>
+          <div class="value">${sp.multi_facility_pct != null ? sp.multi_facility_pct + '%' : '—'}</div>
+        </div>
+        ${se.date_range?.earliest ? `
+        <div class="stat">
+          <div class="label">Date Range</div>
+          <div class="value" style="font-size:13px;margin-top:8px">${se.date_range.earliest} – ${se.date_range.latest}</div>
+        </div>` : ''}
+      </div>`;
+  }
+
+  // ── Condition prevalence ─────────────────────────────────────
+  let condSection = '';
+  if (sp.conditions && sp.total) {
+    const total = sp.total;
+    const entries = Object.entries(sp.conditions)
+      .sort((a, b) => b[1] - a[1])
+      .filter(([, v]) => v > 0);
+    const maxPct = entries[0] ? entries[0][1] / total * 100 : 1;
+    condSection = `
+      <div class="card mt-16">
+        <h3>Condition Prevalence</h3>
+        ${entries.map(([label, count]) => {
+          const pct = count / total * 100;
+          const barW = Math.round(pct / maxPct * 100);
+          return `<div class="dist-row no-sub">
+            <span class="dist-label">${label}</span>
+            <div class="dist-bar-wrap"><div class="dist-bar" style="width:${barW}%"></div></div>
+            <span class="dist-pct">${pct.toFixed(1)}%</span>
+          </div>`;
+        }).join('')}
+      </div>`;
+  }
+
+  // ── Demographics ─────────────────────────────────────────────
+  let demoSection = '';
+  if (sp.age_buckets || sp.sex || sp.race) {
+    const total = sp.total || 1;
+    const ageEntries  = Object.entries(sp.age_buckets || {});
+    const sexEntries  = Object.entries(sp.sex || {});
+    const raceEntries = Object.entries(sp.race || {}).slice(0, 6);
+    const narrow = (entries, divisor) => entries.map(([k, v]) => {
+      const barW = divisor ? Math.round(v / divisor * 100) : 0;
+      return `<div class="dist-row narrow">
+        <span class="dist-label">${k}</span>
+        <div class="dist-bar-wrap"><div class="dist-bar" style="width:${barW}%"></div></div>
+        <span class="dist-pct">${Math.round(v / total * 100)}%</span>
+      </div>`;
+    }).join('');
+    const maxAge  = Math.max(...ageEntries.map(([,v]) => v),  1);
+    const maxSex  = Math.max(...sexEntries.map(([,v]) => v),  1);
+    const maxRace = Math.max(...raceEntries.map(([,v]) => v), 1);
+    demoSection = `
+      <div class="card mt-16">
+        <h3>Demographics</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 32px">
+          <div>
+            <div class="text-muted text-sm" style="font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Age</div>
+            ${narrow(ageEntries, maxAge)}
+          </div>
+          <div>
+            <div class="text-muted text-sm" style="font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Sex</div>
+            ${narrow(sexEntries, maxSex)}
+          </div>
+          <div>
+            <div class="text-muted text-sm" style="font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Race</div>
+            ${narrow(raceEntries, maxRace)}
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // ── Top diagnoses ────────────────────────────────────────────
+  let dxSection = '';
+  if (se.top_diagnoses?.length) {
+    const maxC = se.top_diagnoses[0].count || 1;
+    dxSection = `
+      <div class="card mt-16">
+        <h3>Top Diagnoses</h3>
+        ${se.top_diagnoses.map(d => {
+          const label = d.dx.length > 40 ? d.dx.slice(0, 38) + '…' : d.dx;
+          return `<div class="dist-row no-sub" title="${d.dx}">
+            <span class="dist-label">${label}</span>
+            <div class="dist-bar-wrap"><div class="dist-bar" style="width:${Math.round(d.count/maxC*100)}%"></div></div>
+            <span class="dist-pct">${d.count.toLocaleString()}</span>
+          </div>`;
+        }).join('')}
+      </div>`;
+  }
+
+  // ── QA issues ────────────────────────────────────────────────
+  const qaSection = pop.qa_issues?.length
+    ? `<div class="card mt-16">
+        <h3>QA Issues (${pop.qa_issues.length})</h3>
+        ${pop.qa_issues.map(i => `
+          <div class="qa-issue ${i.severity}">
+            <div class="flex items-c gap-8">
+              <span class="qi-sev">${i.severity}</span>
+              <span class="qi-title">${i.title || i.category}</span>
+            </div>
+            <div class="qi-evidence">${i.evidence || i.recommendation || ''}</div>
+          </div>`).join('')}
+      </div>`
+    : pop.run_qa ? '<div class="alert alert-success mt-16">QA passed — no issues found.</div>' : '';
+
+  // ── Fix panel ────────────────────────────────────────────────
+  const fixPanel = pop.qa_status === 'needs_review' ? `
+    <div class="card mt-16" id="fix-panel">
+      <div class="flex items-c gap-16" style="justify-content:space-between">
+        <div>
+          <h3>Auto-Fix &amp; Regenerate</h3>
+          <p class="text-muted text-sm">The AI applies fixes to the template, regenerates, and re-runs QA — up to 5 rounds.</p>
+        </div>
+        <div class="flex gap-8">
+          <button id="btn-reqa-pop" class="btn btn-secondary" data-popid="${pop.id}">Re-run QA</button>
+          <button id="btn-fix-pop" class="btn btn-primary" data-popid="${pop.id}">Fix &amp; Regenerate</button>
+        </div>
+      </div>
+      <div id="fix-log-wrap" class="hidden mt-12">
+        <div id="fix-log" class="log-box"></div>
+      </div>
+    </div>` : '';
+
+  // ── Download manager ─────────────────────────────────────────
+  const chunkRows = pop.downloadable && pop.chunks?.length
+    ? '<div class="chunk-list">' +
+      pop.chunks.map(c => `
+        <div class="chunk-item">
+          <span class="chunk-name">${c.name}</span>
+          <span class="chunk-size">${c.size_mb} MB</span>
+          <a class="btn btn-sm btn-secondary" href="/api/populations/${pop.id}/chunks/${c.name}" download>Download</a>
+        </div>`).join('') +
+      '</div>'
+    : pop.run_qa && pop.qa_status !== 'approved'
+      ? '<div class="alert alert-warning">Downloads are locked until QA is approved.</div>'
+      : '<div class="text-muted text-sm">No chunks available.</div>';
+
+  const dlAllBtn = pop.downloadable && pop.chunks?.length > 1
+    ? `<button id="btn-dl-all" class="btn btn-sm btn-primary" data-popid="${pop.id}">⬇ Download All (${pop.chunks.length} chunks)</button>`
+    : '';
+
+  const dlSection = `
+    <div class="card mt-16">
+      <div class="flex items-c gap-16" style="justify-content:space-between;margin-bottom:12px">
+        <h3 style="margin-bottom:0">Download Chunks <span class="text-muted text-sm" style="font-weight:400">(SDA3 XML, 10k patients/zip)</span></h3>
+        ${dlAllBtn}
+      </div>
+      <div id="dl-all-status" class="hidden text-muted text-sm mb-8"></div>
+      ${chunkRows}
+    </div>`;
+
+  // ── Render ───────────────────────────────────────────────────
+  el('pop-detail-body').innerHTML =
+    statCards + rateCards + condSection + demoSection + dxSection +
+    qaSection + fixPanel + dlSection;
+
+  // Download All button handler
+  el('btn-dl-all') && el('btn-dl-all').addEventListener('click', async () => {
+    const chunks = pop.chunks;
+    if (!chunks?.length) return;
+    const btn = el('btn-dl-all');
+    const statusEl = el('dl-all-status');
+    btn.disabled = true;
+    statusEl.classList.remove('hidden');
+    for (let i = 0; i < chunks.length; i++) {
+      statusEl.textContent = `Downloading chunk ${i + 1} of ${chunks.length}: ${chunks[i].name}…`;
+      const a = document.createElement('a');
+      a.href = `/api/populations/${pop.id}/chunks/${chunks[i].name}`;
+      a.download = chunks[i].name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      if (i < chunks.length - 1) await new Promise(r => setTimeout(r, 1500));
+    }
+    statusEl.textContent = `All ${chunks.length} chunk(s) queued for download.`;
+    btn.disabled = false;
+  });
+
+  // Fix & Regenerate handler
+  el('btn-fix-pop') && el('btn-fix-pop').addEventListener('click', async () => {
+    const popId = el('btn-fix-pop').dataset.popid;
+    el('btn-fix-pop').disabled = true;
+    el('btn-fix-pop').textContent = 'Running…';
+    show('fix-log-wrap');
+    const logBox = el('fix-log');
+    logBox.innerHTML = '';
+    try {
+      const resp = await api.post(`/populations/${popId}/fix`, {});
+      streamGet(`/jobs/${resp.job_id}/stream`,
+        (line) => logLine(logBox, line),
+        async (status) => {
+          if (status === 'completed') {
+            logLine(logBox, '');
+            logLine(logBox, '✓ Done — refreshing…');
+            setTimeout(() => navigate(`#populations/${popId}`), 1500);
+          } else {
+            logLine(logBox, `Fix job ended with status: ${status}`);
+            el('btn-fix-pop').disabled = false;
+            el('btn-fix-pop').textContent = 'Fix & Regenerate';
+          }
+        }
+      );
+    } catch (e) {
+      logLine(logBox, `Error starting fix: ${e.message}`);
+      el('btn-fix-pop').disabled = false;
+      el('btn-fix-pop').textContent = 'Fix & Regenerate';
+    }
+  });
+
+  // Re-run QA handler
+  el('btn-reqa-pop') && el('btn-reqa-pop').addEventListener('click', async () => {
+    const popId = el('btn-reqa-pop').dataset.popid;
+    el('btn-reqa-pop').disabled = true;
+    el('btn-reqa-pop').textContent = 'Running QA…';
+    show('fix-log-wrap');
+    const logBox = el('fix-log');
+    logBox.innerHTML = '';
+    try {
+      const resp = await api.post(`/populations/${popId}/reqa`, {});
+      streamGet(`/jobs/${resp.job_id}/stream`,
+        (line) => logLine(logBox, line),
+        async (status) => {
+          if (status === 'completed') {
+            logLine(logBox, '');
+            logLine(logBox, '✓ Done — refreshing…');
+            setTimeout(() => navigate(`#populations/${popId}`), 1500);
+          } else {
+            logLine(logBox, `QA job ended with status: ${status}`);
+            el('btn-reqa-pop').disabled = false;
+            el('btn-reqa-pop').textContent = 'Re-run QA';
+          }
+        }
+      );
+    } catch (e) {
+      logLine(logBox, `Error starting QA: ${e.message}`);
+      el('btn-reqa-pop').disabled = false;
+      el('btn-reqa-pop').textContent = 'Re-run QA';
+    }
+  });
 }
 
 el('pop-del-btn') && document.getElementById('pop-del-btn').addEventListener('click', async () => {
@@ -727,3 +1130,183 @@ el('pop-del-btn') && document.getElementById('pop-del-btn').addEventListener('cl
   await api.del(`/populations/${id}`);
   navigate('#dashboard');
 });
+
+// =========================================================
+// TEMPLATE PREVIEW MODAL
+// =========================================================
+
+window.openTemplatePreview = async (templateId) => {
+  try {
+    const resp = await api.get(`/templates/${templateId}`);
+    renderTemplatePreview(resp.content);
+    el('tmpl-preview-modal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  } catch (e) {
+    alert('Could not load template: ' + e.message);
+  }
+};
+
+window.closeTemplatePreview = () => {
+  el('tmpl-preview-modal').classList.add('hidden');
+  document.body.style.overflow = '';
+};
+
+function renderTemplatePreview(t) {
+  const meta = t.meta || {};
+  el('tmpl-preview-title').textContent = meta.name || 'Template';
+  el('tmpl-preview-subtitle').textContent =
+    [meta.state, meta.total_patients ? (meta.total_patients).toLocaleString() + ' patients' : '',
+     meta.history_months ? meta.history_months + ' months history' : '']
+    .filter(Boolean).join(' · ');
+
+  const body = el('tmpl-preview-body');
+  body.innerHTML = '';
+
+  // Helper: percentage formatter
+  const pct = (w) => Math.round((w || 0) * 100) + '%';
+
+  // Helper: render a distribution section with bars
+  const distSection = (title, items, labelFn, subFn) => {
+    const total = items.reduce((s, i) => s + (i.weight || 0), 0) || 1;
+    const rowClass = subFn ? 'dist-row' : 'dist-row no-sub';
+    return `<div class="preview-section">
+      <h3>${title}</h3>
+      ${items.map(i => {
+        const w = (i.weight || 0) / total;
+        return `<div class="${rowClass}">
+          <div class="dist-label">${labelFn(i)}</div>
+          ${subFn ? `<div class="dist-sub">${subFn(i)}</div>` : ''}
+          <div class="dist-bar-wrap"><div class="dist-bar" style="width:${Math.round(w*100)}%"></div></div>
+          <div class="dist-pct">${Math.round(w * 100)}%</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  };
+
+  let html = '';
+
+  // ── Geography ──────────────────────────────────────────
+  const locs = (t.geography || {}).locations || [];
+  if (locs.length) {
+    html += distSection('Geography — Counties', locs,
+      i => i.county + (i.region ? ` <span class="text-muted" style="font-size:11px">(${i.region})</span>` : ''),
+      i => `<span style="text-transform:capitalize">${i.rurality || ''}</span>`
+    );
+  }
+
+  // ── Demographics ───────────────────────────────────────
+  const dem = t.demographics || {};
+  if (dem.age_distribution?.length) {
+    html += distSection('Age Distribution', dem.age_distribution,
+      i => i.label || `${i.min}–${i.max}`,
+      i => `Ages ${i.min}–${i.max}`
+    );
+  }
+  if (dem.sex_distribution?.length) {
+    html += distSection('Sex Distribution', dem.sex_distribution,
+      i => i.sex === 'F' ? 'Female' : i.sex === 'M' ? 'Male' : i.sex,
+      null
+    );
+  }
+  if (dem.race_distribution?.length) {
+    html += distSection('Race / Ethnicity', dem.race_distribution,
+      i => i.race_description || i.race_code,
+      i => i.ethnicity_description || ''
+    );
+  }
+  if (dem.insurance_distribution?.length) {
+    // Try to resolve insurance plan names
+    const planMap = {};
+    (t.insurance_plans || []).forEach(p => { planMap[p.code] = p.name; });
+    html += distSection('Insurance', dem.insurance_distribution,
+      i => planMap[i.plan_code] || i.plan_code,
+      null
+    );
+  }
+
+  // ── Facilities ─────────────────────────────────────────
+  const facs = t.facilities || [];
+  if (facs.length) {
+    html += `<div class="preview-section"><h3>Facilities (${facs.length})</h3>
+      <table style="width:100%;font-size:13px;border-collapse:collapse">
+        <thead><tr style="border-bottom:1px solid var(--clr-border);text-align:left">
+          <th style="padding:6px 8px">Name</th>
+          <th style="padding:6px 8px">Health System</th>
+          <th style="padding:6px 8px">City</th>
+          <th style="padding:6px 8px;text-align:right">Weight</th>
+        </tr></thead>
+        <tbody>${facs.map(f => `
+          <tr style="border-bottom:1px solid #f1f5f9">
+            <td style="padding:6px 8px;font-weight:500">${f.name}</td>
+            <td style="padding:6px 8px;color:var(--clr-muted)">${f.health_system_name || ''}</td>
+            <td style="padding:6px 8px;color:var(--clr-muted)">${f.city || ''}</td>
+            <td style="padding:6px 8px;text-align:right">${pct(f.weight)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+  }
+
+  // ── Multi-facility ─────────────────────────────────────
+  const mf = t.multi_facility || {};
+  if (mf.enabled && mf.distribution) {
+    const d = mf.distribution;
+    html += `<div class="preview-section"><h3>Multi-Facility Distribution</h3>
+      <div style="display:flex;gap:24px;font-size:13px">
+        <div>Single facility <strong>${pct(d.one_facility_pct)}</strong></div>
+        <div>Two facilities <strong>${pct(d.two_facility_pct)}</strong></div>
+        <div>Three+ facilities <strong>${pct(d.three_plus_facility_pct)}</strong></div>
+      </div>
+    </div>`;
+  }
+
+  // ── Cohorts ────────────────────────────────────────────
+  const cohorts = t.cohorts || [];
+  if (cohorts.length) {
+    html += `<div class="preview-section"><h3>Cohorts (${cohorts.length})</h3>`;
+    cohorts.forEach(c => {
+      const sexLabel = c.sex_bias === 'F' ? 'Female only' : c.sex_bias === 'M' ? 'Male only' : 'All sexes';
+      const ageLabel = `Ages ${c.min_age ?? 0}–${c.max_age ?? 100}`;
+      const enc = c.encounter_pattern || {};
+      const typeW = enc.encounter_type_weights || {};
+      const encTypes = Object.entries(typeW)
+        .map(([k,v]) => `${k === 'O' ? 'Outpatient' : k === 'E' ? 'ED' : k === 'I' ? 'Inpatient' : k} ${pct(v)}`)
+        .join(' · ');
+
+      const dxList = [...(c.diagnoses || []), ...(c.comorbidities || [])]
+        .slice(0, 6)
+        .map(d => `<li>${d.description || d.code}</li>`).join('');
+      const medList = (c.medications || []).slice(0, 5)
+        .map(m => `<li>${m.drug_description || m.drug_code}</li>`).join('');
+      const labList = (c.labs || []).slice(0, 5)
+        .map(l => `<li>${l.order_description || l.order_code}</li>`).join('');
+
+      html += `<div class="cohort-preview-card">
+        <div class="cohort-preview-header">
+          <span class="cohort-preview-name">${c.name}</span>
+          <span class="cohort-preview-pct">${pct(c.weight)} of population</span>
+        </div>
+        <div class="cohort-preview-meta">${ageLabel} · ${sexLabel}</div>
+        ${c.description ? `<div class="cohort-preview-desc">${c.description}</div>` : ''}
+        <div class="cohort-preview-grid">
+          ${dxList ? `<div class="cohort-preview-block">
+            <div class="block-title">Diagnoses</div><ul>${dxList}</ul></div>` : ''}
+          ${medList ? `<div class="cohort-preview-block">
+            <div class="block-title">Medications</div><ul>${medList}</ul></div>` : ''}
+          ${labList ? `<div class="cohort-preview-block">
+            <div class="block-title">Lab Orders</div><ul>${labList}</ul></div>` : ''}
+          ${enc.encounters_per_year ? `<div class="cohort-preview-block">
+            <div class="block-title">Encounter Pattern</div>
+            <ul>
+              <li>${enc.encounters_per_year} visits/year</li>
+              ${encTypes ? `<li style="color:var(--clr-muted)">${encTypes}</li>` : ''}
+              ${enc.lab_encounter_rate ? `<li>${pct(enc.lab_encounter_rate)} lab rate</li>` : ''}
+            </ul></div>` : ''}
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  body.innerHTML = html;
+}

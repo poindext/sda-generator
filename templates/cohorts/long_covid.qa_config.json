@@ -1,0 +1,32 @@
+{
+  "description": "Long COVID / PASC population. Key clinical context: U09.9 is the correct ICD-10 for post-acute sequelae, not U07.1 (active COVID). Fatigue, cognitive impairment, and autonomic dysfunction (tachycardia, dyspnea) are hallmark features. No FDA-approved specific treatment exists \u2014 symptomatic management (SSRIs, low-dose naltrexone, beta-blockers for POTS) is appropriate.",
+  "do_not_flag": [
+    "Absence of antiviral medications (remdesivir, Paxlovid) \u2014 these are for acute COVID, not Long COVID",
+    "Resting tachycardia (HR 100-140) in Long COVID patients \u2014 autonomic dysfunction and POTS are hallmark features",
+    "Low SpO2 (88-94%) during activity in Long COVID \u2014 exertional oxygen desaturation is a documented feature",
+    "Multiple psychiatric medications in same patient \u2014 depression and anxiety are extremely prevalent (40-60%) in Long COVID",
+    "Elevated CRP (10-85 mg/L) in Long COVID \u2014 persistent low-grade inflammation is a documented mechanism",
+    "Elevated ferritin in Long COVID \u2014 hyperferritinemia is associated with post-COVID inflammatory state",
+    "Low-dose naltrexone use without opioid diagnosis \u2014 LDN (4.5 mg) is used off-label as an immunomodulator in Long COVID",
+    "Multiple symptomatic complaints (fatigue + dyspnea + cognitive + cardiac) in same patient \u2014 multi-system involvement is the defining feature of PASC",
+    "U09.9 coded as the sole diagnosis in a follow-up encounter without explicit symptom codes \u2014 ICD-10-CM guidelines allow U09.9 to be the primary and only code when the Long COVID condition is the reason for the visit; secondary symptom codes are supplementary, not required",
+    "Absence of spirometry data (FEV1/FVC) in Long COVID \u2014 spirometry is not part of routine Long COVID management unless significant obstructive disease is suspected; the 15% asthma comorbidity prevalence does not require population-wide spirometry"
+  ],
+  "required_drug_classes": [
+    {
+      "class_name": "SSRI/antidepressant",
+      "keywords": [
+        "sertraline",
+        "fluoxetine",
+        "escitalopram",
+        "venlafaxine"
+      ],
+      "minimum_patient_pct": 20,
+      "rationale": "Depression prevalence in Long COVID is 40-60%. SSRIs appear in most Long COVID clinic treatment protocols."
+    }
+  ],
+  "required_checks": [
+    "VERIFY that fatigue-related codes (R53.83) or dyspnea (R06.00) appear in at least some patients alongside U09.9 \u2014 isolated U09.9 without symptom codes is undercoding. If no symptom codes at all, flag as MEDIUM.",
+    "VERIFY that inflammatory labs (CRP, ferritin) appear in the population. If absent, flag as MEDIUM."
+  ]
+}

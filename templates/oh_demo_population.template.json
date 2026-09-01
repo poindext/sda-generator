@@ -1,0 +1,6632 @@
+{
+  "meta": {
+    "name": "Ohio Maternal Health Dashboard",
+    "description": "Synthetic patient population for maternal health surveillance in Ohio.",
+    "state": "Ohio",
+    "state_code": "OH",
+    "medicaid_field": "Ohio Medicaid",
+    "medicaid_id_prefix": "OH-MEDICAID-",
+    "total_patients": 25000,
+    "history_months": 36
+  },
+  "geography": {
+    "locations": [
+      {
+        "county": "Cuyahoga",
+        "county_fips": "39035",
+        "state_code": "OH",
+        "region": "NE Ohio",
+        "weight": 0.105,
+        "rurality": "urban",
+        "cities": [
+          "Cleveland",
+          "Parma",
+          "Lakewood"
+        ]
+      },
+      {
+        "county": "Summit",
+        "county_fips": "39153",
+        "state_code": "OH",
+        "region": "NE Ohio",
+        "weight": 0.045,
+        "rurality": "urban",
+        "cities": [
+          "Akron",
+          "Cuyahoga Falls"
+        ]
+      },
+      {
+        "county": "Stark",
+        "county_fips": "39151",
+        "state_code": "OH",
+        "region": "NE Ohio",
+        "weight": 0.03,
+        "rurality": "urban",
+        "cities": [
+          "Canton",
+          "Massillon"
+        ]
+      },
+      {
+        "county": "Lorain",
+        "county_fips": "39093",
+        "state_code": "OH",
+        "region": "NE Ohio",
+        "weight": 0.025,
+        "rurality": "suburban",
+        "cities": [
+          "Lorain",
+          "Elyria"
+        ]
+      },
+      {
+        "county": "Lake",
+        "county_fips": "39085",
+        "state_code": "OH",
+        "region": "NE Ohio",
+        "weight": 0.02,
+        "rurality": "suburban",
+        "cities": [
+          "Mentor",
+          "Painesville"
+        ]
+      },
+      {
+        "county": "Mahoning",
+        "county_fips": "39099",
+        "state_code": "OH",
+        "region": "NE Ohio",
+        "weight": 0.019,
+        "rurality": "urban",
+        "cities": [
+          "Youngstown",
+          "Boardman"
+        ]
+      },
+      {
+        "county": "Medina",
+        "county_fips": "39103",
+        "state_code": "OH",
+        "region": "NE Ohio",
+        "weight": 0.015,
+        "rurality": "suburban",
+        "cities": [
+          "Medina",
+          "Brunswick"
+        ]
+      },
+      {
+        "county": "Portage",
+        "county_fips": "39133",
+        "state_code": "OH",
+        "region": "NE Ohio",
+        "weight": 0.013,
+        "rurality": "suburban",
+        "cities": [
+          "Ravenna",
+          "Kent"
+        ]
+      },
+      {
+        "county": "Trumbull",
+        "county_fips": "39155",
+        "state_code": "OH",
+        "region": "NE Ohio",
+        "weight": 0.017,
+        "rurality": "suburban",
+        "cities": [
+          "Warren",
+          "Niles"
+        ]
+      },
+      {
+        "county": "Wayne",
+        "county_fips": "39169",
+        "state_code": "OH",
+        "region": "NE Ohio",
+        "weight": 0.011,
+        "rurality": "rural",
+        "cities": [
+          "Wooster"
+        ]
+      },
+      {
+        "county": "Geauga",
+        "county_fips": "39055",
+        "state_code": "OH",
+        "region": "NE Ohio",
+        "weight": 0.009,
+        "rurality": "suburban",
+        "cities": [
+          "Chardon"
+        ]
+      },
+      {
+        "county": "Tuscarawas",
+        "county_fips": "39157",
+        "state_code": "OH",
+        "region": "NE Ohio",
+        "weight": 0.009,
+        "rurality": "rural",
+        "cities": [
+          "New Philadelphia",
+          "Dover"
+        ]
+      },
+      {
+        "county": "Ashtabula",
+        "county_fips": "39007",
+        "state_code": "OH",
+        "region": "NE Ohio",
+        "weight": 0.006,
+        "rurality": "rural",
+        "cities": [
+          "Jefferson",
+          "Ashtabula"
+        ]
+      },
+      {
+        "county": "Jefferson",
+        "county_fips": "39081",
+        "state_code": "OH",
+        "region": "NE Ohio",
+        "weight": 0.006,
+        "rurality": "urban",
+        "cities": [
+          "Steubenville"
+        ]
+      },
+      {
+        "county": "Columbiana",
+        "county_fips": "39029",
+        "state_code": "OH",
+        "region": "NE Ohio",
+        "weight": 0.006,
+        "rurality": "rural",
+        "cities": [
+          "Lisbon",
+          "Salem"
+        ]
+      },
+      {
+        "county": "Ashland",
+        "county_fips": "39005",
+        "state_code": "OH",
+        "region": "NE Ohio",
+        "weight": 0.005,
+        "rurality": "rural",
+        "cities": [
+          "Ashland"
+        ]
+      },
+      {
+        "county": "Holmes",
+        "county_fips": "39075",
+        "state_code": "OH",
+        "region": "NE Ohio",
+        "weight": 0.004,
+        "rurality": "rural",
+        "cities": [
+          "Millersburg"
+        ]
+      },
+      {
+        "county": "Carroll",
+        "county_fips": "39019",
+        "state_code": "OH",
+        "region": "NE Ohio",
+        "weight": 0.003,
+        "rurality": "rural",
+        "cities": [
+          "Carrollton"
+        ]
+      },
+      {
+        "county": "Harrison",
+        "county_fips": "39067",
+        "state_code": "OH",
+        "region": "NE Ohio",
+        "weight": 0.003,
+        "rurality": "rural",
+        "cities": [
+          "Cadiz"
+        ]
+      },
+      {
+        "county": "Franklin",
+        "county_fips": "39049",
+        "state_code": "OH",
+        "region": "Central Ohio",
+        "weight": 0.115,
+        "rurality": "urban",
+        "cities": [
+          "Columbus",
+          "Dublin",
+          "Westerville"
+        ]
+      },
+      {
+        "county": "Delaware",
+        "county_fips": "39041",
+        "state_code": "OH",
+        "region": "Central Ohio",
+        "weight": 0.018,
+        "rurality": "suburban",
+        "cities": [
+          "Delaware",
+          "Powell"
+        ]
+      },
+      {
+        "county": "Licking",
+        "county_fips": "39089",
+        "state_code": "OH",
+        "region": "Central Ohio",
+        "weight": 0.018,
+        "rurality": "suburban",
+        "cities": [
+          "Newark",
+          "Pataskala"
+        ]
+      },
+      {
+        "county": "Fairfield",
+        "county_fips": "39045",
+        "state_code": "OH",
+        "region": "Central Ohio",
+        "weight": 0.016,
+        "rurality": "suburban",
+        "cities": [
+          "Lancaster",
+          "Pickerington"
+        ]
+      },
+      {
+        "county": "Union",
+        "county_fips": "39159",
+        "state_code": "OH",
+        "region": "Central Ohio",
+        "weight": 0.007,
+        "rurality": "suburban",
+        "cities": [
+          "Marysville"
+        ]
+      },
+      {
+        "county": "Pickaway",
+        "county_fips": "39129",
+        "state_code": "OH",
+        "region": "Central Ohio",
+        "weight": 0.006,
+        "rurality": "rural",
+        "cities": [
+          "Circleville"
+        ]
+      },
+      {
+        "county": "Knox",
+        "county_fips": "39083",
+        "state_code": "OH",
+        "region": "Central Ohio",
+        "weight": 0.006,
+        "rurality": "rural",
+        "cities": [
+          "Mount Vernon"
+        ]
+      },
+      {
+        "county": "Marion",
+        "county_fips": "39101",
+        "state_code": "OH",
+        "region": "Central Ohio",
+        "weight": 0.005,
+        "rurality": "rural",
+        "cities": [
+          "Marion"
+        ]
+      },
+      {
+        "county": "Logan",
+        "county_fips": "39091",
+        "state_code": "OH",
+        "region": "Central Ohio",
+        "weight": 0.005,
+        "rurality": "rural",
+        "cities": [
+          "Bellefontaine"
+        ]
+      },
+      {
+        "county": "Coshocton",
+        "county_fips": "39031",
+        "state_code": "OH",
+        "region": "Central Ohio",
+        "weight": 0.004,
+        "rurality": "rural",
+        "cities": [
+          "Coshocton"
+        ]
+      },
+      {
+        "county": "Champaign",
+        "county_fips": "39021",
+        "state_code": "OH",
+        "region": "Central Ohio",
+        "weight": 0.004,
+        "rurality": "rural",
+        "cities": [
+          "Urbana"
+        ]
+      },
+      {
+        "county": "Madison",
+        "county_fips": "39097",
+        "state_code": "OH",
+        "region": "Central Ohio",
+        "weight": 0.004,
+        "rurality": "rural",
+        "cities": [
+          "London"
+        ]
+      },
+      {
+        "county": "Fayette",
+        "county_fips": "39047",
+        "state_code": "OH",
+        "region": "Central Ohio",
+        "weight": 0.003,
+        "rurality": "rural",
+        "cities": [
+          "Washington Court House"
+        ]
+      },
+      {
+        "county": "Morrow",
+        "county_fips": "39117",
+        "state_code": "OH",
+        "region": "Central Ohio",
+        "weight": 0.003,
+        "rurality": "rural",
+        "cities": [
+          "Mount Gilead"
+        ]
+      },
+      {
+        "county": "Hamilton",
+        "county_fips": "39061",
+        "state_code": "OH",
+        "region": "SW Ohio",
+        "weight": 0.07,
+        "rurality": "urban",
+        "cities": [
+          "Cincinnati",
+          "Norwood",
+          "Blue Ash"
+        ]
+      },
+      {
+        "county": "Montgomery",
+        "county_fips": "39113",
+        "state_code": "OH",
+        "region": "SW Ohio",
+        "weight": 0.045,
+        "rurality": "urban",
+        "cities": [
+          "Dayton",
+          "Kettering",
+          "Huber Heights"
+        ]
+      },
+      {
+        "county": "Butler",
+        "county_fips": "39017",
+        "state_code": "OH",
+        "region": "SW Ohio",
+        "weight": 0.033,
+        "rurality": "suburban",
+        "cities": [
+          "Hamilton",
+          "Middletown",
+          "Fairfield"
+        ]
+      },
+      {
+        "county": "Warren",
+        "county_fips": "39165",
+        "state_code": "OH",
+        "region": "SW Ohio",
+        "weight": 0.024,
+        "rurality": "suburban",
+        "cities": [
+          "Lebanon",
+          "Mason"
+        ]
+      },
+      {
+        "county": "Clermont",
+        "county_fips": "39025",
+        "state_code": "OH",
+        "region": "SW Ohio",
+        "weight": 0.021,
+        "rurality": "suburban",
+        "cities": [
+          "Batavia",
+          "Milford"
+        ]
+      },
+      {
+        "county": "Greene",
+        "county_fips": "39057",
+        "state_code": "OH",
+        "region": "SW Ohio",
+        "weight": 0.017,
+        "rurality": "suburban",
+        "cities": [
+          "Xenia",
+          "Beavercreek",
+          "Fairborn"
+        ]
+      },
+      {
+        "county": "Clark",
+        "county_fips": "39023",
+        "state_code": "OH",
+        "region": "SW Ohio",
+        "weight": 0.013,
+        "rurality": "urban",
+        "cities": [
+          "Springfield"
+        ]
+      },
+      {
+        "county": "Miami",
+        "county_fips": "39109",
+        "state_code": "OH",
+        "region": "SW Ohio",
+        "weight": 0.011,
+        "rurality": "suburban",
+        "cities": [
+          "Troy",
+          "Piqua"
+        ]
+      },
+      {
+        "county": "Darke",
+        "county_fips": "39037",
+        "state_code": "OH",
+        "region": "SW Ohio",
+        "weight": 0.005,
+        "rurality": "rural",
+        "cities": [
+          "Greenville"
+        ]
+      },
+      {
+        "county": "Shelby",
+        "county_fips": "39149",
+        "state_code": "OH",
+        "region": "SW Ohio",
+        "weight": 0.005,
+        "rurality": "rural",
+        "cities": [
+          "Sidney"
+        ]
+      },
+      {
+        "county": "Brown",
+        "county_fips": "39015",
+        "state_code": "OH",
+        "region": "SW Ohio",
+        "weight": 0.004,
+        "rurality": "rural",
+        "cities": [
+          "Georgetown"
+        ]
+      },
+      {
+        "county": "Preble",
+        "county_fips": "39135",
+        "state_code": "OH",
+        "region": "SW Ohio",
+        "weight": 0.004,
+        "rurality": "rural",
+        "cities": [
+          "Eaton"
+        ]
+      },
+      {
+        "county": "Clinton",
+        "county_fips": "39027",
+        "state_code": "OH",
+        "region": "SW Ohio",
+        "weight": 0.004,
+        "rurality": "rural",
+        "cities": [
+          "Wilmington"
+        ]
+      },
+      {
+        "county": "Muskingum",
+        "county_fips": "39119",
+        "state_code": "OH",
+        "region": "SE Ohio/Appalachian",
+        "weight": 0.009,
+        "rurality": "rural",
+        "cities": [
+          "Zanesville"
+        ]
+      },
+      {
+        "county": "Ross",
+        "county_fips": "39141",
+        "state_code": "OH",
+        "region": "SE Ohio/Appalachian",
+        "weight": 0.008,
+        "rurality": "rural",
+        "cities": [
+          "Chillicothe"
+        ]
+      },
+      {
+        "county": "Belmont",
+        "county_fips": "39013",
+        "state_code": "OH",
+        "region": "SE Ohio/Appalachian",
+        "weight": 0.007,
+        "rurality": "rural",
+        "cities": [
+          "St. Clairsville"
+        ]
+      },
+      {
+        "county": "Lawrence",
+        "county_fips": "39087",
+        "state_code": "OH",
+        "region": "SE Ohio/Appalachian",
+        "weight": 0.006,
+        "rurality": "rural",
+        "cities": [
+          "Ironton"
+        ]
+      },
+      {
+        "county": "Washington",
+        "county_fips": "39167",
+        "state_code": "OH",
+        "region": "SE Ohio/Appalachian",
+        "weight": 0.006,
+        "rurality": "rural",
+        "cities": [
+          "Marietta"
+        ]
+      },
+      {
+        "county": "Scioto",
+        "county_fips": "39145",
+        "state_code": "OH",
+        "region": "SE Ohio/Appalachian",
+        "weight": 0.006,
+        "rurality": "rural",
+        "cities": [
+          "Portsmouth"
+        ]
+      },
+      {
+        "county": "Athens",
+        "county_fips": "39009",
+        "state_code": "OH",
+        "region": "SE Ohio/Appalachian",
+        "weight": 0.006,
+        "rurality": "rural",
+        "cities": [
+          "Athens"
+        ]
+      },
+      {
+        "county": "Guernsey",
+        "county_fips": "39059",
+        "state_code": "OH",
+        "region": "SE Ohio/Appalachian",
+        "weight": 0.004,
+        "rurality": "rural",
+        "cities": [
+          "Cambridge"
+        ]
+      },
+      {
+        "county": "Highland",
+        "county_fips": "39071",
+        "state_code": "OH",
+        "region": "SE Ohio/Appalachian",
+        "weight": 0.004,
+        "rurality": "rural",
+        "cities": [
+          "Hillsboro"
+        ]
+      },
+      {
+        "county": "Gallia",
+        "county_fips": "39053",
+        "state_code": "OH",
+        "region": "SE Ohio/Appalachian",
+        "weight": 0.003,
+        "rurality": "rural",
+        "cities": [
+          "Gallipolis"
+        ]
+      },
+      {
+        "county": "Hocking",
+        "county_fips": "39073",
+        "state_code": "OH",
+        "region": "SE Ohio/Appalachian",
+        "weight": 0.003,
+        "rurality": "rural",
+        "cities": [
+          "Logan"
+        ]
+      },
+      {
+        "county": "Jackson",
+        "county_fips": "39079",
+        "state_code": "OH",
+        "region": "SE Ohio/Appalachian",
+        "weight": 0.003,
+        "rurality": "rural",
+        "cities": [
+          "Jackson"
+        ]
+      },
+      {
+        "county": "Perry",
+        "county_fips": "39127",
+        "state_code": "OH",
+        "region": "SE Ohio/Appalachian",
+        "weight": 0.003,
+        "rurality": "rural",
+        "cities": [
+          "New Lexington"
+        ]
+      },
+      {
+        "county": "Pike",
+        "county_fips": "39131",
+        "state_code": "OH",
+        "region": "SE Ohio/Appalachian",
+        "weight": 0.003,
+        "rurality": "rural",
+        "cities": [
+          "Waverly"
+        ]
+      },
+      {
+        "county": "Meigs",
+        "county_fips": "39105",
+        "state_code": "OH",
+        "region": "SE Ohio/Appalachian",
+        "weight": 0.003,
+        "rurality": "rural",
+        "cities": [
+          "Pomeroy"
+        ]
+      },
+      {
+        "county": "Adams",
+        "county_fips": "39001",
+        "state_code": "OH",
+        "region": "SE Ohio/Appalachian",
+        "weight": 0.003,
+        "rurality": "rural",
+        "cities": [
+          "West Union"
+        ]
+      },
+      {
+        "county": "Morgan",
+        "county_fips": "39115",
+        "state_code": "OH",
+        "region": "SE Ohio/Appalachian",
+        "weight": 0.002,
+        "rurality": "rural",
+        "cities": [
+          "McConnelsville"
+        ]
+      },
+      {
+        "county": "Monroe",
+        "county_fips": "39111",
+        "state_code": "OH",
+        "region": "SE Ohio/Appalachian",
+        "weight": 0.002,
+        "rurality": "rural",
+        "cities": [
+          "Woodsfield"
+        ]
+      },
+      {
+        "county": "Noble",
+        "county_fips": "39121",
+        "state_code": "OH",
+        "region": "SE Ohio/Appalachian",
+        "weight": 0.002,
+        "rurality": "rural",
+        "cities": [
+          "Caldwell"
+        ]
+      },
+      {
+        "county": "Vinton",
+        "county_fips": "39163",
+        "state_code": "OH",
+        "region": "SE Ohio/Appalachian",
+        "weight": 0.002,
+        "rurality": "rural",
+        "cities": [
+          "McArthur"
+        ]
+      },
+      {
+        "county": "Lucas",
+        "county_fips": "39095",
+        "state_code": "OH",
+        "region": "NW Ohio",
+        "weight": 0.037,
+        "rurality": "urban",
+        "cities": [
+          "Toledo",
+          "Sylvania"
+        ]
+      },
+      {
+        "county": "Richland",
+        "county_fips": "39139",
+        "state_code": "OH",
+        "region": "NW Ohio",
+        "weight": 0.011,
+        "rurality": "urban",
+        "cities": [
+          "Mansfield"
+        ]
+      },
+      {
+        "county": "Allen",
+        "county_fips": "39003",
+        "state_code": "OH",
+        "region": "NW Ohio",
+        "weight": 0.01,
+        "rurality": "urban",
+        "cities": [
+          "Lima"
+        ]
+      },
+      {
+        "county": "Hancock",
+        "county_fips": "39063",
+        "state_code": "OH",
+        "region": "NW Ohio",
+        "weight": 0.008,
+        "rurality": "urban",
+        "cities": [
+          "Findlay"
+        ]
+      },
+      {
+        "county": "Wood",
+        "county_fips": "39173",
+        "state_code": "OH",
+        "region": "NW Ohio",
+        "weight": 0.009,
+        "rurality": "suburban",
+        "cities": [
+          "Bowling Green",
+          "Perrysburg"
+        ]
+      },
+      {
+        "county": "Erie",
+        "county_fips": "39043",
+        "state_code": "OH",
+        "region": "NW Ohio",
+        "weight": 0.008,
+        "rurality": "suburban",
+        "cities": [
+          "Sandusky"
+        ]
+      },
+      {
+        "county": "Huron",
+        "county_fips": "39077",
+        "state_code": "OH",
+        "region": "NW Ohio",
+        "weight": 0.005,
+        "rurality": "rural",
+        "cities": [
+          "Norwalk"
+        ]
+      },
+      {
+        "county": "Sandusky",
+        "county_fips": "39143",
+        "state_code": "OH",
+        "region": "NW Ohio",
+        "weight": 0.005,
+        "rurality": "rural",
+        "cities": [
+          "Fremont"
+        ]
+      },
+      {
+        "county": "Seneca",
+        "county_fips": "39147",
+        "state_code": "OH",
+        "region": "NW Ohio",
+        "weight": 0.005,
+        "rurality": "rural",
+        "cities": [
+          "Tiffin"
+        ]
+      },
+      {
+        "county": "Auglaize",
+        "county_fips": "39011",
+        "state_code": "OH",
+        "region": "NW Ohio",
+        "weight": 0.004,
+        "rurality": "rural",
+        "cities": [
+          "Wapakoneta"
+        ]
+      },
+      {
+        "county": "Crawford",
+        "county_fips": "39033",
+        "state_code": "OH",
+        "region": "NW Ohio",
+        "weight": 0.004,
+        "rurality": "rural",
+        "cities": [
+          "Bucyrus"
+        ]
+      },
+      {
+        "county": "Defiance",
+        "county_fips": "39039",
+        "state_code": "OH",
+        "region": "NW Ohio",
+        "weight": 0.004,
+        "rurality": "rural",
+        "cities": [
+          "Defiance"
+        ]
+      },
+      {
+        "county": "Mercer",
+        "county_fips": "39107",
+        "state_code": "OH",
+        "region": "NW Ohio",
+        "weight": 0.004,
+        "rurality": "rural",
+        "cities": [
+          "Celina"
+        ]
+      },
+      {
+        "county": "Ottawa",
+        "county_fips": "39123",
+        "state_code": "OH",
+        "region": "NW Ohio",
+        "weight": 0.004,
+        "rurality": "rural",
+        "cities": [
+          "Port Clinton"
+        ]
+      },
+      {
+        "county": "Fulton",
+        "county_fips": "39051",
+        "state_code": "OH",
+        "region": "NW Ohio",
+        "weight": 0.004,
+        "rurality": "rural",
+        "cities": [
+          "Wauseon"
+        ]
+      },
+      {
+        "county": "Williams",
+        "county_fips": "39171",
+        "state_code": "OH",
+        "region": "NW Ohio",
+        "weight": 0.004,
+        "rurality": "rural",
+        "cities": [
+          "Bryan"
+        ]
+      },
+      {
+        "county": "Hardin",
+        "county_fips": "39065",
+        "state_code": "OH",
+        "region": "NW Ohio",
+        "weight": 0.003,
+        "rurality": "rural",
+        "cities": [
+          "Kenton"
+        ]
+      },
+      {
+        "county": "Henry",
+        "county_fips": "39069",
+        "state_code": "OH",
+        "region": "NW Ohio",
+        "weight": 0.003,
+        "rurality": "rural",
+        "cities": [
+          "Napoleon"
+        ]
+      },
+      {
+        "county": "Van Wert",
+        "county_fips": "39161",
+        "state_code": "OH",
+        "region": "NW Ohio",
+        "weight": 0.003,
+        "rurality": "rural",
+        "cities": [
+          "Van Wert"
+        ]
+      },
+      {
+        "county": "Putnam",
+        "county_fips": "39137",
+        "state_code": "OH",
+        "region": "NW Ohio",
+        "weight": 0.003,
+        "rurality": "rural",
+        "cities": [
+          "Ottawa"
+        ]
+      },
+      {
+        "county": "Paulding",
+        "county_fips": "39125",
+        "state_code": "OH",
+        "region": "NW Ohio",
+        "weight": 0.002,
+        "rurality": "rural",
+        "cities": [
+          "Paulding"
+        ]
+      },
+      {
+        "county": "Wyandot",
+        "county_fips": "39175",
+        "state_code": "OH",
+        "region": "NW Ohio",
+        "weight": 0.002,
+        "rurality": "rural",
+        "cities": [
+          "Upper Sandusky"
+        ]
+      }
+    ]
+  },
+  "demographics": {
+    "age_distribution": [
+      {
+        "min": 0,
+        "max": 14,
+        "weight": 0.08,
+        "label": "Child"
+      },
+      {
+        "min": 15,
+        "max": 19,
+        "weight": 0.05,
+        "label": "Teen"
+      },
+      {
+        "min": 20,
+        "max": 39,
+        "weight": 0.32,
+        "label": "Adult"
+      },
+      {
+        "min": 40,
+        "max": 64,
+        "weight": 0.35,
+        "label": "Middle Age"
+      },
+      {
+        "min": 65,
+        "max": 100,
+        "weight": 0.2,
+        "label": "Senior"
+      }
+    ],
+    "sex_distribution": [
+      {
+        "sex": "F",
+        "weight": 0.55
+      },
+      {
+        "sex": "M",
+        "weight": 0.45
+      }
+    ],
+    "race_distribution": [
+      {
+        "race_code": "2106-3",
+        "race_description": "White",
+        "ethnicity_code": "2186-5",
+        "ethnicity_description": "Not Hispanic or Latino",
+        "weight": 0.7
+      },
+      {
+        "race_code": "2054-5",
+        "race_description": "Black or African American",
+        "ethnicity_code": "2186-5",
+        "ethnicity_description": "Not Hispanic or Latino",
+        "weight": 0.16
+      },
+      {
+        "race_code": "2135-2",
+        "race_description": "Hispanic or Latino",
+        "ethnicity_code": "2135-2",
+        "ethnicity_description": "Hispanic or Latino",
+        "weight": 0.07
+      },
+      {
+        "race_code": "2028-9",
+        "race_description": "Asian",
+        "ethnicity_code": "2186-5",
+        "ethnicity_description": "Not Hispanic or Latino",
+        "weight": 0.03
+      },
+      {
+        "race_code": "2076-8",
+        "race_description": "Native Hawaiian or Other Pacific Islander",
+        "ethnicity_code": "2186-5",
+        "ethnicity_description": "Not Hispanic or Latino",
+        "weight": 0.01
+      },
+      {
+        "race_code": "1002-5",
+        "race_description": "American Indian or Alaska Native",
+        "ethnicity_code": "2186-5",
+        "ethnicity_description": "Not Hispanic or Latino",
+        "weight": 0.01
+      },
+      {
+        "race_code": "2131-1",
+        "race_description": "Other Race",
+        "ethnicity_code": "2186-5",
+        "ethnicity_description": "Not Hispanic or Latino",
+        "weight": 0.02
+      }
+    ],
+    "insurance_distribution": [
+      {
+        "plan_code": "OHMED",
+        "weight": 0.3
+      },
+      {
+        "plan_code": "COMM",
+        "weight": 0.42
+      },
+      {
+        "plan_code": "MEDICARE",
+        "weight": 0.2
+      },
+      {
+        "plan_code": "UNINS",
+        "weight": 0.06
+      },
+      {
+        "plan_code": "OTHER",
+        "weight": 0.02
+      }
+    ]
+  },
+  "facilities": [
+    {
+      "code": "FAC001",
+      "name": "Lake Erie Academic Medical Center",
+      "type": "academic",
+      "health_system_code": "HS001",
+      "health_system_name": "Lake Erie Health",
+      "city": "Cleveland",
+      "region": "NE Ohio",
+      "county_fips": "39035",
+      "weight": 0.12
+    },
+    {
+      "code": "FAC002",
+      "name": "Lake Erie Health \u2014 Akron Campus",
+      "type": "academic",
+      "health_system_code": "HS001",
+      "health_system_name": "Lake Erie Health",
+      "city": "Akron",
+      "region": "NE Ohio",
+      "county_fips": "39153",
+      "weight": 0.07
+    },
+    {
+      "code": "FAC003",
+      "name": "Lake Erie Health \u2014 Lorain Community Hospital",
+      "type": "community",
+      "health_system_code": "HS001",
+      "health_system_name": "Lake Erie Health",
+      "city": "Lorain",
+      "region": "NE Ohio",
+      "county_fips": "39093",
+      "weight": 0.04
+    },
+    {
+      "code": "FAC004",
+      "name": "Lake Erie Health \u2014 Trumbull Medical Center",
+      "type": "community",
+      "health_system_code": "HS001",
+      "health_system_name": "Lake Erie Health",
+      "city": "Warren",
+      "region": "NE Ohio",
+      "county_fips": "39155",
+      "weight": 0.04
+    },
+    {
+      "code": "FAC005",
+      "name": "Lake Erie Health \u2014 Canton Regional Hospital",
+      "type": "community",
+      "health_system_code": "HS001",
+      "health_system_name": "Lake Erie Health",
+      "city": "Canton",
+      "region": "NE Ohio",
+      "county_fips": "39151",
+      "weight": 0.04
+    },
+    {
+      "code": "FAC006",
+      "name": "Buckeye Regional Health University Medical Center",
+      "type": "academic",
+      "health_system_code": "HS002",
+      "health_system_name": "Buckeye Regional Health",
+      "city": "Columbus",
+      "region": "Central Ohio",
+      "county_fips": "39049",
+      "weight": 0.12
+    },
+    {
+      "code": "FAC007",
+      "name": "Buckeye Regional Health \u2014 East Columbus Hospital",
+      "type": "community",
+      "health_system_code": "HS002",
+      "health_system_name": "Buckeye Regional Health",
+      "city": "Columbus",
+      "region": "Central Ohio",
+      "county_fips": "39049",
+      "weight": 0.05
+    },
+    {
+      "code": "FAC008",
+      "name": "Buckeye Regional Health \u2014 Delaware Community Hospital",
+      "type": "community",
+      "health_system_code": "HS002",
+      "health_system_name": "Buckeye Regional Health",
+      "city": "Delaware",
+      "region": "Central Ohio",
+      "county_fips": "39041",
+      "weight": 0.03
+    },
+    {
+      "code": "FAC009",
+      "name": "Buckeye Regional Health \u2014 Licking Valley Medical Center",
+      "type": "community",
+      "health_system_code": "HS002",
+      "health_system_name": "Buckeye Regional Health",
+      "city": "Newark",
+      "region": "Central Ohio",
+      "county_fips": "39089",
+      "weight": 0.03
+    },
+    {
+      "code": "FAC010",
+      "name": "Buckeye Regional Health \u2014 Fairfield Community Hospital",
+      "type": "community",
+      "health_system_code": "HS002",
+      "health_system_name": "Buckeye Regional Health",
+      "city": "Lancaster",
+      "region": "Central Ohio",
+      "county_fips": "39045",
+      "weight": 0.03
+    },
+    {
+      "code": "FAC011",
+      "name": "Buckeye Community Health Center \u2014 Columbus South",
+      "type": "fqhc",
+      "health_system_code": "HS002",
+      "health_system_name": "Buckeye Regional Health",
+      "city": "Columbus",
+      "region": "Central Ohio",
+      "county_fips": "39049",
+      "weight": 0.025
+    },
+    {
+      "code": "FAC012",
+      "name": "Buckeye Community Health Center \u2014 Licking County",
+      "type": "fqhc",
+      "health_system_code": "HS002",
+      "health_system_name": "Buckeye Regional Health",
+      "city": "Newark",
+      "region": "Central Ohio",
+      "county_fips": "39089",
+      "weight": 0.02
+    },
+    {
+      "code": "FAC013",
+      "name": "Central Ohio Medical Center",
+      "type": "academic",
+      "health_system_code": "HS003",
+      "health_system_name": "Central Ohio Medical Network",
+      "city": "Columbus",
+      "region": "Central Ohio",
+      "county_fips": "39049",
+      "weight": 0.1
+    },
+    {
+      "code": "FAC014",
+      "name": "Central Ohio Medical Network \u2014 Westside Hospital",
+      "type": "community",
+      "health_system_code": "HS003",
+      "health_system_name": "Central Ohio Medical Network",
+      "city": "Columbus",
+      "region": "Central Ohio",
+      "county_fips": "39049",
+      "weight": 0.04
+    },
+    {
+      "code": "FAC015",
+      "name": "Central Ohio Medical Network \u2014 Knox County Hospital",
+      "type": "community",
+      "health_system_code": "HS003",
+      "health_system_name": "Central Ohio Medical Network",
+      "city": "Mount Vernon",
+      "region": "Central Ohio",
+      "county_fips": "39083",
+      "weight": 0.02
+    },
+    {
+      "code": "FAC016",
+      "name": "Central Ohio Medical Network \u2014 Pickaway Community Hospital",
+      "type": "community",
+      "health_system_code": "HS003",
+      "health_system_name": "Central Ohio Medical Network",
+      "city": "Circleville",
+      "region": "Central Ohio",
+      "county_fips": "39129",
+      "weight": 0.02
+    },
+    {
+      "code": "FAC017",
+      "name": "Central Ohio Maternal-Fetal Medicine Associates",
+      "type": "ob_gyn",
+      "health_system_code": "HS003",
+      "health_system_name": "Central Ohio Medical Network",
+      "city": "Columbus",
+      "region": "Central Ohio",
+      "county_fips": "39049",
+      "weight": 0.03
+    },
+    {
+      "code": "FAC018",
+      "name": "Miami Valley Academic Health Center",
+      "type": "academic",
+      "health_system_code": "HS004",
+      "health_system_name": "Miami Valley Health Alliance",
+      "city": "Dayton",
+      "region": "SW Ohio",
+      "county_fips": "39113",
+      "weight": 0.1
+    },
+    {
+      "code": "FAC019",
+      "name": "Miami Valley Health \u2014 Cincinnati Community Hospital",
+      "type": "community",
+      "health_system_code": "HS004",
+      "health_system_name": "Miami Valley Health Alliance",
+      "city": "Cincinnati",
+      "region": "SW Ohio",
+      "county_fips": "39061",
+      "weight": 0.05
+    },
+    {
+      "code": "FAC020",
+      "name": "Miami Valley Health \u2014 Butler County Medical Center",
+      "type": "community",
+      "health_system_code": "HS004",
+      "health_system_name": "Miami Valley Health Alliance",
+      "city": "Hamilton",
+      "region": "SW Ohio",
+      "county_fips": "39017",
+      "weight": 0.04
+    },
+    {
+      "code": "FAC021",
+      "name": "Miami Valley Urgent Care Network",
+      "type": "urgent_care",
+      "health_system_code": "HS004",
+      "health_system_name": "Miami Valley Health Alliance",
+      "city": "Cincinnati",
+      "region": "SW Ohio",
+      "county_fips": "39061",
+      "weight": 0.02
+    },
+    {
+      "code": "FAC022",
+      "name": "Appalachian Ohio Regional Medical Center",
+      "type": "academic",
+      "health_system_code": "HS005",
+      "health_system_name": "Appalachian Ohio Health Network",
+      "city": "Athens",
+      "region": "SE Ohio/Appalachian",
+      "county_fips": "39009",
+      "weight": 0.05
+    },
+    {
+      "code": "FAC023",
+      "name": "Appalachian Ohio Health \u2014 Ross County Hospital",
+      "type": "rural_cah",
+      "health_system_code": "HS005",
+      "health_system_name": "Appalachian Ohio Health Network",
+      "city": "Chillicothe",
+      "region": "SE Ohio/Appalachian",
+      "county_fips": "39141",
+      "weight": 0.03
+    },
+    {
+      "code": "FAC024",
+      "name": "Appalachian Ohio Health \u2014 Scioto Valley Hospital",
+      "type": "rural_cah",
+      "health_system_code": "HS005",
+      "health_system_name": "Appalachian Ohio Health Network",
+      "city": "Portsmouth",
+      "region": "SE Ohio/Appalachian",
+      "county_fips": "39145",
+      "weight": 0.03
+    },
+    {
+      "code": "FAC025",
+      "name": "Appalachian Community Health Center",
+      "type": "fqhc",
+      "health_system_code": "HS005",
+      "health_system_name": "Appalachian Ohio Health Network",
+      "city": "Athens",
+      "region": "SE Ohio/Appalachian",
+      "county_fips": "39009",
+      "weight": 0.02
+    },
+    {
+      "code": "FAC026",
+      "name": "Northwest Ohio Academic Health System",
+      "type": "academic",
+      "health_system_code": "HS006",
+      "health_system_name": "Northwest Ohio Health System",
+      "city": "Toledo",
+      "region": "NW Ohio",
+      "county_fips": "39095",
+      "weight": 0.08
+    },
+    {
+      "code": "FAC027",
+      "name": "Northwest Ohio Health \u2014 Lucas Community Hospital",
+      "type": "community",
+      "health_system_code": "HS006",
+      "health_system_name": "Northwest Ohio Health System",
+      "city": "Toledo",
+      "region": "NW Ohio",
+      "county_fips": "39095",
+      "weight": 0.04
+    },
+    {
+      "code": "FAC028",
+      "name": "Northwest Ohio Health \u2014 Allen County Hospital",
+      "type": "community",
+      "health_system_code": "HS006",
+      "health_system_name": "Northwest Ohio Health System",
+      "city": "Lima",
+      "region": "NW Ohio",
+      "county_fips": "39003",
+      "weight": 0.03
+    },
+    {
+      "code": "FAC029",
+      "name": "Northwest Ohio Regional Laboratory",
+      "type": "laboratory",
+      "health_system_code": "HS006",
+      "health_system_name": "Northwest Ohio Health System",
+      "city": "Toledo",
+      "region": "NW Ohio",
+      "county_fips": "39095",
+      "weight": 0.02
+    },
+    {
+      "code": "FAC030",
+      "name": "Vinton County General Hospital",
+      "type": "rural_cah",
+      "health_system_code": "IND",
+      "health_system_name": "Independent",
+      "city": "McArthur",
+      "region": "SE Ohio/Appalachian",
+      "county_fips": "39163",
+      "weight": 0.015
+    },
+    {
+      "code": "FAC031",
+      "name": "Morgan County Memorial Hospital",
+      "type": "rural_cah",
+      "health_system_code": "IND",
+      "health_system_name": "Independent",
+      "city": "McConnelsville",
+      "region": "SE Ohio/Appalachian",
+      "county_fips": "39115",
+      "weight": 0.015
+    },
+    {
+      "code": "FAC032",
+      "name": "Miami Valley Community Health Centers",
+      "type": "fqhc",
+      "health_system_code": "IND",
+      "health_system_name": "Independent",
+      "city": "Dayton",
+      "region": "SW Ohio",
+      "county_fips": "39113",
+      "weight": 0.02
+    },
+    {
+      "code": "FAC033",
+      "name": "Southwest Ohio Primary Care Network",
+      "type": "fqhc",
+      "health_system_code": "IND",
+      "health_system_name": "Independent",
+      "city": "Cincinnati",
+      "region": "SW Ohio",
+      "county_fips": "39061",
+      "weight": 0.02
+    },
+    {
+      "code": "FAC034",
+      "name": "Central Ohio Rural Health Consortium",
+      "type": "fqhc",
+      "health_system_code": "IND",
+      "health_system_name": "Independent",
+      "city": "Marion",
+      "region": "Central Ohio",
+      "county_fips": "39101",
+      "weight": 0.015
+    },
+    {
+      "code": "FAC035",
+      "name": "Southeast Ohio Community Health Clinic",
+      "type": "fqhc",
+      "health_system_code": "IND",
+      "health_system_name": "Independent",
+      "city": "Zanesville",
+      "region": "SE Ohio/Appalachian",
+      "county_fips": "39119",
+      "weight": 0.015
+    },
+    {
+      "code": "FAC036",
+      "name": "Northwest Ohio Primary Care Network",
+      "type": "fqhc",
+      "health_system_code": "IND",
+      "health_system_name": "Independent",
+      "city": "Findlay",
+      "region": "NW Ohio",
+      "county_fips": "39063",
+      "weight": 0.015
+    },
+    {
+      "code": "FAC037",
+      "name": "Columbus Perinatal Associates",
+      "type": "ob_gyn",
+      "health_system_code": "IND",
+      "health_system_name": "Independent",
+      "city": "Columbus",
+      "region": "Central Ohio",
+      "county_fips": "39049",
+      "weight": 0.025
+    },
+    {
+      "code": "FAC038",
+      "name": "Northeast Ohio Women's Health Clinic",
+      "type": "ob_gyn",
+      "health_system_code": "IND",
+      "health_system_name": "Independent",
+      "city": "Cleveland",
+      "region": "NE Ohio",
+      "county_fips": "39035",
+      "weight": 0.025
+    },
+    {
+      "code": "FAC039",
+      "name": "Dayton OB/GYN and Women's Health",
+      "type": "ob_gyn",
+      "health_system_code": "IND",
+      "health_system_name": "Independent",
+      "city": "Dayton",
+      "region": "SW Ohio",
+      "county_fips": "39113",
+      "weight": 0.02
+    },
+    {
+      "code": "FAC040",
+      "name": "Southwest Ohio Perinatal Associates",
+      "type": "ob_gyn",
+      "health_system_code": "IND",
+      "health_system_name": "Independent",
+      "city": "Cincinnati",
+      "region": "SW Ohio",
+      "county_fips": "39061",
+      "weight": 0.025
+    },
+    {
+      "code": "FAC041",
+      "name": "Northeast Ohio Maternal Health Specialists",
+      "type": "ob_gyn",
+      "health_system_code": "IND",
+      "health_system_name": "Independent",
+      "city": "Akron",
+      "region": "NE Ohio",
+      "county_fips": "39153",
+      "weight": 0.02
+    },
+    {
+      "code": "FAC042",
+      "name": "BestCare Urgent Care \u2014 Columbus",
+      "type": "urgent_care",
+      "health_system_code": "IND",
+      "health_system_name": "Independent",
+      "city": "Columbus",
+      "region": "Central Ohio",
+      "county_fips": "39049",
+      "weight": 0.015
+    },
+    {
+      "code": "FAC043",
+      "name": "QuickCare Ohio \u2014 Cleveland",
+      "type": "urgent_care",
+      "health_system_code": "IND",
+      "health_system_name": "Independent",
+      "city": "Cleveland",
+      "region": "NE Ohio",
+      "county_fips": "39035",
+      "weight": 0.015
+    },
+    {
+      "code": "FAC044",
+      "name": "Express Medical Centers \u2014 Cincinnati",
+      "type": "urgent_care",
+      "health_system_code": "IND",
+      "health_system_name": "Independent",
+      "city": "Cincinnati",
+      "region": "SW Ohio",
+      "county_fips": "39061",
+      "weight": 0.015
+    },
+    {
+      "code": "FAC045",
+      "name": "Immediate Medical Care \u2014 Toledo",
+      "type": "urgent_care",
+      "health_system_code": "IND",
+      "health_system_name": "Independent",
+      "city": "Toledo",
+      "region": "NW Ohio",
+      "county_fips": "39095",
+      "weight": 0.012
+    },
+    {
+      "code": "FAC046",
+      "name": "OhioReady Urgent Care \u2014 Youngstown",
+      "type": "urgent_care",
+      "health_system_code": "IND",
+      "health_system_name": "Independent",
+      "city": "Youngstown",
+      "region": "NE Ohio",
+      "county_fips": "39099",
+      "weight": 0.012
+    },
+    {
+      "code": "FAC047",
+      "name": "Central Ohio Clinical Laboratory",
+      "type": "laboratory",
+      "health_system_code": "IND",
+      "health_system_name": "Independent",
+      "city": "Columbus",
+      "region": "Central Ohio",
+      "county_fips": "39049",
+      "weight": 0.02
+    },
+    {
+      "code": "FAC048",
+      "name": "Southwest Ohio Reference Laboratory",
+      "type": "laboratory",
+      "health_system_code": "IND",
+      "health_system_name": "Independent",
+      "city": "Cincinnati",
+      "region": "SW Ohio",
+      "county_fips": "39061",
+      "weight": 0.02
+    }
+  ],
+  "providers": [
+    {
+      "code": "DR001",
+      "name": "Dr. Renata Okafor",
+      "specialty": "OB/GYN",
+      "facility_code": "FAC001"
+    },
+    {
+      "code": "DR002",
+      "name": "Dr. Maria Santos",
+      "specialty": "OB/GYN",
+      "facility_code": "FAC006"
+    },
+    {
+      "code": "DR003",
+      "name": "Dr. Aisha Williams",
+      "specialty": "OB/GYN",
+      "facility_code": "FAC013"
+    },
+    {
+      "code": "DR004",
+      "name": "Dr. Jennifer Park",
+      "specialty": "OB/GYN",
+      "facility_code": "FAC018"
+    },
+    {
+      "code": "DR005",
+      "name": "Dr. Lucinda Chavez",
+      "specialty": "OB/GYN",
+      "facility_code": "FAC022"
+    },
+    {
+      "code": "DR006",
+      "name": "Dr. Patricia Kim",
+      "specialty": "OB/GYN",
+      "facility_code": "FAC026"
+    },
+    {
+      "code": "DR007",
+      "name": "Dr. Brianna Thompson",
+      "specialty": "OB/GYN",
+      "facility_code": "FAC017"
+    },
+    {
+      "code": "DR008",
+      "name": "Dr. Yolanda Brown",
+      "specialty": "OB/GYN",
+      "facility_code": "FAC037"
+    },
+    {
+      "code": "DR009",
+      "name": "Dr. Fatima Al-Rashid",
+      "specialty": "OB/GYN",
+      "facility_code": "FAC038"
+    },
+    {
+      "code": "DR010",
+      "name": "Dr. Stephanie Nguyen",
+      "specialty": "OB/GYN",
+      "facility_code": "FAC039"
+    },
+    {
+      "code": "DR011",
+      "name": "Dr. Angela Robinson",
+      "specialty": "OB/GYN",
+      "facility_code": "FAC040"
+    },
+    {
+      "code": "DR012",
+      "name": "Dr. Christine Mueller",
+      "specialty": "OB/GYN",
+      "facility_code": "FAC041"
+    },
+    {
+      "code": "DR013",
+      "name": "Dr. Tanya Reeves",
+      "specialty": "OB/GYN",
+      "facility_code": "FAC002"
+    },
+    {
+      "code": "DR014",
+      "name": "Dr. Monica Singh",
+      "specialty": "OB/GYN",
+      "facility_code": "FAC007"
+    },
+    {
+      "code": "DR015",
+      "name": "Dr. Carolyn Adams",
+      "specialty": "OB/GYN",
+      "facility_code": "FAC014"
+    },
+    {
+      "code": "DR016",
+      "name": "Dr. Sandra Bell",
+      "specialty": "OB/GYN",
+      "facility_code": "FAC019"
+    },
+    {
+      "code": "DR017",
+      "name": "Dr. Jonathan Patel",
+      "specialty": "Maternal-Fetal Medicine",
+      "facility_code": "FAC001"
+    },
+    {
+      "code": "DR018",
+      "name": "Dr. Emily Whitfield",
+      "specialty": "Maternal-Fetal Medicine",
+      "facility_code": "FAC006"
+    },
+    {
+      "code": "DR019",
+      "name": "Dr. Marcus Coleman",
+      "specialty": "Maternal-Fetal Medicine",
+      "facility_code": "FAC013"
+    },
+    {
+      "code": "DR020",
+      "name": "Dr. Rachel Goldstein",
+      "specialty": "Maternal-Fetal Medicine",
+      "facility_code": "FAC018"
+    },
+    {
+      "code": "DR021",
+      "name": "Dr. David Osei",
+      "specialty": "Maternal-Fetal Medicine",
+      "facility_code": "FAC022"
+    },
+    {
+      "code": "DR022",
+      "name": "Dr. Yvonne Castillo",
+      "specialty": "Maternal-Fetal Medicine",
+      "facility_code": "FAC026"
+    },
+    {
+      "code": "DR023",
+      "name": "Dr. Andrew Fletcher",
+      "specialty": "Maternal-Fetal Medicine",
+      "facility_code": "FAC017"
+    },
+    {
+      "code": "DR024",
+      "name": "Dr. Nadia Kapoor",
+      "specialty": "Maternal-Fetal Medicine",
+      "facility_code": "FAC040"
+    },
+    {
+      "code": "DR025",
+      "name": "Dr. Robert Hayes",
+      "specialty": "Primary Care/Family Medicine",
+      "facility_code": "FAC011"
+    },
+    {
+      "code": "DR026",
+      "name": "Dr. Lisa Chen",
+      "specialty": "Primary Care/Family Medicine",
+      "facility_code": "FAC025"
+    },
+    {
+      "code": "DR027",
+      "name": "Dr. Kevin Wallace",
+      "specialty": "Primary Care/Family Medicine",
+      "facility_code": "FAC032"
+    },
+    {
+      "code": "DR028",
+      "name": "Dr. Nicole Foster",
+      "specialty": "Primary Care/Family Medicine",
+      "facility_code": "FAC033"
+    },
+    {
+      "code": "DR029",
+      "name": "Dr. James Ortega",
+      "specialty": "Primary Care/Family Medicine",
+      "facility_code": "FAC034"
+    },
+    {
+      "code": "DR030",
+      "name": "Dr. Denise Turner",
+      "specialty": "Primary Care/Family Medicine",
+      "facility_code": "FAC035"
+    },
+    {
+      "code": "DR031",
+      "name": "Dr. Alan Nwosu",
+      "specialty": "Primary Care/Family Medicine",
+      "facility_code": "FAC036"
+    },
+    {
+      "code": "DR032",
+      "name": "Dr. Claire Morrison",
+      "specialty": "Primary Care/Family Medicine",
+      "facility_code": "FAC012"
+    },
+    {
+      "code": "DR033",
+      "name": "Dr. Thomas Ramirez",
+      "specialty": "Emergency Medicine",
+      "facility_code": "FAC001"
+    },
+    {
+      "code": "DR034",
+      "name": "Dr. Keisha Marshall",
+      "specialty": "Emergency Medicine",
+      "facility_code": "FAC006"
+    },
+    {
+      "code": "DR035",
+      "name": "Dr. Bryan Kowalski",
+      "specialty": "Emergency Medicine",
+      "facility_code": "FAC018"
+    },
+    {
+      "code": "DR036",
+      "name": "Dr. Amara Diallo",
+      "specialty": "Emergency Medicine",
+      "facility_code": "FAC026"
+    },
+    {
+      "code": "DR037",
+      "name": "Dr. Philip Steinberg",
+      "specialty": "Emergency Medicine",
+      "facility_code": "FAC022"
+    },
+    {
+      "code": "DR038",
+      "name": "Dr. Wendy Cruz",
+      "specialty": "Emergency Medicine",
+      "facility_code": "FAC013"
+    },
+    {
+      "code": "DR039",
+      "name": "Dr. Olivia Grant",
+      "specialty": "Behavioral Health/Psychiatry",
+      "facility_code": "FAC001"
+    },
+    {
+      "code": "DR040",
+      "name": "Dr. Samuel Abebe",
+      "specialty": "Behavioral Health/Psychiatry",
+      "facility_code": "FAC006"
+    },
+    {
+      "code": "DR041",
+      "name": "Dr. Heather Lawson",
+      "specialty": "Behavioral Health/Psychiatry",
+      "facility_code": "FAC018"
+    },
+    {
+      "code": "DR042",
+      "name": "Dr. Daniel Achebe",
+      "specialty": "Behavioral Health/Psychiatry",
+      "facility_code": "FAC013"
+    },
+    {
+      "code": "DR043",
+      "name": "Dr. Rosa Delgado",
+      "specialty": "Behavioral Health/Psychiatry",
+      "facility_code": "FAC022"
+    },
+    {
+      "code": "DR044",
+      "name": "Dr. Nathan Brooks",
+      "specialty": "Addiction Medicine",
+      "facility_code": "FAC001"
+    },
+    {
+      "code": "DR045",
+      "name": "Dr. Grace Mensah",
+      "specialty": "Addiction Medicine",
+      "facility_code": "FAC006"
+    },
+    {
+      "code": "DR046",
+      "name": "Dr. Victor Russo",
+      "specialty": "Addiction Medicine",
+      "facility_code": "FAC025"
+    },
+    {
+      "code": "DR047",
+      "name": "Dr. Tamara Webb",
+      "specialty": "Addiction Medicine",
+      "facility_code": "FAC022"
+    },
+    {
+      "code": "DR048",
+      "name": "Dr. Ivan Petrov",
+      "specialty": "Pediatrics/Neonatology",
+      "facility_code": "FAC001"
+    },
+    {
+      "code": "DR049",
+      "name": "Dr. Jasmine Okonkwo",
+      "specialty": "Pediatrics/Neonatology",
+      "facility_code": "FAC006"
+    },
+    {
+      "code": "DR050",
+      "name": "Dr. Sean Murphy",
+      "specialty": "Pediatrics/Neonatology",
+      "facility_code": "FAC013"
+    },
+    {
+      "code": "DR051",
+      "name": "Dr. Linda Yamamoto",
+      "specialty": "Pediatrics/Neonatology",
+      "facility_code": "FAC018"
+    },
+    {
+      "code": "DR052",
+      "name": "Dr. Carlos Vega",
+      "specialty": "Endocrinology",
+      "facility_code": "FAC006"
+    },
+    {
+      "code": "DR053",
+      "name": "Dr. Hannah Johansson",
+      "specialty": "Endocrinology",
+      "facility_code": "FAC013"
+    },
+    {
+      "code": "DR054",
+      "name": "Dr. Kwame Acheampong",
+      "specialty": "Endocrinology",
+      "facility_code": "FAC018"
+    },
+    {
+      "code": "DR055",
+      "name": "Dr. Margaret Osei",
+      "specialty": "Internal Medicine",
+      "facility_code": "FAC006"
+    },
+    {
+      "code": "DR056",
+      "name": "Dr. Frank Thornton",
+      "specialty": "Internal Medicine",
+      "facility_code": "FAC026"
+    },
+    {
+      "code": "DR057",
+      "name": "Dr. Ingrid Andersen",
+      "specialty": "Internal Medicine",
+      "facility_code": "FAC022"
+    },
+    {
+      "code": "DR058",
+      "name": "Dr. Steven Park",
+      "specialty": "Cardiology",
+      "facility_code": "FAC001"
+    },
+    {
+      "code": "DR059",
+      "name": "Dr. Priya Sharma",
+      "specialty": "Cardiology",
+      "facility_code": "FAC013"
+    },
+    {
+      "code": "DR060",
+      "name": "Dr. Joseph Mensah",
+      "specialty": "Nephrology",
+      "facility_code": "FAC006"
+    },
+    {
+      "code": "DR061",
+      "name": "Dr. Elizabeth Okafor",
+      "specialty": "Nephrology",
+      "facility_code": "FAC018"
+    },
+    {
+      "code": "DR062",
+      "name": "Dr. Diana Flores",
+      "specialty": "Hematology",
+      "facility_code": "FAC001"
+    },
+    {
+      "code": "DR063",
+      "name": "Dr. Christopher Nwosu",
+      "specialty": "Hematology",
+      "facility_code": "FAC006"
+    }
+  ],
+  "insurance_plans": [
+    {
+      "code": "OHMED",
+      "name": "Ohio Medicaid",
+      "coding_standard": "QD_HealthPlanCodeList",
+      "type": "Medicaid",
+      "plan_code": "OH-MED-PLAN",
+      "plan_name": "Ohio Medicaid Managed Care Plan",
+      "group_name": "Ohio Medicaid Program",
+      "priority": 1
+    },
+    {
+      "code": "COMM",
+      "name": "Commercial Insurance",
+      "coding_standard": "QD_HealthPlanCodeList",
+      "type": "Commercial",
+      "plan_code": "COMM-PLAN",
+      "plan_name": "Commercial Health Plan",
+      "group_name": "Commercial Insurance Group",
+      "priority": 2
+    },
+    {
+      "code": "MEDICARE",
+      "name": "Medicare",
+      "coding_standard": "QD_HealthPlanCodeList",
+      "type": "Medicare",
+      "plan_code": "MEDICARE-PLAN",
+      "plan_name": "Medicare Health Plan",
+      "group_name": "Medicare Program",
+      "priority": 3
+    },
+    {
+      "code": "UNINS",
+      "name": "Uninsured/Self-pay",
+      "coding_standard": "QD_HealthPlanCodeList",
+      "type": "Self-pay",
+      "plan_code": "UNINS-PLAN",
+      "plan_name": "Uninsured/Self-pay Plan",
+      "group_name": "Uninsured Group",
+      "priority": 4
+    },
+    {
+      "code": "OTHER",
+      "name": "Other Insurance",
+      "coding_standard": "QD_HealthPlanCodeList",
+      "type": "Other",
+      "plan_code": "OTHER-PLAN",
+      "plan_name": "Other Health Plan",
+      "group_name": "Other Insurance Group",
+      "priority": 5
+    }
+  ],
+  "sending_facility": "FAC001",
+  "multi_facility": {
+    "enabled": true,
+    "distribution": {
+      "one_facility_pct": 0.65,
+      "two_facility_pct": 0.25,
+      "three_plus_facility_pct": 0.1,
+      "max_facilities": 3
+    },
+    "encounter_type_outside_prob": {
+      "O": 0.08,
+      "E": 0.4,
+      "I": 0.2
+    },
+    "geographic_affinity": {
+      "same_region_weight": 0.7,
+      "adjacent_region_weight": 0.2,
+      "other_region_weight": 0.1
+    },
+    "adjacent_regions": {
+      "NE Ohio": [
+        "Central Ohio",
+        "NW Ohio"
+      ],
+      "Central Ohio": [
+        "NE Ohio",
+        "SW Ohio",
+        "SE Ohio/Appalachian"
+      ],
+      "SW Ohio": [
+        "Central Ohio",
+        "SE Ohio/Appalachian"
+      ],
+      "SE Ohio/Appalachian": [
+        "Central Ohio",
+        "SW Ohio"
+      ],
+      "NW Ohio": [
+        "NE Ohio",
+        "Central Ohio"
+      ]
+    },
+    "ed_ip_same_facility_lock": true,
+    "facility_mrn_prefix": true
+  },
+  "name_pools": {
+    "male_first": {
+      "White": [
+        "James",
+        "John",
+        "Robert",
+        "Michael",
+        "William",
+        "David",
+        "Richard",
+        "Joseph",
+        "Thomas",
+        "Charles",
+        "Christopher",
+        "Daniel",
+        "Matthew",
+        "Anthony",
+        "Mark",
+        "Donald",
+        "Steven",
+        "Paul",
+        "Andrew",
+        "Joshua"
+      ],
+      "Black": [
+        "Marcus",
+        "Darius",
+        "Andre",
+        "Jamal",
+        "Tyrone",
+        "Malik",
+        "DeShawn",
+        "Terrence",
+        "Lamar",
+        "Jerome",
+        "Darnell",
+        "Marquis",
+        "Demetrius",
+        "Trevon",
+        "Jalen",
+        "Kareem",
+        "Rashad",
+        "Antoine",
+        "Devonte",
+        "Tyriek"
+      ],
+      "Hispanic": [
+        "Carlos",
+        "Miguel",
+        "Jose",
+        "Juan",
+        "Luis",
+        "Javier",
+        "Alejandro",
+        "Fernando",
+        "Ricardo",
+        "Rafael",
+        "Santiago",
+        "Diego",
+        "Hector",
+        "Emilio",
+        "Manuel",
+        "Antonio",
+        "Francisco",
+        "Eduardo",
+        "Julio",
+        "Adrian"
+      ],
+      "Asian": [
+        "Kevin",
+        "Daniel",
+        "Wei",
+        "Jin",
+        "Hiroshi",
+        "Sung",
+        "Min",
+        "Takeshi",
+        "Yuki",
+        "Kenji",
+        "Hao",
+        "Jun",
+        "Li",
+        "An",
+        "Chao",
+        "Yong",
+        "Jiro",
+        "Ryu",
+        "Satoshi",
+        "Kenta"
+      ],
+      "Native American": [
+        "Joseph",
+        "Raymond",
+        "Thomas",
+        "Elijah",
+        "Gabriel",
+        "Isaiah",
+        "Logan",
+        "Hunter",
+        "Dakota",
+        "Aiden",
+        "Chase",
+        "Cody",
+        "Skylar",
+        "Tristan",
+        "Wyatt"
+      ],
+      "Other": [
+        "Alex",
+        "Jordan",
+        "Chris",
+        "Taylor",
+        "Morgan",
+        "Casey",
+        "Cameron",
+        "Riley",
+        "Parker",
+        "Quinn",
+        "Reese",
+        "Avery",
+        "Sawyer",
+        "Rowan",
+        "Dakota"
+      ]
+    },
+    "female_first": {
+      "White": [
+        "Mary",
+        "Patricia",
+        "Jennifer",
+        "Linda",
+        "Elizabeth",
+        "Barbara",
+        "Susan",
+        "Jessica",
+        "Sarah",
+        "Karen",
+        "Nancy",
+        "Lisa",
+        "Margaret",
+        "Betty",
+        "Sandra",
+        "Ashley",
+        "Dorothy",
+        "Kimberly",
+        "Emily",
+        "Donna"
+      ],
+      "Black": [
+        "Aaliyah",
+        "Keisha",
+        "Tamara",
+        "Imani",
+        "Latoya",
+        "Monique",
+        "Shanice",
+        "Tasha",
+        "Jasmine",
+        "Brianna",
+        "Kiara",
+        "Destiny",
+        "Nia",
+        "Tiana",
+        "Zoe",
+        "Chantel",
+        "Raven",
+        "Serena",
+        "Ebony",
+        "Sierra"
+      ],
+      "Hispanic": [
+        "Maria",
+        "Sofia",
+        "Isabella",
+        "Camila",
+        "Valentina",
+        "Gabriela",
+        "Lucia",
+        "Ana",
+        "Elena",
+        "Carla",
+        "Paula",
+        "Mariana",
+        "Natalia",
+        "Laura",
+        "Claudia",
+        "Andrea",
+        "Rosa",
+        "Carmen",
+        "Angela",
+        "Diana"
+      ],
+      "Asian": [
+        "Mei",
+        "Yuki",
+        "Ji-Young",
+        "Sakura",
+        "Hana",
+        "Min",
+        "Yuna",
+        "Aya",
+        "Rina",
+        "Jia",
+        "Lina",
+        "Soo",
+        "Mika",
+        "Nari",
+        "Yuri",
+        "Hui",
+        "Ling",
+        "Xia",
+        "Chun",
+        "Fen"
+      ],
+      "Native American": [
+        "Sarah",
+        "Rebecca",
+        "Angela",
+        "Cheyenne",
+        "Dakota",
+        "Shania",
+        "Tala",
+        "Kaya",
+        "Aiyana",
+        "Mika",
+        "Nina",
+        "Tara",
+        "Lena",
+        "Zara",
+        "Maya"
+      ],
+      "Other": [
+        "Taylor",
+        "Morgan",
+        "Quinn",
+        "Avery",
+        "Jordan",
+        "Riley",
+        "Casey",
+        "Skylar",
+        "Peyton",
+        "Reese",
+        "Harper",
+        "Rowan",
+        "Sawyer",
+        "Dakota",
+        "Alexis"
+      ]
+    },
+    "last_names": {
+      "White": [
+        "Smith",
+        "Johnson",
+        "Williams",
+        "Brown",
+        "Jones",
+        "Miller",
+        "Davis",
+        "Garcia",
+        "Rodriguez",
+        "Wilson",
+        "Martinez",
+        "Anderson",
+        "Taylor",
+        "Thomas",
+        "Hernandez",
+        "Moore",
+        "Martin",
+        "Jackson",
+        "Thompson",
+        "White",
+        "Lopez",
+        "Lee",
+        "Gonzalez",
+        "Harris",
+        "Clark"
+      ],
+      "Black": [
+        "Washington",
+        "Jackson",
+        "Robinson",
+        "Harris",
+        "Davis",
+        "Johnson",
+        "Brown",
+        "Jones",
+        "Williams",
+        "Thomas",
+        "Moore",
+        "Taylor",
+        "Anderson",
+        "White",
+        "Thompson",
+        "Lewis",
+        "Walker",
+        "Hall",
+        "Allen",
+        "Young",
+        "King",
+        "Wright",
+        "Scott",
+        "Green",
+        "Adams"
+      ],
+      "Hispanic": [
+        "Garcia",
+        "Martinez",
+        "Rodriguez",
+        "Lopez",
+        "Hernandez",
+        "Gonzalez",
+        "Perez",
+        "Sanchez",
+        "Ramirez",
+        "Torres",
+        "Flores",
+        "Rivera",
+        "Gomez",
+        "Diaz",
+        "Reyes",
+        "Cruz",
+        "Morales",
+        "Ortiz",
+        "Gutierrez",
+        "Chavez",
+        "Ramos",
+        "Santiago",
+        "Vargas",
+        "Castillo",
+        "Mendoza"
+      ],
+      "Asian": [
+        "Kim",
+        "Chen",
+        "Nguyen",
+        "Wang",
+        "Lee",
+        "Zhang",
+        "Liu",
+        "Yang",
+        "Huang",
+        "Lin",
+        "Zhao",
+        "Wu",
+        "Xu",
+        "Sun",
+        "Ma",
+        "Zhou",
+        "Hu",
+        "Jiang",
+        "Guo",
+        "He",
+        "Gao",
+        "Luo",
+        "Zheng",
+        "Li",
+        "Feng"
+      ],
+      "Native American": [
+        "Runningwater",
+        "Littlefeather",
+        "Bearcloud",
+        "Redhawk",
+        "Whitefeather",
+        "Thunderhawk",
+        "Eagleman",
+        "Blackwolf",
+        "Spiritwalker",
+        "Rainwater",
+        "Nightwolf",
+        "Firewalker",
+        "Skywalker",
+        "Starfeather",
+        "Moonshadow",
+        "Sunbear",
+        "Windrider",
+        "Earthwalker",
+        "Stonehawk",
+        "Wolfheart"
+      ],
+      "Other": [
+        "Brown",
+        "Taylor",
+        "Davis",
+        "Wilson",
+        "Moore",
+        "Anderson",
+        "Thomas",
+        "Jackson",
+        "White",
+        "Harris",
+        "Martin",
+        "Thompson",
+        "Garcia",
+        "Martinez",
+        "Robinson",
+        "Clark",
+        "Lewis",
+        "Lee",
+        "Walker",
+        "Hall"
+      ]
+    },
+    "middle_initials": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "J",
+      "K",
+      "L",
+      "M",
+      "N",
+      "P",
+      "R",
+      "S",
+      "T",
+      "W"
+    ]
+  },
+  "cohorts": [
+    {
+      "id": "pregnancy",
+      "name": "Pregnancy",
+      "weight": 0.14,
+      "min_age": 15,
+      "max_age": 45,
+      "sex_bias": "F",
+      "description": "Patients who are currently pregnant or have been pregnant in the past 36 months",
+      "diagnoses": [
+        {
+          "code": "Z34.01",
+          "description": "Encounter for supervision of normal first pregnancy, first trimester",
+          "is_primary": true,
+          "only_encounter_types": [
+            "O"
+          ],
+          "onset_age_min": 18,
+          "onset_age_max": 45
+        },
+        {
+          "code": "Z34.02",
+          "description": "Encounter for supervision of normal first pregnancy, second trimester",
+          "is_primary": true,
+          "only_encounter_types": [
+            "O"
+          ],
+          "onset_age_min": 18,
+          "onset_age_max": 45
+        },
+        {
+          "code": "Z34.03",
+          "description": "Encounter for supervision of normal first pregnancy, third trimester",
+          "is_primary": true,
+          "only_encounter_types": [
+            "O"
+          ],
+          "onset_age_min": 18,
+          "onset_age_max": 45
+        },
+        {
+          "code": "O34.21",
+          "description": "Maternal care for scar from previous cesarean delivery",
+          "is_primary": false,
+          "only_encounter_types": [],
+          "onset_age_min": 22,
+          "onset_age_max": 45
+        },
+        {
+          "code": "O80",
+          "description": "Encounter for full-term uncomplicated delivery",
+          "is_primary": true,
+          "only_encounter_types": [
+            "I"
+          ],
+          "onset_age_min": 18,
+          "onset_age_max": 45
+        },
+        {
+          "code": "Z39.0",
+          "description": "Encounter for care and examination of mother immediately after delivery",
+          "is_primary": true,
+          "only_encounter_types": [
+            "O"
+          ],
+          "onset_age_min": 18,
+          "onset_age_max": 45
+        },
+        {
+          "code": "Z39.2",
+          "description": "Encounter for routine postpartum follow-up",
+          "is_primary": true,
+          "only_encounter_types": [
+            "O"
+          ],
+          "onset_age_min": 18,
+          "onset_age_max": 45
+        }
+      ],
+      "comorbidities": [
+        {
+          "code": "O14.00",
+          "description": "Mild to moderate pre-eclampsia",
+          "prevalence_pct": 0.05
+        },
+        {
+          "code": "O24.419",
+          "description": "Gestational diabetes mellitus in pregnancy",
+          "prevalence_pct": 0.09
+        },
+        {
+          "code": "F41.9",
+          "description": "Anxiety disorder, unspecified",
+          "prevalence_pct": 0.15
+        },
+        {
+          "code": "O82",
+          "description": "Encounter for cesarean delivery without indication",
+          "prevalence_pct": 0.3
+        }
+      ],
+      "medications": [
+        {
+          "drug_code": "197361",
+          "drug_description": "Prenatal multivitamin",
+          "dose_quantity": "1",
+          "dose_uom": "tablet",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "Z34.01",
+          "weight": 0.2
+        },
+        {
+          "drug_code": "221137",
+          "drug_description": "Folic Acid 1 MG Oral Tablet",
+          "dose_quantity": "1",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "Z34.01",
+          "weight": 0.2
+        },
+        {
+          "drug_code": "310325",
+          "drug_description": "Ferrous Sulfate 325 MG Oral Tablet",
+          "dose_quantity": "325",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "Z34.02",
+          "weight": 0.2
+        },
+        {
+          "drug_code": "1049630",
+          "drug_description": "Labetalol 100 MG Oral Tablet",
+          "dose_quantity": "100",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "BID",
+          "frequency_description": "Twice daily",
+          "status": "active",
+          "for_diagnosis_code": "O14.00",
+          "weight": 0.15
+        },
+        {
+          "drug_code": "905168",
+          "drug_description": "Nifedipine 30 MG Extended Release Oral Tablet",
+          "dose_quantity": "30",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "O14.00",
+          "weight": 0.1
+        },
+        {
+          "drug_code": "816726",
+          "drug_description": "Insulin NPH Human 100 UNT/ML Injectable Suspension",
+          "dose_quantity": "10",
+          "dose_uom": "units",
+          "dosage_form_code": "INJ",
+          "dosage_form_description": "Injectable",
+          "route_code": "SC",
+          "route_description": "Subcutaneous",
+          "frequency_code": "QHS",
+          "frequency_description": "At bedtime",
+          "status": "active",
+          "for_diagnosis_code": "O24.419",
+          "weight": 0.15
+        }
+      ],
+      "labs": [
+        {
+          "order_code": "718-7",
+          "order_description": "Hemoglobin [Mass/volume] in Blood",
+          "specimen": "Blood",
+          "result_items": [
+            {
+              "code": "718-7",
+              "description": "Hemoglobin [Mass/volume] in Blood",
+              "is_numeric": true,
+              "units": "g/dL",
+              "normal_range_text": "12-16",
+              "normal_min": 12,
+              "normal_max": 16,
+              "abnormal_min": 10,
+              "abnormal_max": 18,
+              "abnormal_flag": "L",
+              "text_values": []
+            }
+          ],
+          "abnormal_pct": 0.2,
+          "weight": 0.25
+        },
+        {
+          "order_code": "57021-8",
+          "order_description": "Glucose [Mass/volume] in Blood",
+          "specimen": "Blood",
+          "result_items": [
+            {
+              "code": "57021-8",
+              "description": "Glucose [Mass/volume] in Blood",
+              "is_numeric": true,
+              "units": "mg/dL",
+              "normal_range_text": "70-99",
+              "normal_min": 70,
+              "normal_max": 99,
+              "abnormal_min": 100,
+              "abnormal_max": 200,
+              "abnormal_flag": "H",
+              "text_values": []
+            }
+          ],
+          "abnormal_pct": 0.15,
+          "weight": 0.2
+        },
+        {
+          "order_code": "58410-2",
+          "order_description": "CBC panel - Blood by Automated count",
+          "specimen": "Blood",
+          "result_items": [
+            {
+              "code": "6690-2",
+              "description": "WBC",
+              "units": "K/uL",
+              "is_numeric": true,
+              "normal_min": 8.0,
+              "normal_max": 15.0,
+              "abnormal_min": 15.1,
+              "abnormal_max": 40.0
+            },
+            {
+              "code": "789-8",
+              "description": "RBC",
+              "units": "M/uL",
+              "is_numeric": true,
+              "normal_min": 3.9,
+              "normal_max": 5.9,
+              "abnormal_min": 2.0,
+              "abnormal_max": 7.0
+            },
+            {
+              "code": "718-7",
+              "description": "Hemoglobin",
+              "units": "g/dL",
+              "is_numeric": true,
+              "normal_min": 11.5,
+              "normal_max": 17.5,
+              "abnormal_min": 6.0,
+              "abnormal_max": 20.0
+            },
+            {
+              "code": "4544-3",
+              "description": "Hematocrit",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 35,
+              "normal_max": 52,
+              "abnormal_min": 20,
+              "abnormal_max": 60
+            },
+            {
+              "code": "777-3",
+              "description": "Platelets",
+              "units": "K/uL",
+              "is_numeric": true,
+              "normal_min": 150,
+              "normal_max": 400,
+              "abnormal_min": 50,
+              "abnormal_max": 600
+            },
+            {
+              "code": "731-0",
+              "description": "Lymphocytes",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 20,
+              "normal_max": 45,
+              "abnormal_min": 5,
+              "abnormal_max": 80
+            },
+            {
+              "code": "752-6",
+              "description": "Neutrophils",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 40,
+              "normal_max": 75,
+              "abnormal_min": 5,
+              "abnormal_max": 95
+            }
+          ],
+          "abnormal_pct": 0.2,
+          "weight": 0.25
+        },
+        {
+          "order_code": "24357-6",
+          "order_description": "Urinalysis with microscopy panel",
+          "specimen": "Urine",
+          "result_items": [
+            {
+              "code": "2888-6",
+              "description": "Protein [Presence] in Urine",
+              "is_numeric": false,
+              "units": "",
+              "normal_min": 0,
+              "normal_max": 0,
+              "abnormal_min": 0,
+              "abnormal_max": 0,
+              "text_values": [
+                "Negative",
+                "Trace",
+                "1+",
+                "2+",
+                "3+"
+              ]
+            },
+            {
+              "code": "2349-9",
+              "description": "Glucose [Presence] in Urine",
+              "is_numeric": false,
+              "units": "",
+              "normal_min": 0,
+              "normal_max": 0,
+              "abnormal_min": 0,
+              "abnormal_max": 0,
+              "text_values": [
+                "Negative",
+                "Trace",
+                "Positive"
+              ]
+            },
+            {
+              "code": "5767-9",
+              "description": "Leukocyte esterase [Presence] in Urine",
+              "is_numeric": false,
+              "units": "",
+              "normal_min": 0,
+              "normal_max": 0,
+              "abnormal_min": 0,
+              "abnormal_max": 0,
+              "text_values": [
+                "Negative",
+                "Trace",
+                "Positive"
+              ]
+            }
+          ],
+          "abnormal_pct": 0.2,
+          "weight": 0.15
+        },
+        {
+          "order_code": "17563-8",
+          "order_description": "Group B Streptococcus (GBS) culture",
+          "specimen": "Vaginal/Rectal",
+          "result_items": [
+            {
+              "code": "17563-8",
+              "description": "Streptococcus agalactiae [Presence] in Vaginal culture",
+              "is_numeric": false,
+              "units": "",
+              "normal_min": 0,
+              "normal_max": 0,
+              "abnormal_min": 0,
+              "abnormal_max": 0,
+              "text_values": [
+                "Negative",
+                "Positive"
+              ]
+            }
+          ],
+          "abnormal_pct": 0.15,
+          "weight": 0.15
+        }
+      ],
+      "observations": [
+        {
+          "code": "8480-6",
+          "description": "Systolic blood pressure",
+          "units": "mmHg",
+          "normal_min": 90,
+          "normal_max": 119,
+          "abnormal_min": 130,
+          "abnormal_max": 175,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.25,
+          "weight": 0.25
+        },
+        {
+          "code": "8462-4",
+          "description": "Diastolic blood pressure",
+          "units": "mmHg",
+          "normal_min": 60,
+          "normal_max": 79,
+          "abnormal_min": 80,
+          "abnormal_max": 110,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.25,
+          "weight": 0.2
+        },
+        {
+          "code": "11876-0",
+          "description": "Fundal height of uterus",
+          "units": "cm",
+          "normal_min": 20,
+          "normal_max": 40,
+          "abnormal_min": 10,
+          "abnormal_max": 46,
+          "abnormal_flag": "L",
+          "abnormal_pct": 0.1,
+          "weight": 0.2
+        },
+        {
+          "code": "55283-6",
+          "description": "Fetal heart rate",
+          "units": "bpm",
+          "normal_min": 110,
+          "normal_max": 160,
+          "abnormal_min": 80,
+          "abnormal_max": 109,
+          "abnormal_flag": "L",
+          "abnormal_pct": 0.05,
+          "weight": 0.2
+        },
+        {
+          "code": "29463-7",
+          "description": "Body weight",
+          "units": "kg",
+          "normal_min": 50,
+          "normal_max": 100,
+          "abnormal_min": 100,
+          "abnormal_max": 130,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.1,
+          "weight": 0.15
+        }
+      ],
+      "encounter_pattern": {
+        "encounters_per_year": 8.0,
+        "encounter_type_weights": {
+          "O": 0.82,
+          "E": 0.1,
+          "I": 0.08
+        },
+        "lab_encounter_rate": 0.7,
+        "rad_encounter_rate": 0.45
+      },
+      "procedures": [
+        {
+          "code": "76805",
+          "description": "Obstetric ultrasound, fetal and maternal evaluation, after first trimester",
+          "encounter_type": "O",
+          "weight": 0.3
+        },
+        {
+          "code": "59025",
+          "description": "Nonstress test (NST) for fetal well-being",
+          "encounter_type": "O",
+          "weight": 0.2
+        },
+        {
+          "code": "59400",
+          "description": "Routine obstetric care including antepartum care, vaginal delivery and postpartum care",
+          "encounter_type": "I",
+          "weight": 0.15
+        },
+        {
+          "code": "59514",
+          "description": "Cesarean delivery",
+          "encounter_type": "I",
+          "weight": 0.15
+        },
+        {
+          "code": "59430",
+          "description": "Postpartum care only (separate procedure)",
+          "encounter_type": "O",
+          "weight": 0.1
+        },
+        {
+          "code": "87081",
+          "description": "Culture, bacterial; GBS screening",
+          "encounter_type": "O",
+          "weight": 0.1
+        }
+      ],
+      "delivery_dx_override": {
+        "O82": {
+          "code": "O82",
+          "description": "Encounter for cesarean delivery without indication"
+        }
+      },
+      "prenatal_dx_override": {
+        "O14": {
+          "code": "O14.00",
+          "description": "Mild to moderate pre-eclampsia, unspecified trimester"
+        }
+      }
+    },
+    {
+      "id": "hypertension",
+      "name": "Hypertension",
+      "weight": 0.18,
+      "min_age": 18,
+      "max_age": 85,
+      "sex_bias": null,
+      "description": "Patients with hypertension, including chronic and gestational",
+      "diagnoses": [
+        {
+          "code": "I10",
+          "description": "Essential (primary) hypertension",
+          "is_primary": true,
+          "onset_age_min": 18,
+          "onset_age_max": 85
+        }
+      ],
+      "comorbidities": [
+        {
+          "code": "E78.5",
+          "description": "Hyperlipidemia, unspecified",
+          "prevalence_pct": 0.45
+        }
+      ],
+      "medications": [
+        {
+          "drug_code": "197361",
+          "drug_description": "Lisinopril 10 MG Oral Tablet",
+          "dose_quantity": "10",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "",
+          "weight": 0.25
+        },
+        {
+          "drug_code": "617317",
+          "drug_description": "Amlodipine 5 MG Oral Tablet",
+          "dose_quantity": "5",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "",
+          "weight": 0.2
+        },
+        {
+          "drug_code": "1049630",
+          "drug_description": "Metoprolol Tartrate 50 MG Oral Tablet",
+          "dose_quantity": "50",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "BID",
+          "frequency_description": "Twice daily",
+          "status": "active",
+          "for_diagnosis_code": "I10",
+          "weight": 0.15
+        },
+        {
+          "drug_code": "860975",
+          "drug_description": "Metformin 500 MG Oral Tablet",
+          "dose_quantity": "500",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "BID",
+          "frequency_description": "Twice daily",
+          "status": "active",
+          "for_diagnosis_code": "",
+          "weight": 0.3
+        },
+        {
+          "drug_code": "617314",
+          "drug_description": "Atorvastatin 20 MG Oral Tablet",
+          "dose_quantity": "20",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "",
+          "weight": 0.1
+        }
+      ],
+      "labs": [
+        {
+          "order_code": "51990-0",
+          "order_description": "Basic metabolic panel",
+          "specimen": "Blood",
+          "weight": 0.4,
+          "abnormal_pct": 0.3,
+          "result_items": [
+            {
+              "code": "2951-2",
+              "description": "Sodium",
+              "units": "mEq/L",
+              "is_numeric": true,
+              "normal_min": 136,
+              "normal_max": 145,
+              "abnormal_min": 129,
+              "abnormal_max": 152
+            },
+            {
+              "code": "2823-3",
+              "description": "Potassium",
+              "units": "mEq/L",
+              "is_numeric": true,
+              "normal_min": 3.5,
+              "normal_max": 5.0,
+              "abnormal_min": 2.8,
+              "abnormal_max": 6.2
+            },
+            {
+              "code": "2075-0",
+              "description": "Chloride",
+              "units": "mEq/L",
+              "is_numeric": true,
+              "normal_min": 98,
+              "normal_max": 107,
+              "abnormal_min": 90,
+              "abnormal_max": 115
+            },
+            {
+              "code": "2028-9",
+              "description": "CO2 (Bicarbonate)",
+              "units": "mEq/L",
+              "is_numeric": true,
+              "normal_min": 22,
+              "normal_max": 29,
+              "abnormal_min": 16,
+              "abnormal_max": 34
+            },
+            {
+              "code": "2339-0",
+              "description": "Glucose",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 70,
+              "normal_max": 99,
+              "abnormal_min": 50,
+              "abnormal_max": 450
+            },
+            {
+              "code": "3094-0",
+              "description": "BUN",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 6,
+              "normal_max": 20,
+              "abnormal_min": 2,
+              "abnormal_max": 50
+            },
+            {
+              "code": "2160-0",
+              "description": "Creatinine",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 0.6,
+              "normal_max": 1.2,
+              "abnormal_min": 0.4,
+              "abnormal_max": 3.5
+            },
+            {
+              "code": "17861-6",
+              "description": "Calcium",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 8.5,
+              "normal_max": 10.5,
+              "abnormal_min": 7.0,
+              "abnormal_max": 12.0
+            }
+          ]
+        },
+        {
+          "order_code": "57698-3",
+          "order_description": "Lipid panel",
+          "specimen": "Blood",
+          "weight": 0.35,
+          "abnormal_pct": 0.45,
+          "result_items": [
+            {
+              "code": "2093-3",
+              "description": "Total Cholesterol",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 130,
+              "normal_max": 200,
+              "abnormal_min": 201,
+              "abnormal_max": 340
+            },
+            {
+              "code": "2571-8",
+              "description": "Triglycerides",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 40,
+              "normal_max": 150,
+              "abnormal_min": 151,
+              "abnormal_max": 400
+            },
+            {
+              "code": "2085-9",
+              "description": "HDL Cholesterol",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 40,
+              "normal_max": 90,
+              "abnormal_min": 15,
+              "abnormal_max": 39
+            },
+            {
+              "code": "13457-7",
+              "description": "LDL Cholesterol",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 50,
+              "normal_max": 100,
+              "abnormal_min": 101,
+              "abnormal_max": 220
+            }
+          ]
+        },
+        {
+          "order_code": "17855-8",
+          "order_description": "Hemoglobin A1c panel",
+          "specimen": "Blood",
+          "weight": 0.15,
+          "abnormal_pct": 0.55,
+          "result_items": [
+            {
+              "code": "4548-4",
+              "description": "Hemoglobin A1c/Hemoglobin.total in Blood",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 0,
+              "normal_max": 5.6,
+              "abnormal_min": 5.7,
+              "abnormal_max": 14.0
+            }
+          ]
+        },
+        {
+          "order_code": "58410-2",
+          "order_description": "CBC panel - Blood by Automated count",
+          "specimen": "Blood",
+          "weight": 0.1,
+          "abnormal_pct": 0.2,
+          "result_items": [
+            {
+              "code": "6690-2",
+              "description": "WBC",
+              "units": "K/uL",
+              "is_numeric": true,
+              "normal_min": 4.5,
+              "normal_max": 11.0,
+              "abnormal_min": 0.5,
+              "abnormal_max": 18.0
+            },
+            {
+              "code": "789-8",
+              "description": "RBC",
+              "units": "M/uL",
+              "is_numeric": true,
+              "normal_min": 3.9,
+              "normal_max": 5.9,
+              "abnormal_min": 2.0,
+              "abnormal_max": 7.0
+            },
+            {
+              "code": "718-7",
+              "description": "Hemoglobin",
+              "units": "g/dL",
+              "is_numeric": true,
+              "normal_min": 11.5,
+              "normal_max": 17.5,
+              "abnormal_min": 6.0,
+              "abnormal_max": 20.0
+            },
+            {
+              "code": "4544-3",
+              "description": "Hematocrit",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 35,
+              "normal_max": 52,
+              "abnormal_min": 20,
+              "abnormal_max": 60
+            },
+            {
+              "code": "777-3",
+              "description": "Platelets",
+              "units": "K/uL",
+              "is_numeric": true,
+              "normal_min": 150,
+              "normal_max": 400,
+              "abnormal_min": 50,
+              "abnormal_max": 600
+            },
+            {
+              "code": "731-0",
+              "description": "Lymphocytes",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 20,
+              "normal_max": 45,
+              "abnormal_min": 5,
+              "abnormal_max": 80
+            },
+            {
+              "code": "752-6",
+              "description": "Neutrophils",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 40,
+              "normal_max": 75,
+              "abnormal_min": 5,
+              "abnormal_max": 95
+            }
+          ]
+        }
+      ],
+      "observations": [
+        {
+          "code": "8480-6",
+          "description": "Systolic blood pressure",
+          "units": "mmHg",
+          "normal_min": 90,
+          "normal_max": 119,
+          "abnormal_min": 130,
+          "abnormal_max": 175,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.45,
+          "weight": 0.333333
+        },
+        {
+          "code": "8462-4",
+          "description": "Diastolic blood pressure",
+          "units": "mmHg",
+          "normal_min": 60,
+          "normal_max": 79,
+          "abnormal_min": 80,
+          "abnormal_max": 110,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.4,
+          "weight": 0.333333
+        },
+        {
+          "code": "8310-5",
+          "description": "Body temperature",
+          "units": "\u00b0F",
+          "normal_min": 97.0,
+          "normal_max": 99.0,
+          "abnormal_min": 100.0,
+          "abnormal_max": 104.0,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.05,
+          "weight": 0.166667
+        },
+        {
+          "code": "8867-4",
+          "description": "Heart rate",
+          "units": "bpm",
+          "normal_min": 60,
+          "normal_max": 100,
+          "abnormal_min": 101,
+          "abnormal_max": 150,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.1,
+          "weight": 0.166667
+        }
+      ],
+      "encounter_pattern": {
+        "encounters_per_year": 4.0,
+        "encounter_type_weights": {
+          "O": 0.9,
+          "E": 0.05,
+          "I": 0.05
+        },
+        "lab_encounter_rate": 0.75,
+        "rad_encounter_rate": 0.15
+      },
+      "procedures": [
+        {
+          "code": "99213",
+          "description": "Office or other outpatient visit, moderate complexity",
+          "encounter_type": "O",
+          "weight": 0.5
+        },
+        {
+          "code": "93000",
+          "description": "Electrocardiogram, routine ECG with at least 12 leads; with interpretation and report",
+          "encounter_type": "O",
+          "weight": 0.3
+        },
+        {
+          "code": "80061",
+          "description": "Lipid panel",
+          "encounter_type": "O",
+          "weight": 0.2
+        }
+      ]
+    },
+    {
+      "id": "diabetes_t2",
+      "name": "Type 2 Diabetes",
+      "weight": 0.09,
+      "min_age": 30,
+      "max_age": 85,
+      "sex_bias": null,
+      "description": "Patients with type 2 diabetes, managed with oral agents and/or insulin",
+      "diagnoses": [
+        {
+          "code": "E11.9",
+          "description": "Type 2 diabetes mellitus without complications",
+          "is_primary": true,
+          "onset_age_min": 30,
+          "onset_age_max": 85
+        },
+        {
+          "code": "E11.65",
+          "description": "Type 2 diabetes mellitus with hyperglycemia",
+          "is_primary": false,
+          "onset_age_min": 30,
+          "onset_age_max": 85
+        },
+        {
+          "code": "E11.21",
+          "description": "Type 2 diabetes mellitus with diabetic nephropathy",
+          "is_primary": false,
+          "onset_age_min": 30,
+          "onset_age_max": 85
+        },
+        {
+          "code": "E11.42",
+          "description": "Type 2 diabetes mellitus with diabetic polyneuropathy",
+          "is_primary": false,
+          "onset_age_min": 30,
+          "onset_age_max": 85
+        },
+        {
+          "code": "E11.621",
+          "description": "Type 2 diabetes mellitus with foot ulcer",
+          "is_primary": false,
+          "onset_age_min": 40,
+          "onset_age_max": 85
+        },
+        {
+          "code": "Z89.512",
+          "description": "Acquired absence of left foot",
+          "is_primary": false,
+          "onset_age_min": 45,
+          "onset_age_max": 85
+        },
+        {
+          "code": "Z89.611",
+          "description": "Acquired absence of right leg below knee",
+          "is_primary": false,
+          "onset_age_min": 45,
+          "onset_age_max": 85
+        }
+      ],
+      "comorbidities": [
+        {
+          "code": "E78.5",
+          "description": "Hyperlipidemia, unspecified",
+          "prevalence_pct": 0.45
+        },
+        {
+          "code": "N18.3",
+          "description": "Chronic kidney disease, stage 3 (moderate)",
+          "prevalence_pct": 0.2
+        }
+      ],
+      "medications": [
+        {
+          "drug_code": "860975",
+          "drug_description": "Metformin 500 MG Oral Tablet",
+          "dose_quantity": "500",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "BID",
+          "frequency_description": "Twice daily",
+          "status": "active",
+          "for_diagnosis_code": "",
+          "weight": 0.3
+        },
+        {
+          "drug_code": "1049630",
+          "drug_description": "Lisinopril 10 MG Oral Tablet",
+          "dose_quantity": "10",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "",
+          "weight": 0.25
+        },
+        {
+          "drug_code": "197361",
+          "drug_description": "Atorvastatin 20 MG Oral Tablet",
+          "dose_quantity": "20",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "E11",
+          "weight": 0.2
+        },
+        {
+          "drug_code": "617314",
+          "drug_description": "Glipizide 5 MG Oral Tablet",
+          "dose_quantity": "5",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "BID",
+          "frequency_description": "Twice daily",
+          "status": "active",
+          "for_diagnosis_code": "E11.9",
+          "weight": 0.15
+        },
+        {
+          "drug_code": "1110240",
+          "drug_description": "Insulin Glargine 100 UNT/ML Subcutaneous Solution",
+          "dose_quantity": "10",
+          "dose_uom": "units",
+          "dosage_form_code": "SOL",
+          "dosage_form_description": "Solution",
+          "route_code": "SQ",
+          "route_description": "Subcutaneous",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "E11.9",
+          "weight": 0.1
+        },
+        {
+          "drug_code": "1730929",
+          "drug_description": "Empagliflozin 10 MG Oral Tablet",
+          "dose_quantity": "10",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "E11.9",
+          "weight": 0.3
+        }
+      ],
+      "labs": [
+        {
+          "order_code": "17855-8",
+          "order_description": "Hemoglobin A1c panel",
+          "specimen": "Blood",
+          "weight": 0.304348,
+          "abnormal_pct": 0.55,
+          "result_items": [
+            {
+              "code": "4548-4",
+              "description": "Hemoglobin A1c/Hemoglobin.total in Blood",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 4.0,
+              "normal_max": 5.6,
+              "abnormal_min": 5.7,
+              "abnormal_max": 14.0
+            }
+          ]
+        },
+        {
+          "order_code": "51990-0",
+          "order_description": "Basic metabolic panel",
+          "specimen": "Blood",
+          "weight": 0.26087,
+          "abnormal_pct": 0.3,
+          "result_items": [
+            {
+              "code": "2951-2",
+              "description": "Sodium",
+              "units": "mEq/L",
+              "is_numeric": true,
+              "normal_min": 136,
+              "normal_max": 145,
+              "abnormal_min": 129,
+              "abnormal_max": 152
+            },
+            {
+              "code": "2823-3",
+              "description": "Potassium",
+              "units": "mEq/L",
+              "is_numeric": true,
+              "normal_min": 3.5,
+              "normal_max": 5.0,
+              "abnormal_min": 2.8,
+              "abnormal_max": 6.2
+            },
+            {
+              "code": "2075-0",
+              "description": "Chloride",
+              "units": "mEq/L",
+              "is_numeric": true,
+              "normal_min": 98,
+              "normal_max": 107,
+              "abnormal_min": 90,
+              "abnormal_max": 115
+            },
+            {
+              "code": "2028-9",
+              "description": "CO2 (Bicarbonate)",
+              "units": "mEq/L",
+              "is_numeric": true,
+              "normal_min": 22,
+              "normal_max": 29,
+              "abnormal_min": 16,
+              "abnormal_max": 34
+            },
+            {
+              "code": "2339-0",
+              "description": "Glucose",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 70,
+              "normal_max": 99,
+              "abnormal_min": 50,
+              "abnormal_max": 450
+            },
+            {
+              "code": "3094-0",
+              "description": "BUN",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 6,
+              "normal_max": 20,
+              "abnormal_min": 2,
+              "abnormal_max": 50
+            },
+            {
+              "code": "2160-0",
+              "description": "Creatinine",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 0.6,
+              "normal_max": 1.2,
+              "abnormal_min": 0.4,
+              "abnormal_max": 3.5
+            },
+            {
+              "code": "17861-6",
+              "description": "Calcium",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 8.5,
+              "normal_max": 10.5,
+              "abnormal_min": 7.0,
+              "abnormal_max": 12.0
+            }
+          ]
+        },
+        {
+          "order_code": "57698-3",
+          "order_description": "Lipid panel",
+          "specimen": "Blood",
+          "weight": 0.130435,
+          "abnormal_pct": 0.45,
+          "result_items": [
+            {
+              "code": "2093-3",
+              "description": "Total Cholesterol",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 130,
+              "normal_max": 200,
+              "abnormal_min": 201,
+              "abnormal_max": 340
+            },
+            {
+              "code": "2571-8",
+              "description": "Triglycerides",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 40,
+              "normal_max": 150,
+              "abnormal_min": 151,
+              "abnormal_max": 400
+            },
+            {
+              "code": "2085-9",
+              "description": "HDL Cholesterol",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 40,
+              "normal_max": 90,
+              "abnormal_min": 15,
+              "abnormal_max": 39
+            },
+            {
+              "code": "13457-7",
+              "description": "LDL Cholesterol",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 50,
+              "normal_max": 100,
+              "abnormal_min": 101,
+              "abnormal_max": 220
+            }
+          ]
+        },
+        {
+          "order_code": "88294-4",
+          "order_description": "Glomerular filtration rate panel",
+          "specimen": "Blood",
+          "weight": 0.086957,
+          "abnormal_pct": 0.35,
+          "result_items": [
+            {
+              "code": "88294-4",
+              "description": "Glomerular filtration rate/1.73 sq M.predicted [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (CKD-EPI 2021)",
+              "units": "mL/min/1.73m2",
+              "is_numeric": true,
+              "normal_min": 60,
+              "normal_max": 135,
+              "abnormal_min": 0,
+              "abnormal_max": 59
+            }
+          ]
+        },
+        {
+          "order_code": "59574-4",
+          "order_description": "Ankle-Brachial Index",
+          "specimen": "Vascular",
+          "weight": 0.130435,
+          "abnormal_pct": 0.25,
+          "result_items": [
+            {
+              "code": "59574-4",
+              "description": "Ankle-Brachial Index",
+              "units": "ratio",
+              "is_numeric": true,
+              "normal_min": 0.9,
+              "normal_max": 1.3,
+              "abnormal_min": 0.4,
+              "abnormal_max": 0.89,
+              "abnormal_flag": "L"
+            }
+          ]
+        }
+      ],
+      "observations": [
+        {
+          "code": "8480-6",
+          "description": "Systolic blood pressure",
+          "units": "mmHg",
+          "normal_min": 90,
+          "normal_max": 119,
+          "abnormal_min": 130,
+          "abnormal_max": 175,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.45,
+          "weight": 0.285714
+        },
+        {
+          "code": "8462-4",
+          "description": "Diastolic blood pressure",
+          "units": "mmHg",
+          "normal_min": 60,
+          "normal_max": 79,
+          "abnormal_min": 80,
+          "abnormal_max": 110,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.35,
+          "weight": 0.285714
+        },
+        {
+          "code": "8302-2",
+          "description": "Body height",
+          "units": "cm",
+          "normal_min": 150,
+          "normal_max": 190,
+          "abnormal_min": 140,
+          "abnormal_max": 200,
+          "abnormal_flag": "N",
+          "abnormal_pct": 0.1,
+          "weight": 0.142857
+        },
+        {
+          "code": "29463-7",
+          "description": "Body weight",
+          "units": "kg",
+          "normal_min": 50,
+          "normal_max": 100,
+          "abnormal_min": 101,
+          "abnormal_max": 150,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.4,
+          "weight": 0.285714
+        }
+      ],
+      "encounter_pattern": {
+        "encounters_per_year": 4.0,
+        "encounter_type_weights": {
+          "O": 0.9,
+          "E": 0.05,
+          "I": 0.05
+        },
+        "lab_encounter_rate": 0.75,
+        "rad_encounter_rate": 0.15
+      },
+      "procedures": [
+        {
+          "code": "99213",
+          "description": "Office or other outpatient visit, moderate complexity",
+          "encounter_type": "O",
+          "weight": 0.37594
+        },
+        {
+          "code": "83036",
+          "description": "Hemoglobin A1c",
+          "encounter_type": "O",
+          "weight": 0.225564
+        },
+        {
+          "code": "93000",
+          "description": "Electrocardiogram, routine ECG with at least 12 leads; with interpretation and report",
+          "encounter_type": "O",
+          "weight": 0.150376
+        },
+        {
+          "code": "27880",
+          "description": "Amputation, leg, below knee",
+          "encounter_type": "I",
+          "weight": 0.06015
+        },
+        {
+          "code": "97597",
+          "description": "Debridement, open wound; first 20 sq cm",
+          "encounter_type": "O",
+          "weight": 0.112782
+        },
+        {
+          "code": "97605",
+          "description": "Negative pressure wound therapy",
+          "encounter_type": "O",
+          "weight": 0.075188
+        }
+      ]
+    },
+    {
+      "id": "behavioral_health",
+      "name": "Behavioral Health",
+      "weight": 0.15,
+      "min_age": 18,
+      "max_age": 85,
+      "sex_bias": null,
+      "description": "Patients with behavioral health conditions, including depression and anxiety",
+      "diagnoses": [
+        {
+          "code": "F32.9",
+          "description": "Major depressive disorder, single episode, unspecified",
+          "is_primary": true,
+          "onset_age_min": 18,
+          "onset_age_max": 85
+        },
+        {
+          "code": "F41.1",
+          "description": "Generalized anxiety disorder",
+          "is_primary": false,
+          "onset_age_min": 18,
+          "onset_age_max": 85
+        },
+        {
+          "code": "F33.0",
+          "description": "Major depressive disorder, recurrent, mild",
+          "is_primary": false,
+          "onset_age_min": 18,
+          "onset_age_max": 85
+        }
+      ],
+      "comorbidities": [
+        {
+          "code": "I10",
+          "description": "Essential hypertension",
+          "prevalence_pct": 0.35
+        },
+        {
+          "code": "E11.9",
+          "description": "Type 2 diabetes mellitus without complications",
+          "prevalence_pct": 0.25
+        },
+        {
+          "code": "E66.9",
+          "description": "Obesity, unspecified",
+          "prevalence_pct": 0.3
+        },
+        {
+          "code": "F10.10",
+          "description": "Alcohol use disorder, mild",
+          "prevalence_pct": 0.15
+        }
+      ],
+      "medications": [
+        {
+          "drug_code": "36437",
+          "drug_description": "Sertraline 50 MG Oral Tablet",
+          "dose_quantity": "50",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "",
+          "weight": 0.3
+        },
+        {
+          "drug_code": "596926",
+          "drug_description": "Escitalopram 10 MG Oral Tablet",
+          "dose_quantity": "10",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "",
+          "weight": 0.25
+        },
+        {
+          "drug_code": "42347",
+          "drug_description": "Bupropion Hydrochloride 150 MG Oral Tablet",
+          "dose_quantity": "150",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "F32.9",
+          "weight": 0.25
+        },
+        {
+          "drug_code": "308047",
+          "drug_description": "Alprazolam 0.5 MG Oral Tablet",
+          "dose_quantity": "0.5",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "BID",
+          "frequency_description": "Twice daily as needed",
+          "status": "active",
+          "for_diagnosis_code": "F41.1",
+          "weight": 0.2
+        }
+      ],
+      "labs": [
+        {
+          "order_code": "3016-3",
+          "order_description": "TSH (Thyroid stimulating hormone) panel",
+          "specimen": "Blood",
+          "abnormal_pct": 0.2,
+          "weight": 0.35,
+          "result_items": [
+            {
+              "code": "3016-3",
+              "description": "Thyrotropin [Units/volume] in Serum or Plasma",
+              "is_numeric": true,
+              "units": "mIU/L",
+              "normal_min": 0.5,
+              "normal_max": 4.5,
+              "abnormal_min": 4.6,
+              "abnormal_max": 20.0
+            }
+          ]
+        },
+        {
+          "order_code": "58410-2",
+          "order_description": "CBC panel - Blood by Automated count",
+          "specimen": "Blood",
+          "abnormal_pct": 0.15,
+          "weight": 0.35,
+          "result_items": [
+            {
+              "code": "6690-2",
+              "description": "WBC",
+              "units": "K/uL",
+              "is_numeric": true,
+              "normal_min": 4.5,
+              "normal_max": 11.0,
+              "abnormal_min": 0.5,
+              "abnormal_max": 18.0
+            },
+            {
+              "code": "789-8",
+              "description": "RBC",
+              "units": "M/uL",
+              "is_numeric": true,
+              "normal_min": 3.9,
+              "normal_max": 5.9,
+              "abnormal_min": 2.0,
+              "abnormal_max": 7.0
+            },
+            {
+              "code": "718-7",
+              "description": "Hemoglobin",
+              "units": "g/dL",
+              "is_numeric": true,
+              "normal_min": 11.5,
+              "normal_max": 17.5,
+              "abnormal_min": 6.0,
+              "abnormal_max": 20.0
+            },
+            {
+              "code": "4544-3",
+              "description": "Hematocrit",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 35,
+              "normal_max": 52,
+              "abnormal_min": 20,
+              "abnormal_max": 60
+            },
+            {
+              "code": "777-3",
+              "description": "Platelets",
+              "units": "K/uL",
+              "is_numeric": true,
+              "normal_min": 150,
+              "normal_max": 400,
+              "abnormal_min": 50,
+              "abnormal_max": 600
+            },
+            {
+              "code": "731-0",
+              "description": "Lymphocytes",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 20,
+              "normal_max": 45,
+              "abnormal_min": 5,
+              "abnormal_max": 80
+            },
+            {
+              "code": "752-6",
+              "description": "Neutrophils",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 40,
+              "normal_max": 75,
+              "abnormal_min": 5,
+              "abnormal_max": 95
+            }
+          ]
+        },
+        {
+          "order_code": "24323-8",
+          "order_description": "Comprehensive metabolic panel",
+          "specimen": "Blood",
+          "abnormal_pct": 0.2,
+          "weight": 0.3,
+          "result_items": [
+            {
+              "code": "2951-2",
+              "description": "Sodium",
+              "units": "mEq/L",
+              "is_numeric": true,
+              "normal_min": 136,
+              "normal_max": 145,
+              "abnormal_min": 129,
+              "abnormal_max": 152
+            },
+            {
+              "code": "2823-3",
+              "description": "Potassium",
+              "units": "mEq/L",
+              "is_numeric": true,
+              "normal_min": 3.5,
+              "normal_max": 5.0,
+              "abnormal_min": 2.8,
+              "abnormal_max": 6.2
+            },
+            {
+              "code": "2075-0",
+              "description": "Chloride",
+              "units": "mEq/L",
+              "is_numeric": true,
+              "normal_min": 98,
+              "normal_max": 107,
+              "abnormal_min": 90,
+              "abnormal_max": 115
+            },
+            {
+              "code": "2028-9",
+              "description": "CO2 (Bicarbonate)",
+              "units": "mEq/L",
+              "is_numeric": true,
+              "normal_min": 22,
+              "normal_max": 29,
+              "abnormal_min": 16,
+              "abnormal_max": 34
+            },
+            {
+              "code": "2339-0",
+              "description": "Glucose",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 70,
+              "normal_max": 99,
+              "abnormal_min": 50,
+              "abnormal_max": 450
+            },
+            {
+              "code": "3094-0",
+              "description": "BUN",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 6,
+              "normal_max": 20,
+              "abnormal_min": 2,
+              "abnormal_max": 50
+            },
+            {
+              "code": "2160-0",
+              "description": "Creatinine",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 0.6,
+              "normal_max": 1.2,
+              "abnormal_min": 0.4,
+              "abnormal_max": 3.5
+            },
+            {
+              "code": "17861-6",
+              "description": "Calcium",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 8.5,
+              "normal_max": 10.5,
+              "abnormal_min": 7.0,
+              "abnormal_max": 12.0
+            },
+            {
+              "code": "2885-2",
+              "description": "Total Protein",
+              "units": "g/dL",
+              "is_numeric": true,
+              "normal_min": 6.3,
+              "normal_max": 8.2,
+              "abnormal_min": 4.5,
+              "abnormal_max": 10.0
+            },
+            {
+              "code": "1751-7",
+              "description": "Albumin",
+              "units": "g/dL",
+              "is_numeric": true,
+              "normal_min": 3.5,
+              "normal_max": 5.0,
+              "abnormal_min": 2.0,
+              "abnormal_max": 6.0
+            },
+            {
+              "code": "1742-6",
+              "description": "ALT",
+              "units": "U/L",
+              "is_numeric": true,
+              "normal_min": 7,
+              "normal_max": 56,
+              "abnormal_min": 57,
+              "abnormal_max": 200
+            },
+            {
+              "code": "1920-8",
+              "description": "AST",
+              "units": "U/L",
+              "is_numeric": true,
+              "normal_min": 10,
+              "normal_max": 40,
+              "abnormal_min": 41,
+              "abnormal_max": 200
+            },
+            {
+              "code": "6768-6",
+              "description": "Alkaline Phosphatase",
+              "units": "U/L",
+              "is_numeric": true,
+              "normal_min": 44,
+              "normal_max": 147,
+              "abnormal_min": 148,
+              "abnormal_max": 350
+            },
+            {
+              "code": "1975-2",
+              "description": "Total Bilirubin",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 0.1,
+              "normal_max": 1.2,
+              "abnormal_min": 1.3,
+              "abnormal_max": 5.0
+            }
+          ]
+        }
+      ],
+      "observations": [
+        {
+          "code": "8480-6",
+          "description": "Systolic blood pressure",
+          "units": "mmHg",
+          "normal_min": 90,
+          "normal_max": 119,
+          "abnormal_min": 130,
+          "abnormal_max": 175,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.35,
+          "weight": 0.3
+        },
+        {
+          "code": "8462-4",
+          "description": "Diastolic blood pressure",
+          "units": "mmHg",
+          "normal_min": 60,
+          "normal_max": 79,
+          "abnormal_min": 80,
+          "abnormal_max": 110,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.3,
+          "weight": 0.25
+        },
+        {
+          "code": "8310-5",
+          "description": "Body temperature",
+          "units": "\u00b0F",
+          "normal_min": 97.0,
+          "normal_max": 99.0,
+          "abnormal_min": 100.0,
+          "abnormal_max": 104.0,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.05,
+          "weight": 0.2
+        },
+        {
+          "code": "8867-4",
+          "description": "Heart rate",
+          "units": "bpm",
+          "normal_min": 60,
+          "normal_max": 100,
+          "abnormal_min": 101,
+          "abnormal_max": 140,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.2,
+          "weight": 0.25
+        }
+      ],
+      "encounter_pattern": {
+        "encounters_per_year": 4.0,
+        "encounter_type_weights": {
+          "O": 0.9,
+          "E": 0.07,
+          "I": 0.03
+        },
+        "lab_encounter_rate": 0.5,
+        "rad_encounter_rate": 0.1
+      },
+      "procedures": [
+        {
+          "code": "90837",
+          "description": "Psychotherapy, 60 minutes with patient",
+          "encounter_type": "O",
+          "weight": 0.5
+        },
+        {
+          "code": "90834",
+          "description": "Psychotherapy, 45 minutes with patient",
+          "encounter_type": "O",
+          "weight": 0.3
+        },
+        {
+          "code": "90791",
+          "description": "Psychiatric diagnostic evaluation",
+          "encounter_type": "O",
+          "weight": 0.2
+        }
+      ]
+    },
+    {
+      "id": "oud",
+      "name": "Opioid Use Disorder",
+      "weight": 0.03,
+      "min_age": 18,
+      "max_age": 85,
+      "sex_bias": null,
+      "description": "Patients with opioid use disorder",
+      "diagnoses": [
+        {
+          "code": "F11.20",
+          "description": "Opioid use disorder, uncomplicated",
+          "is_primary": true,
+          "onset_age_min": 18,
+          "onset_age_max": 65
+        },
+        {
+          "code": "F11.10",
+          "description": "Opioid abuse, uncomplicated",
+          "is_primary": false,
+          "onset_age_min": 18,
+          "onset_age_max": 60
+        },
+        {
+          "code": "T40.4X1A",
+          "description": "Poisoning by other synthetic narcotics, accidental (unintentional), initial encounter",
+          "is_primary": false,
+          "onset_age_min": 18,
+          "onset_age_max": 70
+        }
+      ],
+      "comorbidities": [
+        {
+          "code": "F32.9",
+          "description": "Major depressive disorder, single episode, unspecified",
+          "prevalence_pct": 0.45
+        },
+        {
+          "code": "F41.1",
+          "description": "Generalized anxiety disorder",
+          "prevalence_pct": 0.35
+        },
+        {
+          "code": "B20",
+          "description": "Human immunodeficiency virus [HIV] disease",
+          "prevalence_pct": 0.08
+        },
+        {
+          "code": "K70.30",
+          "description": "Alcoholic cirrhosis of liver without ascites",
+          "prevalence_pct": 0.1
+        }
+      ],
+      "medications": [
+        {
+          "drug_code": "351264",
+          "drug_description": "Buprenorphine 8 MG / Naloxone 2 MG Sublingual Film",
+          "dose_quantity": "8",
+          "dose_uom": "mg",
+          "dosage_form_code": "FILM",
+          "dosage_form_description": "Sublingual Film",
+          "route_code": "SL",
+          "route_description": "Sublingual",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "",
+          "weight": 0.35
+        },
+        {
+          "drug_code": "864706",
+          "drug_description": "Methadone Hydrochloride 40 MG Oral Tablet",
+          "dose_quantity": "40",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "",
+          "weight": 0.25
+        },
+        {
+          "drug_code": "1860487",
+          "drug_description": "Naltrexone 50 MG Oral Tablet",
+          "dose_quantity": "50",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "",
+          "weight": 0.15
+        },
+        {
+          "drug_code": "1659929",
+          "drug_description": "Naloxone 4 MG/ACTUAT Nasal Spray",
+          "dose_quantity": "4",
+          "dose_uom": "mg",
+          "dosage_form_code": "SPRAY",
+          "dosage_form_description": "Nasal Spray",
+          "route_code": "NASAL",
+          "route_description": "Nasal",
+          "frequency_code": "PRN",
+          "frequency_description": "As needed",
+          "status": "active",
+          "for_diagnosis_code": "",
+          "weight": 0.25
+        }
+      ],
+      "labs": [
+        {
+          "order_code": "3426-4",
+          "order_description": "Urine drug screen",
+          "specimen": "Urine",
+          "abnormal_pct": 0.7,
+          "weight": 0.5,
+          "result_items": [
+            {
+              "code": "3426-4",
+              "description": "Drugs of abuse screen panel",
+              "units": "",
+              "is_numeric": false,
+              "normal_min": null,
+              "normal_max": null,
+              "abnormal_min": null,
+              "abnormal_max": null,
+              "abnormal_flag": "A",
+              "text_values": [
+                "Positive",
+                "Negative"
+              ]
+            }
+          ]
+        },
+        {
+          "order_code": "1742-6",
+          "order_description": "Liver function tests (ALT/AST/Bilirubin)",
+          "specimen": "Blood",
+          "abnormal_pct": 0.35,
+          "weight": 0.15,
+          "result_items": [
+            {
+              "code": "1742-6",
+              "description": "ALT",
+              "units": "U/L",
+              "is_numeric": true,
+              "normal_min": 7,
+              "normal_max": 56,
+              "abnormal_min": 57,
+              "abnormal_max": 300,
+              "abnormal_flag": "H",
+              "text_values": []
+            },
+            {
+              "code": "1920-8",
+              "description": "AST",
+              "units": "U/L",
+              "is_numeric": true,
+              "normal_min": 10,
+              "normal_max": 40,
+              "abnormal_min": 41,
+              "abnormal_max": 300,
+              "abnormal_flag": "H",
+              "text_values": []
+            },
+            {
+              "code": "1975-2",
+              "description": "Total Bilirubin",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 0.1,
+              "normal_max": 1.2,
+              "abnormal_min": 1.3,
+              "abnormal_max": 8.0,
+              "abnormal_flag": "H",
+              "text_values": []
+            }
+          ]
+        },
+        {
+          "order_code": "16128-1",
+          "order_description": "Hepatitis C virus antibody screen",
+          "specimen": "Blood",
+          "abnormal_pct": 0.25,
+          "weight": 0.2,
+          "result_items": [
+            {
+              "code": "16128-1",
+              "description": "Hepatitis C virus Ab [Presence] in Serum",
+              "is_numeric": false,
+              "units": "",
+              "normal_min": 0,
+              "normal_max": 0,
+              "abnormal_min": 0,
+              "abnormal_max": 0,
+              "text_values": [
+                "Non-reactive",
+                "Reactive"
+              ]
+            }
+          ]
+        },
+        {
+          "order_code": "58410-2",
+          "order_description": "CBC panel - Blood by Automated count",
+          "specimen": "Blood",
+          "abnormal_pct": 0.2,
+          "weight": 0.15,
+          "result_items": [
+            {
+              "code": "6690-2",
+              "description": "WBC",
+              "units": "K/uL",
+              "is_numeric": true,
+              "normal_min": 4.5,
+              "normal_max": 11.0,
+              "abnormal_min": 0.5,
+              "abnormal_max": 18.0
+            },
+            {
+              "code": "789-8",
+              "description": "RBC",
+              "units": "M/uL",
+              "is_numeric": true,
+              "normal_min": 3.9,
+              "normal_max": 5.9,
+              "abnormal_min": 2.0,
+              "abnormal_max": 7.0
+            },
+            {
+              "code": "718-7",
+              "description": "Hemoglobin",
+              "units": "g/dL",
+              "is_numeric": true,
+              "normal_min": 11.5,
+              "normal_max": 17.5,
+              "abnormal_min": 6.0,
+              "abnormal_max": 20.0
+            },
+            {
+              "code": "4544-3",
+              "description": "Hematocrit",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 35,
+              "normal_max": 52,
+              "abnormal_min": 20,
+              "abnormal_max": 60
+            },
+            {
+              "code": "777-3",
+              "description": "Platelets",
+              "units": "K/uL",
+              "is_numeric": true,
+              "normal_min": 150,
+              "normal_max": 400,
+              "abnormal_min": 50,
+              "abnormal_max": 600
+            },
+            {
+              "code": "731-0",
+              "description": "Lymphocytes",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 20,
+              "normal_max": 45,
+              "abnormal_min": 5,
+              "abnormal_max": 80
+            },
+            {
+              "code": "752-6",
+              "description": "Neutrophils",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 40,
+              "normal_max": 75,
+              "abnormal_min": 5,
+              "abnormal_max": 95
+            }
+          ]
+        }
+      ],
+      "observations": [
+        {
+          "code": "8867-4",
+          "description": "Heart rate",
+          "units": "bpm",
+          "normal_min": 60,
+          "normal_max": 100,
+          "abnormal_min": 101,
+          "abnormal_max": 140,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.25,
+          "weight": 0.5
+        },
+        {
+          "code": "9279-1",
+          "description": "Respiratory rate",
+          "units": "/min",
+          "normal_min": 12,
+          "normal_max": 20,
+          "abnormal_min": 6,
+          "abnormal_max": 11,
+          "abnormal_flag": "L",
+          "abnormal_pct": 0.15,
+          "weight": 0.5
+        }
+      ],
+      "encounter_pattern": {
+        "encounters_per_year": 6.0,
+        "encounter_type_weights": {
+          "O": 0.6,
+          "E": 0.3,
+          "I": 0.1
+        },
+        "lab_encounter_rate": 0.7,
+        "rad_encounter_rate": 0.05
+      },
+      "procedures": [
+        {
+          "code": "99213",
+          "description": "Office or other outpatient visit, moderate complexity",
+          "encounter_type": "O",
+          "weight": 0.45
+        },
+        {
+          "code": "H0020",
+          "description": "Alcohol and/or drug services; methadone administration and/or service",
+          "encounter_type": "O",
+          "weight": 0.3
+        },
+        {
+          "code": "G2067",
+          "description": "Medication assisted treatment, buprenorphine (oral); weekly bundle",
+          "encounter_type": "O",
+          "weight": 0.25
+        }
+      ]
+    },
+    {
+      "id": "sdoh_risk",
+      "name": "Significant SDOH Risk",
+      "weight": 0.25,
+      "min_age": 18,
+      "max_age": 85,
+      "sex_bias": null,
+      "description": "Patients with significant social determinants of health risk factors",
+      "diagnoses": [
+        {
+          "code": "E11.9",
+          "description": "Type 2 diabetes mellitus without complications",
+          "is_primary": true,
+          "onset_age_min": 30,
+          "onset_age_max": 85,
+          "only_encounter_types": []
+        },
+        {
+          "code": "F32.9",
+          "description": "Major depressive disorder, single episode, unspecified",
+          "is_primary": false,
+          "onset_age_min": 18,
+          "onset_age_max": 85,
+          "only_encounter_types": []
+        }
+      ],
+      "comorbidities": [
+        {
+          "code": "I10",
+          "description": "Essential hypertension",
+          "prevalence_pct": 0.45
+        },
+        {
+          "code": "F32.9",
+          "description": "Major depressive disorder",
+          "prevalence_pct": 0.35
+        }
+      ],
+      "medications": [
+        {
+          "drug_code": "860975",
+          "drug_description": "Metformin 500 MG Oral Tablet",
+          "dose_quantity": "500",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "BID",
+          "frequency_description": "Twice daily",
+          "status": "active",
+          "for_diagnosis_code": "E11.9",
+          "weight": 0.3
+        },
+        {
+          "drug_code": "314076",
+          "drug_description": "Lisinopril 10 MG Oral Tablet",
+          "dose_quantity": "10",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "",
+          "weight": 0.25
+        },
+        {
+          "drug_code": "310429",
+          "drug_description": "Amlodipine 5 MG Oral Tablet",
+          "dose_quantity": "5",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "",
+          "weight": 0.2
+        },
+        {
+          "drug_code": "197361",
+          "drug_description": "Sertraline 50 MG Oral Tablet",
+          "dose_quantity": "50",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "F32.9",
+          "weight": 0.15
+        },
+        {
+          "drug_code": "1049630",
+          "drug_description": "Insulin Glargine 100 unit/mL Injectable Solution",
+          "dose_quantity": "10",
+          "dose_uom": "units",
+          "dosage_form_code": "INJ",
+          "dosage_form_description": "Injection",
+          "route_code": "SQ",
+          "route_description": "Subcutaneous",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "E11.9",
+          "weight": 0.1
+        }
+      ],
+      "labs": [
+        {
+          "order_code": "58410-2",
+          "order_description": "CBC panel - Blood by Automated count",
+          "specimen": "Blood",
+          "abnormal_pct": 0.2,
+          "weight": 0.3,
+          "result_items": [
+            {
+              "code": "6690-2",
+              "description": "WBC",
+              "units": "K/uL",
+              "is_numeric": true,
+              "normal_min": 4.5,
+              "normal_max": 11.0,
+              "abnormal_min": 0.5,
+              "abnormal_max": 18.0
+            },
+            {
+              "code": "789-8",
+              "description": "RBC",
+              "units": "M/uL",
+              "is_numeric": true,
+              "normal_min": 3.9,
+              "normal_max": 5.9,
+              "abnormal_min": 2.0,
+              "abnormal_max": 7.0
+            },
+            {
+              "code": "718-7",
+              "description": "Hemoglobin",
+              "units": "g/dL",
+              "is_numeric": true,
+              "normal_min": 11.5,
+              "normal_max": 17.5,
+              "abnormal_min": 6.0,
+              "abnormal_max": 20.0
+            },
+            {
+              "code": "4544-3",
+              "description": "Hematocrit",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 35,
+              "normal_max": 52,
+              "abnormal_min": 20,
+              "abnormal_max": 60
+            },
+            {
+              "code": "777-3",
+              "description": "Platelets",
+              "units": "K/uL",
+              "is_numeric": true,
+              "normal_min": 150,
+              "normal_max": 400,
+              "abnormal_min": 50,
+              "abnormal_max": 600
+            },
+            {
+              "code": "731-0",
+              "description": "Lymphocytes",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 20,
+              "normal_max": 45,
+              "abnormal_min": 5,
+              "abnormal_max": 80
+            },
+            {
+              "code": "752-6",
+              "description": "Neutrophils",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 40,
+              "normal_max": 75,
+              "abnormal_min": 5,
+              "abnormal_max": 95
+            }
+          ]
+        },
+        {
+          "order_code": "24323-8",
+          "order_description": "Comprehensive metabolic panel",
+          "specimen": "Blood",
+          "abnormal_pct": 0.25,
+          "weight": 0.3,
+          "result_items": [
+            {
+              "code": "2951-2",
+              "description": "Sodium",
+              "units": "mEq/L",
+              "is_numeric": true,
+              "normal_min": 136,
+              "normal_max": 145,
+              "abnormal_min": 129,
+              "abnormal_max": 152
+            },
+            {
+              "code": "2823-3",
+              "description": "Potassium",
+              "units": "mEq/L",
+              "is_numeric": true,
+              "normal_min": 3.5,
+              "normal_max": 5.0,
+              "abnormal_min": 2.8,
+              "abnormal_max": 6.2
+            },
+            {
+              "code": "2075-0",
+              "description": "Chloride",
+              "units": "mEq/L",
+              "is_numeric": true,
+              "normal_min": 98,
+              "normal_max": 107,
+              "abnormal_min": 90,
+              "abnormal_max": 115
+            },
+            {
+              "code": "2028-9",
+              "description": "CO2 (Bicarbonate)",
+              "units": "mEq/L",
+              "is_numeric": true,
+              "normal_min": 22,
+              "normal_max": 29,
+              "abnormal_min": 16,
+              "abnormal_max": 34
+            },
+            {
+              "code": "2339-0",
+              "description": "Glucose",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 70,
+              "normal_max": 99,
+              "abnormal_min": 50,
+              "abnormal_max": 450
+            },
+            {
+              "code": "3094-0",
+              "description": "BUN",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 6,
+              "normal_max": 20,
+              "abnormal_min": 2,
+              "abnormal_max": 50
+            },
+            {
+              "code": "2160-0",
+              "description": "Creatinine",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 0.6,
+              "normal_max": 1.2,
+              "abnormal_min": 0.4,
+              "abnormal_max": 3.5
+            },
+            {
+              "code": "17861-6",
+              "description": "Calcium",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 8.5,
+              "normal_max": 10.5,
+              "abnormal_min": 7.0,
+              "abnormal_max": 12.0
+            },
+            {
+              "code": "2885-2",
+              "description": "Total Protein",
+              "units": "g/dL",
+              "is_numeric": true,
+              "normal_min": 6.3,
+              "normal_max": 8.2,
+              "abnormal_min": 4.5,
+              "abnormal_max": 10.0
+            },
+            {
+              "code": "1751-7",
+              "description": "Albumin",
+              "units": "g/dL",
+              "is_numeric": true,
+              "normal_min": 3.5,
+              "normal_max": 5.0,
+              "abnormal_min": 2.0,
+              "abnormal_max": 6.0
+            },
+            {
+              "code": "1742-6",
+              "description": "ALT",
+              "units": "U/L",
+              "is_numeric": true,
+              "normal_min": 7,
+              "normal_max": 56,
+              "abnormal_min": 57,
+              "abnormal_max": 200
+            },
+            {
+              "code": "1920-8",
+              "description": "AST",
+              "units": "U/L",
+              "is_numeric": true,
+              "normal_min": 10,
+              "normal_max": 40,
+              "abnormal_min": 41,
+              "abnormal_max": 200
+            },
+            {
+              "code": "6768-6",
+              "description": "Alkaline Phosphatase",
+              "units": "U/L",
+              "is_numeric": true,
+              "normal_min": 44,
+              "normal_max": 147,
+              "abnormal_min": 148,
+              "abnormal_max": 350
+            },
+            {
+              "code": "1975-2",
+              "description": "Total Bilirubin",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 0.1,
+              "normal_max": 1.2,
+              "abnormal_min": 1.3,
+              "abnormal_max": 5.0
+            }
+          ]
+        },
+        {
+          "order_code": "4548-4",
+          "order_description": "Hemoglobin A1c panel",
+          "specimen": "Blood",
+          "abnormal_pct": 0.55,
+          "weight": 0.4,
+          "result_items": [
+            {
+              "code": "4548-4",
+              "description": "Hemoglobin A1c/Hemoglobin.total in Blood",
+              "is_numeric": true,
+              "units": "%",
+              "normal_range_text": "<5.7",
+              "normal_min": 4.5,
+              "normal_max": 5.6,
+              "abnormal_min": 6.5,
+              "abnormal_max": 12.0,
+              "abnormal_flag": "H",
+              "text_values": []
+            }
+          ]
+        }
+      ],
+      "observations": [
+        {
+          "code": "8480-6",
+          "description": "Systolic blood pressure",
+          "units": "mmHg",
+          "normal_min": 90,
+          "normal_max": 119,
+          "abnormal_min": 130,
+          "abnormal_max": 175,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.45,
+          "weight": 0.285714
+        },
+        {
+          "code": "8462-4",
+          "description": "Diastolic blood pressure",
+          "units": "mmHg",
+          "normal_min": 60,
+          "normal_max": 79,
+          "abnormal_min": 80,
+          "abnormal_max": 110,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.35,
+          "weight": 0.285714
+        },
+        {
+          "code": "29463-7",
+          "description": "Body weight",
+          "units": "kg",
+          "normal_min": 50,
+          "normal_max": 100,
+          "abnormal_min": 101,
+          "abnormal_max": 200,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.3,
+          "weight": 0.285714
+        },
+        {
+          "code": "8302-2",
+          "description": "Body height",
+          "units": "cm",
+          "normal_min": 150,
+          "normal_max": 190,
+          "abnormal_min": 191,
+          "abnormal_max": 250,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.1,
+          "weight": 0.142857
+        }
+      ],
+      "procedures": [
+        {
+          "code": "99213",
+          "description": "Office or other outpatient visit, moderate complexity",
+          "encounter_type": "O",
+          "weight": 0.625
+        },
+        {
+          "code": "93000",
+          "description": "Electrocardiogram, routine ECG with at least 12 leads; with interpretation and report",
+          "encounter_type": "O",
+          "weight": 0.375
+        }
+      ],
+      "illness_history_templates": [
+        {
+          "condition": "Type 2 diabetes mellitus, diagnosed at age 45",
+          "onset_at_age_min": 40,
+          "onset_at_age_max": 55,
+          "is_resolved": false,
+          "weight": 0.555556
+        },
+        {
+          "condition": "Major depressive disorder, diagnosed at age 30",
+          "onset_at_age_min": 25,
+          "onset_at_age_max": 35,
+          "is_resolved": false,
+          "weight": 0.444444
+        }
+      ],
+      "social_history_templates": [
+        {
+          "habit_code": "NS",
+          "habit_description": "Non Smoker",
+          "comments": [
+            "Patient has never smoked.",
+            "Former smoker, quit 10 years ago."
+          ],
+          "weight": 0.6
+        },
+        {
+          "habit_code": "ETOH",
+          "habit_description": "Alcohol use",
+          "comments": [
+            "Social drinker, 1-2 drinks per week.",
+            "Occasional alcohol use, no history of abuse."
+          ],
+          "weight": 0.4
+        }
+      ],
+      "family_history_templates": [
+        {
+          "condition": "Type 2 diabetes mellitus",
+          "relationship": "Mother",
+          "weight": 0.5
+        },
+        {
+          "condition": "Hypertension",
+          "relationship": "Father",
+          "weight": 0.5
+        }
+      ],
+      "document_templates": [
+        {
+          "type_code": "PN",
+          "type_description": "Progress Note",
+          "encounter_type": "O",
+          "chief_complaints": [
+            "Follow-up for diabetes management",
+            "Routine monitoring of type 2 diabetes",
+            "Diabetes follow-up with medication review"
+          ],
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine follow-up of {diagnosis}. Patient reports {compliance_statement}. Denies chest pain, shortness of breath, or dizziness.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n\nFOLLOW-UP: Return in 3 months."
+        }
+      ],
+      "rad_order_templates": [
+        {
+          "order_code": "CXR-PA-LAT",
+          "order_description": "Chest X-Ray PA and Lateral",
+          "reason_description": "Evaluate for cardiac enlargement and pulmonary edema",
+          "result_texts": [
+            "No acute cardiopulmonary process. Mild cardiomegaly noted.",
+            "Lungs are clear. No pleural effusion. Heart size upper limits of normal."
+          ],
+          "weight": 1.0
+        }
+      ],
+      "encounter_pattern": {
+        "encounters_per_year": 5.0,
+        "encounter_type_weights": {
+          "O": 0.75,
+          "E": 0.18,
+          "I": 0.07
+        },
+        "lab_encounter_rate": 0.75,
+        "rad_encounter_rate": 0.15
+      }
+    },
+    {
+      "id": "ckd",
+      "name": "Chronic Kidney Disease Stages 3-5",
+      "weight": 0.01,
+      "min_age": 18,
+      "max_age": 85,
+      "sex_bias": null,
+      "description": "Patients with chronic kidney disease stages 3-5",
+      "diagnoses": [
+        {
+          "code": "N18.3",
+          "description": "Chronic kidney disease, stage 3 (moderate)",
+          "is_primary": true,
+          "onset_age_min": 40,
+          "onset_age_max": 85
+        }
+      ],
+      "comorbidities": [
+        {
+          "code": "E11.9",
+          "description": "Type 2 diabetes mellitus without complications",
+          "prevalence_pct": 0.65
+        },
+        {
+          "code": "I10",
+          "description": "Essential (primary) hypertension",
+          "prevalence_pct": 0.7
+        },
+        {
+          "code": "D63.1",
+          "description": "Anemia in chronic kidney disease",
+          "prevalence_pct": 0.45
+        },
+        {
+          "code": "I50.9",
+          "description": "Heart failure, unspecified",
+          "prevalence_pct": 0.25
+        },
+        {
+          "code": "E78.5",
+          "description": "Hyperlipidemia, unspecified",
+          "prevalence_pct": 0.5
+        },
+        {
+          "code": "I25.10",
+          "description": "Atherosclerotic heart disease of native coronary artery without angina pectoris",
+          "prevalence_pct": 0.2
+        },
+        {
+          "code": "I48.91",
+          "description": "Unspecified atrial fibrillation",
+          "prevalence_pct": 0.15
+        },
+        {
+          "code": "E83.39",
+          "description": "Other disorders of phosphorus metabolism",
+          "prevalence_pct": 0.35
+        },
+        {
+          "code": "E21.1",
+          "description": "Secondary hyperparathyroidism, not elsewhere classified",
+          "prevalence_pct": 0.3
+        }
+      ],
+      "medications": [
+        {
+          "drug_code": "104375",
+          "drug_description": "Lisinopril 10 MG Oral Tablet",
+          "dose_quantity": "10",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "N18.3",
+          "weight": 0.114434
+        },
+        {
+          "drug_code": "197361",
+          "drug_description": "Amlodipine 5 MG Oral Tablet",
+          "dose_quantity": "5",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "",
+          "weight": 0.117035
+        },
+        {
+          "drug_code": "310138",
+          "drug_description": "Epoetin alfa 4000 UNT/ML Injection",
+          "dose_quantity": "4000",
+          "dose_uom": "UNT/ML",
+          "dosage_form_code": "INJ",
+          "dosage_form_description": "Injection",
+          "route_code": "SC",
+          "route_description": "Subcutaneous",
+          "frequency_code": "3XWKLY",
+          "frequency_description": "Three times weekly",
+          "status": "active",
+          "for_diagnosis_code": "",
+          "weight": 0.117035
+        },
+        {
+          "drug_code": "310430",
+          "drug_description": "Ferric gluconate 62.5 MG/5 mL Intravenous Solution",
+          "dose_quantity": "62.5",
+          "dose_uom": "mg",
+          "dosage_form_code": "SOL",
+          "dosage_form_description": "Solution",
+          "route_code": "IV",
+          "route_description": "Intravenous",
+          "frequency_code": "PRN",
+          "frequency_description": "As needed",
+          "status": "active",
+          "for_diagnosis_code": "",
+          "weight": 0.091027
+        },
+        {
+          "drug_code": "896664",
+          "drug_description": "Sevelamer carbonate 800 MG Oral Tablet",
+          "dose_quantity": "800",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "TID",
+          "frequency_description": "Three times daily with meals",
+          "status": "active",
+          "for_diagnosis_code": "",
+          "weight": 0.114434
+        },
+        {
+          "drug_code": "200483",
+          "drug_description": "Calcitriol 0.25 MCG Oral Capsule",
+          "dose_quantity": "0.25",
+          "dose_uom": "mcg",
+          "dosage_form_code": "CAP",
+          "dosage_form_description": "Capsule",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "",
+          "weight": 0.117035
+        },
+        {
+          "drug_code": "310429",
+          "drug_description": "Furosemide 40 MG Oral Tablet",
+          "dose_quantity": "40",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "",
+          "weight": 0.117035
+        },
+        {
+          "drug_code": "860975",
+          "drug_description": "Metformin 500 MG Oral Tablet",
+          "dose_quantity": "500",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "BID",
+          "frequency_description": "Twice daily",
+          "status": "active",
+          "for_diagnosis_code": "",
+          "weight": 0.097529
+        },
+        {
+          "drug_code": "617310",
+          "drug_description": "Atorvastatin 40 MG Oral Tablet",
+          "dose_quantity": "40",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "",
+          "weight": 0.114434
+        },
+        {
+          "drug_code": "1730929",
+          "drug_description": "Empagliflozin 10 MG Oral Tablet",
+          "dose_quantity": "10",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "N18.3",
+          "weight": 0.15
+        }
+      ],
+      "labs": [
+        {
+          "order_code": "33914-3",
+          "order_description": "eGFR (CKD-EPI)",
+          "specimen": "Blood",
+          "abnormal_pct": 1.0,
+          "weight": 0.431818,
+          "result_items": [
+            {
+              "code": "33914-3",
+              "description": "Glomerular filtration rate/1.73 sq M predicted",
+              "units": "mL/min/1.73m2",
+              "is_numeric": true,
+              "normal_min": 60,
+              "normal_max": 120,
+              "abnormal_min": 5,
+              "abnormal_max": 59
+            }
+          ]
+        },
+        {
+          "order_code": "51990-0",
+          "order_description": "Basic metabolic panel",
+          "specimen": "Blood",
+          "abnormal_pct": 0.65,
+          "weight": 0.181818,
+          "result_items": [
+            {
+              "code": "2951-2",
+              "description": "Sodium",
+              "units": "mEq/L",
+              "is_numeric": true,
+              "normal_min": 136,
+              "normal_max": 145,
+              "abnormal_min": 129,
+              "abnormal_max": 152
+            },
+            {
+              "code": "2823-3",
+              "description": "Potassium",
+              "units": "mEq/L",
+              "is_numeric": true,
+              "normal_min": 3.5,
+              "normal_max": 5.0,
+              "abnormal_min": 2.8,
+              "abnormal_max": 6.2
+            },
+            {
+              "code": "2075-0",
+              "description": "Chloride",
+              "units": "mEq/L",
+              "is_numeric": true,
+              "normal_min": 98,
+              "normal_max": 107,
+              "abnormal_min": 90,
+              "abnormal_max": 115
+            },
+            {
+              "code": "2028-9",
+              "description": "CO2 (Bicarbonate)",
+              "units": "mEq/L",
+              "is_numeric": true,
+              "normal_min": 22,
+              "normal_max": 29,
+              "abnormal_min": 16,
+              "abnormal_max": 34
+            },
+            {
+              "code": "2339-0",
+              "description": "Glucose",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 70,
+              "normal_max": 99,
+              "abnormal_min": 50,
+              "abnormal_max": 450
+            },
+            {
+              "code": "3094-0",
+              "description": "BUN",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 6,
+              "normal_max": 20,
+              "abnormal_min": 2,
+              "abnormal_max": 50
+            },
+            {
+              "code": "2160-0",
+              "description": "Creatinine",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 0.6,
+              "normal_max": 1.2,
+              "abnormal_min": 0.4,
+              "abnormal_max": 3.5
+            },
+            {
+              "code": "17861-6",
+              "description": "Calcium",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 8.5,
+              "normal_max": 10.5,
+              "abnormal_min": 7.0,
+              "abnormal_max": 12.0
+            }
+          ]
+        },
+        {
+          "order_code": "58410-2",
+          "order_description": "CBC panel - Blood by Automated count",
+          "specimen": "Blood",
+          "abnormal_pct": 0.55,
+          "weight": 0.318182,
+          "result_items": [
+            {
+              "code": "6690-2",
+              "description": "WBC",
+              "units": "K/uL",
+              "is_numeric": true,
+              "normal_min": 4.5,
+              "normal_max": 11.0,
+              "abnormal_min": 0.5,
+              "abnormal_max": 18.0
+            },
+            {
+              "code": "789-8",
+              "description": "RBC",
+              "units": "M/uL",
+              "is_numeric": true,
+              "normal_min": 3.9,
+              "normal_max": 5.9,
+              "abnormal_min": 2.0,
+              "abnormal_max": 7.0
+            },
+            {
+              "code": "718-7",
+              "description": "Hemoglobin",
+              "units": "g/dL",
+              "is_numeric": true,
+              "normal_min": 11.5,
+              "normal_max": 17.5,
+              "abnormal_min": 6.0,
+              "abnormal_max": 20.0
+            },
+            {
+              "code": "4544-3",
+              "description": "Hematocrit",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 35,
+              "normal_max": 52,
+              "abnormal_min": 20,
+              "abnormal_max": 60
+            },
+            {
+              "code": "777-3",
+              "description": "Platelets",
+              "units": "K/uL",
+              "is_numeric": true,
+              "normal_min": 150,
+              "normal_max": 400,
+              "abnormal_min": 50,
+              "abnormal_max": 600
+            },
+            {
+              "code": "731-0",
+              "description": "Lymphocytes",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 20,
+              "normal_max": 45,
+              "abnormal_min": 5,
+              "abnormal_max": 80
+            },
+            {
+              "code": "752-6",
+              "description": "Neutrophils",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 40,
+              "normal_max": 75,
+              "abnormal_min": 5,
+              "abnormal_max": 95
+            }
+          ]
+        },
+        {
+          "order_code": "5767-9",
+          "order_description": "Urinalysis",
+          "specimen": "Urine",
+          "abnormal_pct": 0.6,
+          "weight": 0.068182,
+          "result_items": [
+            {
+              "code": "5767-9",
+              "description": "Protein [Mass/volume] in Urine",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 0,
+              "normal_max": 20,
+              "abnormal_min": 21,
+              "abnormal_max": 500
+            }
+          ]
+        },
+        {
+          "order_code": "57698-3",
+          "order_description": "Lipid panel",
+          "specimen": "Blood",
+          "weight": 0.25,
+          "abnormal_pct": 0.55,
+          "result_items": [
+            {
+              "code": "2093-3",
+              "description": "Total Cholesterol",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 130,
+              "normal_max": 200,
+              "abnormal_min": 201,
+              "abnormal_max": 340
+            },
+            {
+              "code": "2571-8",
+              "description": "Triglycerides",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 40,
+              "normal_max": 150,
+              "abnormal_min": 151,
+              "abnormal_max": 400
+            },
+            {
+              "code": "2085-9",
+              "description": "HDL Cholesterol",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 40,
+              "normal_max": 90,
+              "abnormal_min": 15,
+              "abnormal_max": 39
+            },
+            {
+              "code": "13457-7",
+              "description": "LDL Cholesterol",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 50,
+              "normal_max": 100,
+              "abnormal_min": 101,
+              "abnormal_max": 220
+            }
+          ]
+        }
+      ],
+      "observations": [
+        {
+          "code": "8480-6",
+          "description": "Systolic blood pressure",
+          "units": "mmHg",
+          "normal_min": 90,
+          "normal_max": 129,
+          "abnormal_min": 130,
+          "abnormal_max": 190,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.55,
+          "weight": 0.35
+        },
+        {
+          "code": "8462-4",
+          "description": "Diastolic blood pressure",
+          "units": "mmHg",
+          "normal_min": 60,
+          "normal_max": 79,
+          "abnormal_min": 80,
+          "abnormal_max": 120,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.45,
+          "weight": 0.35
+        },
+        {
+          "code": "29463-7",
+          "description": "Body weight",
+          "units": "lbs",
+          "normal_min": 110,
+          "normal_max": 250,
+          "abnormal_min": 251,
+          "abnormal_max": 400,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.2,
+          "weight": 0.3
+        }
+      ],
+      "encounter_pattern": {
+        "encounters_per_year": 8.0,
+        "encounter_type_weights": {
+          "O": 0.82,
+          "E": 0.12,
+          "I": 0.06
+        },
+        "lab_encounter_rate": 0.9,
+        "rad_encounter_rate": 0.1
+      },
+      "procedures": [
+        {
+          "code": "99214",
+          "description": "Office visit moderate complexity",
+          "encounter_type": "O",
+          "weight": 0.6
+        },
+        {
+          "code": "90935",
+          "description": "Hemodialysis one evaluation",
+          "encounter_type": "O",
+          "weight": 0.2
+        },
+        {
+          "code": "36832",
+          "description": "Arteriovenous fistula revision",
+          "encounter_type": "O",
+          "weight": 0.2
+        }
+      ],
+      "ckd_progression": true,
+      "initial_egfr_min": 20,
+      "initial_egfr_max": 55,
+      "progression_trajectories": [
+        {
+          "name": "stable",
+          "rate_min": 0.0,
+          "rate_max": 0.5,
+          "weight": 0.2
+        },
+        {
+          "name": "slow",
+          "rate_min": -3.0,
+          "rate_max": -0.5,
+          "weight": 0.35
+        },
+        {
+          "name": "moderate",
+          "rate_min": -6.0,
+          "rate_max": -3.1,
+          "weight": 0.3
+        },
+        {
+          "name": "rapid",
+          "rate_min": -12.0,
+          "rate_max": -6.1,
+          "weight": 0.15
+        }
+      ]
+    },
+    {
+      "id": "sickle_cell",
+      "name": "Sickle Cell Disease",
+      "weight": 0.005,
+      "min_age": 18,
+      "max_age": 85,
+      "sex_bias": null,
+      "description": "Patients with sickle cell disease",
+      "diagnoses": [
+        {
+          "code": "D57.1",
+          "description": "Sickle-cell disease without crisis",
+          "is_primary": true,
+          "onset_age_min": 1,
+          "onset_age_max": 65
+        },
+        {
+          "code": "D57.00",
+          "description": "Hb-SS disease with unspecified type of crisis",
+          "is_primary": false,
+          "onset_age_min": 1,
+          "onset_age_max": 65
+        },
+        {
+          "code": "D57.419",
+          "description": "Sickle-cell thalassemia, unspecified, without crisis",
+          "is_primary": false,
+          "onset_age_min": 1,
+          "onset_age_max": 65
+        }
+      ],
+      "comorbidities": [
+        {
+          "code": "D64.9",
+          "description": "Anaemia, unspecified",
+          "prevalence_pct": 0.95
+        },
+        {
+          "code": "K83.09",
+          "description": "Other cholangitis",
+          "prevalence_pct": 0.25
+        },
+        {
+          "code": "N18.3",
+          "description": "Chronic kidney disease, stage 3 (moderate)",
+          "prevalence_pct": 0.2
+        },
+        {
+          "code": "I27.20",
+          "description": "Pulmonary hypertension, unspecified",
+          "prevalence_pct": 0.15
+        },
+        {
+          "code": "G93.49",
+          "description": "Other encephalopathy (stroke)",
+          "prevalence_pct": 0.1
+        }
+      ],
+      "medications": [
+        {
+          "drug_code": "310829",
+          "drug_description": "Hydroxyurea 500 MG Oral Capsule",
+          "dose_quantity": "500",
+          "dose_uom": "mg",
+          "dosage_form_code": "CAP",
+          "dosage_form_description": "Capsule",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "D57.1",
+          "weight": 0.3
+        },
+        {
+          "drug_code": "316340",
+          "drug_description": "Folic Acid 1 MG Oral Tablet",
+          "dose_quantity": "1",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "D57.1",
+          "weight": 0.25
+        },
+        {
+          "drug_code": "7980",
+          "drug_description": "Penicillin V Potassium 250 MG Oral Tablet",
+          "dose_quantity": "250",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "BID",
+          "frequency_description": "Twice daily",
+          "status": "active",
+          "for_diagnosis_code": "D57.1",
+          "weight": 0.2
+        },
+        {
+          "drug_code": "892296",
+          "drug_description": "Morphine Sulfate 4 MG/ML Injectable Solution",
+          "dose_quantity": "4",
+          "dose_uom": "mg/mL",
+          "dosage_form_code": "INJ",
+          "dosage_form_description": "Injectable Solution",
+          "route_code": "IV",
+          "route_description": "Intravenous",
+          "frequency_code": "PRN",
+          "frequency_description": "As needed for pain",
+          "status": "active",
+          "for_diagnosis_code": "D57.00",
+          "weight": 0.15
+        },
+        {
+          "drug_code": "1049502",
+          "drug_description": "Oxycodone 5 MG Oral Tablet",
+          "dose_quantity": "5",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "PRN",
+          "frequency_description": "As needed for pain",
+          "status": "active",
+          "for_diagnosis_code": "D57.00",
+          "weight": 0.1
+        }
+      ],
+      "labs": [
+        {
+          "order_code": "58410-2",
+          "order_description": "CBC panel - Blood by Automated count",
+          "specimen": "Blood",
+          "abnormal_pct": 0.9,
+          "weight": 0.3,
+          "result_items": [
+            {
+              "code": "6690-2",
+              "description": "WBC",
+              "units": "K/uL",
+              "is_numeric": true,
+              "normal_min": 4.5,
+              "normal_max": 11.0,
+              "abnormal_min": 0.5,
+              "abnormal_max": 18.0
+            },
+            {
+              "code": "789-8",
+              "description": "RBC",
+              "units": "M/uL",
+              "is_numeric": true,
+              "normal_min": 3.9,
+              "normal_max": 5.9,
+              "abnormal_min": 2.0,
+              "abnormal_max": 7.0
+            },
+            {
+              "code": "718-7",
+              "description": "Hemoglobin",
+              "units": "g/dL",
+              "is_numeric": true,
+              "normal_min": 11.5,
+              "normal_max": 17.5,
+              "abnormal_min": 6.0,
+              "abnormal_max": 20.0
+            },
+            {
+              "code": "4544-3",
+              "description": "Hematocrit",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 35,
+              "normal_max": 52,
+              "abnormal_min": 20,
+              "abnormal_max": 60
+            },
+            {
+              "code": "777-3",
+              "description": "Platelets",
+              "units": "K/uL",
+              "is_numeric": true,
+              "normal_min": 150,
+              "normal_max": 400,
+              "abnormal_min": 50,
+              "abnormal_max": 600
+            },
+            {
+              "code": "731-0",
+              "description": "Lymphocytes",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 20,
+              "normal_max": 45,
+              "abnormal_min": 5,
+              "abnormal_max": 80
+            },
+            {
+              "code": "752-6",
+              "description": "Neutrophils",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 40,
+              "normal_max": 75,
+              "abnormal_min": 5,
+              "abnormal_max": 95
+            }
+          ]
+        },
+        {
+          "order_code": "17849-1",
+          "order_description": "Reticulocyte count",
+          "specimen": "Blood",
+          "abnormal_pct": 0.85,
+          "weight": 0.25,
+          "result_items": [
+            {
+              "code": "17849-1",
+              "description": "Reticulocytes/100 erythrocytes in Blood",
+              "is_numeric": true,
+              "units": "%",
+              "normal_min": 0.5,
+              "normal_max": 1.5,
+              "abnormal_min": 2.0,
+              "abnormal_max": 10.0
+            }
+          ]
+        },
+        {
+          "order_code": "2532-0",
+          "order_description": "LDH [Enzymatic activity/volume] in Serum or Plasma",
+          "specimen": "Blood",
+          "abnormal_pct": 0.8,
+          "weight": 0.2,
+          "result_items": [
+            {
+              "code": "2532-0",
+              "description": "Lactate dehydrogenase [Enzymatic activity/volume] in Serum or Plasma",
+              "units": "U/L",
+              "is_numeric": true,
+              "normal_min": 100,
+              "normal_max": 250,
+              "abnormal_min": 251,
+              "abnormal_max": 1200,
+              "abnormal_flag": "H",
+              "text_values": []
+            }
+          ]
+        },
+        {
+          "order_code": "1975-2",
+          "order_description": "Bilirubin, Total in Serum or Plasma",
+          "specimen": "Blood",
+          "abnormal_pct": 0.75,
+          "weight": 0.15,
+          "result_items": [
+            {
+              "code": "1975-2",
+              "description": "Bilirubin.total [Mass/volume] in Serum or Plasma",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 0.1,
+              "normal_max": 1.2,
+              "abnormal_min": 1.3,
+              "abnormal_max": 8.0,
+              "abnormal_flag": "H",
+              "text_values": []
+            }
+          ]
+        },
+        {
+          "order_code": "4641-7",
+          "order_description": "Hemoglobin S [Presence] in Blood",
+          "specimen": "Blood",
+          "abnormal_pct": 0.95,
+          "weight": 0.1,
+          "result_items": [
+            {
+              "code": "4641-7",
+              "description": "Hemoglobin S [Presence] in Blood",
+              "units": null,
+              "is_numeric": false,
+              "normal_min": null,
+              "normal_max": null,
+              "abnormal_min": null,
+              "abnormal_max": null,
+              "abnormal_flag": "A",
+              "text_values": [
+                "Hemoglobin S present \u2014 consistent with sickle cell disease",
+                "Hemoglobin S detected \u2014 Hb-SS pattern on electrophoresis"
+              ]
+            }
+          ]
+        }
+      ],
+      "observations": [
+        {
+          "code": "8480-6",
+          "description": "Systolic blood pressure",
+          "units": "mmHg",
+          "normal_min": 90,
+          "normal_max": 119,
+          "abnormal_min": 130,
+          "abnormal_max": 175,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.25,
+          "weight": 0.3
+        },
+        {
+          "code": "8867-4",
+          "description": "Heart rate",
+          "units": "bpm",
+          "normal_min": 60,
+          "normal_max": 100,
+          "abnormal_min": 101,
+          "abnormal_max": 140,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.3,
+          "weight": 0.3
+        },
+        {
+          "code": "9279-1",
+          "description": "Respiratory rate",
+          "units": "breaths/min",
+          "normal_min": 12,
+          "normal_max": 20,
+          "abnormal_min": 21,
+          "abnormal_max": 30,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.2,
+          "weight": 0.2
+        },
+        {
+          "code": "2710-2",
+          "description": "Oxygen saturation in Arterial blood",
+          "units": "%",
+          "normal_min": 95,
+          "normal_max": 100,
+          "abnormal_min": 88,
+          "abnormal_max": 94,
+          "abnormal_flag": "L",
+          "abnormal_pct": 0.25,
+          "weight": 0.2
+        }
+      ],
+      "encounter_pattern": {
+        "encounters_per_year": 6.0,
+        "encounter_type_weights": {
+          "O": 0.55,
+          "E": 0.25,
+          "I": 0.2
+        },
+        "lab_encounter_rate": 0.8,
+        "rad_encounter_rate": 0.3
+      },
+      "procedures": [
+        {
+          "code": "36430",
+          "description": "Transfusion, blood or blood components",
+          "encounter_type": "I",
+          "weight": 0.4
+        },
+        {
+          "code": "86900",
+          "description": "Blood typing, ABO",
+          "encounter_type": "E",
+          "weight": 0.3
+        },
+        {
+          "code": "93303",
+          "description": "Echocardiography, transthoracic (sickle cell cardiac screening)",
+          "encounter_type": "O",
+          "weight": 0.3
+        }
+      ]
+    }
+  ],
+  "catalogs": {
+    "allergies": [
+      {
+        "allergen_code": "372687004",
+        "allergen_description": "Amoxicillin",
+        "category_code": "DA",
+        "category_description": "Drug Allergy",
+        "reaction_code": "247472004",
+        "reaction_description": "Hives",
+        "severity_code": "MO",
+        "severity_description": "Moderate",
+        "weight": 0.1
+      },
+      {
+        "allergen_code": "91936005",
+        "allergen_description": "Peanut",
+        "category_code": "FA",
+        "category_description": "Food Allergy",
+        "reaction_code": "39579001",
+        "reaction_description": "Anaphylaxis",
+        "severity_code": "SE",
+        "severity_description": "Severe",
+        "weight": 0.0875
+      },
+      {
+        "allergen_code": "232347008",
+        "allergen_description": "Pollen",
+        "category_code": "EA",
+        "category_description": "Environmental Allergy",
+        "reaction_code": "271807003",
+        "reaction_description": "Sneezing",
+        "severity_code": "MO",
+        "severity_description": "Moderate",
+        "weight": 0.075
+      },
+      {
+        "allergen_code": "7980006",
+        "allergen_description": "Penicillin",
+        "category_code": "DA",
+        "category_description": "Drug Allergy",
+        "reaction_code": "39579001",
+        "reaction_description": "Anaphylaxis",
+        "severity_code": "SE",
+        "severity_description": "Severe",
+        "weight": 0.1125
+      },
+      {
+        "allergen_code": "91930004",
+        "allergen_description": "Egg",
+        "category_code": "FA",
+        "category_description": "Food Allergy",
+        "reaction_code": "247472004",
+        "reaction_description": "Hives",
+        "severity_code": "MO",
+        "severity_description": "Moderate",
+        "weight": 0.0625
+      },
+      {
+        "allergen_code": "409137002",
+        "allergen_description": "Latex",
+        "category_code": "EA",
+        "category_description": "Environmental Allergy",
+        "reaction_code": "271807003",
+        "reaction_description": "Sneezing",
+        "severity_code": "MO",
+        "severity_description": "Moderate",
+        "weight": 0.05
+      },
+      {
+        "allergen_code": "91935009",
+        "allergen_description": "Milk",
+        "category_code": "FA",
+        "category_description": "Food Allergy",
+        "reaction_code": "39579001",
+        "reaction_description": "Anaphylaxis",
+        "severity_code": "SE",
+        "severity_description": "Severe",
+        "weight": 0.075
+      },
+      {
+        "allergen_code": "300913006",
+        "allergen_description": "Dust mite",
+        "category_code": "EA",
+        "category_description": "Environmental Allergy",
+        "reaction_code": "271807003",
+        "reaction_description": "Sneezing",
+        "severity_code": "MO",
+        "severity_description": "Moderate",
+        "weight": 0.0625
+      },
+      {
+        "allergen_code": "91934008",
+        "allergen_description": "Shellfish",
+        "category_code": "FA",
+        "category_description": "Food Allergy",
+        "reaction_code": "39579001",
+        "reaction_description": "Anaphylaxis",
+        "severity_code": "SE",
+        "severity_description": "Severe",
+        "weight": 0.0875
+      },
+      {
+        "allergen_code": "294954003",
+        "allergen_description": "Cat dander",
+        "category_code": "EA",
+        "category_description": "Environmental Allergy",
+        "reaction_code": "271807003",
+        "reaction_description": "Sneezing",
+        "severity_code": "MO",
+        "severity_description": "Moderate",
+        "weight": 0.0625
+      },
+      {
+        "allergen_code": "91931001",
+        "allergen_description": "Soy",
+        "category_code": "FA",
+        "category_description": "Food Allergy",
+        "reaction_code": "247472004",
+        "reaction_description": "Hives",
+        "severity_code": "MO",
+        "severity_description": "Moderate",
+        "weight": 0.0625
+      },
+      {
+        "allergen_code": "91932008",
+        "allergen_description": "Wheat",
+        "category_code": "FA",
+        "category_description": "Food Allergy",
+        "reaction_code": "247472004",
+        "reaction_description": "Hives",
+        "severity_code": "MO",
+        "severity_description": "Moderate",
+        "weight": 0.075
+      },
+      {
+        "allergen_code": "91933003",
+        "allergen_description": "Tree nuts",
+        "category_code": "FA",
+        "category_description": "Food Allergy",
+        "reaction_code": "39579001",
+        "reaction_description": "Anaphylaxis",
+        "severity_code": "SE",
+        "severity_description": "Severe",
+        "weight": 0.0875
+      }
+    ],
+    "vaccinations": [
+      {
+        "cvx_code": "141",
+        "description": "Influenza, seasonal, injectable",
+        "min_age_years": 0,
+        "max_age_years": 120,
+        "weight": 0.136364
+      },
+      {
+        "cvx_code": "03",
+        "description": "MMR",
+        "min_age_years": 1,
+        "max_age_years": 120,
+        "weight": 0.090909
+      },
+      {
+        "cvx_code": "08",
+        "description": "Hepatitis B",
+        "min_age_years": 0,
+        "max_age_years": 120,
+        "weight": 0.090909
+      },
+      {
+        "cvx_code": "10",
+        "description": "Polio",
+        "min_age_years": 0,
+        "max_age_years": 120,
+        "weight": 0.090909
+      },
+      {
+        "cvx_code": "49",
+        "description": "Hib",
+        "min_age_years": 0,
+        "max_age_years": 5,
+        "weight": 0.090909
+      },
+      {
+        "cvx_code": "21",
+        "description": "Varicella",
+        "min_age_years": 1,
+        "max_age_years": 120,
+        "weight": 0.090909
+      },
+      {
+        "cvx_code": "133",
+        "description": "Pneumococcal conjugate PCV13",
+        "min_age_years": 0,
+        "max_age_years": 120,
+        "weight": 0.090909
+      },
+      {
+        "cvx_code": "114",
+        "description": "Meningococcal",
+        "min_age_years": 11,
+        "max_age_years": 120,
+        "weight": 0.090909
+      },
+      {
+        "cvx_code": "136",
+        "description": "Tdap",
+        "min_age_years": 11,
+        "max_age_years": 120,
+        "weight": 0.090909
+      },
+      {
+        "cvx_code": "48",
+        "description": "Hepatitis A",
+        "min_age_years": 1,
+        "max_age_years": 120,
+        "weight": 0.045455
+      },
+      {
+        "cvx_code": "62",
+        "description": "HPV",
+        "min_age_years": 9,
+        "max_age_years": 26,
+        "weight": 0.090909
+      }
+    ],
+    "encounter_patterns": [
+      {
+        "id": "routine_outpatient",
+        "label": "Routine Outpatient Visit",
+        "encounter_type": "O",
+        "duration_days": 0,
+        "encounters_per_year": 3.0,
+        "weight": 0.4
+      },
+      {
+        "id": "emergency_visit",
+        "label": "Emergency Room Visit",
+        "encounter_type": "E",
+        "duration_days": 0,
+        "encounters_per_year": 0.5,
+        "weight": 0.2
+      },
+      {
+        "id": "inpatient_stay",
+        "label": "Inpatient Hospital Stay",
+        "encounter_type": "I",
+        "duration_days": 3,
+        "encounters_per_year": 0.2,
+        "weight": 0.1
+      },
+      {
+        "id": "prenatal_visit",
+        "label": "Prenatal Visit",
+        "encounter_type": "O",
+        "duration_days": 0,
+        "encounters_per_year": 10.0,
+        "weight": 0.2
+      },
+      {
+        "id": "postpartum_visit",
+        "label": "Postpartum Visit",
+        "encounter_type": "O",
+        "duration_days": 0,
+        "encounters_per_year": 1.0,
+        "weight": 0.1
+      }
+    ]
+  },
+  "special_scenarios": {
+    "_note": "Seeded demo scenarios \u2014 generator uses these to skew patient distributions and event timing",
+    "hotspot_counties": [
+      {
+        "county_fips": "39009",
+        "county_name": "Athens",
+        "region": "SE Ohio/Appalachian",
+        "condition": "gestational_hypertension_preeclampsia",
+        "trend": "increasing",
+        "trend_start_month_offset": -12,
+        "magnitude": 1.5,
+        "narrative": "SE Appalachian county with rising preeclampsia over final 12 months"
+      },
+      {
+        "county_fips": "39099",
+        "county_name": "Mahoning",
+        "region": "NE Ohio",
+        "condition": "gestational_hypertension_preeclampsia",
+        "trend": "increasing",
+        "trend_start_month_offset": -12,
+        "magnitude": 1.4,
+        "narrative": "Urban NE Ohio county with rising gestational HTN/preeclampsia signal"
+      }
+    ],
+    "improving_county": {
+      "county_fips": "39049",
+      "county_name": "Franklin",
+      "region": "Central Ohio",
+      "condition": "inadequate_prenatal_care",
+      "trend": "decreasing",
+      "trend_start_month_offset": -18,
+      "reduction_pct": 0.22,
+      "narrative": "Franklin County shows 20-25% reduction in inadequate prenatal care over 18 months"
+    },
+    "deteriorating_county": {
+      "county_fips": "39145",
+      "county_name": "Scioto",
+      "region": "SE Ohio/Appalachian",
+      "conditions": [
+        "late_prenatal_care",
+        "hypertensive_complications",
+        "preterm_delivery"
+      ],
+      "trend": "increasing",
+      "trend_start_month_offset": -12,
+      "magnitude": 1.35,
+      "narrative": "Scioto County (Portsmouth) \u2014 increasing late prenatal care, hypertension, preterm delivery"
+    },
+    "care_gaps": {
+      "inadequate_prenatal_care_pct": 0.08,
+      "no_first_trimester_visit_pct": 0.04,
+      "postpartum_followup_gap_pct": 0.15,
+      "postpartum_followup_gap_enriched_sdoh": true,
+      "postpartum_htn_no_followup_pct": 0.12,
+      "gdm_delayed_followup_pct": 0.1,
+      "behavioral_health_delayed_followup_pct": 0.2,
+      "oud_fragmented_treatment_pct": 0.25
+    },
+    "maternal_transfer_cluster": {
+      "origin_facility_types": [
+        "rural_cah",
+        "fqhc"
+      ],
+      "destination_facility_types": [
+        "academic"
+      ],
+      "transfer_conditions": [
+        "O14.10",
+        "O14.20",
+        "O72.1",
+        "O85",
+        "O26.83"
+      ],
+      "transfer_pct": 0.12,
+      "narrative": "Rural/CAH to academic transfers for severe preeclampsia, hemorrhage, sepsis"
+    },
+    "postpartum_acute_events": {
+      "hypertension_cluster": true,
+      "postpartum_sepsis_pct": 0.005,
+      "postpartum_hemorrhage_pct": 0.01,
+      "postpartum_ed_utilization_pct": 0.06,
+      "postpartum_readmission_pct": 0.025
+    },
+    "feed_imperfections": {
+      "incomplete_feed": {
+        "facility_code": "FAC010",
+        "facility_name": "Buckeye Regional Health \u2014 Fairfield Community Hospital",
+        "data_type": "lab_results",
+        "gap_start_month_offset": -8,
+        "gap_duration_days": 45,
+        "narrative": "Community hospital lab feed stops for ~45 days \u2014 demonstrates HIE gap detection"
+      },
+      "delayed_feed": {
+        "facility_code": "FAC030",
+        "facility_name": "Vinton County General Hospital",
+        "delay_days": 2.5,
+        "start_month_offset": -6,
+        "narrative": "Rural CAH with consistent 2-3 day reporting delay"
+      }
+    },
+    "identity_imperfections": {
+      "different_mrn_pct": 0.08,
+      "surname_change_pct": 0.03,
+      "address_variation_pct": 0.05,
+      "duplicate_identifier_pct": 0.02
+    },
+    "pregnancy_lifecycle": {
+      "_note": "Trimester-aware encounter sequencing for pregnancy cohort",
+      "first_trimester_visits": {
+        "min": 1,
+        "max": 3,
+        "encounter_type": "O"
+      },
+      "second_trimester_visits": {
+        "min": 3,
+        "max": 5,
+        "encounter_type": "O"
+      },
+      "third_trimester_visits": {
+        "min": 4,
+        "max": 8,
+        "encounter_type": "O"
+      },
+      "delivery_encounter": {
+        "encounter_type": "I",
+        "duration_days_normal": 2,
+        "duration_days_csection": 3,
+        "duration_days_complicated": 5
+      },
+      "postpartum_window_days": 42,
+      "postpartum_visit_at_day": [
+        7,
+        42
+      ],
+      "complication_timing": {
+        "preeclampsia": "third_trimester_or_delivery",
+        "gestational_diabetes": "second_trimester_onward",
+        "postpartum_depression": "postpartum_window",
+        "hemorrhage": "delivery_or_immediate_postpartum"
+      }
+    }
+  }
+}

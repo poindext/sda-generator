@@ -1,0 +1,34 @@
+{
+  "description": "Social Determinants of Health (SDOH) population \u2014 patients defined by homelessness (Z59.0) as a primary social need, with varied clinical comorbidities. Clinical context: Z59.0 is the principal diagnosis for outpatient/case-management visits. F32.9 (major depression) is the principal diagnosis for ED/inpatient encounters \u2014 psychiatric crisis is the most common acute presentation for homeless patients. Z59.0 still appears as a secondary code on all acute encounters. Co-occurring conditions (diabetes ~60%, hypertension ~65%, AUD ~30%) are present in meaningful but not universal proportions. HbA1c is expected to be very high (7-14%) in food-insecure diabetic patients. Not every patient has diabetes or hypertension \u2014 comorbidity prevalence reflects realistic SDOH heterogeneity.",
+  "do_not_flag": [
+    "Z59.0 Homelessness as primary diagnosis for outpatient encounters \u2014 this is correct for the SDOH cohort design; social needs are the primary reason for outpatient case-management visits",
+    "F32.9 Major depressive disorder as primary diagnosis for ED/inpatient encounters \u2014 psychiatric crisis and suicidal ideation are the leading acute presentations for homeless patients; this is correct and expected",
+    "Z59.0 appearing as secondary code on ED/inpatient encounters (with F32.9 as primary) \u2014 homelessness context is always documented on the encounter but may not be the principal diagnosis for an acute psychiatric or medical admission",
+    "HbA1c 7.0-14.0% in diabetic SDOH patients \u2014 food insecurity and poor medication adherence drive extremely poor glycemic control; this is expected",
+    "Glucose 100-500 mg/dL in food-insecure diabetic patients \u2014 hyperglycemia from poor access to medication and food",
+    "High co-occurrence of depression + anxiety + alcohol use \u2014 all three are strongly driven by social adversity and housing instability",
+    "ALT/AST elevation in patients with alcohol use disorder \u2014 hepatic inflammation from chronic alcohol use",
+    "Hemoglobin 7.0-11.4 g/dL \u2014 nutritional anemia (iron, B12, folate deficiency) is common in food-insecure patients",
+    "Not all patients have diabetes or hypertension \u2014 unlike prior templates, comorbidity prevalence is heterogeneous (DM ~60%, HTN ~65%); the absence of diabetes or hypertension in some patients is correct",
+    "Multiple Z-codes in same patient \u2014 social complexity typically involves multiple interacting social risk factors",
+    "HbA1c present in only a subset of encounters \u2014 quarterly monitoring is correct; only diabetic patients (60%) should have HbA1c results"
+  ],
+  "required_drug_classes": [
+    {
+      "class_name": "Antidepressant",
+      "keywords": [
+        "sertraline",
+        "fluoxetine",
+        "escitalopram",
+        "bupropion",
+        "mirtazapine"
+      ],
+      "minimum_patient_pct": 25,
+      "rationale": "Depression prevalence is 50% in this SDOH cohort; antidepressant treatment is expected."
+    }
+  ],
+  "required_checks": [
+    "VERIFY that HbA1c lab values appear in the LAB VALUE RANGES section — approximately 60% of patients have diabetes, so HbA1c results should be present for a substantial subset. If HbA1c is completely absent (zero results), flag HIGH. HbA1c at every encounter is not required — quarterly monitoring is correct.",
+    "VERIFY that not ALL patients have diabetes and hypertension — the population should show heterogeneous comorbidity. If Diabetes and Hypertension flags are both 100% in the DEMOGRAPHICS section, flag MEDIUM; the intended prevalence is ~60% diabetes, ~65% hypertension."
+  ]
+}
