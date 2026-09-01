@@ -1,0 +1,1702 @@
+{
+  "meta": {
+    "name": "Chronic Kidney Disease Progression Synthetic Population",
+    "description": "Synthetic patients with CKD stages 3-5, modeling disease progression with eGFR-based staging, anemia management, and pre-dialysis transitions",
+    "state": "Maryland",
+    "state_code": "MD",
+    "medicaid_field": "Maryland Medicaid",
+    "medicaid_id_prefix": "MD-MEDICAID-",
+    "total_patients": 200,
+    "history_months": 36
+  },
+  "geography": {
+    "locations": [
+      {
+        "county": "Allegany",
+        "county_fips": "24001",
+        "state_code": "MD",
+        "region": "Western Maryland",
+        "weight": 0.1,
+        "rurality": "rural",
+        "cities": [
+          "Cumberland",
+          "Frostburg"
+        ]
+      },
+      {
+        "county": "Garrett",
+        "county_fips": "24023",
+        "state_code": "MD",
+        "region": "Western Maryland",
+        "weight": 0.05,
+        "rurality": "rural",
+        "cities": [
+          "Oakland",
+          "Grantsville"
+        ]
+      },
+      {
+        "county": "Washington",
+        "county_fips": "24043",
+        "state_code": "MD",
+        "region": "Western Maryland",
+        "weight": 0.1,
+        "rurality": "suburban",
+        "cities": [
+          "Hagerstown",
+          "Boonsboro"
+        ]
+      },
+      {
+        "county": "Montgomery",
+        "county_fips": "24031",
+        "state_code": "MD",
+        "region": "Central Maryland",
+        "weight": 0.2,
+        "rurality": "urban",
+        "cities": [
+          "Rockville",
+          "Bethesda"
+        ]
+      },
+      {
+        "county": "Frederick",
+        "county_fips": "24021",
+        "state_code": "MD",
+        "region": "Central Maryland",
+        "weight": 0.1,
+        "rurality": "suburban",
+        "cities": [
+          "Frederick",
+          "Thurmont"
+        ]
+      },
+      {
+        "county": "Howard",
+        "county_fips": "24027",
+        "state_code": "MD",
+        "region": "Central Maryland",
+        "weight": 0.1,
+        "rurality": "suburban",
+        "cities": [
+          "Columbia",
+          "Ellicott City"
+        ]
+      },
+      {
+        "county": "Baltimore",
+        "county_fips": "24005",
+        "state_code": "MD",
+        "region": "Central Maryland",
+        "weight": 0.15,
+        "rurality": "urban",
+        "cities": [
+          "Baltimore",
+          "Towson"
+        ]
+      },
+      {
+        "county": "Talbot",
+        "county_fips": "24041",
+        "state_code": "MD",
+        "region": "Eastern Maryland",
+        "weight": 0.05,
+        "rurality": "rural",
+        "cities": [
+          "Easton",
+          "St. Michaels"
+        ]
+      },
+      {
+        "county": "Queen Anne's",
+        "county_fips": "24035",
+        "state_code": "MD",
+        "region": "Eastern Maryland",
+        "weight": 0.05,
+        "rurality": "rural",
+        "cities": [
+          "Centreville",
+          "Stevensville"
+        ]
+      },
+      {
+        "county": "Wicomico",
+        "county_fips": "24045",
+        "state_code": "MD",
+        "region": "Eastern Maryland",
+        "weight": 0.1,
+        "rurality": "suburban",
+        "cities": [
+          "Salisbury",
+          "Delmar"
+        ]
+      }
+    ]
+  },
+  "demographics": {
+    "age_distribution": [
+      {
+        "min": 40,
+        "max": 59,
+        "weight": 0.35,
+        "label": "Middle Aged"
+      },
+      {
+        "min": 60,
+        "max": 74,
+        "weight": 0.4,
+        "label": "Older Adult"
+      },
+      {
+        "min": 75,
+        "max": 85,
+        "weight": 0.25,
+        "label": "Senior"
+      }
+    ],
+    "sex_distribution": [
+      {
+        "sex": "F",
+        "weight": 0.51
+      },
+      {
+        "sex": "M",
+        "weight": 0.49
+      }
+    ],
+    "race_distribution": [
+      {
+        "race_code": "2106-3",
+        "race_description": "White",
+        "ethnicity_code": "2186-5",
+        "ethnicity_description": "Not Hispanic or Latino",
+        "weight": 0.5
+      },
+      {
+        "race_code": "2054-5",
+        "race_description": "Black or African American",
+        "ethnicity_code": "2186-5",
+        "ethnicity_description": "Not Hispanic or Latino",
+        "weight": 0.3
+      },
+      {
+        "race_code": "2135-2",
+        "race_description": "Hispanic or Latino",
+        "ethnicity_code": "2135-2",
+        "ethnicity_description": "Hispanic or Latino",
+        "weight": 0.1
+      },
+      {
+        "race_code": "2028-9",
+        "race_description": "Asian",
+        "ethnicity_code": "2186-5",
+        "ethnicity_description": "Not Hispanic or Latino",
+        "weight": 0.06
+      },
+      {
+        "race_code": "2076-8",
+        "race_description": "Other",
+        "ethnicity_code": "2186-5",
+        "ethnicity_description": "Not Hispanic or Latino",
+        "weight": 0.04
+      }
+    ],
+    "insurance_distribution": [
+      {
+        "plan_code": "MD-MEDICAID",
+        "weight": 0.2
+      },
+      {
+        "plan_code": "MEDICARE",
+        "weight": 0.15
+      },
+      {
+        "plan_code": "CAREFIRST",
+        "weight": 0.3
+      },
+      {
+        "plan_code": "KAISER",
+        "weight": 0.25
+      },
+      {
+        "plan_code": "UNINSURED",
+        "weight": 0.1
+      }
+    ]
+  },
+  "facilities": [
+    {
+      "code": "FAC001",
+      "name": "Johns Hopkins Hospital",
+      "type": "academic medical center",
+      "health_system_code": "HS001",
+      "health_system_name": "Johns Hopkins Medicine",
+      "city": "Baltimore",
+      "region": "Central Maryland",
+      "county_fips": "24005",
+      "address": "1800 Orleans St",
+      "zip": "21287",
+      "weight": 0.2
+    },
+    {
+      "code": "FAC002",
+      "name": "Johns Hopkins Bayview Medical Center",
+      "type": "hospital",
+      "health_system_code": "HS001",
+      "health_system_name": "Johns Hopkins Medicine",
+      "city": "Baltimore",
+      "region": "Central Maryland",
+      "county_fips": "24005",
+      "address": "4940 Eastern Ave",
+      "zip": "21224",
+      "weight": 0.15
+    },
+    {
+      "code": "FAC003",
+      "name": "Howard County General Hospital",
+      "type": "hospital",
+      "health_system_code": "HS001",
+      "health_system_name": "Johns Hopkins Medicine",
+      "city": "Columbia",
+      "region": "Central Maryland",
+      "county_fips": "24027",
+      "address": "5755 Cedar Ln",
+      "zip": "21044",
+      "weight": 0.1
+    },
+    {
+      "code": "FAC004",
+      "name": "Adventist HealthCare Shady Grove Medical Center",
+      "type": "hospital",
+      "health_system_code": "HS002",
+      "health_system_name": "Adventist HealthCare",
+      "city": "Rockville",
+      "region": "Central Maryland",
+      "county_fips": "24031",
+      "address": "9901 Medical Center Dr",
+      "zip": "20850",
+      "weight": 0.1
+    },
+    {
+      "code": "FAC005",
+      "name": "Adventist HealthCare White Oak Medical Center",
+      "type": "hospital",
+      "health_system_code": "HS002",
+      "health_system_name": "Adventist HealthCare",
+      "city": "Silver Spring",
+      "region": "Central Maryland",
+      "county_fips": "24031",
+      "address": "11890 Healing Way",
+      "zip": "20904",
+      "weight": 0.1
+    },
+    {
+      "code": "FAC006",
+      "name": "MedStar Union Memorial Hospital",
+      "type": "hospital",
+      "health_system_code": "HS003",
+      "health_system_name": "MedStar Health",
+      "city": "Baltimore",
+      "region": "Central Maryland",
+      "county_fips": "24005",
+      "address": "201 E University Pkwy",
+      "zip": "21218",
+      "weight": 0.1
+    },
+    {
+      "code": "FAC007",
+      "name": "MedStar Good Samaritan Hospital",
+      "type": "hospital",
+      "health_system_code": "HS003",
+      "health_system_name": "MedStar Health",
+      "city": "Baltimore",
+      "region": "Central Maryland",
+      "county_fips": "24005",
+      "address": "5601 Loch Raven Blvd",
+      "zip": "21239",
+      "weight": 0.1
+    },
+    {
+      "code": "FAC008",
+      "name": "MedStar Harbor Hospital",
+      "type": "hospital",
+      "health_system_code": "HS003",
+      "health_system_name": "MedStar Health",
+      "city": "Baltimore",
+      "region": "Central Maryland",
+      "county_fips": "24005",
+      "address": "3001 S Hanover St",
+      "zip": "21225",
+      "weight": 0.05
+    },
+    {
+      "code": "FAC009",
+      "name": "Western Maryland Regional Medical Center",
+      "type": "hospital",
+      "health_system_code": "HS004",
+      "health_system_name": "Western Maryland Health System",
+      "city": "Cumberland",
+      "region": "Western Maryland",
+      "county_fips": "24001",
+      "address": "12500 Willowbrook Rd",
+      "zip": "21502",
+      "weight": 0.05
+    },
+    {
+      "code": "FAC010",
+      "name": "Peninsula Regional Medical Center",
+      "type": "hospital",
+      "health_system_code": "HS005",
+      "health_system_name": "Peninsula Regional Health System",
+      "city": "Salisbury",
+      "region": "Eastern Maryland",
+      "county_fips": "24045",
+      "address": "100 E Carroll St",
+      "zip": "21801",
+      "weight": 0.05
+    }
+  ],
+  "providers": [
+    {
+      "code": "DR001",
+      "name": "Dr. Jane Smith",
+      "specialty": "Internal Medicine",
+      "facility_code": "FAC001"
+    },
+    {
+      "code": "DR002",
+      "name": "Dr. John Doe",
+      "specialty": "Pulmonology",
+      "facility_code": "FAC002"
+    },
+    {
+      "code": "DR003",
+      "name": "Dr. Emily White",
+      "specialty": "Infectious Disease",
+      "facility_code": "FAC003"
+    },
+    {
+      "code": "DR004",
+      "name": "Dr. Michael Brown",
+      "specialty": "Primary Care",
+      "facility_code": "FAC004"
+    },
+    {
+      "code": "DR005",
+      "name": "Dr. Sarah Johnson",
+      "specialty": "Pulmonology",
+      "facility_code": "FAC005"
+    },
+    {
+      "code": "DR006",
+      "name": "Dr. William Green",
+      "specialty": "Infectious Disease",
+      "facility_code": "FAC006"
+    },
+    {
+      "code": "DR007",
+      "name": "Dr. Linda Black",
+      "specialty": "Primary Care",
+      "facility_code": "FAC007"
+    },
+    {
+      "code": "DR008",
+      "name": "Dr. Robert Lee",
+      "specialty": "Pulmonology",
+      "facility_code": "FAC008"
+    },
+    {
+      "code": "DR009",
+      "name": "Dr. Patricia Davis",
+      "specialty": "Infectious Disease",
+      "facility_code": "FAC009"
+    },
+    {
+      "code": "DR010",
+      "name": "Dr. James Wilson",
+      "specialty": "Primary Care",
+      "facility_code": "FAC010"
+    }
+  ],
+  "insurance_plans": [
+    {
+      "code": "MD-MEDICAID",
+      "name": "Maryland Medicaid",
+      "coding_standard": "QD_HealthPlanCodeList",
+      "type": "Medicaid",
+      "plan_code": "MD-MED-PLAN",
+      "plan_name": "Maryland Medicaid Managed Care Plan",
+      "group_name": "Maryland Medicaid",
+      "priority": 1
+    },
+    {
+      "code": "MEDICARE",
+      "name": "Medicare",
+      "coding_standard": "QD_HealthPlanCodeList",
+      "type": "Medicare",
+      "plan_code": "MEDICARE-PLAN",
+      "plan_name": "Medicare Advantage Plan",
+      "group_name": "Medicare",
+      "priority": 2
+    },
+    {
+      "code": "CAREFIRST",
+      "name": "CareFirst BlueCross BlueShield",
+      "coding_standard": "QD_HealthPlanCodeList",
+      "type": "Commercial",
+      "plan_code": "CF-PLAN",
+      "plan_name": "CareFirst PPO",
+      "group_name": "CareFirst",
+      "priority": 3
+    },
+    {
+      "code": "KAISER",
+      "name": "Kaiser Permanente",
+      "coding_standard": "QD_HealthPlanCodeList",
+      "type": "Commercial",
+      "plan_code": "KP-PLAN",
+      "plan_name": "Kaiser HMO",
+      "group_name": "Kaiser Permanente",
+      "priority": 4
+    },
+    {
+      "code": "UNINSURED",
+      "name": "Uninsured",
+      "coding_standard": "QD_HealthPlanCodeList",
+      "type": "Uninsured",
+      "plan_code": "UNINSURED-PLAN",
+      "plan_name": "Uninsured",
+      "group_name": "Uninsured",
+      "priority": 5
+    }
+  ],
+  "sending_facility": "FAC001",
+  "multi_facility": {
+    "enabled": true,
+    "distribution": {
+      "one_facility_pct": 0.55,
+      "two_facility_pct": 0.3,
+      "three_plus_facility_pct": 0.15,
+      "max_facilities": 3
+    },
+    "encounter_type_outside_prob": {
+      "O": 0.08,
+      "E": 0.4,
+      "I": 0.2
+    },
+    "geographic_affinity": {
+      "same_region_weight": 0.7,
+      "adjacent_region_weight": 0.2,
+      "other_region_weight": 0.1
+    },
+    "adjacent_regions": {
+      "Western Maryland": [
+        "Central Maryland"
+      ],
+      "Central Maryland": [
+        "Western Maryland",
+        "Eastern Maryland"
+      ],
+      "Eastern Maryland": [
+        "Central Maryland"
+      ]
+    },
+    "ed_ip_same_facility_lock": true,
+    "facility_mrn_prefix": true
+  },
+  "name_pools": {
+    "male_first": {
+      "White": [
+        "James",
+        "John",
+        "Robert",
+        "Michael",
+        "William",
+        "David",
+        "Richard",
+        "Joseph",
+        "Charles",
+        "Thomas",
+        "Christopher",
+        "Daniel",
+        "Matthew",
+        "Anthony",
+        "Mark",
+        "Donald",
+        "Steven",
+        "Paul",
+        "Andrew",
+        "Joshua"
+      ],
+      "Black": [
+        "Marcus",
+        "Darius",
+        "Andre",
+        "Jamal",
+        "Tyrone",
+        "Malik",
+        "Deshawn",
+        "Terrence",
+        "Lamar",
+        "Jerome",
+        "Darnell",
+        "Marquis",
+        "Deandre",
+        "Jalen",
+        "Trevon",
+        "Demetrius",
+        "Rashad",
+        "Kareem",
+        "Javon",
+        "Tyriek"
+      ],
+      "Hispanic": [
+        "Carlos",
+        "Miguel",
+        "Jose",
+        "Juan",
+        "Luis",
+        "Javier",
+        "Alejandro",
+        "Fernando",
+        "Ricardo",
+        "Pedro",
+        "Manuel",
+        "Rafael",
+        "Santiago",
+        "Diego",
+        "Hector",
+        "Eduardo",
+        "Francisco",
+        "Antonio",
+        "Julio",
+        "Raul"
+      ],
+      "Asian": [
+        "Kevin",
+        "Daniel",
+        "Wei",
+        "Hiroshi",
+        "Jin",
+        "Sung",
+        "Min",
+        "Takeshi",
+        "Yuki",
+        "Kenji",
+        "Yong",
+        "Hao",
+        "Jiro",
+        "An",
+        "Jun",
+        "Li",
+        "Chen",
+        "Kai",
+        "Ryu",
+        "Tao"
+      ],
+      "Native American": [
+        "Joseph",
+        "Raymond",
+        "Thomas",
+        "Elijah",
+        "Isaiah",
+        "Gabriel",
+        "Logan",
+        "Hunter",
+        "Dakota",
+        "Aiden",
+        "Jayden",
+        "Cody",
+        "Chase",
+        "Wyatt",
+        "Tristan"
+      ],
+      "Other": [
+        "Alex",
+        "Jordan",
+        "Chris",
+        "Taylor",
+        "Morgan",
+        "Casey",
+        "Riley",
+        "Cameron",
+        "Drew",
+        "Skyler",
+        "Avery",
+        "Blake",
+        "Reese",
+        "Peyton",
+        "Quinn"
+      ]
+    },
+    "female_first": {
+      "White": [
+        "Mary",
+        "Patricia",
+        "Jennifer",
+        "Linda",
+        "Elizabeth",
+        "Barbara",
+        "Susan",
+        "Jessica",
+        "Sarah",
+        "Karen",
+        "Nancy",
+        "Lisa",
+        "Betty",
+        "Margaret",
+        "Sandra",
+        "Ashley",
+        "Kimberly",
+        "Emily",
+        "Donna",
+        "Michelle"
+      ],
+      "Black": [
+        "Aaliyah",
+        "Keisha",
+        "Tamara",
+        "Jasmine",
+        "Imani",
+        "Nia",
+        "Tiana",
+        "Shanice",
+        "Latoya",
+        "Monique",
+        "Ebony",
+        "Kiara",
+        "Tameka",
+        "Shayla",
+        "Brianna",
+        "Destiny",
+        "Chantel",
+        "Tasha",
+        "Zariah",
+        "Anaya"
+      ],
+      "Hispanic": [
+        "Maria",
+        "Sofia",
+        "Isabella",
+        "Camila",
+        "Valentina",
+        "Gabriela",
+        "Daniela",
+        "Ana",
+        "Lucia",
+        "Elena",
+        "Carla",
+        "Paula",
+        "Mariana",
+        "Adriana",
+        "Natalia",
+        "Andrea",
+        "Rosa",
+        "Veronica",
+        "Laura",
+        "Carmen"
+      ],
+      "Asian": [
+        "Mei",
+        "Yuki",
+        "Ji-Young",
+        "Sakura",
+        "Hana",
+        "Aiko",
+        "Min",
+        "Soo",
+        "Yuna",
+        "Aya",
+        "Rina",
+        "Jia",
+        "Ling",
+        "Nari",
+        "Mika",
+        "Ying",
+        "Lina",
+        "Hui",
+        "Suki",
+        "Kira"
+      ],
+      "Native American": [
+        "Sarah",
+        "Rebecca",
+        "Angela",
+        "Kaya",
+        "Aiyana",
+        "Shania",
+        "Tala",
+        "Nina",
+        "Mika",
+        "Leah",
+        "Sky",
+        "Autumn",
+        "Cheyenne",
+        "Dakota",
+        "Sierra"
+      ],
+      "Other": [
+        "Taylor",
+        "Morgan",
+        "Quinn",
+        "Riley",
+        "Jordan",
+        "Avery",
+        "Peyton",
+        "Sydney",
+        "Skylar",
+        "Casey",
+        "Reese",
+        "Alexis",
+        "Bailey",
+        "Harper",
+        "Rowan"
+      ]
+    },
+    "last_names": {
+      "White": [
+        "Smith",
+        "Johnson",
+        "Williams",
+        "Brown",
+        "Jones",
+        "Miller",
+        "Davis",
+        "Wilson",
+        "Anderson",
+        "Taylor",
+        "Thomas",
+        "Moore",
+        "Martin",
+        "Jackson",
+        "Thompson",
+        "White",
+        "Harris",
+        "Clark",
+        "Lewis",
+        "Robinson",
+        "Walker",
+        "Young",
+        "Allen",
+        "King",
+        "Wright"
+      ],
+      "Black": [
+        "Washington",
+        "Jackson",
+        "Robinson",
+        "Harris",
+        "Davis",
+        "Johnson",
+        "Brown",
+        "Jones",
+        "Williams",
+        "Wilson",
+        "Moore",
+        "Taylor",
+        "Anderson",
+        "Thomas",
+        "White",
+        "Lewis",
+        "Walker",
+        "Hall",
+        "Allen",
+        "Young",
+        "King",
+        "Scott",
+        "Green",
+        "Adams",
+        "Hill"
+      ],
+      "Hispanic": [
+        "Garcia",
+        "Martinez",
+        "Rodriguez",
+        "Lopez",
+        "Hernandez",
+        "Gonzalez",
+        "Perez",
+        "Sanchez",
+        "Ramirez",
+        "Torres",
+        "Flores",
+        "Rivera",
+        "Gomez",
+        "Diaz",
+        "Reyes",
+        "Cruz",
+        "Morales",
+        "Ortiz",
+        "Gutierrez",
+        "Chavez",
+        "Ramos",
+        "Vasquez",
+        "Santiago",
+        "Mendoza",
+        "Castillo"
+      ],
+      "Asian": [
+        "Kim",
+        "Chen",
+        "Nguyen",
+        "Lee",
+        "Wang",
+        "Liu",
+        "Yang",
+        "Zhang",
+        "Huang",
+        "Lin",
+        "Choi",
+        "Park",
+        "Tanaka",
+        "Yamamoto",
+        "Ito",
+        "Kobayashi",
+        "Suzuki",
+        "Khan",
+        "Singh",
+        "Patel",
+        "Sharma",
+        "Gupta",
+        "Chung",
+        "Pham",
+        "Tran"
+      ],
+      "Native American": [
+        "Runningwater",
+        "Littlefeather",
+        "Bearcloud",
+        "Redhawk",
+        "Whitefeather",
+        "Thunderhawk",
+        "Blackwolf",
+        "Eaglefeather",
+        "Spiritwalker",
+        "Rainwater",
+        "Sunbear",
+        "Nightwolf",
+        "Starfire",
+        "Moonshadow",
+        "Windwalker",
+        "Skyhorse",
+        "Firewalker",
+        "Earthchild",
+        "Wolfmoon",
+        "Dreamcatcher"
+      ],
+      "Other": [
+        "Brown",
+        "Taylor",
+        "Davis",
+        "Miller",
+        "Wilson",
+        "Moore",
+        "Anderson",
+        "Thomas",
+        "Jackson",
+        "White",
+        "Harris",
+        "Martin",
+        "Thompson",
+        "Garcia",
+        "Martinez",
+        "Robinson",
+        "Clark",
+        "Lewis",
+        "Lee",
+        "Walker"
+      ]
+    },
+    "middle_initials": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "J",
+      "K",
+      "L",
+      "M",
+      "N",
+      "P",
+      "R",
+      "S",
+      "T",
+      "W"
+    ]
+  },
+  "cohorts": [
+    {
+      "id": "ckd_progression",
+      "name": "Chronic Kidney Disease (Stages 3-5)",
+      "weight": 1.0,
+      "min_age": 40,
+      "max_age": 85,
+      "sex_bias": null,
+      "ckd_progression": true,
+      "initial_egfr_min": 20,
+      "initial_egfr_max": 55,
+      "progression_trajectories": [
+        {
+          "name": "stable",
+          "rate_min": 0.0,
+          "rate_max": 0.5,
+          "weight": 0.2
+        },
+        {
+          "name": "slow",
+          "rate_min": -3.0,
+          "rate_max": -0.5,
+          "weight": 0.35
+        },
+        {
+          "name": "moderate",
+          "rate_min": -6.0,
+          "rate_max": -3.1,
+          "weight": 0.3
+        },
+        {
+          "name": "rapid",
+          "rate_min": -12.0,
+          "rate_max": -6.1,
+          "weight": 0.15
+        }
+      ],
+      "description": "Patients with CKD stages 3-5 modeling disease progression, anemia management, and pre-dialysis transitions",
+      "diagnoses": [
+        {
+          "code": "N18.3",
+          "description": "Chronic kidney disease, stage 3 (moderate)",
+          "is_primary": true,
+          "onset_age_min": 40,
+          "onset_age_max": 85
+        }
+      ],
+      "comorbidities": [
+        {
+          "code": "E11.9",
+          "description": "Type 2 diabetes mellitus without complications",
+          "prevalence_pct": 0.65
+        },
+        {
+          "code": "I10",
+          "description": "Essential (primary) hypertension",
+          "prevalence_pct": 0.7
+        },
+        {
+          "code": "D63.1",
+          "description": "Anemia in chronic kidney disease",
+          "prevalence_pct": 0.45
+        },
+        {
+          "code": "I50.9",
+          "description": "Heart failure, unspecified",
+          "prevalence_pct": 0.25
+        },
+        {
+          "code": "E78.5",
+          "description": "Hyperlipidemia, unspecified",
+          "prevalence_pct": 0.5
+        },
+        {
+          "code": "I25.10",
+          "description": "Atherosclerotic heart disease of native coronary artery without angina pectoris",
+          "prevalence_pct": 0.2
+        },
+        {
+          "code": "I48.91",
+          "description": "Unspecified atrial fibrillation",
+          "prevalence_pct": 0.15
+        },
+        {
+          "code": "E83.39",
+          "description": "Other disorders of phosphorus metabolism",
+          "prevalence_pct": 0.35
+        },
+        {
+          "code": "E21.1",
+          "description": "Secondary hyperparathyroidism, not elsewhere classified",
+          "prevalence_pct": 0.3
+        }
+      ],
+      "medications": [
+        {
+          "drug_code": "104375",
+          "drug_description": "Lisinopril 10 MG Oral Tablet",
+          "dose_quantity": "10",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "N18",
+          "weight": 0.88
+        },
+        {
+          "drug_code": "197361",
+          "drug_description": "Amlodipine 5 MG Oral Tablet",
+          "dose_quantity": "5",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "I10",
+          "weight": 0.9
+        },
+        {
+          "drug_code": "310138",
+          "drug_description": "Epoetin alfa 4000 UNT/ML Injection",
+          "dose_quantity": "4000",
+          "dose_uom": "UNT/ML",
+          "dosage_form_code": "INJ",
+          "dosage_form_description": "Injection",
+          "route_code": "SC",
+          "route_description": "Subcutaneous",
+          "frequency_code": "3XWKLY",
+          "frequency_description": "Three times weekly",
+          "status": "active",
+          "for_diagnosis_code": "D63",
+          "weight": 0.9
+        },
+        {
+          "drug_code": "310430",
+          "drug_description": "Ferric gluconate 62.5 MG/5 mL Intravenous Solution",
+          "dose_quantity": "62.5",
+          "dose_uom": "mg",
+          "dosage_form_code": "SOL",
+          "dosage_form_description": "Solution",
+          "route_code": "IV",
+          "route_description": "Intravenous",
+          "frequency_code": "PRN",
+          "frequency_description": "As needed",
+          "status": "active",
+          "for_diagnosis_code": "D63",
+          "weight": 0.7
+        },
+        {
+          "drug_code": "896664",
+          "drug_description": "Sevelamer carbonate 800 MG Oral Tablet",
+          "dose_quantity": "800",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "TID",
+          "frequency_description": "Three times daily with meals",
+          "status": "active",
+          "for_diagnosis_code": "E83",
+          "weight": 0.88
+        },
+        {
+          "drug_code": "200483",
+          "drug_description": "Calcitriol 0.25 MCG Oral Capsule",
+          "dose_quantity": "0.25",
+          "dose_uom": "mcg",
+          "dosage_form_code": "CAP",
+          "dosage_form_description": "Capsule",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "E21",
+          "weight": 0.9
+        },
+        {
+          "drug_code": "310429",
+          "drug_description": "Furosemide 40 MG Oral Tablet",
+          "dose_quantity": "40",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "I50",
+          "weight": 0.9
+        },
+        {
+          "drug_code": "860975",
+          "drug_description": "Metformin 500 MG Oral Tablet",
+          "dose_quantity": "500",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "BID",
+          "frequency_description": "Twice daily",
+          "status": "active",
+          "for_diagnosis_code": "E11",
+          "weight": 0.75
+        },
+        {
+          "drug_code": "617310",
+          "drug_description": "Atorvastatin 40 MG Oral Tablet",
+          "dose_quantity": "40",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "E78",
+          "weight": 0.88
+        }
+      ],
+      "labs": [
+        {
+          "order_code": "33914-3",
+          "order_description": "eGFR (CKD-EPI)",
+          "specimen": "Blood",
+          "abnormal_pct": 1.0,
+          "weight": 0.95,
+          "result_items": [
+            {
+              "code": "33914-3",
+              "description": "Glomerular filtration rate/1.73 sq M predicted",
+              "units": "mL/min/1.73m2",
+              "is_numeric": true,
+              "normal_min": 60,
+              "normal_max": 120,
+              "abnormal_min": 5,
+              "abnormal_max": 59
+            }
+          ]
+        },
+        {
+          "order_code": "51990-0",
+          "order_description": "Basic metabolic panel",
+          "specimen": "Blood",
+          "abnormal_pct": 0.65,
+          "weight": 0.4,
+          "result_items": [
+            {
+              "code": "2951-2",
+              "description": "Sodium",
+              "units": "mEq/L",
+              "is_numeric": true,
+              "normal_min": 136,
+              "normal_max": 145,
+              "abnormal_min": 129,
+              "abnormal_max": 152
+            },
+            {
+              "code": "2823-3",
+              "description": "Potassium",
+              "units": "mEq/L",
+              "is_numeric": true,
+              "normal_min": 3.5,
+              "normal_max": 5.0,
+              "abnormal_min": 5.1,
+              "abnormal_max": 7.0
+            },
+            {
+              "code": "2028-9",
+              "description": "CO2 (Bicarbonate)",
+              "units": "mEq/L",
+              "is_numeric": true,
+              "normal_min": 22,
+              "normal_max": 29,
+              "abnormal_min": 14,
+              "abnormal_max": 21
+            },
+            {
+              "code": "3094-0",
+              "description": "BUN",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 6,
+              "normal_max": 20,
+              "abnormal_min": 21,
+              "abnormal_max": 100
+            },
+            {
+              "code": "2160-0",
+              "description": "Creatinine",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 0.6,
+              "normal_max": 1.2,
+              "abnormal_min": 1.5,
+              "abnormal_max": 10.0
+            },
+            {
+              "code": "17861-6",
+              "description": "Calcium",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 8.5,
+              "normal_max": 10.5,
+              "abnormal_min": 7.0,
+              "abnormal_max": 8.4
+            },
+            {
+              "code": "2339-0",
+              "description": "Glucose",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 70,
+              "normal_max": 99,
+              "abnormal_min": 100,
+              "abnormal_max": 400
+            },
+            {
+              "code": "2132-9",
+              "description": "Phosphate",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 2.5,
+              "normal_max": 4.5,
+              "abnormal_min": 4.6,
+              "abnormal_max": 10.0
+            },
+            {
+              "code": "2731-8",
+              "description": "Parathyrin intact (PTH)",
+              "units": "pg/mL",
+              "is_numeric": true,
+              "normal_min": 15,
+              "normal_max": 65,
+              "abnormal_min": 66,
+              "abnormal_max": 600
+            }
+          ]
+        },
+        {
+          "order_code": "58410-2",
+          "order_description": "CBC panel - Blood by Automated count",
+          "specimen": "Blood",
+          "abnormal_pct": 0.55,
+          "weight": 0.7,
+          "result_items": [
+            {
+              "code": "6690-2",
+              "description": "WBC",
+              "units": "K/uL",
+              "is_numeric": true,
+              "normal_min": 4.5,
+              "normal_max": 11.0,
+              "abnormal_min": 1.5,
+              "abnormal_max": 18.0
+            },
+            {
+              "code": "789-8",
+              "description": "RBC",
+              "units": "M/uL",
+              "is_numeric": true,
+              "normal_min": 3.9,
+              "normal_max": 5.9,
+              "abnormal_min": 2.0,
+              "abnormal_max": 4.5
+            },
+            {
+              "code": "718-7",
+              "description": "Hemoglobin",
+              "units": "g/dL",
+              "is_numeric": true,
+              "normal_min": 11.5,
+              "normal_max": 17.5,
+              "abnormal_min": 6.0,
+              "abnormal_max": 11.4
+            },
+            {
+              "code": "4544-3",
+              "description": "Hematocrit",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 35,
+              "normal_max": 52,
+              "abnormal_min": 20,
+              "abnormal_max": 34
+            },
+            {
+              "code": "777-3",
+              "description": "Platelets",
+              "units": "K/uL",
+              "is_numeric": true,
+              "normal_min": 150,
+              "normal_max": 400,
+              "abnormal_min": 50,
+              "abnormal_max": 600
+            }
+          ]
+        },
+        {
+          "order_code": "5767-9",
+          "order_description": "Urinalysis",
+          "specimen": "Urine",
+          "abnormal_pct": 0.6,
+          "weight": 0.15,
+          "result_items": [
+            {
+              "code": "5767-9",
+              "description": "Protein [Mass/volume] in Urine",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 0,
+              "normal_max": 20,
+              "abnormal_min": 21,
+              "abnormal_max": 500
+            }
+          ]
+        }
+      ],
+      "observations": [
+        {
+          "code": "8480-6",
+          "description": "Systolic blood pressure",
+          "units": "mmHg",
+          "normal_min": 90,
+          "normal_max": 129,
+          "abnormal_min": 130,
+          "abnormal_max": 190,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.55,
+          "weight": 0.35
+        },
+        {
+          "code": "8462-4",
+          "description": "Diastolic blood pressure",
+          "units": "mmHg",
+          "normal_min": 60,
+          "normal_max": 79,
+          "abnormal_min": 80,
+          "abnormal_max": 120,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.45,
+          "weight": 0.35
+        },
+        {
+          "code": "29463-7",
+          "description": "Body weight",
+          "units": "lbs",
+          "normal_min": 110,
+          "normal_max": 250,
+          "abnormal_min": 251,
+          "abnormal_max": 400,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.2,
+          "weight": 0.3
+        }
+      ],
+      "procedures": [
+        {
+          "code": "99214",
+          "description": "Office visit moderate complexity",
+          "encounter_type": "O",
+          "weight": 0.6
+        },
+        {
+          "code": "90935",
+          "description": "Hemodialysis one evaluation",
+          "encounter_type": "O",
+          "weight": 0.2
+        },
+        {
+          "code": "36832",
+          "description": "Arteriovenous fistula revision",
+          "encounter_type": "O",
+          "weight": 0.2
+        }
+      ],
+      "encounter_pattern": {
+        "encounters_per_year": 8.0,
+        "encounter_type_weights": {
+          "O": 0.82,
+          "E": 0.12,
+          "I": 0.06
+        },
+        "lab_encounter_rate": 0.9,
+        "rad_encounter_rate": 0.1
+      },
+      "document_templates": [
+        {
+          "type_code": "PN",
+          "type_description": "Progress Note",
+          "encounter_type": "O",
+          "chief_complaints": [
+            "CKD stage 3 follow-up with lab review",
+            "Anemia management in chronic kidney disease",
+            "Hypertension and CKD management visit",
+            "Pre-dialysis counseling visit"
+          ],
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for nephrology follow-up for {diagnosis}. Patient reports {compliance_statement}. Latest creatinine and eGFR reviewed.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Well-appearing, no acute distress. No peripheral edema noted.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n\nFOLLOW-UP: Return in 3 months for lab recheck."
+        }
+      ]
+    }
+  ],
+  "catalogs": {
+    "allergies": [
+      {
+        "allergen_code": "372687004",
+        "allergen_description": "Amoxicillin",
+        "category_code": "DA",
+        "category_description": "Drug Allergy",
+        "reaction_code": "247472004",
+        "reaction_description": "Hives",
+        "severity_code": "MO",
+        "severity_description": "Moderate",
+        "weight": 0.086022
+      },
+      {
+        "allergen_code": "91936005",
+        "allergen_description": "Peanut",
+        "category_code": "FA",
+        "category_description": "Food Allergy",
+        "reaction_code": "39579001",
+        "reaction_description": "Anaphylaxis",
+        "severity_code": "SE",
+        "severity_description": "Severe",
+        "weight": 0.075269
+      },
+      {
+        "allergen_code": "300913006",
+        "allergen_description": "Pollen",
+        "category_code": "EA",
+        "category_description": "Environmental Allergy",
+        "reaction_code": "267036007",
+        "reaction_description": "Sneezing",
+        "severity_code": "MI",
+        "severity_description": "Mild",
+        "weight": 0.064516
+      },
+      {
+        "allergen_code": "91930004",
+        "allergen_description": "Egg",
+        "category_code": "FA",
+        "category_description": "Food Allergy",
+        "reaction_code": "39579001",
+        "reaction_description": "Anaphylaxis",
+        "severity_code": "SE",
+        "severity_description": "Severe",
+        "weight": 0.075269
+      },
+      {
+        "allergen_code": "294954003",
+        "allergen_description": "Latex",
+        "category_code": "EA",
+        "category_description": "Environmental Allergy",
+        "reaction_code": "271807003",
+        "reaction_description": "Rash",
+        "severity_code": "MO",
+        "severity_description": "Moderate",
+        "weight": 0.064516
+      },
+      {
+        "allergen_code": "91934008",
+        "allergen_description": "Penicillin",
+        "category_code": "DA",
+        "category_description": "Drug Allergy",
+        "reaction_code": "247472004",
+        "reaction_description": "Hives",
+        "severity_code": "MO",
+        "severity_description": "Moderate",
+        "weight": 0.086022
+      },
+      {
+        "allergen_code": "232347008",
+        "allergen_description": "Shellfish",
+        "category_code": "FA",
+        "category_description": "Food Allergy",
+        "reaction_code": "39579001",
+        "reaction_description": "Anaphylaxis",
+        "severity_code": "SE",
+        "severity_description": "Severe",
+        "weight": 0.075269
+      },
+      {
+        "allergen_code": "300916003",
+        "allergen_description": "Dust mite",
+        "category_code": "EA",
+        "category_description": "Environmental Allergy",
+        "reaction_code": "267036007",
+        "reaction_description": "Sneezing",
+        "severity_code": "MI",
+        "severity_description": "Mild",
+        "weight": 0.064516
+      },
+      {
+        "allergen_code": "91935009",
+        "allergen_description": "Soy",
+        "category_code": "FA",
+        "category_description": "Food Allergy",
+        "reaction_code": "271807003",
+        "reaction_description": "Rash",
+        "severity_code": "MO",
+        "severity_description": "Moderate",
+        "weight": 0.064516
+      },
+      {
+        "allergen_code": "294948004",
+        "allergen_description": "Mold",
+        "category_code": "EA",
+        "category_description": "Environmental Allergy",
+        "reaction_code": "267036007",
+        "reaction_description": "Sneezing",
+        "severity_code": "MI",
+        "severity_description": "Mild",
+        "weight": 0.064516
+      },
+      {
+        "allergen_code": "91931003",
+        "allergen_description": "Wheat",
+        "category_code": "FA",
+        "category_description": "Food Allergy",
+        "reaction_code": "271807003",
+        "reaction_description": "Rash",
+        "severity_code": "MO",
+        "severity_description": "Moderate",
+        "weight": 0.064516
+      },
+      {
+        "allergen_code": "294947009",
+        "allergen_description": "Animal dander",
+        "category_code": "EA",
+        "category_description": "Environmental Allergy",
+        "reaction_code": "267036007",
+        "reaction_description": "Sneezing",
+        "severity_code": "MI",
+        "severity_description": "Mild",
+        "weight": 0.064516
+      },
+      {
+        "allergen_code": "91932006",
+        "allergen_description": "Tree nuts",
+        "category_code": "FA",
+        "category_description": "Food Allergy",
+        "reaction_code": "39579001",
+        "reaction_description": "Anaphylaxis",
+        "severity_code": "SE",
+        "severity_description": "Severe",
+        "weight": 0.075269
+      },
+      {
+        "allergen_code": "294949007",
+        "allergen_description": "Insect sting",
+        "category_code": "EA",
+        "category_description": "Environmental Allergy",
+        "reaction_code": "39579001",
+        "reaction_description": "Anaphylaxis",
+        "severity_code": "SE",
+        "severity_description": "Severe",
+        "weight": 0.075269
+      }
+    ],
+    "vaccinations": [
+      {
+        "cvx_code": "141",
+        "description": "Influenza, seasonal, injectable",
+        "min_age_years": 0,
+        "max_age_years": 120,
+        "weight": 0.25
+      },
+      {
+        "cvx_code": "03",
+        "description": "MMR",
+        "min_age_years": 1,
+        "max_age_years": 120,
+        "weight": 0.15
+      },
+      {
+        "cvx_code": "08",
+        "description": "Hepatitis B",
+        "min_age_years": 0,
+        "max_age_years": 120,
+        "weight": 0.15
+      },
+      {
+        "cvx_code": "10",
+        "description": "Polio",
+        "min_age_years": 0,
+        "max_age_years": 120,
+        "weight": 0.1
+      },
+      {
+        "cvx_code": "21",
+        "description": "Varicella",
+        "min_age_years": 1,
+        "max_age_years": 120,
+        "weight": 0.1
+      },
+      {
+        "cvx_code": "48",
+        "description": "Hib",
+        "min_age_years": 0,
+        "max_age_years": 5,
+        "weight": 0.1
+      },
+      {
+        "cvx_code": "133",
+        "description": "Pneumococcal conjugate PCV13",
+        "min_age_years": 0,
+        "max_age_years": 120,
+        "weight": 0.1
+      },
+      {
+        "cvx_code": "120",
+        "description": "DTaP",
+        "min_age_years": 0,
+        "max_age_years": 7,
+        "weight": 0.05
+      }
+    ],
+    "encounter_patterns": [
+      {
+        "id": "routine_outpatient",
+        "label": "Routine Outpatient Visit",
+        "encounter_type": "O",
+        "duration_days": 0,
+        "encounters_per_year": 3.0,
+        "weight": 0.5
+      },
+      {
+        "id": "emergency_visit",
+        "label": "Emergency Room Visit",
+        "encounter_type": "E",
+        "duration_days": 1,
+        "encounters_per_year": 0.5,
+        "weight": 0.15
+      },
+      {
+        "id": "inpatient_stay",
+        "label": "Inpatient Hospital Stay",
+        "encounter_type": "I",
+        "duration_days": 5,
+        "encounters_per_year": 0.2,
+        "weight": 0.1
+      },
+      {
+        "id": "specialist_consult",
+        "label": "Specialist Consultation",
+        "encounter_type": "O",
+        "duration_days": 0,
+        "encounters_per_year": 1.0,
+        "weight": 0.15
+      },
+      {
+        "id": "telehealth_visit",
+        "label": "Telehealth Visit",
+        "encounter_type": "T",
+        "duration_days": 0,
+        "encounters_per_year": 1.5,
+        "weight": 0.1
+      }
+    ]
+  }
+}

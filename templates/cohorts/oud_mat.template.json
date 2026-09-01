@@ -1,0 +1,2323 @@
+{
+  "meta": {
+    "name": "Opioid Use Disorder / MAT Synthetic Population",
+    "description": "Synthetic patients with Opioid Use Disorder on Medication-Assisted Treatment (buprenorphine, naltrexone, methadone)",
+    "state": "Maryland",
+    "state_code": "MD",
+    "medicaid_field": "Maryland Medicaid",
+    "medicaid_id_prefix": "MD-MEDICAID-",
+    "total_patients": 200,
+    "history_months": 24
+  },
+  "geography": {
+    "locations": [
+      {
+        "county": "Allegany",
+        "county_fips": "24001",
+        "state_code": "MD",
+        "region": "Western Maryland",
+        "weight": 0.1,
+        "rurality": "rural",
+        "cities": [
+          "Cumberland",
+          "Frostburg"
+        ]
+      },
+      {
+        "county": "Garrett",
+        "county_fips": "24023",
+        "state_code": "MD",
+        "region": "Western Maryland",
+        "weight": 0.05,
+        "rurality": "rural",
+        "cities": [
+          "Oakland",
+          "Grantsville"
+        ]
+      },
+      {
+        "county": "Washington",
+        "county_fips": "24043",
+        "state_code": "MD",
+        "region": "Western Maryland",
+        "weight": 0.1,
+        "rurality": "suburban",
+        "cities": [
+          "Hagerstown",
+          "Boonsboro"
+        ]
+      },
+      {
+        "county": "Montgomery",
+        "county_fips": "24031",
+        "state_code": "MD",
+        "region": "Central Maryland",
+        "weight": 0.2,
+        "rurality": "urban",
+        "cities": [
+          "Rockville",
+          "Bethesda"
+        ]
+      },
+      {
+        "county": "Frederick",
+        "county_fips": "24021",
+        "state_code": "MD",
+        "region": "Central Maryland",
+        "weight": 0.1,
+        "rurality": "suburban",
+        "cities": [
+          "Frederick",
+          "Thurmont"
+        ]
+      },
+      {
+        "county": "Howard",
+        "county_fips": "24027",
+        "state_code": "MD",
+        "region": "Central Maryland",
+        "weight": 0.1,
+        "rurality": "suburban",
+        "cities": [
+          "Columbia",
+          "Ellicott City"
+        ]
+      },
+      {
+        "county": "Baltimore",
+        "county_fips": "24005",
+        "state_code": "MD",
+        "region": "Central Maryland",
+        "weight": 0.15,
+        "rurality": "urban",
+        "cities": [
+          "Baltimore",
+          "Towson"
+        ]
+      },
+      {
+        "county": "Talbot",
+        "county_fips": "24041",
+        "state_code": "MD",
+        "region": "Eastern Maryland",
+        "weight": 0.05,
+        "rurality": "rural",
+        "cities": [
+          "Easton",
+          "St. Michaels"
+        ]
+      },
+      {
+        "county": "Queen Anne's",
+        "county_fips": "24035",
+        "state_code": "MD",
+        "region": "Eastern Maryland",
+        "weight": 0.05,
+        "rurality": "rural",
+        "cities": [
+          "Centreville",
+          "Stevensville"
+        ]
+      },
+      {
+        "county": "Wicomico",
+        "county_fips": "24045",
+        "state_code": "MD",
+        "region": "Eastern Maryland",
+        "weight": 0.1,
+        "rurality": "suburban",
+        "cities": [
+          "Salisbury",
+          "Delmar"
+        ]
+      }
+    ]
+  },
+  "demographics": {
+    "age_distribution": [
+      {
+        "min": 18,
+        "max": 29,
+        "weight": 0.28,
+        "label": "Young Adult"
+      },
+      {
+        "min": 30,
+        "max": 44,
+        "weight": 0.38,
+        "label": "Adult"
+      },
+      {
+        "min": 45,
+        "max": 64,
+        "weight": 0.26,
+        "label": "Middle Aged"
+      },
+      {
+        "min": 65,
+        "max": 75,
+        "weight": 0.08,
+        "label": "Senior"
+      }
+    ],
+    "sex_distribution": [
+      {
+        "sex": "F",
+        "weight": 0.51
+      },
+      {
+        "sex": "M",
+        "weight": 0.49
+      }
+    ],
+    "race_distribution": [
+      {
+        "race_code": "2106-3",
+        "race_description": "White",
+        "ethnicity_code": "2186-5",
+        "ethnicity_description": "Not Hispanic or Latino",
+        "weight": 0.5
+      },
+      {
+        "race_code": "2054-5",
+        "race_description": "Black or African American",
+        "ethnicity_code": "2186-5",
+        "ethnicity_description": "Not Hispanic or Latino",
+        "weight": 0.3
+      },
+      {
+        "race_code": "2135-2",
+        "race_description": "Hispanic or Latino",
+        "ethnicity_code": "2135-2",
+        "ethnicity_description": "Hispanic or Latino",
+        "weight": 0.1
+      },
+      {
+        "race_code": "2028-9",
+        "race_description": "Asian",
+        "ethnicity_code": "2186-5",
+        "ethnicity_description": "Not Hispanic or Latino",
+        "weight": 0.06
+      },
+      {
+        "race_code": "2076-8",
+        "race_description": "Other",
+        "ethnicity_code": "2186-5",
+        "ethnicity_description": "Not Hispanic or Latino",
+        "weight": 0.04
+      }
+    ],
+    "insurance_distribution": [
+      {
+        "plan_code": "MD-MEDICAID",
+        "weight": 0.38
+      },
+      {
+        "plan_code": "MEDICARE",
+        "weight": 0.08
+      },
+      {
+        "plan_code": "CAREFIRST",
+        "weight": 0.25
+      },
+      {
+        "plan_code": "KAISER",
+        "weight": 0.19
+      },
+      {
+        "plan_code": "UNINSURED",
+        "weight": 0.1
+      }
+    ]
+  },
+  "facilities": [
+    {
+      "code": "FAC001",
+      "name": "Johns Hopkins Hospital",
+      "type": "academic medical center",
+      "health_system_code": "HS001",
+      "health_system_name": "Johns Hopkins Medicine",
+      "city": "Baltimore",
+      "region": "Central Maryland",
+      "county_fips": "24005",
+      "address": "1800 Orleans St",
+      "zip": "21287",
+      "weight": 0.2
+    },
+    {
+      "code": "FAC002",
+      "name": "Johns Hopkins Bayview Medical Center",
+      "type": "hospital",
+      "health_system_code": "HS001",
+      "health_system_name": "Johns Hopkins Medicine",
+      "city": "Baltimore",
+      "region": "Central Maryland",
+      "county_fips": "24005",
+      "address": "4940 Eastern Ave",
+      "zip": "21224",
+      "weight": 0.15
+    },
+    {
+      "code": "FAC003",
+      "name": "Howard County General Hospital",
+      "type": "hospital",
+      "health_system_code": "HS001",
+      "health_system_name": "Johns Hopkins Medicine",
+      "city": "Columbia",
+      "region": "Central Maryland",
+      "county_fips": "24027",
+      "address": "5755 Cedar Ln",
+      "zip": "21044",
+      "weight": 0.1
+    },
+    {
+      "code": "FAC004",
+      "name": "Adventist HealthCare Shady Grove Medical Center",
+      "type": "hospital",
+      "health_system_code": "HS002",
+      "health_system_name": "Adventist HealthCare",
+      "city": "Rockville",
+      "region": "Central Maryland",
+      "county_fips": "24031",
+      "address": "9901 Medical Center Dr",
+      "zip": "20850",
+      "weight": 0.1
+    },
+    {
+      "code": "FAC005",
+      "name": "Adventist HealthCare White Oak Medical Center",
+      "type": "hospital",
+      "health_system_code": "HS002",
+      "health_system_name": "Adventist HealthCare",
+      "city": "Silver Spring",
+      "region": "Central Maryland",
+      "county_fips": "24031",
+      "address": "11890 Healing Way",
+      "zip": "20904",
+      "weight": 0.1
+    },
+    {
+      "code": "FAC006",
+      "name": "MedStar Union Memorial Hospital",
+      "type": "hospital",
+      "health_system_code": "HS003",
+      "health_system_name": "MedStar Health",
+      "city": "Baltimore",
+      "region": "Central Maryland",
+      "county_fips": "24005",
+      "address": "201 E University Pkwy",
+      "zip": "21218",
+      "weight": 0.1
+    },
+    {
+      "code": "FAC007",
+      "name": "MedStar Good Samaritan Hospital",
+      "type": "hospital",
+      "health_system_code": "HS003",
+      "health_system_name": "MedStar Health",
+      "city": "Baltimore",
+      "region": "Central Maryland",
+      "county_fips": "24005",
+      "address": "5601 Loch Raven Blvd",
+      "zip": "21239",
+      "weight": 0.1
+    },
+    {
+      "code": "FAC008",
+      "name": "MedStar Harbor Hospital",
+      "type": "hospital",
+      "health_system_code": "HS003",
+      "health_system_name": "MedStar Health",
+      "city": "Baltimore",
+      "region": "Central Maryland",
+      "county_fips": "24005",
+      "address": "3001 S Hanover St",
+      "zip": "21225",
+      "weight": 0.05
+    },
+    {
+      "code": "FAC009",
+      "name": "Western Maryland Regional Medical Center",
+      "type": "hospital",
+      "health_system_code": "HS004",
+      "health_system_name": "Western Maryland Health System",
+      "city": "Cumberland",
+      "region": "Western Maryland",
+      "county_fips": "24001",
+      "address": "12500 Willowbrook Rd",
+      "zip": "21502",
+      "weight": 0.05
+    },
+    {
+      "code": "FAC010",
+      "name": "Peninsula Regional Medical Center",
+      "type": "hospital",
+      "health_system_code": "HS005",
+      "health_system_name": "Peninsula Regional Health System",
+      "city": "Salisbury",
+      "region": "Eastern Maryland",
+      "county_fips": "24045",
+      "address": "100 E Carroll St",
+      "zip": "21801",
+      "weight": 0.05
+    }
+  ],
+  "providers": [
+    {
+      "code": "DR001",
+      "name": "Dr. Sarah Martinez",
+      "specialty": "Addiction Medicine",
+      "facility_code": "FAC001"
+    },
+    {
+      "code": "DR002",
+      "name": "Dr. James Taylor",
+      "specialty": "Addiction Medicine",
+      "facility_code": "FAC002"
+    },
+    {
+      "code": "DR003",
+      "name": "Dr. Emily Chen",
+      "specialty": "Psychiatry",
+      "facility_code": "FAC003"
+    },
+    {
+      "code": "DR004",
+      "name": "Dr. Michael Brown",
+      "specialty": "Primary Care / Addiction",
+      "facility_code": "FAC004"
+    },
+    {
+      "code": "DR005",
+      "name": "Dr. Linda Washington",
+      "specialty": "Addiction Medicine",
+      "facility_code": "FAC005"
+    },
+    {
+      "code": "DR006",
+      "name": "Dr. Robert Patel",
+      "specialty": "Psychiatry",
+      "facility_code": "FAC006"
+    },
+    {
+      "code": "DR007",
+      "name": "Dr. Angela Davis",
+      "specialty": "Addiction Medicine",
+      "facility_code": "FAC007"
+    },
+    {
+      "code": "DR008",
+      "name": "Dr. Thomas Rivera",
+      "specialty": "Primary Care / Addiction",
+      "facility_code": "FAC008"
+    },
+    {
+      "code": "DR009",
+      "name": "Dr. Patricia Kim",
+      "specialty": "Addiction Medicine",
+      "facility_code": "FAC009"
+    },
+    {
+      "code": "DR010",
+      "name": "Dr. William Johnson",
+      "specialty": "Psychiatry",
+      "facility_code": "FAC010"
+    }
+  ],
+  "insurance_plans": [
+    {
+      "code": "MD-MEDICAID",
+      "name": "Maryland Medicaid",
+      "coding_standard": "QD_HealthPlanCodeList",
+      "type": "Medicaid",
+      "plan_code": "MD-MED-PLAN",
+      "plan_name": "Maryland Medicaid Managed Care Plan",
+      "group_name": "Maryland Medicaid",
+      "priority": 1
+    },
+    {
+      "code": "MEDICARE",
+      "name": "Medicare",
+      "coding_standard": "QD_HealthPlanCodeList",
+      "type": "Medicare",
+      "plan_code": "MEDICARE-PLAN",
+      "plan_name": "Medicare Advantage Plan",
+      "group_name": "Medicare",
+      "priority": 2
+    },
+    {
+      "code": "CAREFIRST",
+      "name": "CareFirst BlueCross BlueShield",
+      "coding_standard": "QD_HealthPlanCodeList",
+      "type": "Commercial",
+      "plan_code": "CF-PLAN",
+      "plan_name": "CareFirst PPO",
+      "group_name": "CareFirst",
+      "priority": 3
+    },
+    {
+      "code": "KAISER",
+      "name": "Kaiser Permanente",
+      "coding_standard": "QD_HealthPlanCodeList",
+      "type": "Commercial",
+      "plan_code": "KP-PLAN",
+      "plan_name": "Kaiser HMO",
+      "group_name": "Kaiser Permanente",
+      "priority": 4
+    },
+    {
+      "code": "UNINSURED",
+      "name": "Uninsured",
+      "coding_standard": "QD_HealthPlanCodeList",
+      "type": "Uninsured",
+      "plan_code": "UNINSURED-PLAN",
+      "plan_name": "Uninsured",
+      "group_name": "Uninsured",
+      "priority": 5
+    }
+  ],
+  "sending_facility": "FAC001",
+  "multi_facility": {
+    "enabled": true,
+    "distribution": {
+      "one_facility_pct": 0.55,
+      "two_facility_pct": 0.3,
+      "three_plus_facility_pct": 0.15,
+      "max_facilities": 3
+    },
+    "encounter_type_outside_prob": {
+      "O": 0.08,
+      "E": 0.4,
+      "I": 0.2
+    },
+    "geographic_affinity": {
+      "same_region_weight": 0.7,
+      "adjacent_region_weight": 0.2,
+      "other_region_weight": 0.1
+    },
+    "adjacent_regions": {
+      "Western Maryland": [
+        "Central Maryland"
+      ],
+      "Central Maryland": [
+        "Western Maryland",
+        "Eastern Maryland"
+      ],
+      "Eastern Maryland": [
+        "Central Maryland"
+      ]
+    },
+    "ed_ip_same_facility_lock": true,
+    "facility_mrn_prefix": true
+  },
+  "name_pools": {
+    "male_first": {
+      "White": [
+        "James",
+        "John",
+        "Robert",
+        "Michael",
+        "William",
+        "David",
+        "Richard",
+        "Joseph",
+        "Charles",
+        "Thomas",
+        "Christopher",
+        "Daniel",
+        "Matthew",
+        "Anthony",
+        "Mark",
+        "Donald",
+        "Steven",
+        "Paul",
+        "Andrew",
+        "Joshua"
+      ],
+      "Black": [
+        "Marcus",
+        "Darius",
+        "Andre",
+        "Jamal",
+        "Tyrone",
+        "Malik",
+        "Deshawn",
+        "Terrence",
+        "Lamar",
+        "Jerome",
+        "Darnell",
+        "Marquis",
+        "Deandre",
+        "Jalen",
+        "Trevon",
+        "Demetrius",
+        "Rashad",
+        "Kareem",
+        "Javon",
+        "Tyriek"
+      ],
+      "Hispanic": [
+        "Carlos",
+        "Miguel",
+        "Jose",
+        "Juan",
+        "Luis",
+        "Javier",
+        "Alejandro",
+        "Fernando",
+        "Ricardo",
+        "Pedro",
+        "Manuel",
+        "Rafael",
+        "Santiago",
+        "Diego",
+        "Hector",
+        "Eduardo",
+        "Francisco",
+        "Antonio",
+        "Julio",
+        "Raul"
+      ],
+      "Asian": [
+        "Kevin",
+        "Daniel",
+        "Wei",
+        "Hiroshi",
+        "Jin",
+        "Sung",
+        "Min",
+        "Takeshi",
+        "Yuki",
+        "Kenji",
+        "Yong",
+        "Hao",
+        "Jiro",
+        "An",
+        "Jun",
+        "Li",
+        "Chen",
+        "Kai",
+        "Ryu",
+        "Tao"
+      ],
+      "Native American": [
+        "Joseph",
+        "Raymond",
+        "Thomas",
+        "Elijah",
+        "Isaiah",
+        "Gabriel",
+        "Logan",
+        "Hunter",
+        "Dakota",
+        "Aiden",
+        "Jayden",
+        "Cody",
+        "Chase",
+        "Wyatt",
+        "Tristan"
+      ],
+      "Other": [
+        "Alex",
+        "Jordan",
+        "Chris",
+        "Taylor",
+        "Morgan",
+        "Casey",
+        "Riley",
+        "Cameron",
+        "Drew",
+        "Skyler",
+        "Avery",
+        "Blake",
+        "Reese",
+        "Peyton",
+        "Quinn"
+      ]
+    },
+    "female_first": {
+      "White": [
+        "Mary",
+        "Patricia",
+        "Jennifer",
+        "Linda",
+        "Elizabeth",
+        "Barbara",
+        "Susan",
+        "Jessica",
+        "Sarah",
+        "Karen",
+        "Nancy",
+        "Lisa",
+        "Betty",
+        "Margaret",
+        "Sandra",
+        "Ashley",
+        "Kimberly",
+        "Emily",
+        "Donna",
+        "Michelle"
+      ],
+      "Black": [
+        "Aaliyah",
+        "Keisha",
+        "Tamara",
+        "Jasmine",
+        "Imani",
+        "Nia",
+        "Tiana",
+        "Shanice",
+        "Latoya",
+        "Monique",
+        "Ebony",
+        "Kiara",
+        "Tameka",
+        "Shayla",
+        "Brianna",
+        "Destiny",
+        "Chantel",
+        "Tasha",
+        "Zariah",
+        "Anaya"
+      ],
+      "Hispanic": [
+        "Maria",
+        "Sofia",
+        "Isabella",
+        "Camila",
+        "Valentina",
+        "Gabriela",
+        "Daniela",
+        "Ana",
+        "Lucia",
+        "Elena",
+        "Carla",
+        "Paula",
+        "Mariana",
+        "Adriana",
+        "Natalia",
+        "Andrea",
+        "Rosa",
+        "Veronica",
+        "Laura",
+        "Carmen"
+      ],
+      "Asian": [
+        "Mei",
+        "Yuki",
+        "Ji-Young",
+        "Sakura",
+        "Hana",
+        "Aiko",
+        "Min",
+        "Soo",
+        "Yuna",
+        "Aya",
+        "Rina",
+        "Jia",
+        "Ling",
+        "Nari",
+        "Mika",
+        "Ying",
+        "Lina",
+        "Hui",
+        "Suki",
+        "Kira"
+      ],
+      "Native American": [
+        "Sarah",
+        "Rebecca",
+        "Angela",
+        "Kaya",
+        "Aiyana",
+        "Shania",
+        "Tala",
+        "Nina",
+        "Mika",
+        "Leah",
+        "Sky",
+        "Autumn",
+        "Cheyenne",
+        "Dakota",
+        "Sierra"
+      ],
+      "Other": [
+        "Taylor",
+        "Morgan",
+        "Quinn",
+        "Riley",
+        "Jordan",
+        "Avery",
+        "Peyton",
+        "Sydney",
+        "Skylar",
+        "Casey",
+        "Reese",
+        "Alexis",
+        "Bailey",
+        "Harper",
+        "Rowan"
+      ]
+    },
+    "last_names": {
+      "White": [
+        "Smith",
+        "Johnson",
+        "Williams",
+        "Brown",
+        "Jones",
+        "Miller",
+        "Davis",
+        "Wilson",
+        "Anderson",
+        "Taylor",
+        "Thomas",
+        "Moore",
+        "Martin",
+        "Jackson",
+        "Thompson",
+        "White",
+        "Harris",
+        "Clark",
+        "Lewis",
+        "Robinson",
+        "Walker",
+        "Young",
+        "Allen",
+        "King",
+        "Wright"
+      ],
+      "Black": [
+        "Washington",
+        "Jackson",
+        "Robinson",
+        "Harris",
+        "Davis",
+        "Johnson",
+        "Brown",
+        "Jones",
+        "Williams",
+        "Wilson",
+        "Moore",
+        "Taylor",
+        "Anderson",
+        "Thomas",
+        "White",
+        "Lewis",
+        "Walker",
+        "Hall",
+        "Allen",
+        "Young",
+        "King",
+        "Scott",
+        "Green",
+        "Adams",
+        "Hill"
+      ],
+      "Hispanic": [
+        "Garcia",
+        "Martinez",
+        "Rodriguez",
+        "Lopez",
+        "Hernandez",
+        "Gonzalez",
+        "Perez",
+        "Sanchez",
+        "Ramirez",
+        "Torres",
+        "Flores",
+        "Rivera",
+        "Gomez",
+        "Diaz",
+        "Reyes",
+        "Cruz",
+        "Morales",
+        "Ortiz",
+        "Gutierrez",
+        "Chavez",
+        "Ramos",
+        "Vasquez",
+        "Santiago",
+        "Mendoza",
+        "Castillo"
+      ],
+      "Asian": [
+        "Kim",
+        "Chen",
+        "Nguyen",
+        "Lee",
+        "Wang",
+        "Liu",
+        "Yang",
+        "Zhang",
+        "Huang",
+        "Lin",
+        "Choi",
+        "Park",
+        "Tanaka",
+        "Yamamoto",
+        "Ito",
+        "Kobayashi",
+        "Suzuki",
+        "Khan",
+        "Singh",
+        "Patel",
+        "Sharma",
+        "Gupta",
+        "Chung",
+        "Pham",
+        "Tran"
+      ],
+      "Native American": [
+        "Runningwater",
+        "Littlefeather",
+        "Bearcloud",
+        "Redhawk",
+        "Whitefeather",
+        "Thunderhawk",
+        "Blackwolf",
+        "Eaglefeather",
+        "Spiritwalker",
+        "Rainwater",
+        "Sunbear",
+        "Nightwolf",
+        "Starfire",
+        "Moonshadow",
+        "Windwalker",
+        "Skyhorse",
+        "Firewalker",
+        "Earthchild",
+        "Wolfmoon",
+        "Dreamcatcher"
+      ],
+      "Other": [
+        "Brown",
+        "Taylor",
+        "Davis",
+        "Miller",
+        "Wilson",
+        "Moore",
+        "Anderson",
+        "Thomas",
+        "Jackson",
+        "White",
+        "Harris",
+        "Martin",
+        "Thompson",
+        "Garcia",
+        "Martinez",
+        "Robinson",
+        "Clark",
+        "Lewis",
+        "Lee",
+        "Walker"
+      ]
+    },
+    "middle_initials": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "J",
+      "K",
+      "L",
+      "M",
+      "N",
+      "P",
+      "R",
+      "S",
+      "T",
+      "W"
+    ]
+  },
+  "cohorts": [
+    {
+      "id": "oud_bup",
+      "name": "Opioid Use Disorder \u2014 Buprenorphine/Naloxone Maintenance",
+      "weight": 0.45,
+      "min_age": 18,
+      "max_age": 65,
+      "sex_bias": null,
+      "diagnoses": [
+        {
+          "code": "F11.20",
+          "description": "Opioid use disorder, uncomplicated",
+          "is_primary": true,
+          "only_encounter_types": [
+            "O"
+          ]
+        },
+        {
+          "code": "F32.9",
+          "description": "Major depressive disorder, unspecified",
+          "is_primary": true,
+          "only_encounter_types": [
+            "E",
+            "I"
+          ]
+        },
+        {
+          "code": "F11.21",
+          "description": "Opioid use disorder, in remission",
+          "is_primary": false
+        },
+        {
+          "code": "F43.10",
+          "description": "Post-traumatic stress disorder, unspecified",
+          "is_primary": false
+        },
+        {
+          "code": "G47.00",
+          "description": "Insomnia, unspecified",
+          "is_primary": false
+        }
+      ],
+      "comorbidities": [
+        {
+          "code": "F41.1",
+          "description": "Generalized anxiety disorder",
+          "prevalence_pct": 0.4,
+          "is_primary": false
+        },
+        {
+          "code": "F14.10",
+          "description": "Cocaine use disorder, uncomplicated",
+          "prevalence_pct": 0.22,
+          "is_primary": false
+        },
+        {
+          "code": "F17.210",
+          "description": "Nicotine dependence, cigarettes, uncomplicated",
+          "prevalence_pct": 0.52,
+          "is_primary": false
+        },
+        {
+          "code": "I10",
+          "description": "Essential (primary) hypertension",
+          "prevalence_pct": 0.22,
+          "is_primary": false
+        },
+        {
+          "code": "B18.2",
+          "description": "Chronic viral hepatitis C without delta-agent",
+          "prevalence_pct": 0.18,
+          "is_primary": false
+        },
+        {
+          "code": "N18.3",
+          "description": "Chronic kidney disease, stage 3",
+          "prevalence_pct": 0.1,
+          "is_primary": false
+        },
+        {
+          "code": "A15.0",
+          "description": "Tuberculosis of lung",
+          "prevalence_pct": 0.015,
+          "is_primary": false
+        }
+      ],
+      "medications": [
+        {
+          "drug_code": "2105765",
+          "drug_description": "Buprenorphine/Naloxone 8 MG/2 MG sublingual tablet",
+          "drug_class": "MAT \u2014 Partial Opioid Agonist",
+          "weight": 0.92,
+          "for_diagnosis_code": "",
+          "dose_options": [
+            {
+              "amount": "8",
+              "unit": "mg",
+              "route": "SL",
+              "frequency": "BID"
+            }
+          ]
+        },
+        {
+          "drug_code": "1659929",
+          "drug_description": "Naloxone HCl 4 MG/0.1 mL nasal spray",
+          "drug_class": "Opioid Antagonist / Rescue",
+          "weight": 0.82,
+          "for_diagnosis_code": "",
+          "dose_options": [
+            {
+              "amount": "4",
+              "unit": "mg",
+              "route": "Intranasal",
+              "frequency": "PRN"
+            }
+          ]
+        },
+        {
+          "drug_code": "2108769",
+          "drug_description": "Sertraline 50 MG Oral Tablet",
+          "drug_class": "SSRI Antidepressant",
+          "weight": 0.45,
+          "for_diagnosis_code": "F32",
+          "dose_options": [
+            {
+              "amount": "50",
+              "unit": "mg",
+              "route": "PO",
+              "frequency": "QD"
+            }
+          ]
+        },
+        {
+          "drug_code": "835564",
+          "drug_description": "Prazosin 1 MG Oral Capsule",
+          "drug_class": "Alpha-1 Antagonist / PTSD nightmares",
+          "weight": 0.3,
+          "for_diagnosis_code": "F43",
+          "dose_options": [
+            {
+              "amount": "1",
+              "unit": "mg",
+              "route": "PO",
+              "frequency": "QHS"
+            }
+          ]
+        },
+        {
+          "drug_code": "898179",
+          "drug_description": "Trazodone 50 MG Oral Tablet",
+          "drug_class": "Sedating Antidepressant",
+          "weight": 0.35,
+          "for_diagnosis_code": "G47",
+          "dose_options": [
+            {
+              "amount": "50",
+              "unit": "mg",
+              "route": "PO",
+              "frequency": "QHS"
+            }
+          ]
+        }
+      ],
+      "labs": [
+        {
+          "order_code": "24323-8",
+          "order_description": "Hepatic Function Panel",
+          "specimen": "Blood",
+          "abnormal_pct": 0.35,
+          "weight": 0.4,
+          "result_items": [
+            {
+              "code": "1742-6",
+              "description": "ALT",
+              "is_numeric": true,
+              "units": "U/L",
+              "normal_min": 7,
+              "normal_max": 56,
+              "abnormal_min": 57,
+              "abnormal_max": 300
+            },
+            {
+              "code": "1920-8",
+              "description": "AST",
+              "is_numeric": true,
+              "units": "U/L",
+              "normal_min": 10,
+              "normal_max": 40,
+              "abnormal_min": 41,
+              "abnormal_max": 300
+            },
+            {
+              "code": "6768-6",
+              "description": "Alkaline Phosphatase",
+              "is_numeric": true,
+              "units": "U/L",
+              "normal_min": 44,
+              "normal_max": 147,
+              "abnormal_min": 148,
+              "abnormal_max": 400
+            },
+            {
+              "code": "1975-2",
+              "description": "Total Bilirubin",
+              "is_numeric": true,
+              "units": "mg/dL",
+              "normal_min": 0.1,
+              "normal_max": 1.2,
+              "abnormal_min": 1.3,
+              "abnormal_max": 8.0
+            }
+          ]
+        },
+        {
+          "order_code": "58410-2",
+          "order_description": "CBC panel - Blood by Automated count",
+          "specimen": "Blood",
+          "abnormal_pct": 0.3,
+          "weight": 0.4,
+          "result_items": [
+            {
+              "code": "6690-2",
+              "description": "WBC",
+              "is_numeric": true,
+              "units": "K/uL",
+              "normal_min": 4.5,
+              "normal_max": 11.0,
+              "abnormal_min": 1.5,
+              "abnormal_max": 18.0
+            },
+            {
+              "code": "789-8",
+              "description": "RBC",
+              "is_numeric": true,
+              "units": "M/uL",
+              "normal_min": 3.9,
+              "normal_max": 5.9,
+              "abnormal_min": 2.0,
+              "abnormal_max": 7.0
+            },
+            {
+              "code": "718-7",
+              "description": "Hemoglobin",
+              "is_numeric": true,
+              "units": "g/dL",
+              "normal_min": 11.5,
+              "normal_max": 17.5,
+              "abnormal_min": 6.0,
+              "abnormal_max": 14.0
+            },
+            {
+              "code": "777-3",
+              "description": "Platelets",
+              "is_numeric": true,
+              "units": "K/uL",
+              "normal_min": 150,
+              "normal_max": 400,
+              "abnormal_min": 50,
+              "abnormal_max": 600
+            }
+          ]
+        },
+        {
+          "order_code": "3426-4",
+          "order_description": "Drugs of abuse screen - Urine",
+          "specimen": "Urine",
+          "abnormal_pct": 0.0,
+          "weight": 0.55,
+          "result_items": [
+            {
+              "code": "3426-4",
+              "description": "Opiates screen [Presence] in Urine",
+              "is_numeric": false,
+              "units": "",
+              "text_values": [
+                "Positive",
+                "Negative"
+              ]
+            }
+          ]
+        }
+      ],
+      "observations": [
+        {
+          "code": "8480-6",
+          "description": "Systolic blood pressure",
+          "units": "mmHg",
+          "normal_min": 90,
+          "normal_max": 119,
+          "abnormal_min": 130,
+          "abnormal_max": 180,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.22,
+          "weight": 0.35
+        },
+        {
+          "code": "8462-4",
+          "description": "Diastolic blood pressure",
+          "units": "mmHg",
+          "normal_min": 60,
+          "normal_max": 79,
+          "abnormal_min": 80,
+          "abnormal_max": 120,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.2,
+          "weight": 0.35
+        },
+        {
+          "code": "8867-4",
+          "description": "Heart rate",
+          "units": "bpm",
+          "normal_min": 60,
+          "normal_max": 100,
+          "abnormal_min": 40,
+          "abnormal_max": 59,
+          "abnormal_flag": "L",
+          "abnormal_pct": 0.15,
+          "weight": 0.3
+        }
+      ],
+      "procedures": [
+        {
+          "code": "H0020",
+          "description": "Methadone administration",
+          "weight": 0.1
+        },
+        {
+          "code": "99213",
+          "description": "Office visit, established patient, moderate complexity",
+          "weight": 0.6
+        },
+        {
+          "code": "90837",
+          "description": "Psychotherapy, 60 min",
+          "weight": 0.3
+        }
+      ],
+      "encounter_pattern": {
+        "encounters_per_year": 13.0,
+        "encounter_type_weights": {
+          "O": 0.87,
+          "E": 0.09,
+          "I": 0.04
+        },
+        "lab_encounter_rate": 0.5,
+        "rad_encounter_rate": 0.04
+      },
+      "document_templates": [
+        {
+          "type_code": "PN",
+          "type_description": "Progress Note",
+          "encounter_type": "O",
+          "chief_complaints": [
+            "Buprenorphine/naloxone monthly refill and MAT follow-up",
+            "MAT check-in \u2014 buprenorphine maintenance and counseling",
+            "Medication-assisted treatment visit \u2014 buprenorphine dose review"
+          ],
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for routine buprenorphine/naloxone MAT follow-up for opioid use disorder. Patient reports {compliance_statement}. Urine drug screen reviewed \u2014 results discussed with patient.\n\nREVIEW OF SYSTEMS: Denies cravings, denies illicit opioid use. Reports adherence to buprenorphine regimen. Mood stable. Sleep adequate.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Alert, oriented, no acute distress.\nSkin: No evidence of fresh injection sites.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 buprenorphine/naloxone dose confirmed as appropriate. Refill provided. Counseling reinforced.\n2. MAT contract reviewed.\n\nFOLLOW-UP: Return in 30 days or sooner if clinically indicated."
+        },
+        {
+          "type_code": "ED",
+          "type_description": "Emergency Department Note",
+          "encounter_type": "E",
+          "chief_complaints": [
+            "psychiatric crisis \u2014 suicidal ideation and worsening depression",
+            "severe opioid withdrawal symptoms",
+            "altered consciousness \u2014 suspected overdose"
+          ],
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} with known opioid use disorder on buprenorphine/naloxone presenting to the emergency department with {chief_complaint}. History obtained from patient and collateral.\n\nASSESSMENT: {diagnosis}. Evaluated and treated per protocol.\n\nED COURSE: Vitals: BP {bp} mmHg, HR {hr} bpm. Acute intervention performed as appropriate. Patient clinically improved during ED stay. Addiction medicine and social work notified.\n\nPLAN: {plan}\n\nFOLLOW-UP: Outpatient addiction medicine in 3-5 days."
+        },
+        {
+          "type_code": "HP",
+          "type_description": "History and Physical",
+          "encounter_type": "I",
+          "chief_complaints": [
+            "admitted to inpatient service \u2014 acute OUD complication",
+            "admitted for further management \u2014 acute psychiatric crisis",
+            "inpatient admission for opioid-related medical complication"
+          ],
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} admitted to the inpatient service for acute management related to opioid use disorder. Patient has history of OUD, currently on buprenorphine/naloxone maintenance.\n\nASSESSMENT: {diagnosis}.\n\nHOSPITAL COURSE: Vitals: BP {bp} mmHg, HR {hr} bpm. Admitted to inpatient service for further evaluation and management. Addiction medicine and psychiatry involved. Buprenorphine continued throughout hospitalization. MAT optimized prior to discharge.\n\nDISCHARGE PLAN: {plan}\n\nFOLLOW-UP: Outpatient MAT clinic within 1 week of discharge."
+        }
+      ]
+    },
+    {
+      "id": "oud_methadone",
+      "name": "Opioid Use Disorder \u2014 Methadone Maintenance Therapy",
+      "weight": 0.3,
+      "min_age": 18,
+      "max_age": 65,
+      "sex_bias": null,
+      "diagnoses": [
+        {
+          "code": "F11.20",
+          "description": "Opioid use disorder, uncomplicated",
+          "is_primary": true,
+          "only_encounter_types": [
+            "O"
+          ]
+        },
+        {
+          "code": "F32.9",
+          "description": "Major depressive disorder, unspecified",
+          "is_primary": true,
+          "only_encounter_types": [
+            "E",
+            "I"
+          ]
+        },
+        {
+          "code": "F11.21",
+          "description": "Opioid use disorder, in remission",
+          "is_primary": false
+        },
+        {
+          "code": "F43.10",
+          "description": "Post-traumatic stress disorder, unspecified",
+          "is_primary": false
+        },
+        {
+          "code": "G47.00",
+          "description": "Insomnia, unspecified",
+          "is_primary": false
+        }
+      ],
+      "comorbidities": [
+        {
+          "code": "F41.1",
+          "description": "Generalized anxiety disorder",
+          "prevalence_pct": 0.4,
+          "is_primary": false
+        },
+        {
+          "code": "F14.10",
+          "description": "Cocaine use disorder, uncomplicated",
+          "prevalence_pct": 0.22,
+          "is_primary": false
+        },
+        {
+          "code": "F17.210",
+          "description": "Nicotine dependence, cigarettes, uncomplicated",
+          "prevalence_pct": 0.52,
+          "is_primary": false
+        },
+        {
+          "code": "I10",
+          "description": "Essential (primary) hypertension",
+          "prevalence_pct": 0.22,
+          "is_primary": false
+        },
+        {
+          "code": "B18.2",
+          "description": "Chronic viral hepatitis C without delta-agent",
+          "prevalence_pct": 0.18,
+          "is_primary": false
+        },
+        {
+          "code": "N18.3",
+          "description": "Chronic kidney disease, stage 3",
+          "prevalence_pct": 0.1,
+          "is_primary": false
+        },
+        {
+          "code": "A15.0",
+          "description": "Tuberculosis of lung",
+          "prevalence_pct": 0.015,
+          "is_primary": false
+        }
+      ],
+      "medications": [
+        {
+          "drug_code": "864978",
+          "drug_description": "Methadone HCl 40 MG dispersible tablet",
+          "drug_class": "MAT \u2014 Full Opioid Agonist",
+          "weight": 0.92,
+          "for_diagnosis_code": "",
+          "dose_options": [
+            {
+              "amount": "40-120",
+              "unit": "mg",
+              "route": "PO",
+              "frequency": "QD"
+            }
+          ]
+        },
+        {
+          "drug_code": "1659929",
+          "drug_description": "Naloxone HCl 4 MG/0.1 mL nasal spray",
+          "drug_class": "Opioid Antagonist / Rescue",
+          "weight": 0.75,
+          "for_diagnosis_code": "",
+          "dose_options": [
+            {
+              "amount": "4",
+              "unit": "mg",
+              "route": "Intranasal",
+              "frequency": "PRN"
+            }
+          ]
+        },
+        {
+          "drug_code": "2108769",
+          "drug_description": "Sertraline 50 MG Oral Tablet",
+          "drug_class": "SSRI Antidepressant",
+          "weight": 0.45,
+          "for_diagnosis_code": "F32",
+          "dose_options": [
+            {
+              "amount": "50",
+              "unit": "mg",
+              "route": "PO",
+              "frequency": "QD"
+            }
+          ]
+        },
+        {
+          "drug_code": "898179",
+          "drug_description": "Trazodone 50 MG Oral Tablet",
+          "drug_class": "Sedating Antidepressant",
+          "weight": 0.35,
+          "for_diagnosis_code": "G47",
+          "dose_options": [
+            {
+              "amount": "50",
+              "unit": "mg",
+              "route": "PO",
+              "frequency": "QHS"
+            }
+          ]
+        },
+        {
+          "drug_code": "314076",
+          "drug_description": "Lisinopril 10 MG Oral Tablet",
+          "drug_class": "ACE inhibitor",
+          "weight": 0.4,
+          "for_diagnosis_code": "I10",
+          "dose_options": [
+            {
+              "amount": "10",
+              "unit": "mg",
+              "route": "PO",
+              "frequency": "QD"
+            }
+          ]
+        }
+      ],
+      "labs": [
+        {
+          "order_code": "24323-8",
+          "order_description": "Hepatic Function Panel",
+          "specimen": "Blood",
+          "abnormal_pct": 0.35,
+          "weight": 0.4,
+          "result_items": [
+            {
+              "code": "1742-6",
+              "description": "ALT",
+              "is_numeric": true,
+              "units": "U/L",
+              "normal_min": 7,
+              "normal_max": 56,
+              "abnormal_min": 57,
+              "abnormal_max": 300
+            },
+            {
+              "code": "1920-8",
+              "description": "AST",
+              "is_numeric": true,
+              "units": "U/L",
+              "normal_min": 10,
+              "normal_max": 40,
+              "abnormal_min": 41,
+              "abnormal_max": 300
+            },
+            {
+              "code": "6768-6",
+              "description": "Alkaline Phosphatase",
+              "is_numeric": true,
+              "units": "U/L",
+              "normal_min": 44,
+              "normal_max": 147,
+              "abnormal_min": 148,
+              "abnormal_max": 400
+            },
+            {
+              "code": "1975-2",
+              "description": "Total Bilirubin",
+              "is_numeric": true,
+              "units": "mg/dL",
+              "normal_min": 0.1,
+              "normal_max": 1.2,
+              "abnormal_min": 1.3,
+              "abnormal_max": 8.0
+            }
+          ]
+        },
+        {
+          "order_code": "58410-2",
+          "order_description": "CBC panel - Blood by Automated count",
+          "specimen": "Blood",
+          "abnormal_pct": 0.3,
+          "weight": 0.4,
+          "result_items": [
+            {
+              "code": "6690-2",
+              "description": "WBC",
+              "is_numeric": true,
+              "units": "K/uL",
+              "normal_min": 4.5,
+              "normal_max": 11.0,
+              "abnormal_min": 1.5,
+              "abnormal_max": 18.0
+            },
+            {
+              "code": "789-8",
+              "description": "RBC",
+              "is_numeric": true,
+              "units": "M/uL",
+              "normal_min": 3.9,
+              "normal_max": 5.9,
+              "abnormal_min": 2.0,
+              "abnormal_max": 7.0
+            },
+            {
+              "code": "718-7",
+              "description": "Hemoglobin",
+              "is_numeric": true,
+              "units": "g/dL",
+              "normal_min": 11.5,
+              "normal_max": 17.5,
+              "abnormal_min": 6.0,
+              "abnormal_max": 14.0
+            },
+            {
+              "code": "777-3",
+              "description": "Platelets",
+              "is_numeric": true,
+              "units": "K/uL",
+              "normal_min": 150,
+              "normal_max": 400,
+              "abnormal_min": 50,
+              "abnormal_max": 600
+            }
+          ]
+        },
+        {
+          "order_code": "3426-4",
+          "order_description": "Drugs of abuse screen - Urine",
+          "specimen": "Urine",
+          "abnormal_pct": 0.0,
+          "weight": 0.55,
+          "result_items": [
+            {
+              "code": "3426-4",
+              "description": "Opiates screen [Presence] in Urine",
+              "is_numeric": false,
+              "units": "",
+              "text_values": [
+                "Positive",
+                "Negative"
+              ]
+            }
+          ]
+        }
+      ],
+      "observations": [
+        {
+          "code": "8480-6",
+          "description": "Systolic blood pressure",
+          "units": "mmHg",
+          "normal_min": 90,
+          "normal_max": 119,
+          "abnormal_min": 130,
+          "abnormal_max": 180,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.22,
+          "weight": 0.35
+        },
+        {
+          "code": "8462-4",
+          "description": "Diastolic blood pressure",
+          "units": "mmHg",
+          "normal_min": 60,
+          "normal_max": 79,
+          "abnormal_min": 80,
+          "abnormal_max": 120,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.2,
+          "weight": 0.35
+        },
+        {
+          "code": "8867-4",
+          "description": "Heart rate",
+          "units": "bpm",
+          "normal_min": 60,
+          "normal_max": 100,
+          "abnormal_min": 40,
+          "abnormal_max": 59,
+          "abnormal_flag": "L",
+          "abnormal_pct": 0.15,
+          "weight": 0.3
+        }
+      ],
+      "procedures": [
+        {
+          "code": "H0020",
+          "description": "Methadone administration",
+          "weight": 0.1
+        },
+        {
+          "code": "99213",
+          "description": "Office visit, established patient, moderate complexity",
+          "weight": 0.6
+        },
+        {
+          "code": "90837",
+          "description": "Psychotherapy, 60 min",
+          "weight": 0.3
+        }
+      ],
+      "encounter_pattern": {
+        "encounters_per_year": 13.0,
+        "encounter_type_weights": {
+          "O": 0.87,
+          "E": 0.09,
+          "I": 0.04
+        },
+        "lab_encounter_rate": 0.5,
+        "rad_encounter_rate": 0.04
+      },
+      "document_templates": [
+        {
+          "type_code": "PN",
+          "type_description": "Progress Note",
+          "encounter_type": "O",
+          "chief_complaints": [
+            "Methadone clinic monthly visit and dose review",
+            "MAT follow-up \u2014 methadone maintenance therapy",
+            "Methadone continuation visit \u2014 stable dose assessment"
+          ],
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for monthly methadone clinic visit as part of ongoing opioid use disorder treatment. Patient reports {compliance_statement}. Attending structured methadone dispensing program with observed dosing. UDS reviewed.\n\nREVIEW OF SYSTEMS: Denies illicit opioid use. Reports adequate pain control and mood stability. No withdrawal symptoms between doses.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Alert, cooperative, no acute distress.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 methadone dose stable and appropriate. Take-home doses adjusted per clinic protocol. Counseling session completed.\n\nFOLLOW-UP: Return per clinic schedule; next monthly review in 30 days."
+        },
+        {
+          "type_code": "ED",
+          "type_description": "Emergency Department Note",
+          "encounter_type": "E",
+          "chief_complaints": [
+            "psychiatric crisis \u2014 severe depression and suicidal ideation",
+            "acute withdrawal \u2014 missed methadone doses",
+            "medical complication in patient on methadone maintenance"
+          ],
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} with opioid use disorder on methadone maintenance therapy presenting with {chief_complaint}.\n\nASSESSMENT: {diagnosis}. Methadone clinic contacted to verify current dose.\n\nED COURSE: Vitals: BP {bp} mmHg, HR {hr} bpm. Evaluated and managed per protocol. Social work and addiction medicine notified.\n\nPLAN: {plan}\n\nFOLLOW-UP: Methadone clinic notification; return to usual dosing schedule."
+        },
+        {
+          "type_code": "HP",
+          "type_description": "History and Physical",
+          "encounter_type": "I",
+          "chief_complaints": [
+            "admitted to inpatient service \u2014 acute medical complication",
+            "inpatient admission for management of acute condition in methadone patient",
+            "admitted to hospital \u2014 methadone treatment continued inpatient"
+          ],
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} admitted to the inpatient service for acute medical management. Patient is maintained on methadone for opioid use disorder.\n\nASSESSMENT: {diagnosis}.\n\nHOSPITAL COURSE: Methadone continued at outpatient dose per methadone clinic verification. Admitted to inpatient service for management of acute condition. Addiction medicine consulted. Vitals: BP {bp} mmHg, HR {hr} bpm. Patient clinically improved with treatment.\n\nDISCHARGE PLAN: {plan}\n\nFOLLOW-UP: Methadone clinic within 2 days of discharge."
+        }
+      ]
+    },
+    {
+      "id": "oud_naltrexone",
+      "name": "Opioid Use Disorder \u2014 Extended-Release Naltrexone",
+      "weight": 0.25,
+      "min_age": 18,
+      "max_age": 65,
+      "sex_bias": null,
+      "diagnoses": [
+        {
+          "code": "F11.21",
+          "description": "Opioid use disorder, in sustained remission",
+          "is_primary": true,
+          "only_encounter_types": [
+            "O"
+          ]
+        },
+        {
+          "code": "F32.9",
+          "description": "Major depressive disorder, unspecified",
+          "is_primary": true,
+          "only_encounter_types": [
+            "E",
+            "I"
+          ]
+        },
+        {
+          "code": "F43.10",
+          "description": "Post-traumatic stress disorder, unspecified",
+          "is_primary": false
+        },
+        {
+          "code": "G47.00",
+          "description": "Insomnia, unspecified",
+          "is_primary": false
+        }
+      ],
+      "comorbidities": [
+        {
+          "code": "F41.1",
+          "description": "Generalized anxiety disorder",
+          "prevalence_pct": 0.4,
+          "is_primary": false
+        },
+        {
+          "code": "F14.10",
+          "description": "Cocaine use disorder, uncomplicated",
+          "prevalence_pct": 0.22,
+          "is_primary": false
+        },
+        {
+          "code": "F17.210",
+          "description": "Nicotine dependence, cigarettes, uncomplicated",
+          "prevalence_pct": 0.52,
+          "is_primary": false
+        },
+        {
+          "code": "I10",
+          "description": "Essential (primary) hypertension",
+          "prevalence_pct": 0.22,
+          "is_primary": false
+        },
+        {
+          "code": "B18.2",
+          "description": "Chronic viral hepatitis C without delta-agent",
+          "prevalence_pct": 0.18,
+          "is_primary": false
+        },
+        {
+          "code": "N18.3",
+          "description": "Chronic kidney disease, stage 3",
+          "prevalence_pct": 0.1,
+          "is_primary": false
+        },
+        {
+          "code": "A15.0",
+          "description": "Tuberculosis of lung",
+          "prevalence_pct": 0.015,
+          "is_primary": false
+        }
+      ],
+      "medications": [
+        {
+          "drug_code": "1113834",
+          "drug_description": "Naltrexone 380 MG IM extended-release injectable",
+          "drug_class": "MAT \u2014 Opioid Antagonist",
+          "weight": 0.92,
+          "for_diagnosis_code": "",
+          "dose_options": [
+            {
+              "amount": "380",
+              "unit": "mg",
+              "route": "IM",
+              "frequency": "Monthly"
+            }
+          ]
+        },
+        {
+          "drug_code": "2108769",
+          "drug_description": "Sertraline 50 MG Oral Tablet",
+          "drug_class": "SSRI Antidepressant",
+          "weight": 0.5,
+          "for_diagnosis_code": "F32",
+          "dose_options": [
+            {
+              "amount": "50",
+              "unit": "mg",
+              "route": "PO",
+              "frequency": "QD"
+            }
+          ]
+        },
+        {
+          "drug_code": "835564",
+          "drug_description": "Prazosin 1 MG Oral Capsule",
+          "drug_class": "Alpha-1 Antagonist / PTSD nightmares",
+          "weight": 0.28,
+          "for_diagnosis_code": "F43",
+          "dose_options": [
+            {
+              "amount": "1",
+              "unit": "mg",
+              "route": "PO",
+              "frequency": "QHS"
+            }
+          ]
+        },
+        {
+          "drug_code": "1659929",
+          "drug_description": "Naloxone HCl 4 MG/0.1 mL nasal spray",
+          "drug_class": "Opioid Antagonist / Rescue",
+          "weight": 0.6,
+          "for_diagnosis_code": "",
+          "dose_options": [
+            {
+              "amount": "4",
+              "unit": "mg",
+              "route": "Intranasal",
+              "frequency": "PRN"
+            }
+          ]
+        }
+      ],
+      "labs": [
+        {
+          "order_code": "24323-8",
+          "order_description": "Hepatic Function Panel",
+          "specimen": "Blood",
+          "abnormal_pct": 0.35,
+          "weight": 0.4,
+          "result_items": [
+            {
+              "code": "1742-6",
+              "description": "ALT",
+              "is_numeric": true,
+              "units": "U/L",
+              "normal_min": 7,
+              "normal_max": 56,
+              "abnormal_min": 57,
+              "abnormal_max": 300
+            },
+            {
+              "code": "1920-8",
+              "description": "AST",
+              "is_numeric": true,
+              "units": "U/L",
+              "normal_min": 10,
+              "normal_max": 40,
+              "abnormal_min": 41,
+              "abnormal_max": 300
+            },
+            {
+              "code": "6768-6",
+              "description": "Alkaline Phosphatase",
+              "is_numeric": true,
+              "units": "U/L",
+              "normal_min": 44,
+              "normal_max": 147,
+              "abnormal_min": 148,
+              "abnormal_max": 400
+            },
+            {
+              "code": "1975-2",
+              "description": "Total Bilirubin",
+              "is_numeric": true,
+              "units": "mg/dL",
+              "normal_min": 0.1,
+              "normal_max": 1.2,
+              "abnormal_min": 1.3,
+              "abnormal_max": 8.0
+            }
+          ]
+        },
+        {
+          "order_code": "58410-2",
+          "order_description": "CBC panel - Blood by Automated count",
+          "specimen": "Blood",
+          "abnormal_pct": 0.3,
+          "weight": 0.4,
+          "result_items": [
+            {
+              "code": "6690-2",
+              "description": "WBC",
+              "is_numeric": true,
+              "units": "K/uL",
+              "normal_min": 4.5,
+              "normal_max": 11.0,
+              "abnormal_min": 1.5,
+              "abnormal_max": 18.0
+            },
+            {
+              "code": "789-8",
+              "description": "RBC",
+              "is_numeric": true,
+              "units": "M/uL",
+              "normal_min": 3.9,
+              "normal_max": 5.9,
+              "abnormal_min": 2.0,
+              "abnormal_max": 7.0
+            },
+            {
+              "code": "718-7",
+              "description": "Hemoglobin",
+              "is_numeric": true,
+              "units": "g/dL",
+              "normal_min": 11.5,
+              "normal_max": 17.5,
+              "abnormal_min": 6.0,
+              "abnormal_max": 14.0
+            },
+            {
+              "code": "777-3",
+              "description": "Platelets",
+              "is_numeric": true,
+              "units": "K/uL",
+              "normal_min": 150,
+              "normal_max": 400,
+              "abnormal_min": 50,
+              "abnormal_max": 600
+            }
+          ]
+        },
+        {
+          "order_code": "3426-4",
+          "order_description": "Drugs of abuse screen - Urine",
+          "specimen": "Urine",
+          "abnormal_pct": 0.0,
+          "weight": 0.55,
+          "result_items": [
+            {
+              "code": "3426-4",
+              "description": "Opiates screen [Presence] in Urine",
+              "is_numeric": false,
+              "units": "",
+              "text_values": [
+                "Positive",
+                "Negative"
+              ]
+            }
+          ]
+        }
+      ],
+      "observations": [
+        {
+          "code": "8480-6",
+          "description": "Systolic blood pressure",
+          "units": "mmHg",
+          "normal_min": 90,
+          "normal_max": 119,
+          "abnormal_min": 130,
+          "abnormal_max": 180,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.22,
+          "weight": 0.35
+        },
+        {
+          "code": "8462-4",
+          "description": "Diastolic blood pressure",
+          "units": "mmHg",
+          "normal_min": 60,
+          "normal_max": 79,
+          "abnormal_min": 80,
+          "abnormal_max": 120,
+          "abnormal_flag": "H",
+          "abnormal_pct": 0.2,
+          "weight": 0.35
+        },
+        {
+          "code": "8867-4",
+          "description": "Heart rate",
+          "units": "bpm",
+          "normal_min": 60,
+          "normal_max": 100,
+          "abnormal_min": 40,
+          "abnormal_max": 59,
+          "abnormal_flag": "L",
+          "abnormal_pct": 0.15,
+          "weight": 0.3
+        }
+      ],
+      "procedures": [
+        {
+          "code": "H0020",
+          "description": "Methadone administration",
+          "weight": 0.1
+        },
+        {
+          "code": "99213",
+          "description": "Office visit, established patient, moderate complexity",
+          "weight": 0.6
+        },
+        {
+          "code": "90837",
+          "description": "Psychotherapy, 60 min",
+          "weight": 0.3
+        }
+      ],
+      "encounter_pattern": {
+        "encounters_per_year": 7.0,
+        "encounter_type_weights": {
+          "O": 0.9,
+          "E": 0.08,
+          "I": 0.02
+        },
+        "lab_encounter_rate": 0.45,
+        "rad_encounter_rate": 0.03
+      },
+      "document_templates": [
+        {
+          "type_code": "PN",
+          "type_description": "Progress Note",
+          "encounter_type": "O",
+          "chief_complaints": [
+            "Monthly extended-release naltrexone injection",
+            "Vivitrol injection and MAT follow-up visit",
+            "Naltrexone maintenance \u2014 opioid-free status review"
+          ],
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} presenting for monthly extended-release naltrexone (Vivitrol) injection visit. Patient has achieved and maintained opioid-free status required for naltrexone initiation. Reports {compliance_statement}.\n\nREVIEW OF SYSTEMS: Denies opioid use. Reports adequate mood and sleep. No injection site reactions from prior dose.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nGeneral: Alert, engaged, cooperative. Injection site from prior dose well-healed.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} in sustained remission \u2014 ER-naltrexone 380 mg IM administered to right gluteal muscle. Tolerated well. Recovery support resources reviewed.\n\nFOLLOW-UP: Return in 4 weeks for next injection."
+        },
+        {
+          "type_code": "ED",
+          "type_description": "Emergency Department Note",
+          "encounter_type": "E",
+          "chief_complaints": [
+            "psychiatric crisis \u2014 depression and suicidal ideation",
+            "severe anxiety with panic attacks",
+            "acute medical complaint in patient on naltrexone"
+          ],
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} with OUD in sustained remission on extended-release naltrexone presenting with {chief_complaint}.\n\nNOTE: Patient is on naltrexone \u2014 opioid analgesics will be ineffective and should not be used unless absolutely life-saving. Non-opioid pain management protocol employed.\n\nASSESSMENT: {diagnosis}.\n\nED COURSE: Vitals: BP {bp} mmHg, HR {hr} bpm. Evaluated and treated. Addiction medicine and mental health notified.\n\nPLAN: {plan}\n\nFOLLOW-UP: Outpatient MAT provider within 3-5 days."
+        },
+        {
+          "type_code": "HP",
+          "type_description": "History and Physical",
+          "encounter_type": "I",
+          "chief_complaints": [
+            "admitted to inpatient psychiatry \u2014 acute suicidal ideation",
+            "inpatient admission for acute medical complication",
+            "Admitted to inpatient service \u2014 naltrexone patient with acute condition"
+          ],
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old {sex} with opioid use disorder in sustained remission on extended-release naltrexone, admitted to the inpatient service.\n\nIMPORTANT: Patient currently on naltrexone \u2014 opioid analgesics are contraindicated. Non-opioid analgesia and anesthesia protocols must be used.\n\nASSESSMENT: {diagnosis}.\n\nHOSPITAL COURSE: Admitted to inpatient service for management. Addiction medicine and psychiatry consulted. Naltrexone bridged per specialist guidance. Vitals: BP {bp} mmHg, HR {hr} bpm.\n\nDISCHARGE PLAN: {plan}\n\nFOLLOW-UP: MAT clinic within 1 week; next naltrexone injection as scheduled."
+        }
+      ]
+    }
+  ],
+  "catalogs": {
+    "allergies": [
+      {
+        "allergen_code": "372687004",
+        "allergen_description": "Amoxicillin",
+        "category_code": "DA",
+        "category_description": "Drug Allergy",
+        "reaction_code": "247472004",
+        "reaction_description": "Hives",
+        "severity_code": "MO",
+        "severity_description": "Moderate",
+        "weight": 0.086022
+      },
+      {
+        "allergen_code": "91936005",
+        "allergen_description": "Peanut",
+        "category_code": "FA",
+        "category_description": "Food Allergy",
+        "reaction_code": "39579001",
+        "reaction_description": "Anaphylaxis",
+        "severity_code": "SE",
+        "severity_description": "Severe",
+        "weight": 0.075269
+      },
+      {
+        "allergen_code": "300913006",
+        "allergen_description": "Pollen",
+        "category_code": "EA",
+        "category_description": "Environmental Allergy",
+        "reaction_code": "267036007",
+        "reaction_description": "Sneezing",
+        "severity_code": "MI",
+        "severity_description": "Mild",
+        "weight": 0.064516
+      },
+      {
+        "allergen_code": "91930004",
+        "allergen_description": "Egg",
+        "category_code": "FA",
+        "category_description": "Food Allergy",
+        "reaction_code": "39579001",
+        "reaction_description": "Anaphylaxis",
+        "severity_code": "SE",
+        "severity_description": "Severe",
+        "weight": 0.075269
+      },
+      {
+        "allergen_code": "294954003",
+        "allergen_description": "Latex",
+        "category_code": "EA",
+        "category_description": "Environmental Allergy",
+        "reaction_code": "271807003",
+        "reaction_description": "Rash",
+        "severity_code": "MO",
+        "severity_description": "Moderate",
+        "weight": 0.064516
+      },
+      {
+        "allergen_code": "91934008",
+        "allergen_description": "Penicillin",
+        "category_code": "DA",
+        "category_description": "Drug Allergy",
+        "reaction_code": "247472004",
+        "reaction_description": "Hives",
+        "severity_code": "MO",
+        "severity_description": "Moderate",
+        "weight": 0.086022
+      },
+      {
+        "allergen_code": "232347008",
+        "allergen_description": "Shellfish",
+        "category_code": "FA",
+        "category_description": "Food Allergy",
+        "reaction_code": "39579001",
+        "reaction_description": "Anaphylaxis",
+        "severity_code": "SE",
+        "severity_description": "Severe",
+        "weight": 0.075269
+      },
+      {
+        "allergen_code": "300916003",
+        "allergen_description": "Dust mite",
+        "category_code": "EA",
+        "category_description": "Environmental Allergy",
+        "reaction_code": "267036007",
+        "reaction_description": "Sneezing",
+        "severity_code": "MI",
+        "severity_description": "Mild",
+        "weight": 0.064516
+      },
+      {
+        "allergen_code": "91935009",
+        "allergen_description": "Soy",
+        "category_code": "FA",
+        "category_description": "Food Allergy",
+        "reaction_code": "271807003",
+        "reaction_description": "Rash",
+        "severity_code": "MO",
+        "severity_description": "Moderate",
+        "weight": 0.064516
+      },
+      {
+        "allergen_code": "294948004",
+        "allergen_description": "Mold",
+        "category_code": "EA",
+        "category_description": "Environmental Allergy",
+        "reaction_code": "267036007",
+        "reaction_description": "Sneezing",
+        "severity_code": "MI",
+        "severity_description": "Mild",
+        "weight": 0.064516
+      },
+      {
+        "allergen_code": "91931003",
+        "allergen_description": "Wheat",
+        "category_code": "FA",
+        "category_description": "Food Allergy",
+        "reaction_code": "271807003",
+        "reaction_description": "Rash",
+        "severity_code": "MO",
+        "severity_description": "Moderate",
+        "weight": 0.064516
+      },
+      {
+        "allergen_code": "294947009",
+        "allergen_description": "Animal dander",
+        "category_code": "EA",
+        "category_description": "Environmental Allergy",
+        "reaction_code": "267036007",
+        "reaction_description": "Sneezing",
+        "severity_code": "MI",
+        "severity_description": "Mild",
+        "weight": 0.064516
+      },
+      {
+        "allergen_code": "91932006",
+        "allergen_description": "Tree nuts",
+        "category_code": "FA",
+        "category_description": "Food Allergy",
+        "reaction_code": "39579001",
+        "reaction_description": "Anaphylaxis",
+        "severity_code": "SE",
+        "severity_description": "Severe",
+        "weight": 0.075269
+      },
+      {
+        "allergen_code": "294949007",
+        "allergen_description": "Insect sting",
+        "category_code": "EA",
+        "category_description": "Environmental Allergy",
+        "reaction_code": "39579001",
+        "reaction_description": "Anaphylaxis",
+        "severity_code": "SE",
+        "severity_description": "Severe",
+        "weight": 0.075269
+      }
+    ],
+    "vaccinations": [
+      {
+        "cvx_code": "141",
+        "description": "Influenza, seasonal, injectable",
+        "min_age_years": 0,
+        "max_age_years": 120,
+        "weight": 0.25
+      },
+      {
+        "cvx_code": "03",
+        "description": "MMR",
+        "min_age_years": 1,
+        "max_age_years": 120,
+        "weight": 0.15
+      },
+      {
+        "cvx_code": "08",
+        "description": "Hepatitis B",
+        "min_age_years": 0,
+        "max_age_years": 120,
+        "weight": 0.15
+      },
+      {
+        "cvx_code": "10",
+        "description": "Polio",
+        "min_age_years": 0,
+        "max_age_years": 120,
+        "weight": 0.1
+      },
+      {
+        "cvx_code": "21",
+        "description": "Varicella",
+        "min_age_years": 1,
+        "max_age_years": 120,
+        "weight": 0.1
+      },
+      {
+        "cvx_code": "48",
+        "description": "Hib",
+        "min_age_years": 0,
+        "max_age_years": 5,
+        "weight": 0.1
+      },
+      {
+        "cvx_code": "133",
+        "description": "Pneumococcal conjugate PCV13",
+        "min_age_years": 0,
+        "max_age_years": 120,
+        "weight": 0.1
+      },
+      {
+        "cvx_code": "120",
+        "description": "DTaP",
+        "min_age_years": 0,
+        "max_age_years": 7,
+        "weight": 0.05
+      }
+    ],
+    "encounter_patterns": [
+      {
+        "id": "routine_outpatient",
+        "label": "Routine Outpatient Visit",
+        "encounter_type": "O",
+        "duration_days": 0,
+        "encounters_per_year": 3.0,
+        "weight": 0.5
+      },
+      {
+        "id": "emergency_visit",
+        "label": "Emergency Room Visit",
+        "encounter_type": "E",
+        "duration_days": 1,
+        "encounters_per_year": 0.5,
+        "weight": 0.15
+      },
+      {
+        "id": "inpatient_stay",
+        "label": "Inpatient Hospital Stay",
+        "encounter_type": "I",
+        "duration_days": 5,
+        "encounters_per_year": 0.2,
+        "weight": 0.1
+      },
+      {
+        "id": "specialist_consult",
+        "label": "Specialist Consultation",
+        "encounter_type": "O",
+        "duration_days": 0,
+        "encounters_per_year": 1.0,
+        "weight": 0.15
+      },
+      {
+        "id": "telehealth_visit",
+        "label": "Telehealth Visit",
+        "encounter_type": "T",
+        "duration_days": 0,
+        "encounters_per_year": 1.5,
+        "weight": 0.1
+      }
+    ]
+  }
+}

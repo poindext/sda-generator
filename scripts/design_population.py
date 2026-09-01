@@ -430,10 +430,10 @@ _P1_SCHEMA = """\
   "meta": {
     "name": "short population name",
     "description": "1-2 sentence summary",
-    "state": "full state name",
-    "state_code": "2-letter USPS code",
-    "medicaid_field": "state Medicaid program name",
-    "medicaid_id_prefix": "prefix for Medicaid IDs e.g. OH-MEDICAID-",
+    "state": "full state name — use 'National' if the description says national/nationwide/multi-state",
+    "state_code": "2-letter USPS code — use 'US' if national/nationwide/multi-state",
+    "medicaid_field": "state Medicaid program name — use 'Medicaid' if national",
+    "medicaid_id_prefix": "prefix for Medicaid IDs — use 'MEDICAID-' if national",
     "total_patients": integer,
     "history_months": integer
   },
@@ -441,9 +441,9 @@ _P1_SCHEMA = """\
     "locations": [
       {
         "county": "County Name",
-        "county_fips": "5-digit FIPS",
-        "state_code": "OH",
-        "region": "NE Ohio",
+        "county_fips": "5-digit FIPS code for the actual county",
+        "state_code": "2-letter USPS code matching the description",
+        "region": "Region Name (derive from description geography)",
         "weight": 0.15,
         "rurality": "urban|suburban|rural",
         "cities": ["City1", "City2"]
@@ -473,16 +473,16 @@ _P1_SCHEMA = """\
   },
   "facilities": [
     {
-      "code": "CLECLINIC",
-      "name": "Cleveland Clinic Main Campus",
+      "code": "FAC001",
+      "name": "Facility Name matching the description geography",
       "type": "hospital",
-      "health_system_code": "CCHS",
-      "health_system_name": "Cleveland Clinic Health System",
-      "city": "Cleveland",
-      "region": "NE Ohio",
-      "county_fips": "39035",
-      "address": "9500 Euclid Ave",
-      "zip": "44195",
+      "health_system_code": "HS001",
+      "health_system_name": "Health System Name",
+      "city": "City matching the description",
+      "region": "Region Name matching a location region above",
+      "county_fips": "5-digit FIPS for this facility's county",
+      "address": "Street Address",
+      "zip": "ZIP code",
       "weight": 0.12
     }
   ],
@@ -496,13 +496,13 @@ _P1_SCHEMA = """\
   ],
   "insurance_plans": [
     {
-      "code": "OHMED",
-      "name": "Ohio Medicaid",
+      "code": "STMED",
+      "name": "State Medicaid Program (name based on description state)",
       "coding_standard": "QD_HealthPlanCodeList",
       "type": "Medicaid",
-      "plan_code": "OH-MED-PLAN",
-      "plan_name": "Ohio Medicaid Managed Care Plan",
-      "group_name": "State of Ohio Medicaid Program",
+      "plan_code": "XX-MED-PLAN",
+      "plan_name": "State Medicaid Managed Care Plan",
+      "group_name": "State Medicaid Program",
       "priority": 1
     }
   ],
@@ -537,11 +537,10 @@ _P1_SCHEMA = """\
       "other_region_weight": 0.10
     },
     "adjacent_regions": {
-      "NE Ohio": ["Central Ohio", "NW Ohio"],
-      "Central Ohio": ["NE Ohio", "SW Ohio", "SE Ohio"],
-      "SW Ohio": ["Central Ohio", "SE Ohio"],
-      "NW Ohio": ["NE Ohio"],
-      "SE Ohio": ["Central Ohio", "SW Ohio"]
+      "Region A": ["Region B", "Region C"],
+      "Region B": ["Region A", "Region D"],
+      "Region C": ["Region A", "Region D"],
+      "Region D": ["Region B", "Region C"]
     },
     "ed_ip_same_facility_lock": true,
     "facility_mrn_prefix": true
@@ -557,7 +556,7 @@ Population description:
 
 Generate a JSON object matching the schema below. Include:
 - 8-15 geographic locations, each with a "region" label grouping them
-  (e.g. "NE Ohio", "Central Ohio") — 3-6 distinct regions total
+  (derive region names from the description's geography) — 3-6 distinct regions total
 - 8-15 facilities, each with a health_system_code/name (group related facilities
   under the same health system), a region matching one of the location regions,
   and a realistic weight (larger/academic centers get higher weight)
@@ -567,6 +566,15 @@ Generate a JSON object matching the schema below. Include:
 - A multi_facility block: set adjacent_regions to reflect actual geographic
   adjacency between the regions you defined above; keep all other values as shown
 All weights within each array must sum to 1.0.
+
+IMPORTANT — if the description says "national", "nationwide", or "multi-state":
+- Set meta.state = "National" and meta.state_code = "US"
+- Spread locations across multiple US states (each location's state_code reflects
+  its actual state — do NOT set every location to the same state)
+- Use regions based on US Census divisions (Northeast, Southeast, Midwest, Southwest,
+  West, etc.) rather than intra-state regions
+- Name facilities after realistic national specialty centers for the condition
+- Include national insurance plans (commercial, Medicare, Medicaid by state)
 
 Schema:
 {_P1_SCHEMA}""", "phase1")

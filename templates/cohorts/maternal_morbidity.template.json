@@ -1,0 +1,1957 @@
+{
+  "meta": {
+    "name": "Maternal Morbidity Synthetic Population",
+    "description": "Synthetic patients with high-risk pregnancy conditions: gestational diabetes, pre-eclampsia, postpartum hemorrhage, and maternal hypertension",
+    "state": "Maryland",
+    "state_code": "MD",
+    "medicaid_field": "Maryland Medicaid",
+    "medicaid_id_prefix": "MD-MEDICAID-",
+    "total_patients": 200,
+    "history_months": 24
+  },
+  "geography": {
+    "locations": [
+      {
+        "county": "Allegany",
+        "county_fips": "24001",
+        "state_code": "MD",
+        "region": "Western Maryland",
+        "weight": 0.1,
+        "rurality": "rural",
+        "cities": [
+          "Cumberland",
+          "Frostburg"
+        ]
+      },
+      {
+        "county": "Garrett",
+        "county_fips": "24023",
+        "state_code": "MD",
+        "region": "Western Maryland",
+        "weight": 0.05,
+        "rurality": "rural",
+        "cities": [
+          "Oakland",
+          "Grantsville"
+        ]
+      },
+      {
+        "county": "Washington",
+        "county_fips": "24043",
+        "state_code": "MD",
+        "region": "Western Maryland",
+        "weight": 0.1,
+        "rurality": "suburban",
+        "cities": [
+          "Hagerstown",
+          "Boonsboro"
+        ]
+      },
+      {
+        "county": "Montgomery",
+        "county_fips": "24031",
+        "state_code": "MD",
+        "region": "Central Maryland",
+        "weight": 0.2,
+        "rurality": "urban",
+        "cities": [
+          "Rockville",
+          "Bethesda"
+        ]
+      },
+      {
+        "county": "Frederick",
+        "county_fips": "24021",
+        "state_code": "MD",
+        "region": "Central Maryland",
+        "weight": 0.1,
+        "rurality": "suburban",
+        "cities": [
+          "Frederick",
+          "Thurmont"
+        ]
+      },
+      {
+        "county": "Howard",
+        "county_fips": "24027",
+        "state_code": "MD",
+        "region": "Central Maryland",
+        "weight": 0.1,
+        "rurality": "suburban",
+        "cities": [
+          "Columbia",
+          "Ellicott City"
+        ]
+      },
+      {
+        "county": "Baltimore",
+        "county_fips": "24005",
+        "state_code": "MD",
+        "region": "Central Maryland",
+        "weight": 0.15,
+        "rurality": "urban",
+        "cities": [
+          "Baltimore",
+          "Towson"
+        ]
+      },
+      {
+        "county": "Talbot",
+        "county_fips": "24041",
+        "state_code": "MD",
+        "region": "Eastern Maryland",
+        "weight": 0.05,
+        "rurality": "rural",
+        "cities": [
+          "Easton",
+          "St. Michaels"
+        ]
+      },
+      {
+        "county": "Queen Anne's",
+        "county_fips": "24035",
+        "state_code": "MD",
+        "region": "Eastern Maryland",
+        "weight": 0.05,
+        "rurality": "rural",
+        "cities": [
+          "Centreville",
+          "Stevensville"
+        ]
+      },
+      {
+        "county": "Wicomico",
+        "county_fips": "24045",
+        "state_code": "MD",
+        "region": "Eastern Maryland",
+        "weight": 0.1,
+        "rurality": "suburban",
+        "cities": [
+          "Salisbury",
+          "Delmar"
+        ]
+      }
+    ]
+  },
+  "demographics": {
+    "age_distribution": [
+      {
+        "min": 18,
+        "max": 45,
+        "weight": 1.0,
+        "label": "Reproductive Age"
+      }
+    ],
+    "sex_distribution": [
+      {
+        "sex": "F",
+        "weight": 1.0
+      }
+    ],
+    "race_distribution": [
+      {
+        "race_code": "2106-3",
+        "race_description": "White",
+        "ethnicity_code": "2186-5",
+        "ethnicity_description": "Not Hispanic or Latino",
+        "weight": 0.5
+      },
+      {
+        "race_code": "2054-5",
+        "race_description": "Black or African American",
+        "ethnicity_code": "2186-5",
+        "ethnicity_description": "Not Hispanic or Latino",
+        "weight": 0.3
+      },
+      {
+        "race_code": "2135-2",
+        "race_description": "Hispanic or Latino",
+        "ethnicity_code": "2135-2",
+        "ethnicity_description": "Hispanic or Latino",
+        "weight": 0.1
+      },
+      {
+        "race_code": "2028-9",
+        "race_description": "Asian",
+        "ethnicity_code": "2186-5",
+        "ethnicity_description": "Not Hispanic or Latino",
+        "weight": 0.06
+      },
+      {
+        "race_code": "2076-8",
+        "race_description": "Other",
+        "ethnicity_code": "2186-5",
+        "ethnicity_description": "Not Hispanic or Latino",
+        "weight": 0.04
+      }
+    ],
+    "insurance_distribution": [
+      {
+        "plan_code": "MD-MEDICAID",
+        "weight": 0.2
+      },
+      {
+        "plan_code": "MEDICARE",
+        "weight": 0.15
+      },
+      {
+        "plan_code": "CAREFIRST",
+        "weight": 0.3
+      },
+      {
+        "plan_code": "KAISER",
+        "weight": 0.25
+      },
+      {
+        "plan_code": "UNINSURED",
+        "weight": 0.1
+      }
+    ]
+  },
+  "facilities": [
+    {
+      "code": "FAC001",
+      "name": "Johns Hopkins Hospital",
+      "type": "academic medical center",
+      "health_system_code": "HS001",
+      "health_system_name": "Johns Hopkins Medicine",
+      "city": "Baltimore",
+      "region": "Central Maryland",
+      "county_fips": "24005",
+      "address": "1800 Orleans St",
+      "zip": "21287",
+      "weight": 0.2
+    },
+    {
+      "code": "FAC002",
+      "name": "Johns Hopkins Bayview Medical Center",
+      "type": "hospital",
+      "health_system_code": "HS001",
+      "health_system_name": "Johns Hopkins Medicine",
+      "city": "Baltimore",
+      "region": "Central Maryland",
+      "county_fips": "24005",
+      "address": "4940 Eastern Ave",
+      "zip": "21224",
+      "weight": 0.15
+    },
+    {
+      "code": "FAC003",
+      "name": "Howard County General Hospital",
+      "type": "hospital",
+      "health_system_code": "HS001",
+      "health_system_name": "Johns Hopkins Medicine",
+      "city": "Columbia",
+      "region": "Central Maryland",
+      "county_fips": "24027",
+      "address": "5755 Cedar Ln",
+      "zip": "21044",
+      "weight": 0.1
+    },
+    {
+      "code": "FAC004",
+      "name": "Adventist HealthCare Shady Grove Medical Center",
+      "type": "hospital",
+      "health_system_code": "HS002",
+      "health_system_name": "Adventist HealthCare",
+      "city": "Rockville",
+      "region": "Central Maryland",
+      "county_fips": "24031",
+      "address": "9901 Medical Center Dr",
+      "zip": "20850",
+      "weight": 0.1
+    },
+    {
+      "code": "FAC005",
+      "name": "Adventist HealthCare White Oak Medical Center",
+      "type": "hospital",
+      "health_system_code": "HS002",
+      "health_system_name": "Adventist HealthCare",
+      "city": "Silver Spring",
+      "region": "Central Maryland",
+      "county_fips": "24031",
+      "address": "11890 Healing Way",
+      "zip": "20904",
+      "weight": 0.1
+    },
+    {
+      "code": "FAC006",
+      "name": "MedStar Union Memorial Hospital",
+      "type": "hospital",
+      "health_system_code": "HS003",
+      "health_system_name": "MedStar Health",
+      "city": "Baltimore",
+      "region": "Central Maryland",
+      "county_fips": "24005",
+      "address": "201 E University Pkwy",
+      "zip": "21218",
+      "weight": 0.1
+    },
+    {
+      "code": "FAC007",
+      "name": "MedStar Good Samaritan Hospital",
+      "type": "hospital",
+      "health_system_code": "HS003",
+      "health_system_name": "MedStar Health",
+      "city": "Baltimore",
+      "region": "Central Maryland",
+      "county_fips": "24005",
+      "address": "5601 Loch Raven Blvd",
+      "zip": "21239",
+      "weight": 0.1
+    },
+    {
+      "code": "FAC008",
+      "name": "MedStar Harbor Hospital",
+      "type": "hospital",
+      "health_system_code": "HS003",
+      "health_system_name": "MedStar Health",
+      "city": "Baltimore",
+      "region": "Central Maryland",
+      "county_fips": "24005",
+      "address": "3001 S Hanover St",
+      "zip": "21225",
+      "weight": 0.05
+    },
+    {
+      "code": "FAC009",
+      "name": "Western Maryland Regional Medical Center",
+      "type": "hospital",
+      "health_system_code": "HS004",
+      "health_system_name": "Western Maryland Health System",
+      "city": "Cumberland",
+      "region": "Western Maryland",
+      "county_fips": "24001",
+      "address": "12500 Willowbrook Rd",
+      "zip": "21502",
+      "weight": 0.05
+    },
+    {
+      "code": "FAC010",
+      "name": "Peninsula Regional Medical Center",
+      "type": "hospital",
+      "health_system_code": "HS005",
+      "health_system_name": "Peninsula Regional Health System",
+      "city": "Salisbury",
+      "region": "Eastern Maryland",
+      "county_fips": "24045",
+      "address": "100 E Carroll St",
+      "zip": "21801",
+      "weight": 0.05
+    }
+  ],
+  "providers": [
+    {
+      "code": "DR001",
+      "name": "Dr. Jane Smith",
+      "specialty": "Internal Medicine",
+      "facility_code": "FAC001"
+    },
+    {
+      "code": "DR002",
+      "name": "Dr. John Doe",
+      "specialty": "Pulmonology",
+      "facility_code": "FAC002"
+    },
+    {
+      "code": "DR003",
+      "name": "Dr. Emily White",
+      "specialty": "Infectious Disease",
+      "facility_code": "FAC003"
+    },
+    {
+      "code": "DR004",
+      "name": "Dr. Michael Brown",
+      "specialty": "Primary Care",
+      "facility_code": "FAC004"
+    },
+    {
+      "code": "DR005",
+      "name": "Dr. Sarah Johnson",
+      "specialty": "Pulmonology",
+      "facility_code": "FAC005"
+    },
+    {
+      "code": "DR006",
+      "name": "Dr. William Green",
+      "specialty": "Infectious Disease",
+      "facility_code": "FAC006"
+    },
+    {
+      "code": "DR007",
+      "name": "Dr. Linda Black",
+      "specialty": "Primary Care",
+      "facility_code": "FAC007"
+    },
+    {
+      "code": "DR008",
+      "name": "Dr. Robert Lee",
+      "specialty": "Pulmonology",
+      "facility_code": "FAC008"
+    },
+    {
+      "code": "DR009",
+      "name": "Dr. Patricia Davis",
+      "specialty": "Infectious Disease",
+      "facility_code": "FAC009"
+    },
+    {
+      "code": "DR010",
+      "name": "Dr. James Wilson",
+      "specialty": "Primary Care",
+      "facility_code": "FAC010"
+    }
+  ],
+  "insurance_plans": [
+    {
+      "code": "MD-MEDICAID",
+      "name": "Maryland Medicaid",
+      "coding_standard": "QD_HealthPlanCodeList",
+      "type": "Medicaid",
+      "plan_code": "MD-MED-PLAN",
+      "plan_name": "Maryland Medicaid Managed Care Plan",
+      "group_name": "Maryland Medicaid",
+      "priority": 1
+    },
+    {
+      "code": "MEDICARE",
+      "name": "Medicare",
+      "coding_standard": "QD_HealthPlanCodeList",
+      "type": "Medicare",
+      "plan_code": "MEDICARE-PLAN",
+      "plan_name": "Medicare Advantage Plan",
+      "group_name": "Medicare",
+      "priority": 2
+    },
+    {
+      "code": "CAREFIRST",
+      "name": "CareFirst BlueCross BlueShield",
+      "coding_standard": "QD_HealthPlanCodeList",
+      "type": "Commercial",
+      "plan_code": "CF-PLAN",
+      "plan_name": "CareFirst PPO",
+      "group_name": "CareFirst",
+      "priority": 3
+    },
+    {
+      "code": "KAISER",
+      "name": "Kaiser Permanente",
+      "coding_standard": "QD_HealthPlanCodeList",
+      "type": "Commercial",
+      "plan_code": "KP-PLAN",
+      "plan_name": "Kaiser HMO",
+      "group_name": "Kaiser Permanente",
+      "priority": 4
+    },
+    {
+      "code": "UNINSURED",
+      "name": "Uninsured",
+      "coding_standard": "QD_HealthPlanCodeList",
+      "type": "Uninsured",
+      "plan_code": "UNINSURED-PLAN",
+      "plan_name": "Uninsured",
+      "group_name": "Uninsured",
+      "priority": 5
+    }
+  ],
+  "sending_facility": "FAC001",
+  "multi_facility": {
+    "enabled": true,
+    "distribution": {
+      "one_facility_pct": 0.55,
+      "two_facility_pct": 0.3,
+      "three_plus_facility_pct": 0.15,
+      "max_facilities": 3
+    },
+    "encounter_type_outside_prob": {
+      "O": 0.08,
+      "E": 0.4,
+      "I": 0.2
+    },
+    "geographic_affinity": {
+      "same_region_weight": 0.7,
+      "adjacent_region_weight": 0.2,
+      "other_region_weight": 0.1
+    },
+    "adjacent_regions": {
+      "Western Maryland": [
+        "Central Maryland"
+      ],
+      "Central Maryland": [
+        "Western Maryland",
+        "Eastern Maryland"
+      ],
+      "Eastern Maryland": [
+        "Central Maryland"
+      ]
+    },
+    "ed_ip_same_facility_lock": true,
+    "facility_mrn_prefix": true
+  },
+  "name_pools": {
+    "male_first": {
+      "White": [
+        "James",
+        "John",
+        "Robert",
+        "Michael",
+        "William",
+        "David",
+        "Richard",
+        "Joseph",
+        "Charles",
+        "Thomas",
+        "Christopher",
+        "Daniel",
+        "Matthew",
+        "Anthony",
+        "Mark",
+        "Donald",
+        "Steven",
+        "Paul",
+        "Andrew",
+        "Joshua"
+      ],
+      "Black": [
+        "Marcus",
+        "Darius",
+        "Andre",
+        "Jamal",
+        "Tyrone",
+        "Malik",
+        "Deshawn",
+        "Terrence",
+        "Lamar",
+        "Jerome",
+        "Darnell",
+        "Marquis",
+        "Deandre",
+        "Jalen",
+        "Trevon",
+        "Demetrius",
+        "Rashad",
+        "Kareem",
+        "Javon",
+        "Tyriek"
+      ],
+      "Hispanic": [
+        "Carlos",
+        "Miguel",
+        "Jose",
+        "Juan",
+        "Luis",
+        "Javier",
+        "Alejandro",
+        "Fernando",
+        "Ricardo",
+        "Pedro",
+        "Manuel",
+        "Rafael",
+        "Santiago",
+        "Diego",
+        "Hector",
+        "Eduardo",
+        "Francisco",
+        "Antonio",
+        "Julio",
+        "Raul"
+      ],
+      "Asian": [
+        "Kevin",
+        "Daniel",
+        "Wei",
+        "Hiroshi",
+        "Jin",
+        "Sung",
+        "Min",
+        "Takeshi",
+        "Yuki",
+        "Kenji",
+        "Yong",
+        "Hao",
+        "Jiro",
+        "An",
+        "Jun",
+        "Li",
+        "Chen",
+        "Kai",
+        "Ryu",
+        "Tao"
+      ],
+      "Native American": [
+        "Joseph",
+        "Raymond",
+        "Thomas",
+        "Elijah",
+        "Isaiah",
+        "Gabriel",
+        "Logan",
+        "Hunter",
+        "Dakota",
+        "Aiden",
+        "Jayden",
+        "Cody",
+        "Chase",
+        "Wyatt",
+        "Tristan"
+      ],
+      "Other": [
+        "Alex",
+        "Jordan",
+        "Chris",
+        "Taylor",
+        "Morgan",
+        "Casey",
+        "Riley",
+        "Cameron",
+        "Drew",
+        "Skyler",
+        "Avery",
+        "Blake",
+        "Reese",
+        "Peyton",
+        "Quinn"
+      ]
+    },
+    "female_first": {
+      "White": [
+        "Mary",
+        "Patricia",
+        "Jennifer",
+        "Linda",
+        "Elizabeth",
+        "Barbara",
+        "Susan",
+        "Jessica",
+        "Sarah",
+        "Karen",
+        "Nancy",
+        "Lisa",
+        "Betty",
+        "Margaret",
+        "Sandra",
+        "Ashley",
+        "Kimberly",
+        "Emily",
+        "Donna",
+        "Michelle"
+      ],
+      "Black": [
+        "Aaliyah",
+        "Keisha",
+        "Tamara",
+        "Jasmine",
+        "Imani",
+        "Nia",
+        "Tiana",
+        "Shanice",
+        "Latoya",
+        "Monique",
+        "Ebony",
+        "Kiara",
+        "Tameka",
+        "Shayla",
+        "Brianna",
+        "Destiny",
+        "Chantel",
+        "Tasha",
+        "Zariah",
+        "Anaya"
+      ],
+      "Hispanic": [
+        "Maria",
+        "Sofia",
+        "Isabella",
+        "Camila",
+        "Valentina",
+        "Gabriela",
+        "Daniela",
+        "Ana",
+        "Lucia",
+        "Elena",
+        "Carla",
+        "Paula",
+        "Mariana",
+        "Adriana",
+        "Natalia",
+        "Andrea",
+        "Rosa",
+        "Veronica",
+        "Laura",
+        "Carmen"
+      ],
+      "Asian": [
+        "Mei",
+        "Yuki",
+        "Ji-Young",
+        "Sakura",
+        "Hana",
+        "Aiko",
+        "Min",
+        "Soo",
+        "Yuna",
+        "Aya",
+        "Rina",
+        "Jia",
+        "Ling",
+        "Nari",
+        "Mika",
+        "Ying",
+        "Lina",
+        "Hui",
+        "Suki",
+        "Kira"
+      ],
+      "Native American": [
+        "Sarah",
+        "Rebecca",
+        "Angela",
+        "Kaya",
+        "Aiyana",
+        "Shania",
+        "Tala",
+        "Nina",
+        "Mika",
+        "Leah",
+        "Sky",
+        "Autumn",
+        "Cheyenne",
+        "Dakota",
+        "Sierra"
+      ],
+      "Other": [
+        "Taylor",
+        "Morgan",
+        "Quinn",
+        "Riley",
+        "Jordan",
+        "Avery",
+        "Peyton",
+        "Sydney",
+        "Skylar",
+        "Casey",
+        "Reese",
+        "Alexis",
+        "Bailey",
+        "Harper",
+        "Rowan"
+      ]
+    },
+    "last_names": {
+      "White": [
+        "Smith",
+        "Johnson",
+        "Williams",
+        "Brown",
+        "Jones",
+        "Miller",
+        "Davis",
+        "Wilson",
+        "Anderson",
+        "Taylor",
+        "Thomas",
+        "Moore",
+        "Martin",
+        "Jackson",
+        "Thompson",
+        "White",
+        "Harris",
+        "Clark",
+        "Lewis",
+        "Robinson",
+        "Walker",
+        "Young",
+        "Allen",
+        "King",
+        "Wright"
+      ],
+      "Black": [
+        "Washington",
+        "Jackson",
+        "Robinson",
+        "Harris",
+        "Davis",
+        "Johnson",
+        "Brown",
+        "Jones",
+        "Williams",
+        "Wilson",
+        "Moore",
+        "Taylor",
+        "Anderson",
+        "Thomas",
+        "White",
+        "Lewis",
+        "Walker",
+        "Hall",
+        "Allen",
+        "Young",
+        "King",
+        "Scott",
+        "Green",
+        "Adams",
+        "Hill"
+      ],
+      "Hispanic": [
+        "Garcia",
+        "Martinez",
+        "Rodriguez",
+        "Lopez",
+        "Hernandez",
+        "Gonzalez",
+        "Perez",
+        "Sanchez",
+        "Ramirez",
+        "Torres",
+        "Flores",
+        "Rivera",
+        "Gomez",
+        "Diaz",
+        "Reyes",
+        "Cruz",
+        "Morales",
+        "Ortiz",
+        "Gutierrez",
+        "Chavez",
+        "Ramos",
+        "Vasquez",
+        "Santiago",
+        "Mendoza",
+        "Castillo"
+      ],
+      "Asian": [
+        "Kim",
+        "Chen",
+        "Nguyen",
+        "Lee",
+        "Wang",
+        "Liu",
+        "Yang",
+        "Zhang",
+        "Huang",
+        "Lin",
+        "Choi",
+        "Park",
+        "Tanaka",
+        "Yamamoto",
+        "Ito",
+        "Kobayashi",
+        "Suzuki",
+        "Khan",
+        "Singh",
+        "Patel",
+        "Sharma",
+        "Gupta",
+        "Chung",
+        "Pham",
+        "Tran"
+      ],
+      "Native American": [
+        "Runningwater",
+        "Littlefeather",
+        "Bearcloud",
+        "Redhawk",
+        "Whitefeather",
+        "Thunderhawk",
+        "Blackwolf",
+        "Eaglefeather",
+        "Spiritwalker",
+        "Rainwater",
+        "Sunbear",
+        "Nightwolf",
+        "Starfire",
+        "Moonshadow",
+        "Windwalker",
+        "Skyhorse",
+        "Firewalker",
+        "Earthchild",
+        "Wolfmoon",
+        "Dreamcatcher"
+      ],
+      "Other": [
+        "Brown",
+        "Taylor",
+        "Davis",
+        "Miller",
+        "Wilson",
+        "Moore",
+        "Anderson",
+        "Thomas",
+        "Jackson",
+        "White",
+        "Harris",
+        "Martin",
+        "Thompson",
+        "Garcia",
+        "Martinez",
+        "Robinson",
+        "Clark",
+        "Lewis",
+        "Lee",
+        "Walker"
+      ]
+    },
+    "middle_initials": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "J",
+      "K",
+      "L",
+      "M",
+      "N",
+      "P",
+      "R",
+      "S",
+      "T",
+      "W"
+    ]
+  },
+  "cohorts": [
+    {
+      "name": "Gestational Diabetes Mellitus",
+      "weight": 0.3,
+      "prenatal_dx_override": {
+        "O24": {
+          "code": "O24.419",
+          "description": "Gestational diabetes mellitus in pregnancy, unspecified trimester"
+        }
+      },
+      "delivery_dx_override": {
+        "O24": {
+          "code": "O24.420",
+          "description": "Gestational diabetes mellitus in childbirth, diet controlled"
+        }
+      },
+      "diagnoses": [
+        {
+          "code": "Z34.00",
+          "description": "Encounter for supervision of normal pregnancy, first trimester",
+          "is_primary": false,
+          "onset_age_min": 18,
+          "onset_age_max": 45
+        },
+        {
+          "code": "O24.419",
+          "description": "Gestational diabetes mellitus in pregnancy, unspecified trimester",
+          "is_primary": true,
+          "only_encounter_types": [
+            "O",
+            "I"
+          ],
+          "onset_age_min": 18,
+          "onset_age_max": 45
+        }
+      ],
+      "comorbidities": [
+        {
+          "code": "E66.9",
+          "description": "Obesity, unspecified",
+          "prevalence_pct": 0.4
+        },
+        {
+          "code": "F32.9",
+          "description": "Major depressive disorder, single episode, unspecified",
+          "prevalence_pct": 0.15
+        }
+      ],
+      "medications": [
+        {
+          "drug_code": "261551",
+          "drug_description": "Insulin glargine 100 UNT/ML Injectable Solution",
+          "dose_quantity": "100",
+          "dose_uom": "UNT/ML",
+          "dosage_form_code": "SOL",
+          "dosage_form_description": "Injectable Solution",
+          "route_code": "SC",
+          "route_description": "Subcutaneous",
+          "frequency_code": "QHS",
+          "frequency_description": "Every bedtime",
+          "status": "active",
+          "for_diagnosis_code": "O24",
+          "weight": 0.65
+        },
+        {
+          "drug_code": "854882",
+          "drug_description": "Prenatal vitamins",
+          "dose_quantity": "1",
+          "dose_uom": "tablet",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "Z34",
+          "weight": 0.92
+        }
+      ],
+      "labs": [
+        {
+          "order_code": "14749-6",
+          "order_description": "Glucose tolerance panel",
+          "specimen": "Blood",
+          "abnormal_pct": 0.6,
+          "weight": 0.35,
+          "result_items": [
+            {
+              "code": "14749-6",
+              "description": "Glucose 2h post-dose [Mass/volume] in Serum or Plasma",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 70,
+              "normal_max": 139,
+              "abnormal_min": 140,
+              "abnormal_max": 400
+            },
+            {
+              "code": "2339-0",
+              "description": "Fasting glucose [Mass/volume] in Serum or Plasma",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 70,
+              "normal_max": 95,
+              "abnormal_min": 96,
+              "abnormal_max": 300
+            }
+          ]
+        },
+        {
+          "order_code": "58410-2",
+          "order_description": "CBC panel - Blood by Automated count",
+          "specimen": "Blood",
+          "abnormal_pct": 0.20,
+          "weight": 0.3,
+          "result_items": [
+            {
+              "code": "718-7",
+              "description": "Hemoglobin [Mass/volume] in Blood",
+              "units": "g/dL",
+              "is_numeric": true,
+              "normal_min": 10.0,
+              "normal_max": 16.0,
+              "abnormal_min": 6.0,
+              "abnormal_max": 9.9
+            },
+            {
+              "code": "4544-3",
+              "description": "Hematocrit [Volume Fraction] of Blood by Automated count",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 30,
+              "normal_max": 50,
+              "abnormal_min": 18,
+              "abnormal_max": 29
+            },
+            {
+              "code": "777-3",
+              "description": "Platelets [#/volume] in Blood by Automated count",
+              "units": "K/uL",
+              "is_numeric": true,
+              "normal_min": 150,
+              "normal_max": 400,
+              "abnormal_min": 50,
+              "abnormal_max": 149
+            }
+          ]
+        }
+      ],
+      "document_templates": [
+        {
+          "type_code": "PN",
+          "type_description": "Progress Note",
+          "encounter_type": "O",
+          "chief_complaints": [
+            "Prenatal visit \u2014 gestational diabetes management",
+            "Blood glucose monitoring follow-up in pregnancy",
+            "Diabetes in pregnancy \u2014 dietary counseling",
+            "Insulin therapy adjustment for gestational diabetes"
+          ],
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old female presenting for obstetric follow-up for {diagnosis}. Patient reports {compliance_statement}.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nFetal heart tones: present, regular.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n\nFOLLOW-UP: Return in 2 weeks or sooner if symptoms worsen."
+        }
+      ],
+      "encounter_pattern": {
+        "encounters_per_year": 10,
+        "encounter_type_weights": {
+          "O": 0.88,
+          "E": 0.06,
+          "I": 0.06
+        },
+        "lab_encounter_rate": 0.7,
+        "rad_encounter_rate": 0.1
+      }
+    },
+    {
+      "name": "Gestational Hypertension / Mild Preeclampsia",
+      "weight": 0.25,
+      "prenatal_dx_override": {
+        "O13": {
+          "code": "O13.9",
+          "description": "Gestational hypertension, unspecified trimester"
+        },
+        "O14": {
+          "code": "O14.00",
+          "description": "Mild to moderate pre-eclampsia, unspecified trimester"
+        }
+      },
+      "delivery_dx_override": {
+        "O14": {
+          "code": "O14.04",
+          "description": "Mild to moderate pre-eclampsia, third trimester"
+        },
+        "O13": {
+          "code": "O13.3",
+          "description": "Gestational hypertension with significant proteinuria, third trimester"
+        }
+      },
+      "diagnoses": [
+        {
+          "code": "Z34.00",
+          "description": "Encounter for supervision of normal pregnancy, first trimester",
+          "is_primary": false,
+          "onset_age_min": 18,
+          "onset_age_max": 45
+        },
+        {
+          "code": "O13.9",
+          "description": "Gestational hypertension, unspecified trimester",
+          "is_primary": true,
+          "only_encounter_types": [
+            "O"
+          ],
+          "onset_age_min": 18,
+          "onset_age_max": 45
+        },
+        {
+          "code": "O14.00",
+          "description": "Mild to moderate pre-eclampsia, unspecified trimester",
+          "is_primary": false,
+          "only_encounter_types": [
+            "I",
+            "E"
+          ],
+          "onset_age_min": 18,
+          "onset_age_max": 45
+        }
+      ],
+      "comorbidities": [
+        {
+          "code": "E66.9",
+          "description": "Obesity, unspecified",
+          "prevalence_pct": 0.35
+        },
+        {
+          "code": "F32.9",
+          "description": "Major depressive disorder, single episode, unspecified",
+          "prevalence_pct": 0.18
+        }
+      ],
+      "medications": [
+        {
+          "drug_code": "310798",
+          "drug_description": "Labetalol 200 MG Oral Tablet",
+          "dose_quantity": "200",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "BID",
+          "frequency_description": "Twice daily",
+          "status": "active",
+          "for_diagnosis_code": "O13",
+          "weight": 0.7
+        },
+        {
+          "drug_code": "203549",
+          "drug_description": "Methyldopa 250 MG Oral Tablet",
+          "dose_quantity": "250",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "BID",
+          "frequency_description": "Twice daily",
+          "status": "active",
+          "for_diagnosis_code": "O13",
+          "weight": 0.5
+        },
+        {
+          "drug_code": "310429",
+          "drug_description": "Nifedipine 10 MG Oral Capsule",
+          "dose_quantity": "10",
+          "dose_uom": "mg",
+          "dosage_form_code": "CAP",
+          "dosage_form_description": "Capsule",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "PRN",
+          "frequency_description": "As needed",
+          "status": "active",
+          "for_diagnosis_code": "O14",
+          "weight": 0.45
+        },
+        {
+          "drug_code": "854882",
+          "drug_description": "Prenatal vitamins",
+          "dose_quantity": "1",
+          "dose_uom": "tablet",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "Z34",
+          "weight": 0.92
+        }
+      ],
+      "labs": [
+        {
+          "order_code": "5767-9",
+          "order_description": "Pre-eclampsia labs",
+          "specimen": "Blood/Urine",
+          "abnormal_pct": 0.15,
+          "weight": 0.35,
+          "result_items": [
+            {
+              "code": "5767-9",
+              "description": "Protein [Mass/volume] in Urine",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 0,
+              "normal_max": 20,
+              "abnormal_min": 21,
+              "abnormal_max": 500
+            },
+            {
+              "code": "1742-6",
+              "description": "Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+              "units": "U/L",
+              "is_numeric": true,
+              "normal_min": 7,
+              "normal_max": 56,
+              "abnormal_min": 57,
+              "abnormal_max": 300
+            },
+            {
+              "code": "1920-8",
+              "description": "Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+              "units": "U/L",
+              "is_numeric": true,
+              "normal_min": 10,
+              "normal_max": 40,
+              "abnormal_min": 41,
+              "abnormal_max": 300
+            },
+            {
+              "code": "777-3",
+              "description": "Platelets [#/volume] in Blood by Automated count",
+              "units": "K/uL",
+              "is_numeric": true,
+              "normal_min": 150,
+              "normal_max": 400,
+              "abnormal_min": 50,
+              "abnormal_max": 149
+            }
+          ]
+        },
+        {
+          "order_code": "58410-2",
+          "order_description": "CBC panel - Blood by Automated count",
+          "specimen": "Blood",
+          "abnormal_pct": 0.20,
+          "weight": 0.3,
+          "result_items": [
+            {
+              "code": "718-7",
+              "description": "Hemoglobin [Mass/volume] in Blood",
+              "units": "g/dL",
+              "is_numeric": true,
+              "normal_min": 10.0,
+              "normal_max": 16.0,
+              "abnormal_min": 6.0,
+              "abnormal_max": 9.9
+            },
+            {
+              "code": "4544-3",
+              "description": "Hematocrit [Volume Fraction] of Blood by Automated count",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 30,
+              "normal_max": 50,
+              "abnormal_min": 18,
+              "abnormal_max": 29
+            },
+            {
+              "code": "777-3",
+              "description": "Platelets [#/volume] in Blood by Automated count",
+              "units": "K/uL",
+              "is_numeric": true,
+              "normal_min": 150,
+              "normal_max": 400,
+              "abnormal_min": 50,
+              "abnormal_max": 149
+            }
+          ]
+        }
+      ],
+      "document_templates": [
+        {
+          "type_code": "PN",
+          "type_description": "Progress Note",
+          "encounter_type": "O",
+          "chief_complaints": [
+            "Prenatal visit \u2014 gestational hypertension monitoring",
+            "Blood pressure management in pregnancy",
+            "Preeclampsia surveillance visit",
+            "Antihypertensive medication review in pregnancy"
+          ],
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old female presenting for obstetric follow-up for {diagnosis}. Patient reports {compliance_statement}.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nFetal heart tones: present, regular.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n\nFOLLOW-UP: Return in 1-2 weeks or sooner if blood pressure worsens."
+        }
+      ],
+      "encounter_pattern": {
+        "encounters_per_year": 11,
+        "encounter_type_weights": {
+          "O": 0.87,
+          "E": 0.08,
+          "I": 0.05
+        },
+        "lab_encounter_rate": 0.7,
+        "rad_encounter_rate": 0.1
+      }
+    },
+    {
+      "name": "Severe Preeclampsia / HELLP Syndrome",
+      "weight": 0.2,
+      "prenatal_dx_override": {
+        "O14": {
+          "code": "O14.10",
+          "description": "Severe pre-eclampsia, unspecified trimester"
+        }
+      },
+      "delivery_dx_override": {
+        "O14": {
+          "code": "O14.14",
+          "description": "Severe pre-eclampsia, third trimester"
+        }
+      },
+      "diagnoses": [
+        {
+          "code": "Z34.00",
+          "description": "Encounter for supervision of normal pregnancy, first trimester",
+          "is_primary": false,
+          "onset_age_min": 18,
+          "onset_age_max": 45
+        },
+        {
+          "code": "O14.10",
+          "description": "Severe pre-eclampsia, unspecified trimester",
+          "is_primary": true,
+          "onset_age_min": 18,
+          "onset_age_max": 45
+        },
+        {
+          "code": "O15.02",
+          "description": "Eclampsia in labor",
+          "is_primary": false,
+          "only_encounter_types": [
+            "I"
+          ],
+          "onset_age_min": 18,
+          "onset_age_max": 45
+        }
+      ],
+      "comorbidities": [
+        {
+          "code": "E66.9",
+          "description": "Obesity, unspecified",
+          "prevalence_pct": 0.35
+        },
+        {
+          "code": "F32.9",
+          "description": "Major depressive disorder, single episode, unspecified",
+          "prevalence_pct": 0.2
+        }
+      ],
+      "medications": [
+        {
+          "drug_code": "310798",
+          "drug_description": "Labetalol 200 MG Oral Tablet",
+          "dose_quantity": "200",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "BID",
+          "frequency_description": "Twice daily",
+          "status": "active",
+          "for_diagnosis_code": "O14",
+          "weight": 0.85
+        },
+        {
+          "drug_code": "308167",
+          "drug_description": "Magnesium sulfate 50% Injection",
+          "dose_quantity": "50",
+          "dose_uom": "%",
+          "dosage_form_code": "INJ",
+          "dosage_form_description": "Injection",
+          "route_code": "IV",
+          "route_description": "Intravenous",
+          "frequency_code": "INFUSION",
+          "frequency_description": "Continuous infusion",
+          "status": "active",
+          "for_diagnosis_code": "O14",
+          "weight": 0.9,
+          "is_acute": true
+        },
+        {
+          "drug_code": "854882",
+          "drug_description": "Prenatal vitamins",
+          "dose_quantity": "1",
+          "dose_uom": "tablet",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "Z34",
+          "weight": 0.92
+        }
+      ],
+      "labs": [
+        {
+          "order_code": "5767-9",
+          "order_description": "Pre-eclampsia labs",
+          "specimen": "Blood/Urine",
+          "abnormal_pct": 0.75,
+          "weight": 0.35,
+          "result_items": [
+            {
+              "code": "5767-9",
+              "description": "Protein [Mass/volume] in Urine",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 0,
+              "normal_max": 20,
+              "abnormal_min": 21,
+              "abnormal_max": 500
+            },
+            {
+              "code": "1742-6",
+              "description": "Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+              "units": "U/L",
+              "is_numeric": true,
+              "normal_min": 7,
+              "normal_max": 56,
+              "abnormal_min": 57,
+              "abnormal_max": 300
+            },
+            {
+              "code": "1920-8",
+              "description": "Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+              "units": "U/L",
+              "is_numeric": true,
+              "normal_min": 10,
+              "normal_max": 40,
+              "abnormal_min": 41,
+              "abnormal_max": 300
+            },
+            {
+              "code": "777-3",
+              "description": "Platelets [#/volume] in Blood by Automated count",
+              "units": "K/uL",
+              "is_numeric": true,
+              "normal_min": 150,
+              "normal_max": 400,
+              "abnormal_min": 50,
+              "abnormal_max": 149
+            }
+          ]
+        },
+        {
+          "order_code": "58410-2",
+          "order_description": "CBC panel - Blood by Automated count",
+          "specimen": "Blood",
+          "abnormal_pct": 0.6,
+          "weight": 0.3,
+          "result_items": [
+            {
+              "code": "718-7",
+              "description": "Hemoglobin [Mass/volume] in Blood",
+              "units": "g/dL",
+              "is_numeric": true,
+              "normal_min": 10.0,
+              "normal_max": 16.0,
+              "abnormal_min": 6.0,
+              "abnormal_max": 9.9
+            },
+            {
+              "code": "4544-3",
+              "description": "Hematocrit [Volume Fraction] of Blood by Automated count",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 30,
+              "normal_max": 50,
+              "abnormal_min": 18,
+              "abnormal_max": 29
+            },
+            {
+              "code": "777-3",
+              "description": "Platelets [#/volume] in Blood by Automated count",
+              "units": "K/uL",
+              "is_numeric": true,
+              "normal_min": 150,
+              "normal_max": 400,
+              "abnormal_min": 50,
+              "abnormal_max": 149
+            }
+          ]
+        }
+      ],
+      "document_templates": [
+        {
+          "type_code": "PN",
+          "type_description": "Progress Note",
+          "encounter_type": "O",
+          "chief_complaints": [
+            "Prenatal visit \u2014 severe preeclampsia monitoring",
+            "High-risk OB visit \u2014 HELLP syndrome surveillance",
+            "Blood pressure and lab follow-up \u2014 severe preeclampsia",
+            "Magnesium prophylaxis management in pregnancy"
+          ],
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old female presenting for high-risk obstetric follow-up for {diagnosis}. Patient reports {compliance_statement}.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nFetal heart tones: present, regular.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n\nFOLLOW-UP: Return within 1 week or to ED immediately if severe-range BP, headache, or visual changes."
+        }
+      ],
+      "encounter_pattern": {
+        "encounters_per_year": 12,
+        "encounter_type_weights": {
+          "O": 0.85,
+          "E": 0.09,
+          "I": 0.06
+        },
+        "lab_encounter_rate": 0.7,
+        "rad_encounter_rate": 0.1
+      }
+    },
+    {
+      "name": "Postpartum Hemorrhage",
+      "weight": 0.15,
+      "delivery_dx_override": {
+        "O72": {
+          "code": "O72.1",
+          "description": "Other immediate postpartum hemorrhage"
+        }
+      },
+      "diagnoses": [
+        {
+          "code": "Z34.00",
+          "description": "Encounter for supervision of normal pregnancy, first trimester",
+          "is_primary": false,
+          "onset_age_min": 18,
+          "onset_age_max": 45
+        },
+        {
+          "code": "O72.1",
+          "description": "Other immediate postpartum hemorrhage",
+          "is_primary": true,
+          "only_encounter_types": [
+            "I"
+          ],
+          "onset_age_min": 18,
+          "onset_age_max": 45
+        }
+      ],
+      "comorbidities": [
+        {
+          "code": "E66.9",
+          "description": "Obesity, unspecified",
+          "prevalence_pct": 0.3
+        },
+        {
+          "code": "F32.9",
+          "description": "Major depressive disorder, single episode, unspecified",
+          "prevalence_pct": 0.15
+        }
+      ],
+      "medications": [
+        {
+          "drug_code": "310463",
+          "drug_description": "Ferrous sulfate 325 MG Oral Tablet",
+          "dose_quantity": "325",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "BID",
+          "frequency_description": "Twice daily",
+          "status": "active",
+          "for_diagnosis_code": "O72",
+          "weight": 0.7
+        },
+        {
+          "drug_code": "854882",
+          "drug_description": "Prenatal vitamins",
+          "dose_quantity": "1",
+          "dose_uom": "tablet",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "Z34",
+          "weight": 0.92
+        }
+      ],
+      "labs": [
+        {
+          "order_code": "58410-2",
+          "order_description": "CBC panel - Blood by Automated count",
+          "specimen": "Blood",
+          "abnormal_pct": 0.65,
+          "weight": 0.3,
+          "result_items": [
+            {
+              "code": "718-7",
+              "description": "Hemoglobin [Mass/volume] in Blood",
+              "units": "g/dL",
+              "is_numeric": true,
+              "normal_min": 10.0,
+              "normal_max": 16.0,
+              "abnormal_min": 6.0,
+              "abnormal_max": 9.9
+            },
+            {
+              "code": "4544-3",
+              "description": "Hematocrit [Volume Fraction] of Blood by Automated count",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 30,
+              "normal_max": 50,
+              "abnormal_min": 18,
+              "abnormal_max": 29
+            },
+            {
+              "code": "777-3",
+              "description": "Platelets [#/volume] in Blood by Automated count",
+              "units": "K/uL",
+              "is_numeric": true,
+              "normal_min": 150,
+              "normal_max": 400,
+              "abnormal_min": 50,
+              "abnormal_max": 149
+            }
+          ]
+        },
+        {
+          "order_code": "89247-1",
+          "order_description": "Iron panel",
+          "specimen": "Blood",
+          "abnormal_pct": 0.5,
+          "weight": 0.25,
+          "result_items": [
+            {
+              "code": "2498-4",
+              "description": "Iron [Mass/volume] in Serum or Plasma",
+              "units": "mcg/dL",
+              "is_numeric": true,
+              "normal_min": 60,
+              "normal_max": 170,
+              "abnormal_min": 20,
+              "abnormal_max": 59
+            },
+            {
+              "code": "2276-4",
+              "description": "Ferritin [Mass/volume] in Serum or Plasma",
+              "units": "ng/mL",
+              "is_numeric": true,
+              "normal_min": 12,
+              "normal_max": 150,
+              "abnormal_min": 5,
+              "abnormal_max": 11
+            }
+          ]
+        }
+      ],
+      "document_templates": [
+        {
+          "type_code": "PN",
+          "type_description": "Progress Note",
+          "encounter_type": "O",
+          "chief_complaints": [
+            "Postpartum visit \u2014 hemorrhage recovery follow-up",
+            "Anemia management following postpartum hemorrhage",
+            "Iron supplementation follow-up after delivery complication",
+            "Postpartum 6-week check \u2014 blood loss recovery"
+          ],
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old female presenting for postpartum follow-up following {diagnosis}. Patient reports {compliance_statement}.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n\nFOLLOW-UP: Return in 2 weeks or sooner if increased bleeding, dizziness, or fatigue."
+        }
+      ],
+      "encounter_pattern": {
+        "encounters_per_year": 10,
+        "encounter_type_weights": {
+          "O": 0.88,
+          "E": 0.07,
+          "I": 0.05
+        },
+        "lab_encounter_rate": 0.7,
+        "rad_encounter_rate": 0.1
+      }
+    },
+    {
+      "name": "Severe Maternal Morbidity \u2014 Multiple Complications",
+      "weight": 0.1,
+      "prenatal_dx_override": {
+        "O14": {
+          "code": "O14.10",
+          "description": "Severe pre-eclampsia, unspecified trimester"
+        }
+      },
+      "delivery_dx_override": {
+        "O14": {
+          "code": "O14.14",
+          "description": "Severe pre-eclampsia, third trimester"
+        }
+      },
+      "diagnoses": [
+        {
+          "code": "Z34.00",
+          "description": "Encounter for supervision of normal pregnancy, first trimester",
+          "is_primary": false,
+          "onset_age_min": 18,
+          "onset_age_max": 45
+        },
+        {
+          "code": "O14.10",
+          "description": "Severe pre-eclampsia, unspecified trimester",
+          "is_primary": true,
+          "onset_age_min": 18,
+          "onset_age_max": 45
+        },
+        {
+          "code": "O72.1",
+          "description": "Other immediate postpartum hemorrhage",
+          "is_primary": false,
+          "only_encounter_types": [
+            "I"
+          ],
+          "onset_age_min": 18,
+          "onset_age_max": 45
+        },
+        {
+          "code": "O15.02",
+          "description": "Eclampsia in labor",
+          "is_primary": false,
+          "only_encounter_types": [
+            "I"
+          ],
+          "onset_age_min": 18,
+          "onset_age_max": 45
+        }
+      ],
+      "comorbidities": [
+        {
+          "code": "E66.9",
+          "description": "Obesity, unspecified",
+          "prevalence_pct": 0.4
+        },
+        {
+          "code": "F32.9",
+          "description": "Major depressive disorder, single episode, unspecified",
+          "prevalence_pct": 0.25
+        }
+      ],
+      "medications": [
+        {
+          "drug_code": "310798",
+          "drug_description": "Labetalol 200 MG Oral Tablet",
+          "dose_quantity": "200",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "BID",
+          "frequency_description": "Twice daily",
+          "status": "active",
+          "for_diagnosis_code": "O14",
+          "weight": 0.85
+        },
+        {
+          "drug_code": "308167",
+          "drug_description": "Magnesium sulfate 50% Injection",
+          "dose_quantity": "50",
+          "dose_uom": "%",
+          "dosage_form_code": "INJ",
+          "dosage_form_description": "Injection",
+          "route_code": "IV",
+          "route_description": "Intravenous",
+          "frequency_code": "INFUSION",
+          "frequency_description": "Continuous infusion",
+          "status": "active",
+          "for_diagnosis_code": "O14",
+          "weight": 0.9,
+          "is_acute": true
+        },
+        {
+          "drug_code": "310463",
+          "drug_description": "Ferrous sulfate 325 MG Oral Tablet",
+          "dose_quantity": "325",
+          "dose_uom": "mg",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "BID",
+          "frequency_description": "Twice daily",
+          "status": "active",
+          "for_diagnosis_code": "O72",
+          "weight": 0.6
+        },
+        {
+          "drug_code": "854882",
+          "drug_description": "Prenatal vitamins",
+          "dose_quantity": "1",
+          "dose_uom": "tablet",
+          "dosage_form_code": "TAB",
+          "dosage_form_description": "Tablet",
+          "route_code": "PO",
+          "route_description": "Oral",
+          "frequency_code": "QD",
+          "frequency_description": "Once daily",
+          "status": "active",
+          "for_diagnosis_code": "Z34",
+          "weight": 0.92
+        }
+      ],
+      "labs": [
+        {
+          "order_code": "5767-9",
+          "order_description": "Pre-eclampsia labs",
+          "specimen": "Blood/Urine",
+          "abnormal_pct": 0.8,
+          "weight": 0.35,
+          "result_items": [
+            {
+              "code": "5767-9",
+              "description": "Protein [Mass/volume] in Urine",
+              "units": "mg/dL",
+              "is_numeric": true,
+              "normal_min": 0,
+              "normal_max": 20,
+              "abnormal_min": 21,
+              "abnormal_max": 500
+            },
+            {
+              "code": "1742-6",
+              "description": "Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+              "units": "U/L",
+              "is_numeric": true,
+              "normal_min": 7,
+              "normal_max": 56,
+              "abnormal_min": 57,
+              "abnormal_max": 300
+            },
+            {
+              "code": "1920-8",
+              "description": "Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+              "units": "U/L",
+              "is_numeric": true,
+              "normal_min": 10,
+              "normal_max": 40,
+              "abnormal_min": 41,
+              "abnormal_max": 300
+            },
+            {
+              "code": "777-3",
+              "description": "Platelets [#/volume] in Blood by Automated count",
+              "units": "K/uL",
+              "is_numeric": true,
+              "normal_min": 150,
+              "normal_max": 400,
+              "abnormal_min": 50,
+              "abnormal_max": 149
+            }
+          ]
+        },
+        {
+          "order_code": "58410-2",
+          "order_description": "CBC panel - Blood by Automated count",
+          "specimen": "Blood",
+          "abnormal_pct": 0.65,
+          "weight": 0.3,
+          "result_items": [
+            {
+              "code": "718-7",
+              "description": "Hemoglobin [Mass/volume] in Blood",
+              "units": "g/dL",
+              "is_numeric": true,
+              "normal_min": 10.0,
+              "normal_max": 16.0,
+              "abnormal_min": 6.0,
+              "abnormal_max": 9.9
+            },
+            {
+              "code": "4544-3",
+              "description": "Hematocrit [Volume Fraction] of Blood by Automated count",
+              "units": "%",
+              "is_numeric": true,
+              "normal_min": 30,
+              "normal_max": 50,
+              "abnormal_min": 18,
+              "abnormal_max": 29
+            },
+            {
+              "code": "777-3",
+              "description": "Platelets [#/volume] in Blood by Automated count",
+              "units": "K/uL",
+              "is_numeric": true,
+              "normal_min": 150,
+              "normal_max": 400,
+              "abnormal_min": 50,
+              "abnormal_max": 149
+            }
+          ]
+        }
+      ],
+      "document_templates": [
+        {
+          "type_code": "PN",
+          "type_description": "Progress Note",
+          "encounter_type": "O",
+          "chief_complaints": [
+            "High-risk prenatal visit \u2014 severe preeclampsia with multiple complications",
+            "Multidisciplinary OB visit \u2014 eclampsia and hemorrhage history",
+            "Severe maternal morbidity \u2014 postpartum surveillance",
+            "Complex obstetric follow-up \u2014 preeclampsia, hemorrhage, and eclampsia"
+          ],
+          "note_template": "CHIEF COMPLAINT: {chief_complaint}\n\nHISTORY OF PRESENT ILLNESS: {patient_name} is a {age}-year-old female presenting for high-risk obstetric follow-up for {diagnosis} with multiple complications. Patient reports {compliance_statement}.\n\nPHYSICAL EXAMINATION:\nVitals: BP {bp} mmHg, HR {hr} bpm, Weight {weight} lbs\nFetal heart tones: present, regular.\n\nASSESSMENT AND PLAN:\n1. {diagnosis} \u2014 {plan}\n\nFOLLOW-UP: Return within 1 week or to ED immediately if severe headache, visual changes, or heavy bleeding."
+        }
+      ],
+      "encounter_pattern": {
+        "encounters_per_year": 13,
+        "encounter_type_weights": {
+          "O": 0.85,
+          "E": 0.08,
+          "I": 0.07
+        },
+        "lab_encounter_rate": 0.7,
+        "rad_encounter_rate": 0.1
+      }
+    }
+  ]
+}

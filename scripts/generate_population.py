@@ -180,6 +180,11 @@ def _xml_e(tag: str, val) -> str:
     return f"<{tag}>{val}</{tag}>"
 
 
+def _xe(s: str) -> str:
+    """Escape special XML characters in a text value."""
+    return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
 def _entered_fields(prov_code, prov_name, fac_code, fac_name, dt: datetime) -> str:
     ts = _ts(dt.replace(hour=0, minute=0, second=0))
     return (
@@ -187,6 +192,25 @@ def _entered_fields(prov_code, prov_name, fac_code, fac_name, dt: datetime) -> s
         f"    <EnteredAt><Code>{fac_code}</Code><Description>{fac_name}</Description></EnteredAt>\n"
         f"    <EnteredOn>{ts}</EnteredOn>\n"
     )
+
+
+_LOINC_PLAUSIBILITY: dict = {
+    # code: (hard_min, hard_max)
+    "718-7":   (5.0,  18.0),   # Hemoglobin g/dL
+    "6690-2":  (1.5,  20.0),   # WBC K/uL  (LAB004 ceiling = 20)
+    "1975-2":  (0.1,  10.0),   # Total Bilirubin mg/dL  (LAB004 ceiling = 10)
+    "1742-6":  (5.0,  400.0),  # ALT U/L
+    "1920-8":  (5.0,  400.0),  # AST U/L
+    "6768-6":  (30.0, 600.0),  # Alk Phos U/L
+    "2160-0":  (0.4,  14.0),   # Creatinine mg/dL (realistic ESKD max)
+    "3094-0":  (5.0,  120.0),  # BUN mg/dL (realistic uremia max)
+    "2085-9":  (20.0, 100.0),  # HDL mg/dL
+    "4548-4":  (4.0,  15.0),   # HbA1c %
+    "2093-3":  (120.0, 400.0), # Total Cholesterol mg/dL
+    "2339-0":  (50.0, 500.0),  # Glucose mg/dL
+    "2571-8":  (40.0, 500.0),  # Triglycerides mg/dL (LAB004 floor = 40)
+    "13457-7": (0.0,  300.0),  # LDL (calculated) mg/dL
+}
 
 
 def _result_value(item: dict, is_abnormal: bool, rng: random.Random) -> str:
@@ -197,6 +221,10 @@ def _result_value(item: dict, is_abnormal: bool, rng: random.Random) -> str:
     else:
         lo, hi = float(item.get("normal_min", 0)), float(item.get("normal_max", 100))
     val = rng.uniform(lo, hi)
+    code = item.get("code", "")
+    if code in _LOINC_PLAUSIBILITY:
+        p_lo, p_hi = _LOINC_PLAUSIBILITY[code]
+        val = max(p_lo, min(p_hi, val))
     return f"{val:.1f}" if "." in str(lo) or "." in str(hi) else str(int(val))
 
 
@@ -361,8 +389,8 @@ def _assign_facilities(
     """
     n_enc = len(enc_types)
 
-    # --- shortcircuit: multi-facility disabled or pregnancy cohort ---
-    if not mf_config.get("enabled", False) or is_pregnancy_cohort:
+    # --- shortcircuit: multi-facility disabled ---
+    if not mf_config.get("enabled", False):
         return {i: home_fac for i in range(n_enc)}
 
     # --- step 1: how many distinct facilities does this patient use? ---
@@ -519,7 +547,7 @@ def _plan_pregnancy_episodes(rng, enc_dates):
         "conception_date": del_1 - timedelta(days=gestation),
         "prenatal_start": del_1 - timedelta(days=gestation - 56),
         "delivery_date": del_1,
-        "postpartum_end": del_1 + timedelta(days=42),
+        "postpartum_end": del_1 + timedelta(days=84),
     }
     episodes = [ep1]
 
@@ -534,7 +562,7 @@ def _plan_pregnancy_episodes(rng, enc_dates):
             "conception_date": del_2 - timedelta(days=gestation),
             "prenatal_start": del_2 - timedelta(days=gestation - 56),
             "delivery_date": del_2,
-            "postpartum_end": del_2 + timedelta(days=42),
+            "postpartum_end": del_2 + timedelta(days=84),
         })
 
     return episodes
@@ -559,7 +587,7 @@ _HTN_REGIMENS = [
 
 def _build_lab_xml(lab, enc_num, enc_date, patient_id, prov_code, prov_name,
                    fac_code, fac_name, lab_idx, rng, a1c_override=None,
-                   enc_start_time=None):
+                   enc_start_time=None, ckd_egfr=None):
     result_dt = enc_date + timedelta(days=rng.randint(1, 3))
     result_ts = _ts(result_dt.replace(hour=14, minute=30, second=0))
     _draw_base = enc_start_time if enc_start_time else enc_date.replace(hour=9, minute=0, second=0)
@@ -572,9 +600,93 @@ def _build_lab_xml(lab, enc_num, enc_date, patient_id, prov_code, prov_name,
             val = f"{a1c_override:.1f}"
             is_abn = a1c_override >= 5.7
             interp = "H" if a1c_override >= 5.7 else "N"
+        elif ckd_egfr is not None and ri.get("code") == "33914-3":
+            # eGFR: use trajectory value directly
+            val = f"{ckd_egfr:.0f}"
+            is_abn = ckd_egfr < 60
+            interp = _derive_interp(val, ri)
+        elif ckd_egfr is not None and ri.get("code") == "2160-0":
+            # Creatinine derived from eGFR; floor 1.0 for CKD3+, ceiling 14.0 for ESKD
+            _cr = min(14.0, max(1.0, (78.0 / ckd_egfr) ** 1.05 * rng.uniform(0.88, 1.12)))
+            _cr_rounded = round(_cr, 1)
+            val = f"{_cr_rounded:.1f}"
+            is_abn = _cr_rounded > 1.2
+            interp = "H" if is_abn else "N"
+        elif ckd_egfr is not None and ri.get("code") == "3094-0":
+            # BUN correlated with creatinine; clamped to 120 (realistic uremia max)
+            _cr_est = min(14.0, (78.0 / ckd_egfr) ** 1.05)
+            _bun = int(min(120, max(8, _cr_est * rng.uniform(9.0, 14.0))))
+            val = str(_bun)
+            is_abn = _bun > 20
+            interp = "H" if is_abn else "N"
+        elif ckd_egfr is not None and ri.get("code") == "2823-3":
+            # Potassium: hyperkalemia risk correlates with CKD stage
+            if ckd_egfr < 15:
+                _k = rng.uniform(4.2, 5.8)
+            elif ckd_egfr < 30:
+                _k = rng.uniform(3.8, 5.2)
+            else:
+                _k = rng.uniform(3.5, 4.9)
+            _k_rounded = round(_k, 1)
+            val = f"{_k_rounded:.1f}"
+            is_abn = _k_rounded > 5.0
+            interp = "H" if is_abn else "N"
+        elif ckd_egfr is not None and ri.get("code") == "718-7":
+            # Hemoglobin: normocytic anemia correlates with CKD severity
+            if ckd_egfr < 15:
+                _hgb = rng.uniform(6.5, 10.5)
+            elif ckd_egfr < 30:
+                _hgb = rng.uniform(7.5, 12.0)
+            elif ckd_egfr < 45:
+                _hgb = rng.uniform(9.0, 13.5)
+            else:
+                _hgb = rng.uniform(10.5, 15.5)
+            _hgb_r = round(_hgb, 1)
+            val = f"{_hgb_r:.1f}"
+            is_abn = _hgb_r < 11.5
+            interp = "L" if is_abn else "N"
+        elif ckd_egfr is not None and ri.get("code") == "2132-9":
+            # Phosphate: hyperphosphatemia worsens with CKD progression
+            if ckd_egfr < 15:
+                _phos = rng.uniform(5.0, 10.0)
+            elif ckd_egfr < 30:
+                _phos = rng.uniform(3.8, 7.5)
+            elif ckd_egfr < 45:
+                _phos = rng.uniform(3.0, 6.0)
+            else:
+                _phos = rng.uniform(2.5, 5.0)
+            _phos_r = round(_phos, 1)
+            val = f"{_phos_r:.1f}"
+            is_abn = _phos_r > 4.5
+            interp = "H" if is_abn else "N"
+        elif ckd_egfr is not None and ri.get("code") == "2731-8":
+            # PTH: secondary hyperparathyroidism scales inversely with eGFR
+            if ckd_egfr < 15:
+                _pth = rng.uniform(300, 600)
+            elif ckd_egfr < 30:
+                _pth = rng.uniform(150, 400)
+            elif ckd_egfr < 45:
+                _pth = rng.uniform(80, 220)
+            else:
+                _pth = rng.uniform(66, 130)
+            _pth_int = round(_pth)
+            val = str(_pth_int)
+            is_abn = _pth_int > 65
+            interp = "H" if is_abn else "N"
         else:
             is_abn = rng.random() < float(lab.get("abnormal_pct", 0.3))
             val = _result_value(ri, is_abn, rng)
+            # FEV1/FVC coherence: FEV1 (20157-4) must be < FVC (20150-9)
+            if ri.get("code") == "20157-4":
+                fvc_rv = next((rv for rv in _result_vals if rv["code"] == "20150-9"), None)
+                if fvc_rv:
+                    try:
+                        fvc_v = float(fvc_rv["value"])
+                        if float(val) >= fvc_v:
+                            val = f"{fvc_v * rng.uniform(0.50, 0.85):.1f}"
+                            is_abn = float(val) < float(ri.get("normal_min", 9999))
+                    except (ValueError, TypeError):
+                        pass
             interp = _derive_interp(val, ri)
         _result_vals.append({"code": ri.get("code", ""), "value": val, "interp": interp, "is_abn": is_abn})
         norm_range = ri.get(
@@ -638,9 +750,23 @@ def _build_lab_xml(lab, enc_num, enc_date, patient_id, prov_code, prov_name,
 def generate_from_template(patient_id: int, tmpl: dict) -> str:
     rng = random.Random(patient_id)
 
+    _USPS_NAMES = {
+        "AL":"Alabama","AK":"Alaska","AZ":"Arizona","AR":"Arkansas","CA":"California",
+        "CO":"Colorado","CT":"Connecticut","DE":"Delaware","FL":"Florida","GA":"Georgia",
+        "HI":"Hawaii","ID":"Idaho","IL":"Illinois","IN":"Indiana","IA":"Iowa",
+        "KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland",
+        "MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MS":"Mississippi",
+        "MO":"Missouri","MT":"Montana","NE":"Nebraska","NV":"Nevada","NH":"New Hampshire",
+        "NJ":"New Jersey","NM":"New Mexico","NY":"New York","NC":"North Carolina",
+        "ND":"North Dakota","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania",
+        "RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee",
+        "TX":"Texas","UT":"Utah","VT":"Vermont","VA":"Virginia","WA":"Washington",
+        "WV":"West Virginia","WI":"Wisconsin","WY":"Wyoming","DC":"District of Columbia",
+    }
     meta = tmpl.get("meta", {})
     history_months = int(meta.get("history_months", 24))
     state_code = meta.get("state_code", "OH")
+    state_name = _USPS_NAMES.get(state_code, state_code)
 
     # ---- Demographics ----
     geo = _wpick(tmpl["geography"]["locations"], "weight", rng)
@@ -713,9 +839,9 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         tmpl.get("providers", [{"code": "DR001", "name": "Dr. Smith"}])
     )
     fac_code = fac["code"]
-    fac_name = fac["name"]
+    fac_name = _xe(fac["name"])
     prov_code = prov["code"]
-    prov_name = prov["name"]
+    prov_name = _xe(prov["name"])
 
     # ---- Encounter schedule from template encounter_pattern ----
     ep = cohort.get("encounter_pattern", {})
@@ -800,6 +926,34 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     )
     _pregnancy_episodes: list = []
     _preg_delivery_enc_indices: set = set()
+
+    # ---- CKD progression cohort: assign per-patient eGFR trajectory ----
+    _is_ckd_cohort = cohort.get("ckd_progression", False)
+    _ckd_initial_egfr = 45.0
+    _ckd_annual_rate = 0.0
+    _ckd_enc_egfr: dict = {}
+    if _is_ckd_cohort:
+        _traj_cfg = cohort.get("progression_trajectories", [
+            {"name": "stable",   "rate_min":  0.0,  "rate_max":  0.5,  "weight": 0.20},
+            {"name": "slow",     "rate_min": -3.0,  "rate_max": -0.5,  "weight": 0.35},
+            {"name": "moderate", "rate_min": -6.0,  "rate_max": -3.1,  "weight": 0.30},
+            {"name": "rapid",    "rate_min": -12.0, "rate_max": -6.1,  "weight": 0.15},
+        ])
+        _traj_w = [float(t.get("weight", 1.0)) for t in _traj_cfg]
+        _chosen_traj = rng.choices(_traj_cfg, weights=_traj_w, k=1)[0]
+        _egfr_lo = float(cohort.get("initial_egfr_min", 20))
+        _egfr_hi = float(cohort.get("initial_egfr_max", 60))
+        _ckd_initial_egfr = rng.uniform(_egfr_lo, _egfr_hi)
+        _r_lo = float(min(_chosen_traj["rate_min"], _chosen_traj["rate_max"]))
+        _r_hi = float(max(_chosen_traj["rate_min"], _chosen_traj["rate_max"]))
+        _ckd_annual_rate = rng.uniform(_r_lo, _r_hi)
+        if enc_dates:
+            for _ckd_ei, _ckd_dt in enumerate(enc_dates):
+                _yrs = (_ckd_dt - enc_dates[0]).days / 365.25
+                _e = _ckd_initial_egfr + _ckd_annual_rate * _yrs + rng.gauss(0, 1.5)
+                _ckd_enc_egfr[_ckd_ei] = max(5.0, _e)
+    # Stage ratchet: tracks worst (lowest) eGFR confirmed so far; stage never regresses.
+    _ckd_worst_egfr = _ckd_initial_egfr
     if _is_pregnancy_cohort:
         _pregnancy_episodes = _plan_pregnancy_episodes(rng, enc_dates)
         for _pep in _pregnancy_episodes:
@@ -866,7 +1020,19 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
 
     diag_list = [d for d in cohort.get("diagnoses", []) if _dx_age_sex_ok(d)]
     for _comorbidity in cohort.get("comorbidities", []):
-        if rng.random() < float(_comorbidity.get("prevalence_pct", 0)):
+        _base_prev = float(_comorbidity.get("prevalence_pct", 0))
+        # CKD cohort: scale anemia, mineral-metabolism, and bone-disease comorbidity
+        # prevalence up at worse eGFR stages so medication selection correlates with labs.
+        if _is_ckd_cohort:
+            _cx = _comorbidity.get("code", "")
+            if _cx.startswith(("D63", "E83", "E21")):
+                if _ckd_initial_egfr < 15:
+                    _base_prev = min(1.0, _base_prev * 2.5)
+                elif _ckd_initial_egfr < 30:
+                    _base_prev = min(1.0, _base_prev * 1.8)
+                elif _ckd_initial_egfr >= 45:
+                    _base_prev = _base_prev * 0.5
+        if rng.random() < _base_prev:
             if _dx_age_sex_ok(_comorbidity):
                 diag_list.append({
                     "code": _comorbidity["code"],
@@ -885,13 +1051,23 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     # consistent, and so the diagnoses loop can guarantee anchor codes appear on
     # scenario-carrying encounters (DX002 prevention).
     _pt_diag_codes = [d.get("code", "") for d in diag_list]
+    # Primary-diagnosis codes only (not comorbidities). Used to prefer scenarios
+    # that reflect the cohort's core condition over incidental comorbidity scenarios
+    # (e.g. heart failure patients should get ADHF scenarios, not hyperglycemic crisis
+    # just because they happen to have T2DM as a comorbidity).
+    _primary_diag_codes = [d.get("code", "") for d in diag_list if d.get("is_primary") is not False]
     _inpatient_scenes: dict = {}       # ei (0-based) -> selected scenario dict
     _inpatient_scen_matched: dict = {} # ei -> True if selected via patient-matching ICD prefix
     _ed_scenes: dict = {}              # ei (0-based) -> pre-selected scenario dict for ED encounters
     _ed_scen_matched: dict = {}        # ei -> True if selected via patient-matching ICD prefix
     for _ei, _et in enumerate(enc_types):
         if _et == "I":
-            _ip_matching = [
+            # Prefer scenarios matching primary diagnoses; fall back to all diagnoses
+            _ip_primary = [
+                s for s in _INPATIENT_SCENARIOS
+                if any(c.startswith(tuple(s["icd_prefixes"])) for c in _primary_diag_codes)
+            ]
+            _ip_matching = _ip_primary or [
                 s for s in _INPATIENT_SCENARIOS
                 if any(c.startswith(tuple(s["icd_prefixes"])) for c in _pt_diag_codes)
             ]
@@ -903,7 +1079,10 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 _inpatient_scenes[_ei] = rng.choice(_ip_fallback)
                 _inpatient_scen_matched[_ei] = False
         elif _et == "E":
-            _ed_m = [s for s in _INPATIENT_SCENARIOS
+            # Prefer scenarios matching primary diagnoses; fall back to all diagnoses
+            _ed_primary = [s for s in _INPATIENT_SCENARIOS
+                           if any(c.startswith(tuple(s["icd_prefixes"])) for c in _primary_diag_codes)]
+            _ed_m = _ed_primary or [s for s in _INPATIENT_SCENARIOS
                      if any(c.startswith(tuple(s["icd_prefixes"])) for c in _pt_diag_codes)]
             # Delivery is a planned inpatient-only event; exclude it from the ED pool so
             # pregnancy patients don't get spurious "Normal term delivery" ED encounters.
@@ -968,6 +1147,16 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         for _pep in _pregnancy_episodes:
             if "delivery_enc_ei" in _pep:
                 _pep["delivery_enc_ei"] = _old_to_new_ei[_pep["delivery_enc_ei"]]
+        # Injected I-type encounters (created when an admitting ED visit adds a paired
+        # inpatient stay) are not in _pregnancy_enc_context because they didn't exist
+        # during the initial context-building pass.  Propagate the paired ED encounter's
+        # context so the diagnosis and document loops apply pregnancy-specific primary
+        # selection (Z34.0x / O14.1x / etc.) instead of falling back to the normal path
+        # which would leave O72.1 or another complication code as the inpatient primary.
+        for _old_ed_ei, _new_ip_ei in _new_ip_for_ed.items():
+            _new_ed_ei = _old_to_new_ei[_old_ed_ei]
+            if _new_ed_ei in _pregnancy_enc_context:
+                _pregnancy_enc_context[_new_ip_ei] = _pregnancy_enc_context[_new_ed_ei]
 
     # Rebuild encounter gaps for follow-up text (must be after injection).
     _next_enc_gaps = [
@@ -1152,7 +1341,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             _ep_pool = [p for p in _tmpl_providers if p.get("facility_code") == _ofc]
             if _ep_pool:
                 _ep = rng.choice(_ep_pool)
-                _fac_prov_map[_ofc] = (_ep["code"], _ep["name"])
+                _fac_prov_map[_ofc] = (_ep["code"], _xe(_ep["name"]))
             else:
                 _fac_prov_map[_ofc] = (prov_code, prov_name)
 
@@ -1239,7 +1428,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         f"      <Address>\n"
         f"        <Street>{street_num} {street_name} {street_type}</Street>\n"
         f"        <City><Code>{city.upper().replace(' ','')}</Code><Description>{city}</Description></City>\n"
-        f"        <State><SDACodingStandard>USPS</SDACodingStandard><Code>{state_code}</Code><Description>Ohio</Description></State>\n"
+        f"        <State><SDACodingStandard>USPS</SDACodingStandard><Code>{state_code}</Code><Description>{state_name}</Description></State>\n"
         f"        <Zip><Code>{zip_code}</Code></Zip>\n"
         f"        <Country><SDACodingStandard>ISO 3166</SDACodingStandard><Code>US</Code><Description>United States</Description></Country>\n"
         f"        <County><SDACodingStandard>FIPS</SDACodingStandard><Code>{county_fips}</Code><Description>{county_name} County</Description></County>\n"
@@ -1267,7 +1456,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             f"          <HealthFund>\n"
             f"            <SDACodingStandard>{cs}</SDACodingStandard>\n"
             f"            <Code>{ins_plan['code']}</Code>\n"
-            f"            <Description>{ins_plan['name']}</Description>\n"
+            f"            <Description>{_xe(ins_plan['name'])}</Description>\n"
             f"          </HealthFund>\n"
             f"          <HealthFundPlan><Code>{pc}</Code><Description>{pname}</Description></HealthFundPlan>\n"
             f"          <GroupName>{gname}</GroupName>\n"
@@ -1295,7 +1484,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         _ei0 = ei - 1
         _ef = _enc_facility_map[_ei0]
         fac_code = _ef["code"]
-        fac_name = _ef["name"]
+        fac_name = _xe(_ef["name"])
         prov_code, prov_name = _fac_prov_map[fac_code]
         en = f"ENC-{ed.strftime('%Y%m%d')}-{patient_id:04d}-{ei}"
         enc_nums.append(en)
@@ -1460,6 +1649,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
 
     _enc_secondary_diags: dict = {}  # ei -> list of secondary diag dicts for this encounter
     _enc_all_dx_codes: dict = {}    # ei -> set of all applicable diagnosis codes (primary+secondary)
+    _enc_primary_dx: dict = {}      # ei -> primary diag dict (may be acute scenario code)
     if diag_list:
         diag_idx = 1
         primary_diags = [d for d in diag_list if d.get("is_primary")]
@@ -1476,7 +1666,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         for ei, (ed, en, etype) in enumerate(zip(enc_dates, enc_nums, enc_types)):
             _ef_d = _enc_facility_map[ei]
             fac_code = _ef_d["code"]
-            fac_name = _ef_d["name"]
+            fac_name = _xe(_ef_d["name"])
             prov_code, prov_name = _fac_prov_map[fac_code]
             eod = _ts(ed.replace(hour=0, minute=0, second=0))
             # Filter primary_diags to those applicable to this encounter type.
@@ -1486,6 +1676,27 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 if not d.get("only_encounter_types")
                 or etype in d.get("only_encounter_types", [])
             ]
+            # CKD cohort: override primary diagnosis with trajectory-based N18.x stage code.
+            # Stage ratchet: update worst eGFR with this encounter's value; stage can only advance.
+            if _is_ckd_cohort:
+                _e = _ckd_enc_egfr.get(ei, _ckd_worst_egfr)
+                _ckd_worst_egfr = min(_ckd_worst_egfr, _e)
+                if _ckd_worst_egfr >= 45:
+                    _n18c, _n18d = "N18.31", "Chronic kidney disease, stage 3a"
+                elif _ckd_worst_egfr >= 30:
+                    _n18c, _n18d = "N18.32", "Chronic kidney disease, stage 3b"
+                elif _ckd_worst_egfr >= 15:
+                    _n18c, _n18d = "N18.4", "Chronic kidney disease, stage 4"
+                else:
+                    _n18c, _n18d = "N18.5", "Chronic kidney disease, stage 5"
+                enc_primary = [{"code": _n18c, "description": _n18d, "is_primary": True}]
+            # Primary diagnoses excluded from this encounter type are demoted to secondary so
+            # they still appear on the encounter record (e.g., Z59.0 homelessness remains on
+            # an acute ED visit even when a clinical diagnosis is the principal code).
+            _demoted_primaries = [
+                d for d in primary_diags
+                if d.get("only_encounter_types") and etype not in d["only_encounter_types"]
+            ]
             # Pregnancy cohort: replace enc_primary entirely with episode-context-aware code
             # so Z34.90 is never used — trimester-specific codes replace it, and O80 only
             # appears on the planned delivery encounter.
@@ -1493,21 +1704,56 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 _pctx = _pregnancy_enc_context[ei]
                 _ptype = _pctx.get("type")
                 if _ptype == "delivery":
-                    enc_primary = [{"code": "O80",
-                                    "description": "Encounter for full-term uncomplicated delivery",
-                                    "is_primary": True}]
+                    # Cohort-level delivery_dx_override lets complicated pregnancies use the
+                    # appropriate complication code instead of uncomplicated O80.
+                    _dlv_ovr_map = cohort.get("delivery_dx_override", {})
+                    _dlv_ovr = None
+                    if _dlv_ovr_map:
+                        for _pt_code in _pt_diag_codes:
+                            for _ovr_pfx, _ovr_dx in _dlv_ovr_map.items():
+                                if _pt_code.startswith(_ovr_pfx):
+                                    _dlv_ovr = _ovr_dx
+                                    break
+                            if _dlv_ovr:
+                                break
+                    if _dlv_ovr:
+                        enc_primary = [{"code": _dlv_ovr["code"],
+                                        "description": _dlv_ovr.get("description",
+                                                                     _dlv_ovr["code"]),
+                                        "is_primary": True}]
+                    else:
+                        enc_primary = [{"code": "O80",
+                                        "description": "Encounter for full-term uncomplicated delivery",
+                                        "is_primary": True}]
                 elif _ptype == "prenatal":
-                    _tri = _pctx.get("trimester", 3)
-                    _zmap = {1: ("Z34.01", "first trimester"),
-                             2: ("Z34.02", "second trimester"),
-                             3: ("Z34.03", "third trimester")}
-                    _zcode, _ztail = _zmap[_tri]
-                    enc_primary = [{"code": _zcode,
-                                    "description": (
-                                        f"Encounter for supervision of normal first pregnancy,"
-                                        f" {_ztail}"
-                                    ),
-                                    "is_primary": True}]
+                    # prenatal_dx_override allows complicated pregnancies to use a complication
+                    # code (e.g. O14.10 severe preeclampsia) as the prenatal primary.
+                    _pre_ovr_map = cohort.get("prenatal_dx_override", {})
+                    _pre_ovr = None
+                    if _pre_ovr_map:
+                        for _pt_code in _pt_diag_codes:
+                            for _ovr_pfx, _ovr_dx in _pre_ovr_map.items():
+                                if _pt_code.startswith(_ovr_pfx):
+                                    _pre_ovr = _ovr_dx
+                                    break
+                            if _pre_ovr:
+                                break
+                    if _pre_ovr:
+                        enc_primary = [{"code": _pre_ovr["code"],
+                                        "description": _pre_ovr.get("description", ""),
+                                        "is_primary": True}]
+                    else:
+                        _tri = _pctx.get("trimester", 3)
+                        _zmap = {1: ("Z34.01", "first trimester"),
+                                 2: ("Z34.02", "second trimester"),
+                                 3: ("Z34.03", "third trimester")}
+                        _zcode, _ztail = _zmap[_tri]
+                        enc_primary = [{"code": _zcode,
+                                        "description": (
+                                            f"Encounter for supervision of normal first pregnancy,"
+                                            f" {_ztail}"
+                                        ),
+                                        "is_primary": True}]
                 elif _ptype == "postpartum":
                     enc_primary = [{"code": "Z39.2",
                                     "description": "Encounter for routine postpartum follow-up",
@@ -1527,6 +1773,10 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                              if not d["code"].startswith(("O", "Z34"))]
             else:
                 _sec_pool = secondary_diags
+            # Honour per-diagnosis encounter-type restrictions (only_encounter_types).
+            _sec_pool = [d for d in _sec_pool
+                         if not d.get("only_encounter_types")
+                         or etype in d.get("only_encounter_types", [])]
             # Always include applicable primary diagnoses; sample a few secondary ones.
             # Inpatient encounters get more diagnoses (up to 4); outpatient 1-2 secondaries.
             max_secondary = rng.randint(1, 4) if etype == "I" else rng.randint(0, 2)
@@ -1555,21 +1805,46 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                     if _acute_to_force:
                         _acode = _acute_to_force["code"]
                         if not any(d["code"] == _acode for d in enc_primary):
-                            _forced_sec = [_acute_to_force]
+                            # Promote the scenario's acute diagnosis to primary (unless this is a
+                            # pregnancy encounter whose primary is already managed separately).
+                            if not (_is_pregnancy_cohort and ei in _pregnancy_enc_context):
+                                _demoted_primaries = list(enc_primary) + _demoted_primaries
+                                enc_primary = [{"code": _acode,
+                                                "description": _acute_to_force.get("description", _acode),
+                                                "is_primary": True}]
+                            else:
+                                _forced_sec = [_acute_to_force]
                 else:
                     # Standard anchor: ensure at least one matching-prefix code is present.
                     if not any(d["code"].startswith(_scen_prefs) for d in enc_primary):
                         _anchors = [d for d in _sec_pool if d["code"].startswith(_scen_prefs)]
                         if _anchors:
                             _forced_sec = [rng.choice(_anchors)]
+            # Demoted primaries also respect only_encounter_types — a diagnosis restricted to
+            # inpatient (e.g. O72.1 postpartum hemorrhage) must not bleed into prenatal outpatient
+            # visits via the demoted-primary pathway.
+            _demoted_primaries = [
+                d for d in _demoted_primaries
+                if not d.get("only_encounter_types") or etype in d["only_encounter_types"]
+            ]
             _forced_sec_codes = {d["code"] for d in _forced_sec}
-            _avail_for_sample = [d for d in _sec_pool if d["code"] not in _forced_sec_codes]
+            _demoted_codes = {d["code"] for d in _demoted_primaries}
+            _avail_for_sample = [d for d in _sec_pool
+                                 if d["code"] not in _forced_sec_codes
+                                 and d["code"] not in _demoted_codes]
             _remaining_slots = max(0, max_secondary - len(_forced_sec))
-            enc_secondary = _forced_sec + rng.sample(
+            enc_secondary = _demoted_primaries + _forced_sec + rng.sample(
                 _avail_for_sample, min(_remaining_slots, len(_avail_for_sample))
             )
+            _existing_dx = {d["code"] for d in enc_primary + enc_secondary}
+            _forced_always = [
+                d for d in primary_diags + secondary_diags
+                if d.get("force_secondary") and d["code"] not in _existing_dx
+            ]
+            enc_secondary = enc_secondary + _forced_always
             _enc_secondary_diags[ei] = enc_secondary
             _enc_all_dx_codes[ei] = {d["code"] for d in enc_primary + enc_secondary}
+            _enc_primary_dx[ei] = enc_primary[0] if enc_primary else None
             for d in enc_primary + enc_secondary:
                 dtype_code = "F" if d.get("is_primary") else "C"
                 dtype_desc = "Final" if d.get("is_primary") else "Chronic"
@@ -1621,7 +1896,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             f"      <Diagnosis><Code>{_gd['code']}</Code><Description>{_gd['description']}</Description></Diagnosis>\n"
             f"      <DiagnosisType><Code>C</Code><Description>Chronic</Description></DiagnosisType>\n"
             f"      <EnteredBy><Code>{_fpc_g}</Code><Description>{_fpn_g}</Description></EnteredBy>\n"
-            f"      <EnteredAt><Code>{_ef_g['code']}</Code><Description>{_ef_g['name']}</Description></EnteredAt>\n"
+            f"      <EnteredAt><Code>{_ef_g['code']}</Code><Description>{_xe(_ef_g['name'])}</Description></EnteredAt>\n"
             f"      <EnteredOn>{_eod_g}</EnteredOn>\n"
             f"      <ExternalId>Diagnoses_{diag_idx}</ExternalId>\n"
             f"    </Diagnosis>\n"
@@ -1635,7 +1910,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         for ei_o, (ed, en) in enumerate(zip(enc_dates, enc_nums)):
             _ef_o = _enc_facility_map[ei_o]
             fac_code = _ef_o["code"]
-            fac_name = _ef_o["name"]
+            fac_name = _xe(_ef_o["name"])
             prov_code, prov_name = _fac_prov_map[fac_code]
             obs_time = _ts(enc_start_times[ei_o] + timedelta(minutes=rng.randint(3, 10)))
             ev = enc_vitals[ei_o]
@@ -1667,7 +1942,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         for ep_i, (ed, en) in enumerate(zip(enc_dates, enc_nums)):
             _ef_p = _enc_facility_map[ep_i]
             fac_code = _ef_p["code"]
-            fac_name = _ef_p["name"]
+            fac_name = _xe(_ef_p["name"])
             prov_code, prov_name = _fac_prov_map[fac_code]
             proc = _wpick(proc_list, "weight", rng)
             ets = _ts(enc_start_times[ep_i] + timedelta(minutes=rng.randint(10, 25)))
@@ -1791,7 +2066,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             ei0 = doc_idx - 1  # 0-based encounter index
             _ef_doc = _enc_facility_map[ei0]
             fac_code = _ef_doc["code"]
-            fac_name = _ef_doc["name"]
+            fac_name = _xe(_ef_doc["name"])
             prov_code, prov_name = _fac_prov_map[fac_code]
 
             # Pick the primary diagnosis for this encounter's narrative and CSV.
@@ -1800,37 +2075,74 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 _pctx = _pregnancy_enc_context[ei0]
                 _ptype = _pctx.get("type")
                 _pdx_map = {
-                    "delivery": ("O80", "Encounter for full-term uncomplicated delivery"),
                     "postpartum": ("Z39.2", "Encounter for routine postpartum follow-up"),
                     "inter_pregnancy": ("Z01.419",
                                         "Encounter for gynecological examination"
                                         " without abnormal findings"),
                 }
-                if _ptype == "prenatal":
-                    _tri = _pctx.get("trimester", 3)
-                    _zcode = ("Z34.01", "Z34.02", "Z34.03")[_tri - 1]
-                    _ztail = ("first", "second", "third")[_tri - 1]
-                    primary_diag_code = _zcode
+                if _ptype == "delivery":
+                    _dlv_ovr_map = cohort.get("delivery_dx_override", {})
+                    _dlv_ovr = None
+                    if _dlv_ovr_map:
+                        for _pt_code in _pt_diag_codes:
+                            for _ovr_pfx, _ovr_dx in _dlv_ovr_map.items():
+                                if _pt_code.startswith(_ovr_pfx):
+                                    _dlv_ovr = _ovr_dx
+                                    break
+                            if _dlv_ovr:
+                                break
+                    primary_diag_code = _dlv_ovr["code"] if _dlv_ovr else "O80"
                     primary_diag_desc = (
-                        f"Encounter for supervision of normal first pregnancy, {_ztail} trimester"
+                        _dlv_ovr.get("description", _dlv_ovr["code"]) if _dlv_ovr
+                        else "Encounter for full-term uncomplicated delivery"
                     )
+                elif _ptype == "prenatal":
+                    _pre_ovr_map = cohort.get("prenatal_dx_override", {})
+                    _pre_ovr = None
+                    if _pre_ovr_map:
+                        for _pt_code in _pt_diag_codes:
+                            for _ovr_pfx, _ovr_dx in _pre_ovr_map.items():
+                                if _pt_code.startswith(_ovr_pfx):
+                                    _pre_ovr = _ovr_dx
+                                    break
+                            if _pre_ovr:
+                                break
+                    if _pre_ovr:
+                        primary_diag_code = _pre_ovr["code"]
+                        primary_diag_desc = _pre_ovr.get("description", "")
+                    else:
+                        _tri = _pctx.get("trimester", 3)
+                        _zcode = ("Z34.01", "Z34.02", "Z34.03")[_tri - 1]
+                        _ztail = ("first", "second", "third")[_tri - 1]
+                        primary_diag_code = _zcode
+                        primary_diag_desc = (
+                            f"Encounter for supervision of normal first pregnancy, {_ztail} trimester"
+                        )
                 else:
                     primary_diag_code, primary_diag_desc = _pdx_map.get(
                         _ptype, ("Z01.419", "Encounter for gynecological examination"
                                              " without abnormal findings")
                     )
             else:
-                # Prefer diagnoses whose only_encounter_types matches; fall back to unrestricted.
-                _enc_primary_diag = (
-                    next(
-                        (d for d in primary_diags
-                         if d.get("only_encounter_types") and etype in d["only_encounter_types"]),
-                        None,
-                    ) or next(
-                        (d for d in primary_diags if not d.get("only_encounter_types")),
-                        _primary_diag_fallback,
+                # Use the per-encounter primary computed in the diagnosis loop.
+                # That loop may have promoted an acute scenario diagnosis to primary
+                # (e.g. F11.120 overdose, L02.91 abscess, I16.0 hypertensive urgency).
+                # Fall back to the template's primary_diags if the encounter predates
+                # the diagnoses loop (empty diag_list case).
+                _precomputed = _enc_primary_dx.get(doc_idx - 1)
+                if _precomputed is not None:
+                    _enc_primary_diag = _precomputed
+                else:
+                    _enc_primary_diag = (
+                        next(
+                            (d for d in primary_diags
+                             if d.get("only_encounter_types") and etype in d["only_encounter_types"]),
+                            None,
+                        ) or next(
+                            (d for d in primary_diags if not d.get("only_encounter_types")),
+                            _primary_diag_fallback,
+                        )
                     )
-                )
                 primary_diag_code = _enc_primary_diag.get("code", "")
                 primary_diag_desc = _enc_primary_diag.get("description", "chronic condition")
 
@@ -2191,14 +2503,25 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 "Disposition": (
                     "Inpatient Admission" if etype == "I"
                     else "Inpatient Admission" if (
-                        etype == "E" and ("dmit" in note or "Admitted to inpatient" in note)
+                        etype == "E" and (
+                            "dmit" in note
+                            or "Admitted to inpatient" in note
+                            # Septic shock in ED always requires admission
+                            or any(c.startswith("R65.2") for c in _enc_all_dx_codes.get(ei0, set()))
+                        )
                     )
                     else "Home" if (etype == "E" and "Discharged to home" in note)
                     else "Home"
                 ),
                 "AdmissionDecision": (
                     "Yes" if etype == "I"
-                    else "Yes" if (etype == "E" and ("dmit" in note or "Admitted to inpatient" in note))
+                    else "Yes" if (
+                        etype == "E" and (
+                            "dmit" in note
+                            or "Admitted to inpatient" in note
+                            or any(c.startswith("R65.2") for c in _enc_all_dx_codes.get(ei0, set()))
+                        )
+                    )
                     else "No"
                 ),
                 "InitialSBP": _arr_sys,
@@ -2248,6 +2571,73 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 f"    </Document>\n"
             )
 
+    # Fallback: cohort has no document_templates, so the doc loop never ran and _enc_rows is empty.
+    # Build minimal encounter rows so COH001 validation and downstream CSV analysis still work.
+    if not _enc_rows and enc_nums:
+        for _ei_r, (_ed_r, _en_r, _et_r) in enumerate(zip(enc_dates, enc_nums, enc_types)):
+            _ef_r = _enc_facility_map[_ei_r]
+            _fc_r = _ef_r["code"]
+            _fn_r = _xe(_ef_r["name"])
+            _pc_r, _pn_r = _fac_prov_map[_fc_r]
+            _all_dx_r = sorted(_enc_all_dx_codes.get(_ei_r, []))
+            _prim_dx_r = _enc_primary_dx.get(_ei_r)
+            _prim_code_r = (_prim_dx_r.get("code", "") if _prim_dx_r
+                            else (_all_dx_r[0] if _all_dx_r else ""))
+            _prim_desc_r = (_prim_dx_r.get("description", "") if _prim_dx_r
+                            else next(
+                                (d.get("description", "") for d in diag_list
+                                 if d.get("code") == _prim_code_r), ""
+                            ))
+            _gap_r = _next_enc_gaps[_ei_r] if _ei_r < len(_next_enc_gaps) else ""
+            _enc_rows.append({
+                "PatientID": patient_id,
+                "EncounterNumber": _en_r,
+                "EncounterType": _et_r,
+                "EncounterStart": enc_start_times[_ei_r].strftime("%Y-%m-%dT%H:%M:%S"),
+                "EncounterEnd": enc_end_times[_ei_r].strftime("%Y-%m-%dT%H:%M:%S"),
+                "EncounterDurationMinutes": round(
+                    (enc_end_times[_ei_r] - enc_start_times[_ei_r]).total_seconds() / 60, 1
+                ),
+                "FacilityCode": _fc_r,
+                "FacilityName": _fn_r,
+                "ProviderCode": _pc_r,
+                "ProviderName": _pn_r,
+                "PrimaryDiagnosisCode": _prim_code_r,
+                "PrimaryDiagnosisDescription": _prim_desc_r,
+                "AllEncounterDiagnosisCodes": "|".join(_all_dx_r),
+                "SecondaryDiagnosisCodes": "|".join(
+                    d["code"] for d in _enc_secondary_diags.get(_ei_r, [])
+                ),
+                "SecondaryDiagnosisDescriptions": "|".join(
+                    d.get("description", "") for d in _enc_secondary_diags.get(_ei_r, [])
+                ),
+                "AcuteScenario": "",
+                "Disposition": "Inpatient Admission" if _et_r == "I" else "Home",
+                "AdmissionDecision": "Yes" if _et_r == "I" else "No",
+                "InitialSBP": "",
+                "InitialDBP": "",
+                "InitialHR": "",
+                "InitialWeightLbs": "",
+                "A1c": _a1c_by_enc.get(_ei_r) if _ei_r in _a1c_enc_set else "",
+                "Glucose": "",
+                "BNP": "",
+                "LinkedEncounterNumber": "",
+                "ProcedureCount": 0,
+                "LabCount": len(_lab_enc_plans.get(_ei_r, [])),
+                "MedicationChangeCount": 0,
+                "FollowUpDays": _gap_r,
+                "NoteSignedTime": "",
+                "NoteTemplateVariant": _et_r,
+                "NoteCharacterCount": 0,
+                "IsAcuteEncounter": "Yes" if _et_r in ("E", "I") else "No",
+                "HasMedicationEscalation": "No",
+                "HasDiabetesIntervention": "No",
+                "HasHypertensionIntervention": "No",
+                "HasDispositionConflict": "No",
+                "HasVitalScenarioConflict": "No",
+                "HasTemporalConflict": "No",
+            })
+
     # Post-process: link admitted ED encounters to the immediately following inpatient encounter,
     # but only when the inpatient starts within 24 hours of the ED end (same episode of care).
     _SAME_EPISODE_MAX_HOURS = 24
@@ -2271,7 +2661,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 continue
             _ef_lab = _enc_facility_map[ei]
             fac_code = _ef_lab["code"]
-            fac_name = _ef_lab["name"]
+            fac_name = _xe(_ef_lab["name"])
             prov_code, prov_name = _fac_prov_map[fac_code]
             _ei_result_vals: dict = {}
             for lab in _lab_enc_plans[ei]:  # list of panels
@@ -2285,7 +2675,8 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                     lab, en, ed, patient_id, prov_code, prov_name,
                     fac_code, fac_name, lab_global_idx, rng,
                     a1c_override=a1c_val,
-                    enc_start_time=enc_start_times[ei])
+                    enc_start_time=enc_start_times[ei],
+                    ckd_egfr=_ckd_enc_egfr.get(ei) if _is_ckd_cohort else None)
                 _fac_lab.setdefault(fac_code, []).append(_lab_xml_str)
                 for rv in _lab_ri_vals:
                     _ei_result_vals[rv["code"]] = rv
@@ -2301,7 +2692,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         _rad_start = enc_start_times[-1]
         _ef_rad = _enc_facility_map[n_encounters - 1]
         fac_code = _ef_rad["code"]
-        fac_name = _ef_rad["name"]
+        fac_name = _xe(_ef_rad["name"])
         prov_code, prov_name = _fac_prov_map[fac_code]
         ets = _ts(_rad_start + timedelta(minutes=rng.randint(10, 30)))
         rad_result_ts = _ts(_rad_start + timedelta(minutes=rng.randint(45, 90)))
@@ -2361,10 +2752,13 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                     if m.get("drug_description", "").split()[0].lower() not in _ACE_NAMES]
     chosen_meds = []  # populated below if med_list is non-empty
     if med_list:
-        # Prescribe most medications for the cohort (60–100% of the list, no duplicates)
-        n_meds = max(1, round(len(med_list) * rng.uniform(0.6, 1.0)))
-        n_meds = min(n_meds, len(med_list))
-        chosen_meds = rng.sample(med_list, n_meds)
+        # Medications with weight >= 0.85 are always prescribed (required for the cohort).
+        # Remaining medications are sampled at 60–100% of the optional pool.
+        _required_meds = [m for m in med_list if float(m.get("weight", 0.5)) >= 0.85]
+        _optional_meds = [m for m in med_list if float(m.get("weight", 0.5)) < 0.85]
+        n_optional = max(0, round(len(_optional_meds) * rng.uniform(0.6, 1.0)))
+        n_optional = min(n_optional, len(_optional_meds))
+        chosen_meds = _required_meds + rng.sample(_optional_meds, n_optional)
         seen_drug: set = set()
         med_xml_parts = []
         med_idx = 1
@@ -2389,7 +2783,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 f"<Description>{med.get('frequency_description','Once daily')}</Description></Frequency>\n"
                 f"      <Status>{med.get('status','active')}</Status>\n"
                 f"      <DrugProduct><Code>{med['drug_code']}</Code><Description>{med['drug_description']}</Description></DrugProduct>\n"
-                f"      <DoseQuantity>{med.get('dose_quantity','1')}</DoseQuantity>\n"
+                f"      <DoseQuantity>{str(med.get('dose_quantity','1')).split('/')[0]}</DoseQuantity>\n"
                 f"      <DoseUoM><Code>{med.get('dose_uom','mg')}</Code><Description>{med.get('dose_uom','mg')}</Description></DoseUoM>\n"
                 f"      <DosageForm><Code>{med.get('dosage_form_code','TAB')}</Code><Description>{med.get('dosage_form_description','Tablet')}</Description></DosageForm>\n"
                 f"      <Route><Code>{med.get('route_code','PO')}</Code><Description>{med.get('route_description','Oral')}</Description></Route>\n"
@@ -2635,7 +3029,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     _result_xmls: list = []
     for _fac_d in _ordered_facs:
         _fc = _fac_d["code"]
-        _fn = _fac_d["name"]
+        _fn = _xe(_fac_d["name"])
         _fpc, _fpn = _fac_prov_map[_fc]
         _fmrn = _facility_mrn(patient_id, _fc, use_prefix=_mf_prefix)
         _fxml = "<Container>\n"
@@ -2745,6 +3139,25 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     _med_evt_id = 1
     _FIRST_ENC_DATE = enc_dates[0] if enc_dates else _REFERENCE_DATE
 
+    # For pregnancy cohorts, find the prenatal encounter closest to 20 weeks gestation
+    # (delivery minus 140 days) to anchor chronic gestational medications.  GDM and
+    # gestational HTN typically present in the second trimester (20-28 weeks), so
+    # linking insulin and antihypertensives to a mid-pregnancy encounter is more
+    # clinically accurate than the first prenatal or first overall encounter.
+    _gestational_med_ei = None
+    if _is_pregnancy_cohort and _pregnancy_episodes:
+        _dlv_ep0 = _pregnancy_episodes[0]
+        _dlv_date0 = _dlv_ep0.get("delivery_date")
+        if _dlv_date0:
+            _target_gest_dt = _dlv_date0 - timedelta(days=140)
+            _best_dist_gest = float("inf")
+            for _pei_med in range(len(enc_dates)):
+                if _pregnancy_enc_context.get(_pei_med, {}).get("type") == "prenatal":
+                    _d = abs((enc_dates[_pei_med].date() - _target_gest_dt).days)
+                    if _d < _best_dist_gest:
+                        _best_dist_gest = _d
+                        _gestational_med_ei = _pei_med
+
     # Base medications from chosen_meds (started at first encounter)
     for cm in chosen_meds:
         drug_name = cm.get("drug_description", "").split()[0].lower()
@@ -2755,19 +3168,44 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 cm.get("drug_description", ""), re.IGNORECASE
             )
             _cm_dose = _cm_dose_m.group(1) if _cm_dose_m else ""
-        # Antibiotics and oral corticosteroids are acute courses, not chronic maintenance
+        # Antibiotics, oral corticosteroids, and medications flagged is_acute are short
+        # courses, not chronic maintenance.
         _drug_cls = _MED_CLASS.get(drug_name, cm.get("drug_class", "Other"))
         _is_antibiotic = _drug_cls == "Antibiotic"
         _is_oral_steroid = _drug_cls == "Oral Corticosteroid"
-        _course_days = 21 if _is_antibiotic else 10 if _is_oral_steroid else 0
+        _is_acute_flag = bool(cm.get("is_acute", False))
+        _course_days = 21 if _is_antibiotic else 10 if _is_oral_steroid else 3 if _is_acute_flag else 0
         _end_dt = (
             (_FIRST_ENC_DATE + timedelta(days=_course_days)).strftime("%Y-%m-%d")
             if _course_days else ""
         )
-        _is_acute = _is_antibiotic or _is_oral_steroid
+        _is_acute = _is_antibiotic or _is_oral_steroid or _is_acute_flag
+        # For pregnancy cohorts, is_acute drugs (e.g. magnesium sulfate) are
+        # inpatient-only and should be linked to the delivery encounter, not the
+        # first encounter (which may be a pre-pregnancy gynaecologic visit).
+        if _is_pregnancy_cohort and _is_acute_flag and _pregnancy_episodes:
+            # is_acute (e.g. magnesium sulfate): link to delivery encounter
+            _dlv_ei_med = _pregnancy_episodes[0].get("delivery_enc_ei")
+            if _dlv_ei_med is not None and _dlv_ei_med < len(enc_nums):
+                _med_link_enc = enc_nums[_dlv_ei_med]
+                _med_start = enc_dates[_dlv_ei_med]
+                if _course_days:
+                    _end_dt = (_med_start + timedelta(days=_course_days)).strftime("%Y-%m-%d")
+            else:
+                _med_link_enc = enc_nums[0] if enc_nums else ""
+                _med_start = _FIRST_ENC_DATE
+        elif _is_pregnancy_cohort and _gestational_med_ei is not None:
+            # Chronic gestational medications (insulin, antihypertensives): start at
+            # the prenatal encounter nearest 20 weeks gestation — the window when
+            # GDM and gestational HTN typically present.
+            _med_link_enc = enc_nums[_gestational_med_ei]
+            _med_start = enc_dates[_gestational_med_ei]
+        else:
+            _med_link_enc = enc_nums[0] if enc_nums else ""
+            _med_start = _FIRST_ENC_DATE
         _med_rows.append({
             "PatientID": patient_id,
-            "EncounterNumber": enc_nums[0] if enc_nums else "",
+            "EncounterNumber": _med_link_enc,
             "MedicationEventID": f"{patient_id:06d}-M{_med_evt_id:03d}",
             "MedicationName": cm.get("drug_description", ""),
             "GenericIngredient": drug_name,
@@ -2776,7 +3214,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             "DoseUnit": cm.get("dose_uom", "mg"),
             "Frequency": cm.get("frequency_code", ""),
             "Route": cm.get("route_code", "PO"),
-            "StartDateTime": _FIRST_ENC_DATE.strftime("%Y-%m-%d"),
+            "StartDateTime": _med_start.strftime("%Y-%m-%d"),
             "EndDateTime": _end_dt,
             "Action": "Start",
             "PreviousDoseValue": "",
@@ -3479,8 +3917,8 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     _LAB004_LIMITS = {
         "2085-9":  (15, 100),   # HDL: 15-100 mg/dL (below 15 not physiologically viable)
         "88294-4": (0, 150),    # eGFR: 0-150 mL/min/1.73m²
-        "3094-0":  (0, 60),     # BUN: 0-60 mg/dL
-        "2160-0":  (0, 5.0),    # Creatinine: 0-5.0 mg/dL
+        "3094-0":  (0, 120),    # BUN: 0-120 mg/dL (realistic uremia max)
+        "2160-0":  (0, 14.0),   # Creatinine: 0-14.0 mg/dL (realistic ESKD max)
         "6768-6":  (0, 600),    # Alk Phos: 0-600 U/L
         "1742-6":  (0, 400),    # ALT: 0-400 U/L
         "1920-8":  (0, 400),    # AST: 0-400 U/L
@@ -3737,11 +4175,59 @@ def _worker_generate(args):
     return (patient_id, "ok", [], patient_data)
 
 
+def validate_template(tmpl: dict) -> list[str]:
+    """Structural sanity checks that catch common template authoring mistakes.
+
+    Returns a list of warning strings (empty = all clear).  These are printed
+    before generation so problems surface before a long run is wasted.
+    """
+    import re
+    warnings: list[str] = []
+    _ICD_RE = re.compile(r'^[A-Z]\d')  # valid ICD-10 starts with letter + digit
+
+    for cohort in tmpl.get("cohorts", []):
+        cname = cohort.get("name", "(unnamed)")
+        diag_codes = [d.get("code", "") for d in cohort.get("diagnoses", [])]
+
+        # ── ICD code format check ────────────────────────────────────────────
+        for d in cohort.get("diagnoses", []):
+            code = d.get("code", "")
+            if code and not _ICD_RE.match(code) and not code.startswith("Z"):
+                warnings.append(
+                    f"COHORT '{cname}': diagnosis code looks wrong — "
+                    f"'{code}' (description: '{d.get('description','')}'). "
+                    f"ICD-10 codes must start with a letter followed by a digit."
+                )
+
+        # ── for_diagnosis_code blocking check ───────────────────────────────
+        for med in cohort.get("medications", []):
+            fdc = med.get("for_diagnosis_code", "")
+            if not fdc:
+                continue
+            matched = any(c.startswith(fdc) for c in diag_codes)
+            if not matched:
+                warnings.append(
+                    f"COHORT '{cname}': medication '{med.get('drug_description','')[:50]}' "
+                    f"has for_diagnosis_code='{fdc}' but NO diagnosis in this cohort starts "
+                    f"with that prefix — the medication will NEVER be prescribed to this cohort."
+                )
+
+    return warnings
+
+
 def run_template_mode(count: int, output_dir: Path, template_path: str, resume: bool,
                       no_validate: bool, concurrency: int):
     import csv
     with open(template_path) as f:
         tmpl = json.load(f)
+
+    # ── Pre-flight template validation ──────────────────────────────────────
+    tmpl_warnings = validate_template(tmpl)
+    if tmpl_warnings:
+        print(f"[TEMPLATE WARNINGS] {len(tmpl_warnings)} issue(s) found before generation:")
+        for w in tmpl_warnings:
+            print(f"  ⚠  {w}")
+        print()
 
     xml_dir = output_dir / "xml"
     delete_dir = output_dir / "Delete"

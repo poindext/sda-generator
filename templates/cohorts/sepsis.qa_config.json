@@ -1,0 +1,37 @@
+{
+  "description": "Sepsis / Septic Shock population — one to two sepsis episodes per patient, predominantly inpatient and ED encounters. Clinical context: Sepsis-3 requires life-threatening organ dysfunction from infection. Septic shock is a subset with vasopressor requirement + lactate >2 mmol/L. This population is modeled as patients who experienced acute sepsis episodes over a 24-month window, with rare post-discharge outpatient follow-up. Not every patient has ICU-level illness — lab derangements vary from moderate (uncomplicated sepsis) to severe (septic shock).",
+  "do_not_flag": [
+    "Systolic BP 60-89 mmHg in septic shock patients — hypotension is the defining feature of septic shock",
+    "WBC 12.0-18.0 K/uL — leukocytosis is a Sepsis-3 criterion; values near the abnormal ceiling reflect realistic leukocytosis distribution",
+    "Lactate 2.1-8.0 mmol/L — elevated lactate indicates tissue hypoperfusion; the range reflects both moderate sepsis (2-4) and septic shock (4-8+)",
+    "Creatinine 1.3-4.0 mg/dL — sepsis-induced AKI is common; values up to 4.0 are realistic for acute organ dysfunction",
+    "Platelets 30-149 K/uL — DIC and thrombocytopenia are sepsis complications",
+    "CRP 11-200 mg/L and procalcitonin 0.5-50 ng/mL — markedly elevated inflammatory markers are expected in bacterial sepsis",
+    "Temperature 100.4-105°F — fever is a hallmark sepsis presentation",
+    "High inpatient encounter rate (50%) and ED rate (42%) — sepsis requires hospitalization; outpatient encounters represent only post-discharge follow-up",
+    "Vancomycin + piperacillin-tazobactam prescribed together — empiric dual coverage is standard Surviving Sepsis Campaign protocol",
+    "ALT/AST 57-300 U/L — hepatic injury from sepsis-induced hypoperfusion",
+    "Low outpatient encounter count (8%) — most encounters are acute; the few outpatient encounters are post-discharge follow-up, not routine primary care"
+  ],
+  "required_drug_classes": [
+    {
+      "class_name": "Broad-spectrum antibiotic",
+      "keywords": ["vancomycin", "piperacillin", "meropenem", "cefepime", "ceftriaxone", "azithromycin"],
+      "minimum_patient_pct": 60,
+      "rationale": "Broad-spectrum antibiotics within 1 hour is the Surviving Sepsis Campaign Hour-1 Bundle standard of care."
+    },
+    {
+      "class_name": "Vasopressor",
+      "keywords": ["norepinephrine", "vasopressin", "phenylephrine", "dopamine", "epinephrine"],
+      "minimum_patient_pct": 20,
+      "rationale": "20-30% of sepsis patients develop septic shock requiring vasopressor support."
+    }
+  ],
+  "required_checks": [
+    "VERIFY that lactate lab values appear in the population — lactate monitoring is the Sepsis-3 cornerstone. Expected mean lactate 3-5 mmol/L across the population (reflecting a mix of moderate and severe sepsis). If lactate is absent, flag HIGH.",
+    "VERIFY that at least one broad-spectrum antibiotic appears in medications. If no antibiotic at all, flag CRITICAL.",
+    "VERIFY that inpatient encounters make up 40-60% of all encounters, and ED encounters make up 30-50%. If inpatient+ED rate <70% combined, flag HIGH — this is an acute-illness population.",
+    "CHECK that WBC is elevated in at least some patients (mean >10 K/uL expected). Normal mean WBC for all patients would be implausible in sepsis.",
+    "VERIFY that procalcitonin appears in the population — it is the primary sepsis biomarker. If completely absent, flag MEDIUM."
+  ]
+}

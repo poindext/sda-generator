@@ -43,7 +43,6 @@ Unless `--review-only` was passed, generate the population first:
 python3 scripts/generate_population.py \
   --template <template> \
   --output <output> \
-  --mode template \
   [--count <count>]
 ```
 
@@ -88,6 +87,22 @@ For each issue, print:
 
 ---
 
+### Step 3.5 — Recurring issue check (run before every fix round)
+
+Before applying any fix, read the last 40 lines of `logs/auto_qa_changelog.jsonl` and extract all `fix_applied` entries from this session (same template + output path).
+
+For each issue about to be fixed, check whether a `fix_applied` entry with the **same or very similar title** already exists from an earlier round.
+
+If it does:
+- Print a warning: `⚠ RECURRING ISSUE: "<title>" was fixed in round N but reappeared.`
+- Override the `fix_target` as follows:
+  - If the prior fix targeted `"template"` → escalate to `"generator"` (the template edit had no effect; the issue is in generator logic)
+  - If the prior fix targeted `"generator"` → read the full relevant function in `generate_population.py` before applying (grep the LOINC code or ICD prefix first)
+  - If the prior fix targeted `"both"` → do a root-cause investigation: grep for the specific value, cohort name, or lab code to find where the generator enforces it independently of the template
+- Never apply the same surface fix a second time without first verifying why it didn't work.
+
+---
+
 ### Step 4 — Apply fixes
 
 Work through the issues one by one, most severe first.
@@ -99,6 +114,8 @@ Work through the issues one by one, most severe first.
 - `fix_target == "template"` → edit the template JSON file only (in `templates/`).
 - `fix_target == "generator"` → edit `scripts/generate_population.py` only.
 - `fix_target == "both"` → fix both.
+
+**Template-fix effectiveness check:** After editing a template JSON field, verify the generator actually reads that field. Search `generate_population.py` for the field name (e.g. `"normal_min"`, `"abnormal_max"`) to confirm the generator uses it. If the generator has a separate hardcoded clamp (e.g. `_LOINC_PLAUSIBILITY` dict near line 197), the template edit alone will not change the output — you must also update the generator dict.
 
 **How to fix:**
 
@@ -134,7 +151,6 @@ After all fixes are applied for this round, regenerate:
 python3 scripts/generate_population.py \
   --template <template> \
   --output <output> \
-  --mode template \
   [--count <count>]
 ```
 
