@@ -1,0 +1,87 @@
+**Synthetic Population Description Document**
+
+**Purpose & Scope**
+
+This synthetic population is designed to model a novel disease within the state of Ohio, providing a comprehensive dataset for population health surveillance, disease discovery, and clinical progression analysis. The population consists of 25,000 patients over a 36-month period, allowing for detailed longitudinal study of disease onset, diagnostic delay, progression, treatment response, recurrence, and complications. The dataset includes both affected patients and an unaffected comparison group, supporting dashboards and analytics for prevalence, incidence, risk stratification, healthcare utilization, treatment effectiveness, and outcomes.
+
+**Geography**
+
+The population covers all 88 counties in Ohio, divided into five regions for HIE facility-routing logic:
+
+- **NE Ohio**: Adjacent to Central Ohio and NW Ohio
+- **Central Ohio**: Adjacent to NE Ohio, SW Ohio, SE/Appalachian Ohio, and NW Ohio
+- **SW Ohio**: Adjacent to Central Ohio and SE/Appalachian Ohio
+- **SE/Appalachian Ohio**: Adjacent to Central Ohio and SW Ohio
+- **NW Ohio**: Adjacent to Central Ohio and NE Ohio
+
+The distribution is non-uniform and population-weighted, with higher density in urban and suburban counties. Rural and Appalachian counties are slightly oversampled to ensure sufficient case numbers for analysis of access differences, diagnostic delay, and geographic spread.
+
+**Facilities & Health Systems**
+
+The population includes 48 facilities distributed across Ohio, with the following types:
+
+- 6 Academic/Tertiary Centers
+- 14 Community Hospitals
+- 8 FQHC/Community Health Centers
+- 6 Urgent Care Centers
+- 6 Specialty/Infectious-Disease or Diagnostic Clinics
+- 4 Independent/Regional Labs
+- 4 Rural/Critical-Access Hospitals
+
+Facilities are grouped under fictional health systems:
+
+- **Lake Erie Health**: 2 academic centers, 3 community hospitals, 1 specialty clinic
+- **Buckeye Regional Health**: 2 community hospitals, 2 FQHCs, 1 urgent care center
+- **Central Ohio Medical Network**: 1 academic center, 4 community hospitals, 2 specialty clinics
+- **Miami Valley Health Alliance**: 1 academic center, 2 community hospitals, 1 FQHC, 1 urgent care center
+- **Appalachian Ohio Health Network**: 1 rural hospital, 2 community hospitals, 1 FQHC
+- **Northwest Ohio Health System**: 1 academic center, 2 community hospitals, 1 specialty clinic
+- **Independent Facilities**: 1 academic center, 1 community hospital, 2 labs, 2 urgent care centers
+
+Most larger hospitals and FQHCs are multi-specialty, while specialty clinics, some urgent care centers, and labs are more focused. Only a subset of facilities have advanced diagnostic capabilities for the novel disease.
+
+**Providers**
+
+The population includes approximately 150 providers distributed as follows:
+
+- 35 Primary Care/Family Medicine
+- 20 Emergency Medicine
+- 15 Infectious Disease
+- 12 Pulmonology
+- 10 Internal Medicine/Hospitalists
+- 10 Neurology
+- 8 Cardiology
+- 8 Nephrology
+- 8 Behavioral Health
+- 6 Critical Care
+- 6 Pediatrics
+- 5 Pathology/Laboratory Medicine
+- 7 Novel Disease Specialty Providers
+
+**Disease Cohorts**
+
+The novel disease affects approximately 6% of the population, equating to about 1,500 patients. The disease affects all ages but is concentrated in adults aged 20–64. Disease progression is categorized into four stages:
+
+- **Mild/Early**: 45% of affected patients, characterized by nonspecific symptoms and outpatient care
+- **Moderate**: 30%, with persistent symptoms and specialty referral
+- **Severe**: 18%, involving significant organ involvement and advanced testing
+- **Critical/Complicated**: 7%, requiring ICU care and presenting major complications
+
+Risk factors include age, environmental and geographic exposure, smoking history, selected chronic conditions, immune status, and delayed access to specialty care. The unaffected comparison population includes a Low Risk Preventive/Wellness cohort comprising 30% of the overall population.
+
+**Demographics**
+
+- **Age Distribution**: 0–14: 8%, 15–19: 5%, 20–39: 32%, 40–64: 35%, 65+: 20%
+- **Sex Distribution**: 51% Female, 49% Male
+- **Race/Ethnicity**: 70% White non-Hispanic, 16% Black/African American non-Hispanic, 7% Hispanic/Latino, 3% Asian, 3% Multiracial, 1% American Indian/Alaska Native/Other
+- **Insurance/Payer Mix**: 30% Ohio Medicaid, 42% Commercial, 20% Medicare, 6% Uninsured/Self-Pay, 2% Other
+
+**Multi-Facility HIE Configuration**
+
+- 40% of patients have records across more than one facility
+- 80% of encounters occur within the patient's home region, with 20% occurring outside
+- 85% of ED-to-inpatient admissions stay at the same facility, with 15% involving transfers
+
+**Special Scenarios & Deliberate Imperfections**
+
+The dataset includes an emerging-disease surveillance scenario, with initial cases seeded in SE/Appalachian Ohio, followed by geographic expansion into adjacent counties. Diagnostic delays and nonspecific diagnoses are more common early in the 36-month period, with improvements as awareness increases. Care gaps include missed specialty follow-ups and incomplete testing. Data feed imperfections include a 45-day lab feed disappearance and 48–72 hour result delays. An acute severe-event cluster occurs in one county during the final year, prompting increased testing and transfers. Normal HIE imperfections include different MRNs, outdated demographics, and duplicate identifiers.

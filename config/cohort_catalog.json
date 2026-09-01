@@ -2026,7 +2026,7 @@
                 "units": "K/uL",
                 "normal_min": 150,
                 "normal_max": 400,
-                "abnormal_min": 50,
+                "abnormal_min": 80,
                 "abnormal_max": 600,
                 "text_values": []
               }
@@ -2112,6 +2112,55 @@
             ],
             "abnormal_pct": 0.15,
             "weight": 0.15
+          },
+          {
+            "order_code": "57698-3",
+            "order_description": "Lipid panel",
+            "specimen": "Blood",
+            "result_items": [
+              {
+                "code": "2093-3",
+                "description": "Total Cholesterol",
+                "is_numeric": true,
+                "units": "mg/dL",
+                "normal_min": 150,
+                "normal_max": 250,
+                "abnormal_min": 251,
+                "abnormal_max": 360
+              },
+              {
+                "code": "2571-8",
+                "description": "Triglycerides",
+                "is_numeric": true,
+                "units": "mg/dL",
+                "normal_min": 60,
+                "normal_max": 250,
+                "abnormal_min": 251,
+                "abnormal_max": 500
+              },
+              {
+                "code": "2085-9",
+                "description": "HDL Cholesterol",
+                "is_numeric": true,
+                "units": "mg/dL",
+                "normal_min": 50,
+                "normal_max": 100,
+                "abnormal_min": 20,
+                "abnormal_max": 49
+              },
+              {
+                "code": "13457-7",
+                "description": "LDL Cholesterol",
+                "is_numeric": true,
+                "units": "mg/dL",
+                "normal_min": 60,
+                "normal_max": 160,
+                "abnormal_min": 161,
+                "abnormal_max": 260
+              }
+            ],
+            "abnormal_pct": 0.2,
+            "weight": 0.6
           }
         ],
         "observations": [
@@ -3396,7 +3445,7 @@
       }
     },
     "low_risk_preventive": {
-      "canonical_name": "Low Risk Preventive",
+      "canonical_name": "Low Risk Preventive/Wellness",
       "keywords": [
         "preventive",
         "wellness",
@@ -3408,7 +3457,7 @@
         "screening"
       ],
       "qa_status": "approved",
-      "source_template": "cohorts/low_risk_preventive.template.json",
+      "source_template": "oh_novel_population.template.json",
       "clinical_catalog": {
         "diagnoses": [
           {
@@ -9495,6 +9544,2145 @@
             "description": "Insertion of non-tunneled centrally inserted central venous catheter; age 5 years or older",
             "encounter_type": "I",
             "weight": 0.3
+          }
+        ]
+      }
+    },
+    "novel_disease_mild": {
+      "canonical_name": "Novel Disease Mild/Early",
+      "keywords": [
+        "novel disease mild early",
+        "novel disease mild"
+      ],
+      "qa_status": "approved",
+      "source_template": "oh_novel_population.template.json",
+      "clinical_catalog": {
+        "diagnoses": [
+          {
+            "code": "R53.83",
+            "description": "Other fatigue",
+            "is_primary": true,
+            "onset_age_min": 0,
+            "onset_age_max": 120,
+            "only_encounter_types": []
+          },
+          {
+            "code": "R50.9",
+            "description": "Fever, unspecified",
+            "is_primary": false,
+            "onset_age_min": 0,
+            "onset_age_max": 120,
+            "only_encounter_types": []
+          },
+          {
+            "code": "G54.9",
+            "description": "Nerve root and plexus disorder, unspecified",
+            "is_primary": false,
+            "onset_age_min": 0,
+            "onset_age_max": 120,
+            "only_encounter_types": []
+          }
+        ],
+        "comorbidities": [
+          {
+            "code": "I10",
+            "description": "Essential hypertension",
+            "prevalence_pct": 0.3
+          },
+          {
+            "code": "E66.9",
+            "description": "Obesity, unspecified",
+            "prevalence_pct": 0.25
+          },
+          {
+            "code": "F32.9",
+            "description": "Major depressive disorder, single episode, unspecified",
+            "prevalence_pct": 0.2
+          }
+        ],
+        "medications": [
+          {
+            "drug_code": "1049630",
+            "drug_description": "Ibuprofen 200 MG Oral Tablet",
+            "dose_quantity": "200",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "TID",
+            "frequency_description": "Three times daily",
+            "status": "active",
+            "for_diagnosis_code": "R53.83",
+            "weight": 0.2
+          },
+          {
+            "drug_code": "860975",
+            "drug_description": "Acetaminophen 500 MG Oral Tablet",
+            "dose_quantity": "500",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "QID",
+            "frequency_description": "Four times daily",
+            "status": "active",
+            "for_diagnosis_code": "R50.9",
+            "weight": 0.2
+          },
+          {
+            "drug_code": "197361",
+            "drug_description": "Gabapentin 300 MG Oral Capsule",
+            "dose_quantity": "300",
+            "dose_uom": "mg",
+            "dosage_form_code": "CAP",
+            "dosage_form_description": "Capsule",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "TID",
+            "frequency_description": "Three times daily",
+            "status": "active",
+            "for_diagnosis_code": "G54.9",
+            "weight": 0.2
+          },
+          {
+            "drug_code": "1049502",
+            "drug_description": "Prednisone 10 MG Oral Tablet",
+            "dose_quantity": "10",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "QD",
+            "frequency_description": "Once daily",
+            "status": "active",
+            "for_diagnosis_code": "R53.83",
+            "weight": 0.2
+          },
+          {
+            "drug_code": "617314",
+            "drug_description": "Amitriptyline 25 MG Oral Tablet",
+            "dose_quantity": "25",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "HS",
+            "frequency_description": "At bedtime",
+            "status": "active",
+            "for_diagnosis_code": "F32.9",
+            "weight": 0.2
+          }
+        ],
+        "labs": [
+          {
+            "order_code": "1988-5",
+            "order_description": "C-reactive protein (CRP) panel",
+            "specimen": "Blood",
+            "abnormal_pct": 0.4,
+            "weight": 0.375,
+            "result_items": [
+              {
+                "code": "1988-5",
+                "description": "C reactive protein [Mass/volume] in Serum or Plasma",
+                "is_numeric": true,
+                "units": "mg/L",
+                "normal_min": 0.0,
+                "normal_max": 1.0,
+                "abnormal_min": 1.1,
+                "abnormal_max": 100.0
+              }
+            ]
+          },
+          {
+            "order_code": "58410-2",
+            "order_description": "CBC panel - Blood by Automated count",
+            "specimen": "Blood",
+            "abnormal_pct": 0.35,
+            "weight": 0.375,
+            "result_items": [
+              {
+                "code": "6690-2",
+                "description": "WBC",
+                "units": "K/uL",
+                "is_numeric": true,
+                "normal_min": 4.5,
+                "normal_max": 11.0,
+                "abnormal_min": 0.5,
+                "abnormal_max": 18.0
+              },
+              {
+                "code": "789-8",
+                "description": "RBC",
+                "units": "M/uL",
+                "is_numeric": true,
+                "normal_min": 3.9,
+                "normal_max": 5.9,
+                "abnormal_min": 2.0,
+                "abnormal_max": 7.0
+              },
+              {
+                "code": "718-7",
+                "description": "Hemoglobin",
+                "units": "g/dL",
+                "is_numeric": true,
+                "normal_min": 11.5,
+                "normal_max": 17.5,
+                "abnormal_min": 6.0,
+                "abnormal_max": 20.0
+              },
+              {
+                "code": "4544-3",
+                "description": "Hematocrit",
+                "units": "%",
+                "is_numeric": true,
+                "normal_min": 35,
+                "normal_max": 52,
+                "abnormal_min": 20,
+                "abnormal_max": 60
+              },
+              {
+                "code": "777-3",
+                "description": "Platelets",
+                "units": "K/uL",
+                "is_numeric": true,
+                "normal_min": 150,
+                "normal_max": 400,
+                "abnormal_min": 50,
+                "abnormal_max": 600
+              },
+              {
+                "code": "731-0",
+                "description": "Lymphocytes",
+                "units": "%",
+                "is_numeric": true,
+                "normal_min": 20,
+                "normal_max": 45,
+                "abnormal_min": 5,
+                "abnormal_max": 80
+              },
+              {
+                "code": "752-6",
+                "description": "Neutrophils",
+                "units": "%",
+                "is_numeric": true,
+                "normal_min": 40,
+                "normal_max": 75,
+                "abnormal_min": 5,
+                "abnormal_max": 95
+              }
+            ]
+          },
+          {
+            "order_code": "24323-8",
+            "order_description": "Comprehensive metabolic panel",
+            "specimen": "Blood",
+            "abnormal_pct": 0.3,
+            "weight": 0.25,
+            "result_items": [
+              {
+                "code": "2951-2",
+                "description": "Sodium",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 136,
+                "normal_max": 145,
+                "abnormal_min": 129,
+                "abnormal_max": 152
+              },
+              {
+                "code": "2823-3",
+                "description": "Potassium",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 3.5,
+                "normal_max": 5.0,
+                "abnormal_min": 2.8,
+                "abnormal_max": 6.2
+              },
+              {
+                "code": "2075-0",
+                "description": "Chloride",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 98,
+                "normal_max": 107,
+                "abnormal_min": 90,
+                "abnormal_max": 115
+              },
+              {
+                "code": "2028-9",
+                "description": "CO2 (Bicarbonate)",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 22,
+                "normal_max": 29,
+                "abnormal_min": 16,
+                "abnormal_max": 34
+              },
+              {
+                "code": "2339-0",
+                "description": "Glucose",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 70,
+                "normal_max": 99,
+                "abnormal_min": 50,
+                "abnormal_max": 450
+              },
+              {
+                "code": "3094-0",
+                "description": "BUN",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 6,
+                "normal_max": 20,
+                "abnormal_min": 2,
+                "abnormal_max": 50
+              },
+              {
+                "code": "2160-0",
+                "description": "Creatinine",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 0.6,
+                "normal_max": 1.2,
+                "abnormal_min": 0.4,
+                "abnormal_max": 3.5
+              },
+              {
+                "code": "17861-6",
+                "description": "Calcium",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 8.5,
+                "normal_max": 10.5,
+                "abnormal_min": 7.0,
+                "abnormal_max": 12.0
+              },
+              {
+                "code": "2885-2",
+                "description": "Total Protein",
+                "units": "g/dL",
+                "is_numeric": true,
+                "normal_min": 6.3,
+                "normal_max": 8.2,
+                "abnormal_min": 4.5,
+                "abnormal_max": 10.0
+              },
+              {
+                "code": "1751-7",
+                "description": "Albumin",
+                "units": "g/dL",
+                "is_numeric": true,
+                "normal_min": 3.5,
+                "normal_max": 5.0,
+                "abnormal_min": 2.0,
+                "abnormal_max": 6.0
+              },
+              {
+                "code": "1742-6",
+                "description": "ALT",
+                "units": "U/L",
+                "is_numeric": true,
+                "normal_min": 7,
+                "normal_max": 56,
+                "abnormal_min": 57,
+                "abnormal_max": 200
+              },
+              {
+                "code": "1920-8",
+                "description": "AST",
+                "units": "U/L",
+                "is_numeric": true,
+                "normal_min": 10,
+                "normal_max": 40,
+                "abnormal_min": 41,
+                "abnormal_max": 200
+              },
+              {
+                "code": "6768-6",
+                "description": "Alkaline Phosphatase",
+                "units": "U/L",
+                "is_numeric": true,
+                "normal_min": 44,
+                "normal_max": 147,
+                "abnormal_min": 148,
+                "abnormal_max": 350
+              },
+              {
+                "code": "1975-2",
+                "description": "Total Bilirubin",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 0.1,
+                "normal_max": 1.2,
+                "abnormal_min": 1.3,
+                "abnormal_max": 2.5
+              }
+            ]
+          },
+          {
+            "order_code": "OVMIS-OAP-1",
+            "order_description": "OVMIS-Associated Protein (OAP) Assay",
+            "specimen": "Serum",
+            "fictional": true,
+            "result_items": [
+              {
+                "code": "OAP-SERUM",
+                "description": "OAP Serum Level",
+                "is_numeric": true,
+                "units": "U/mL",
+                "normal_min": 0.0,
+                "normal_max": 10.0,
+                "abnormal_min": 11.0,
+                "abnormal_max": 40.0,
+                "text_values": []
+              }
+            ],
+            "abnormal_pct": 0.75,
+            "weight": 0.7
+          }
+        ],
+        "observations": [
+          {
+            "code": "8310-5",
+            "description": "Body temperature",
+            "units": "\u00b0F",
+            "normal_min": 97.0,
+            "normal_max": 99.0,
+            "abnormal_min": 100.4,
+            "abnormal_max": 104.0,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.25,
+            "weight": 0.25
+          },
+          {
+            "code": "8462-4",
+            "description": "Diastolic blood pressure",
+            "units": "mmHg",
+            "normal_min": 60,
+            "normal_max": 79,
+            "abnormal_min": 90,
+            "abnormal_max": 110,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.3,
+            "weight": 0.25
+          },
+          {
+            "code": "8867-4",
+            "description": "Heart rate",
+            "units": "bpm",
+            "normal_min": 60,
+            "normal_max": 100,
+            "abnormal_min": 110,
+            "abnormal_max": 150,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.2,
+            "weight": 0.25
+          },
+          {
+            "code": "29463-7",
+            "description": "Body weight",
+            "units": "kg",
+            "normal_min": 50,
+            "normal_max": 100,
+            "abnormal_min": 110,
+            "abnormal_max": 150,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.15,
+            "weight": 0.25
+          }
+        ],
+        "encounter_pattern": {
+          "encounters_per_year": 6.0,
+          "encounter_type_weights": {
+            "O": 0.8,
+            "E": 0.1,
+            "I": 0.1
+          },
+          "lab_encounter_rate": 0.7,
+          "rad_encounter_rate": 0.2
+        },
+        "procedures": [
+          {
+            "code": "71020",
+            "description": "Chest X-ray, 2 views",
+            "encounter_type": "O",
+            "weight": 0.571429
+          },
+          {
+            "code": "93000",
+            "description": "Electrocardiogram, routine ECG with at least 12 leads; with interpretation and report",
+            "encounter_type": "O",
+            "weight": 0.428571
+          }
+        ]
+      }
+    },
+    "novel_disease_moderate": {
+      "canonical_name": "Novel Disease Moderate",
+      "keywords": [
+        "novel disease moderate"
+      ],
+      "qa_status": "approved",
+      "source_template": "oh_novel_population.template.json",
+      "clinical_catalog": {
+        "diagnoses": [
+          {
+            "code": "M35.9",
+            "description": "Systemic involvement of connective tissue, unspecified",
+            "is_primary": true,
+            "onset_age_min": 0,
+            "onset_age_max": 120,
+            "only_encounter_types": []
+          },
+          {
+            "code": "R21",
+            "description": "Rash and other nonspecific skin eruption",
+            "is_primary": false,
+            "onset_age_min": 0,
+            "onset_age_max": 120,
+            "only_encounter_types": []
+          },
+          {
+            "code": "R09.02",
+            "description": "Hypoxemia",
+            "is_primary": false,
+            "onset_age_min": 0,
+            "onset_age_max": 120,
+            "only_encounter_types": []
+          },
+          {
+            "code": "G90.9",
+            "description": "Disorder of autonomic nervous system, unspecified",
+            "is_primary": false,
+            "onset_age_min": 0,
+            "onset_age_max": 120,
+            "only_encounter_types": []
+          }
+        ],
+        "comorbidities": [
+          {
+            "code": "I10",
+            "description": "Essential hypertension",
+            "prevalence_pct": 0.3
+          },
+          {
+            "code": "E66.9",
+            "description": "Obesity, unspecified",
+            "prevalence_pct": 0.25
+          },
+          {
+            "code": "F41.9",
+            "description": "Anxiety disorder, unspecified",
+            "prevalence_pct": 0.2
+          },
+          {
+            "code": "E78.5",
+            "description": "Hyperlipidemia, unspecified",
+            "prevalence_pct": 0.35
+          }
+        ],
+        "medications": [
+          {
+            "drug_code": "197361",
+            "drug_description": "Prednisone 20 MG Oral Tablet",
+            "dose_quantity": "20",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "QD",
+            "frequency_description": "Once daily",
+            "status": "active",
+            "for_diagnosis_code": "M35.9",
+            "weight": 0.3125
+          },
+          {
+            "drug_code": "617317",
+            "drug_description": "Hydroxychloroquine 200 MG Oral Tablet",
+            "dose_quantity": "200",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "BID",
+            "frequency_description": "Twice daily",
+            "status": "active",
+            "for_diagnosis_code": "M35.9",
+            "weight": 0.25
+          },
+          {
+            "drug_code": "1049630",
+            "drug_description": "Methotrexate 2.5 MG Oral Tablet",
+            "dose_quantity": "2.5",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "QW",
+            "frequency_description": "Once weekly",
+            "status": "active",
+            "for_diagnosis_code": "M35.9",
+            "weight": 0.1875
+          },
+          {
+            "drug_code": "860975",
+            "drug_description": "Metformin 500 MG Oral Tablet",
+            "dose_quantity": "500",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "BID",
+            "frequency_description": "Twice daily",
+            "status": "active",
+            "for_diagnosis_code": "E66.9",
+            "weight": 0.125
+          },
+          {
+            "drug_code": "617317",
+            "drug_description": "Atorvastatin 20 MG Oral Tablet",
+            "dose_quantity": "20",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "QD",
+            "frequency_description": "Once daily",
+            "status": "active",
+            "for_diagnosis_code": "E78.5",
+            "weight": 0.125
+          }
+        ],
+        "labs": [
+          {
+            "order_code": "1988-5",
+            "order_description": "C-reactive protein (CRP) panel",
+            "specimen": "Blood",
+            "abnormal_pct": 0.6,
+            "weight": 0.3,
+            "result_items": [
+              {
+                "code": "1988-5",
+                "description": "C reactive protein [Mass/volume] in Serum or Plasma",
+                "is_numeric": true,
+                "units": "mg/L",
+                "normal_min": 0.0,
+                "normal_max": 1.0,
+                "abnormal_min": 1.1,
+                "abnormal_max": 100.0
+              }
+            ]
+          },
+          {
+            "order_code": "58410-2",
+            "order_description": "CBC panel - Blood by Automated count",
+            "specimen": "Blood",
+            "abnormal_pct": 0.5,
+            "weight": 0.25,
+            "result_items": [
+              {
+                "code": "6690-2",
+                "description": "WBC",
+                "units": "K/uL",
+                "is_numeric": true,
+                "normal_min": 4.5,
+                "normal_max": 11.0,
+                "abnormal_min": 0.5,
+                "abnormal_max": 18.0
+              },
+              {
+                "code": "789-8",
+                "description": "RBC",
+                "units": "M/uL",
+                "is_numeric": true,
+                "normal_min": 3.9,
+                "normal_max": 5.9,
+                "abnormal_min": 2.0,
+                "abnormal_max": 7.0
+              },
+              {
+                "code": "718-7",
+                "description": "Hemoglobin",
+                "units": "g/dL",
+                "is_numeric": true,
+                "normal_min": 11.5,
+                "normal_max": 17.5,
+                "abnormal_min": 6.0,
+                "abnormal_max": 20.0
+              },
+              {
+                "code": "4544-3",
+                "description": "Hematocrit",
+                "units": "%",
+                "is_numeric": true,
+                "normal_min": 35,
+                "normal_max": 52,
+                "abnormal_min": 20,
+                "abnormal_max": 60
+              },
+              {
+                "code": "777-3",
+                "description": "Platelets",
+                "units": "K/uL",
+                "is_numeric": true,
+                "normal_min": 150,
+                "normal_max": 400,
+                "abnormal_min": 50,
+                "abnormal_max": 600
+              },
+              {
+                "code": "731-0",
+                "description": "Lymphocytes",
+                "units": "%",
+                "is_numeric": true,
+                "normal_min": 20,
+                "normal_max": 45,
+                "abnormal_min": 5,
+                "abnormal_max": 80
+              },
+              {
+                "code": "752-6",
+                "description": "Neutrophils",
+                "units": "%",
+                "is_numeric": true,
+                "normal_min": 40,
+                "normal_max": 75,
+                "abnormal_min": 5,
+                "abnormal_max": 95
+              }
+            ]
+          },
+          {
+            "order_code": "24323-8",
+            "order_description": "Comprehensive metabolic panel",
+            "specimen": "Blood",
+            "abnormal_pct": 0.4,
+            "weight": 0.2,
+            "result_items": [
+              {
+                "code": "2951-2",
+                "description": "Sodium",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 136,
+                "normal_max": 145,
+                "abnormal_min": 129,
+                "abnormal_max": 152
+              },
+              {
+                "code": "2823-3",
+                "description": "Potassium",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 3.5,
+                "normal_max": 5.0,
+                "abnormal_min": 2.8,
+                "abnormal_max": 6.2
+              },
+              {
+                "code": "2075-0",
+                "description": "Chloride",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 98,
+                "normal_max": 107,
+                "abnormal_min": 90,
+                "abnormal_max": 115
+              },
+              {
+                "code": "2028-9",
+                "description": "CO2 (Bicarbonate)",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 22,
+                "normal_max": 29,
+                "abnormal_min": 16,
+                "abnormal_max": 34
+              },
+              {
+                "code": "2339-0",
+                "description": "Glucose",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 70,
+                "normal_max": 99,
+                "abnormal_min": 50,
+                "abnormal_max": 450
+              },
+              {
+                "code": "3094-0",
+                "description": "BUN",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 6,
+                "normal_max": 20,
+                "abnormal_min": 2,
+                "abnormal_max": 50
+              },
+              {
+                "code": "2160-0",
+                "description": "Creatinine",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 0.6,
+                "normal_max": 1.2,
+                "abnormal_min": 0.4,
+                "abnormal_max": 3.5
+              },
+              {
+                "code": "17861-6",
+                "description": "Calcium",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 8.5,
+                "normal_max": 10.5,
+                "abnormal_min": 7.0,
+                "abnormal_max": 12.0
+              },
+              {
+                "code": "2885-2",
+                "description": "Total Protein",
+                "units": "g/dL",
+                "is_numeric": true,
+                "normal_min": 6.3,
+                "normal_max": 8.2,
+                "abnormal_min": 4.5,
+                "abnormal_max": 10.0
+              },
+              {
+                "code": "1751-7",
+                "description": "Albumin",
+                "units": "g/dL",
+                "is_numeric": true,
+                "normal_min": 3.5,
+                "normal_max": 5.0,
+                "abnormal_min": 2.0,
+                "abnormal_max": 6.0
+              },
+              {
+                "code": "1742-6",
+                "description": "ALT",
+                "units": "U/L",
+                "is_numeric": true,
+                "normal_min": 7,
+                "normal_max": 56,
+                "abnormal_min": 57,
+                "abnormal_max": 200
+              },
+              {
+                "code": "1920-8",
+                "description": "AST",
+                "units": "U/L",
+                "is_numeric": true,
+                "normal_min": 10,
+                "normal_max": 40,
+                "abnormal_min": 41,
+                "abnormal_max": 200
+              },
+              {
+                "code": "6768-6",
+                "description": "Alkaline Phosphatase",
+                "units": "U/L",
+                "is_numeric": true,
+                "normal_min": 44,
+                "normal_max": 147,
+                "abnormal_min": 148,
+                "abnormal_max": 350
+              },
+              {
+                "code": "1975-2",
+                "description": "Total Bilirubin",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 0.1,
+                "normal_max": 1.2,
+                "abnormal_min": 1.3,
+                "abnormal_max": 2.5
+              }
+            ]
+          },
+          {
+            "order_code": "57698-3",
+            "order_description": "Lipid panel",
+            "specimen": "Blood",
+            "abnormal_pct": 0.35,
+            "weight": 0.15,
+            "result_items": [
+              {
+                "code": "2093-3",
+                "description": "Total Cholesterol",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 130,
+                "normal_max": 200,
+                "abnormal_min": 201,
+                "abnormal_max": 340
+              },
+              {
+                "code": "2571-8",
+                "description": "Triglycerides",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 40,
+                "normal_max": 150,
+                "abnormal_min": 151,
+                "abnormal_max": 400
+              },
+              {
+                "code": "2085-9",
+                "description": "HDL Cholesterol",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 40,
+                "normal_max": 90,
+                "abnormal_min": 15,
+                "abnormal_max": 39
+              },
+              {
+                "code": "13457-7",
+                "description": "LDL Cholesterol",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 50,
+                "normal_max": 100,
+                "abnormal_min": 101,
+                "abnormal_max": 220
+              }
+            ]
+          },
+          {
+            "order_code": "14804-9",
+            "order_description": "Lactate dehydrogenase (LDH) panel",
+            "specimen": "Blood",
+            "abnormal_pct": 0.3,
+            "weight": 0.1,
+            "result_items": [
+              {
+                "code": "14804-9",
+                "description": "Lactate dehydrogenase [Enzymatic activity/volume] in Serum or Plasma",
+                "is_numeric": true,
+                "units": "U/L",
+                "normal_min": 100,
+                "normal_max": 250,
+                "abnormal_min": 251,
+                "abnormal_max": 800
+              }
+            ]
+          },
+          {
+            "order_code": "OVMIS-OAP-1",
+            "order_description": "OVMIS-Associated Protein (OAP) Assay",
+            "specimen": "Serum",
+            "fictional": true,
+            "result_items": [
+              {
+                "code": "OAP-SERUM",
+                "description": "OAP Serum Level",
+                "is_numeric": true,
+                "units": "U/mL",
+                "normal_min": 0.0,
+                "normal_max": 10.0,
+                "abnormal_min": 30.0,
+                "abnormal_max": 100.0,
+                "text_values": []
+              }
+            ],
+            "abnormal_pct": 0.85,
+            "weight": 0.75
+          }
+        ],
+        "observations": [
+          {
+            "code": "8480-6",
+            "description": "Systolic blood pressure",
+            "units": "mmHg",
+            "normal_min": 90,
+            "normal_max": 119,
+            "abnormal_min": 130,
+            "abnormal_max": 180,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.4,
+            "weight": 0.333333
+          },
+          {
+            "code": "8462-4",
+            "description": "Diastolic blood pressure",
+            "units": "mmHg",
+            "normal_min": 60,
+            "normal_max": 79,
+            "abnormal_min": 80,
+            "abnormal_max": 110,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.35,
+            "weight": 0.25
+          },
+          {
+            "code": "8310-5",
+            "description": "Body temperature",
+            "units": "\u00b0F",
+            "normal_min": 97.0,
+            "normal_max": 99.0,
+            "abnormal_min": 100.4,
+            "abnormal_max": 104.0,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.25,
+            "weight": 0.166667
+          },
+          {
+            "code": "8867-4",
+            "description": "Heart rate",
+            "units": "bpm",
+            "normal_min": 60,
+            "normal_max": 100,
+            "abnormal_min": 101,
+            "abnormal_max": 150,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.3,
+            "weight": 0.25
+          }
+        ],
+        "encounter_pattern": {
+          "encounters_per_year": 6.0,
+          "encounter_type_weights": {
+            "O": 0.8,
+            "E": 0.1,
+            "I": 0.1
+          },
+          "lab_encounter_rate": 0.7,
+          "rad_encounter_rate": 0.2
+        },
+        "procedures": [
+          {
+            "code": "99214",
+            "description": "Office or other outpatient visit, established patient, moderate complexity",
+            "encounter_type": "O",
+            "weight": 0.444444
+          },
+          {
+            "code": "93000",
+            "description": "Electrocardiogram, routine ECG with at least 12 leads; with interpretation and report",
+            "encounter_type": "O",
+            "weight": 0.333333
+          },
+          {
+            "code": "71045",
+            "description": "Radiologic examination, chest; single view",
+            "encounter_type": "O",
+            "weight": 0.222222
+          }
+        ]
+      }
+    },
+    "novel_disease_severe": {
+      "canonical_name": "Novel Disease Severe",
+      "keywords": [
+        "novel disease severe"
+      ],
+      "qa_status": "approved",
+      "source_template": "oh_novel_population.template.json",
+      "clinical_catalog": {
+        "diagnoses": [
+          {
+            "code": "J70.2",
+            "description": "Acute interstitial pneumonitis",
+            "is_primary": true,
+            "onset_age_min": 0,
+            "onset_age_max": 120,
+            "only_encounter_types": [
+              "I"
+            ]
+          },
+          {
+            "code": "G62.9",
+            "description": "Polyneuropathy, unspecified",
+            "is_primary": false,
+            "onset_age_min": 0,
+            "onset_age_max": 120,
+            "only_encounter_types": []
+          },
+          {
+            "code": "M35.9",
+            "description": "Systemic involvement of connective tissue, unspecified",
+            "is_primary": false,
+            "onset_age_min": 0,
+            "onset_age_max": 120,
+            "only_encounter_types": []
+          }
+        ],
+        "comorbidities": [
+          {
+            "code": "I10",
+            "description": "Essential hypertension",
+            "prevalence_pct": 0.3
+          },
+          {
+            "code": "E66.9",
+            "description": "Obesity, unspecified",
+            "prevalence_pct": 0.25
+          },
+          {
+            "code": "E78.5",
+            "description": "Hyperlipidemia, unspecified",
+            "prevalence_pct": 0.2
+          }
+        ],
+        "medications": [
+          {
+            "drug_code": "197361",
+            "drug_description": "Prednisone 20 MG Oral Tablet",
+            "dose_quantity": "20",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "QD",
+            "frequency_description": "Once daily",
+            "status": "active",
+            "for_diagnosis_code": "J70.2",
+            "weight": 0.294118
+          },
+          {
+            "drug_code": "617314",
+            "drug_description": "Azathioprine 50 MG Oral Tablet",
+            "dose_quantity": "50",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "QD",
+            "frequency_description": "Once daily",
+            "status": "active",
+            "for_diagnosis_code": "M35.9",
+            "weight": 0.235294
+          },
+          {
+            "drug_code": "1049630",
+            "drug_description": "Mycophenolate mofetil 500 MG Oral Tablet",
+            "dose_quantity": "500",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "BID",
+            "frequency_description": "Twice daily",
+            "status": "active",
+            "for_diagnosis_code": "G62.9",
+            "weight": 0.294118
+          },
+          {
+            "drug_code": "860975",
+            "drug_description": "Metformin 500 MG Oral Tablet",
+            "dose_quantity": "500",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "BID",
+            "frequency_description": "Twice daily",
+            "status": "active",
+            "for_diagnosis_code": "E66.9",
+            "weight": 0.176471
+          }
+        ],
+        "labs": [
+          {
+            "order_code": "1988-5",
+            "order_description": "C-reactive protein (CRP) panel",
+            "specimen": "Blood",
+            "abnormal_pct": 0.6,
+            "weight": 0.333333,
+            "result_items": [
+              {
+                "code": "1988-5",
+                "description": "C reactive protein [Mass/volume] in Serum or Plasma",
+                "is_numeric": true,
+                "units": "mg/L",
+                "normal_min": 0.0,
+                "normal_max": 1.0,
+                "abnormal_min": 1.1,
+                "abnormal_max": 100.0
+              }
+            ]
+          },
+          {
+            "order_code": "58410-2",
+            "order_description": "CBC panel - Blood by Automated count",
+            "specimen": "Blood",
+            "abnormal_pct": 0.5,
+            "weight": 0.277778,
+            "result_items": [
+              {
+                "code": "6690-2",
+                "description": "WBC",
+                "units": "K/uL",
+                "is_numeric": true,
+                "normal_min": 4.5,
+                "normal_max": 11.0,
+                "abnormal_min": 0.5,
+                "abnormal_max": 18.0
+              },
+              {
+                "code": "789-8",
+                "description": "RBC",
+                "units": "M/uL",
+                "is_numeric": true,
+                "normal_min": 3.9,
+                "normal_max": 5.9,
+                "abnormal_min": 2.0,
+                "abnormal_max": 7.0
+              },
+              {
+                "code": "718-7",
+                "description": "Hemoglobin",
+                "units": "g/dL",
+                "is_numeric": true,
+                "normal_min": 11.5,
+                "normal_max": 17.5,
+                "abnormal_min": 6.0,
+                "abnormal_max": 20.0
+              },
+              {
+                "code": "4544-3",
+                "description": "Hematocrit",
+                "units": "%",
+                "is_numeric": true,
+                "normal_min": 35,
+                "normal_max": 52,
+                "abnormal_min": 20,
+                "abnormal_max": 60
+              },
+              {
+                "code": "777-3",
+                "description": "Platelets",
+                "units": "K/uL",
+                "is_numeric": true,
+                "normal_min": 150,
+                "normal_max": 400,
+                "abnormal_min": 50,
+                "abnormal_max": 600
+              },
+              {
+                "code": "731-0",
+                "description": "Lymphocytes",
+                "units": "%",
+                "is_numeric": true,
+                "normal_min": 20,
+                "normal_max": 45,
+                "abnormal_min": 5,
+                "abnormal_max": 80
+              },
+              {
+                "code": "752-6",
+                "description": "Neutrophils",
+                "units": "%",
+                "is_numeric": true,
+                "normal_min": 40,
+                "normal_max": 75,
+                "abnormal_min": 5,
+                "abnormal_max": 95
+              }
+            ]
+          },
+          {
+            "order_code": "24323-8",
+            "order_description": "Comprehensive metabolic panel",
+            "specimen": "Blood",
+            "abnormal_pct": 0.4,
+            "weight": 0.222222,
+            "result_items": [
+              {
+                "code": "2951-2",
+                "description": "Sodium",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 136,
+                "normal_max": 145,
+                "abnormal_min": 129,
+                "abnormal_max": 152
+              },
+              {
+                "code": "2823-3",
+                "description": "Potassium",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 3.5,
+                "normal_max": 5.0,
+                "abnormal_min": 2.8,
+                "abnormal_max": 6.2
+              },
+              {
+                "code": "2075-0",
+                "description": "Chloride",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 98,
+                "normal_max": 107,
+                "abnormal_min": 90,
+                "abnormal_max": 115
+              },
+              {
+                "code": "2028-9",
+                "description": "CO2 (Bicarbonate)",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 22,
+                "normal_max": 29,
+                "abnormal_min": 16,
+                "abnormal_max": 34
+              },
+              {
+                "code": "2339-0",
+                "description": "Glucose",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 70,
+                "normal_max": 99,
+                "abnormal_min": 50,
+                "abnormal_max": 450
+              },
+              {
+                "code": "3094-0",
+                "description": "BUN",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 6,
+                "normal_max": 20,
+                "abnormal_min": 2,
+                "abnormal_max": 50
+              },
+              {
+                "code": "2160-0",
+                "description": "Creatinine",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 0.6,
+                "normal_max": 1.2,
+                "abnormal_min": 0.4,
+                "abnormal_max": 3.5
+              },
+              {
+                "code": "17861-6",
+                "description": "Calcium",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 8.5,
+                "normal_max": 10.5,
+                "abnormal_min": 7.0,
+                "abnormal_max": 12.0
+              },
+              {
+                "code": "2885-2",
+                "description": "Total Protein",
+                "units": "g/dL",
+                "is_numeric": true,
+                "normal_min": 6.3,
+                "normal_max": 8.2,
+                "abnormal_min": 4.5,
+                "abnormal_max": 10.0
+              },
+              {
+                "code": "1751-7",
+                "description": "Albumin",
+                "units": "g/dL",
+                "is_numeric": true,
+                "normal_min": 3.5,
+                "normal_max": 5.0,
+                "abnormal_min": 2.0,
+                "abnormal_max": 6.0
+              },
+              {
+                "code": "1742-6",
+                "description": "ALT",
+                "units": "U/L",
+                "is_numeric": true,
+                "normal_min": 7,
+                "normal_max": 56,
+                "abnormal_min": 57,
+                "abnormal_max": 200
+              },
+              {
+                "code": "1920-8",
+                "description": "AST",
+                "units": "U/L",
+                "is_numeric": true,
+                "normal_min": 10,
+                "normal_max": 40,
+                "abnormal_min": 41,
+                "abnormal_max": 200
+              },
+              {
+                "code": "6768-6",
+                "description": "Alkaline Phosphatase",
+                "units": "U/L",
+                "is_numeric": true,
+                "normal_min": 44,
+                "normal_max": 147,
+                "abnormal_min": 148,
+                "abnormal_max": 350
+              },
+              {
+                "code": "1975-2",
+                "description": "Total Bilirubin",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 0.1,
+                "normal_max": 1.2,
+                "abnormal_min": 1.3,
+                "abnormal_max": 2.5
+              }
+            ]
+          },
+          {
+            "order_code": "57698-3",
+            "order_description": "Lipid panel",
+            "specimen": "Blood",
+            "abnormal_pct": 0.35,
+            "weight": 0.166667,
+            "result_items": [
+              {
+                "code": "2093-3",
+                "description": "Total Cholesterol",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 130,
+                "normal_max": 200,
+                "abnormal_min": 201,
+                "abnormal_max": 340
+              },
+              {
+                "code": "2571-8",
+                "description": "Triglycerides",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 40,
+                "normal_max": 150,
+                "abnormal_min": 151,
+                "abnormal_max": 400
+              },
+              {
+                "code": "2085-9",
+                "description": "HDL Cholesterol",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 40,
+                "normal_max": 90,
+                "abnormal_min": 15,
+                "abnormal_max": 39
+              },
+              {
+                "code": "13457-7",
+                "description": "LDL Cholesterol",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 50,
+                "normal_max": 100,
+                "abnormal_min": 101,
+                "abnormal_max": 220
+              }
+            ]
+          },
+          {
+            "order_code": "OVMIS-OAP-1",
+            "order_description": "OVMIS-Associated Protein (OAP) Assay",
+            "specimen": "Serum",
+            "fictional": true,
+            "result_items": [
+              {
+                "code": "OAP-SERUM",
+                "description": "OAP Serum Level",
+                "is_numeric": true,
+                "units": "U/mL",
+                "normal_min": 0.0,
+                "normal_max": 10.0,
+                "abnormal_min": 80.0,
+                "abnormal_max": 200.0,
+                "text_values": []
+              }
+            ],
+            "abnormal_pct": 0.9,
+            "weight": 0.8
+          }
+        ],
+        "observations": [
+          {
+            "code": "8480-6",
+            "description": "Systolic blood pressure",
+            "units": "mmHg",
+            "normal_min": 90,
+            "normal_max": 119,
+            "abnormal_min": 130,
+            "abnormal_max": 180,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.4,
+            "weight": 0.333333
+          },
+          {
+            "code": "8462-4",
+            "description": "Diastolic blood pressure",
+            "units": "mmHg",
+            "normal_min": 60,
+            "normal_max": 79,
+            "abnormal_min": 80,
+            "abnormal_max": 110,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.35,
+            "weight": 0.25
+          },
+          {
+            "code": "8310-5",
+            "description": "Body temperature",
+            "units": "\u00b0F",
+            "normal_min": 97.0,
+            "normal_max": 99.0,
+            "abnormal_min": 100.4,
+            "abnormal_max": 104.0,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.25,
+            "weight": 0.166667
+          },
+          {
+            "code": "8867-4",
+            "description": "Heart rate",
+            "units": "bpm",
+            "normal_min": 60,
+            "normal_max": 100,
+            "abnormal_min": 110,
+            "abnormal_max": 150,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.3,
+            "weight": 0.25
+          }
+        ],
+        "encounter_pattern": {
+          "encounters_per_year": 6.0,
+          "encounter_type_weights": {
+            "O": 0.7,
+            "E": 0.15,
+            "I": 0.15
+          },
+          "lab_encounter_rate": 0.8,
+          "rad_encounter_rate": 0.2
+        },
+        "procedures": [
+          {
+            "code": "99223",
+            "description": "Initial hospital care, per day, for the evaluation and management of a patient",
+            "encounter_type": "I",
+            "weight": 0.571429
+          },
+          {
+            "code": "93010",
+            "description": "Electrocardiogram, routine ECG with at least 12 leads; interpretation and report only",
+            "encounter_type": "O",
+            "weight": 0.428571
+          }
+        ]
+      }
+    },
+    "novel_disease_critical": {
+      "canonical_name": "Novel Disease Critical/Complicated",
+      "keywords": [
+        "novel disease critical complicated",
+        "novel disease critical"
+      ],
+      "qa_status": "approved",
+      "source_template": "oh_novel_population.template.json",
+      "clinical_catalog": {
+        "diagnoses": [
+          {
+            "code": "M31.9",
+            "description": "Necrotizing vasculopathy, unspecified",
+            "is_primary": true,
+            "onset_age_min": 0,
+            "onset_age_max": 120,
+            "only_encounter_types": []
+          },
+          {
+            "code": "I41",
+            "description": "Myocarditis in diseases classified elsewhere",
+            "is_primary": false,
+            "onset_age_min": 0,
+            "onset_age_max": 120,
+            "only_encounter_types": [
+              "I"
+            ]
+          },
+          {
+            "code": "G61.9",
+            "description": "Inflammatory polyneuropathy, unspecified",
+            "is_primary": false,
+            "onset_age_min": 0,
+            "onset_age_max": 120,
+            "only_encounter_types": []
+          }
+        ],
+        "comorbidities": [
+          {
+            "code": "I10",
+            "description": "Essential hypertension",
+            "prevalence_pct": 0.5
+          },
+          {
+            "code": "E66.9",
+            "description": "Obesity, unspecified",
+            "prevalence_pct": 0.3
+          },
+          {
+            "code": "E78.5",
+            "description": "Hyperlipidemia, unspecified",
+            "prevalence_pct": 0.4
+          }
+        ],
+        "medications": [
+          {
+            "drug_code": "197361",
+            "drug_description": "Prednisone 20 MG Oral Tablet",
+            "dose_quantity": "20",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "QD",
+            "frequency_description": "Once daily",
+            "status": "active",
+            "for_diagnosis_code": "M31.9",
+            "weight": 0.3
+          },
+          {
+            "drug_code": "617314",
+            "drug_description": "Methotrexate 2.5 MG Oral Tablet",
+            "dose_quantity": "2.5",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "QW",
+            "frequency_description": "Once weekly",
+            "status": "active",
+            "for_diagnosis_code": "M31.9",
+            "weight": 0.2
+          },
+          {
+            "drug_code": "860975",
+            "drug_description": "Metformin 500 MG Oral Tablet",
+            "dose_quantity": "500",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "BID",
+            "frequency_description": "Twice daily",
+            "status": "active",
+            "for_diagnosis_code": "E66.9",
+            "weight": 0.2
+          },
+          {
+            "drug_code": "1049630",
+            "drug_description": "Atorvastatin 20 MG Oral Tablet",
+            "dose_quantity": "20",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "QD",
+            "frequency_description": "Once daily",
+            "status": "active",
+            "for_diagnosis_code": "E78.5",
+            "weight": 0.2
+          },
+          {
+            "drug_code": "313782",
+            "drug_description": "Lisinopril 10 MG Oral Tablet",
+            "dose_quantity": "10",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "QD",
+            "frequency_description": "Once daily",
+            "status": "active",
+            "for_diagnosis_code": "I10",
+            "weight": 0.1
+          }
+        ],
+        "labs": [
+          {
+            "order_code": "1988-5",
+            "order_description": "C-reactive protein (CRP) panel",
+            "specimen": "Blood",
+            "abnormal_pct": 0.6,
+            "weight": 0.3,
+            "result_items": [
+              {
+                "code": "1988-5",
+                "description": "C reactive protein [Mass/volume] in Serum or Plasma",
+                "is_numeric": true,
+                "units": "mg/L",
+                "normal_min": 0.0,
+                "normal_max": 1.0,
+                "abnormal_min": 1.1,
+                "abnormal_max": 100.0
+              }
+            ]
+          },
+          {
+            "order_code": "58410-2",
+            "order_description": "CBC panel - Blood by Automated count",
+            "specimen": "Blood",
+            "abnormal_pct": 0.5,
+            "weight": 0.2,
+            "result_items": [
+              {
+                "code": "6690-2",
+                "description": "WBC",
+                "units": "K/uL",
+                "is_numeric": true,
+                "normal_min": 4.5,
+                "normal_max": 11.0,
+                "abnormal_min": 0.5,
+                "abnormal_max": 18.0
+              },
+              {
+                "code": "789-8",
+                "description": "RBC",
+                "units": "M/uL",
+                "is_numeric": true,
+                "normal_min": 3.9,
+                "normal_max": 5.9,
+                "abnormal_min": 2.0,
+                "abnormal_max": 7.0
+              },
+              {
+                "code": "718-7",
+                "description": "Hemoglobin",
+                "units": "g/dL",
+                "is_numeric": true,
+                "normal_min": 11.5,
+                "normal_max": 17.5,
+                "abnormal_min": 6.0,
+                "abnormal_max": 20.0
+              },
+              {
+                "code": "4544-3",
+                "description": "Hematocrit",
+                "units": "%",
+                "is_numeric": true,
+                "normal_min": 35,
+                "normal_max": 52,
+                "abnormal_min": 20,
+                "abnormal_max": 60
+              },
+              {
+                "code": "777-3",
+                "description": "Platelets",
+                "units": "K/uL",
+                "is_numeric": true,
+                "normal_min": 150,
+                "normal_max": 400,
+                "abnormal_min": 50,
+                "abnormal_max": 600
+              },
+              {
+                "code": "731-0",
+                "description": "Lymphocytes",
+                "units": "%",
+                "is_numeric": true,
+                "normal_min": 20,
+                "normal_max": 45,
+                "abnormal_min": 5,
+                "abnormal_max": 80
+              },
+              {
+                "code": "752-6",
+                "description": "Neutrophils",
+                "units": "%",
+                "is_numeric": true,
+                "normal_min": 40,
+                "normal_max": 75,
+                "abnormal_min": 5,
+                "abnormal_max": 95
+              }
+            ]
+          },
+          {
+            "order_code": "24323-8",
+            "order_description": "Comprehensive metabolic panel",
+            "specimen": "Blood",
+            "abnormal_pct": 0.4,
+            "weight": 0.2,
+            "result_items": [
+              {
+                "code": "2951-2",
+                "description": "Sodium",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 136,
+                "normal_max": 145,
+                "abnormal_min": 129,
+                "abnormal_max": 152
+              },
+              {
+                "code": "2823-3",
+                "description": "Potassium",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 3.5,
+                "normal_max": 5.0,
+                "abnormal_min": 2.8,
+                "abnormal_max": 6.2
+              },
+              {
+                "code": "2075-0",
+                "description": "Chloride",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 98,
+                "normal_max": 107,
+                "abnormal_min": 90,
+                "abnormal_max": 115
+              },
+              {
+                "code": "2028-9",
+                "description": "CO2 (Bicarbonate)",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 22,
+                "normal_max": 29,
+                "abnormal_min": 16,
+                "abnormal_max": 34
+              },
+              {
+                "code": "2339-0",
+                "description": "Glucose",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 70,
+                "normal_max": 99,
+                "abnormal_min": 50,
+                "abnormal_max": 450
+              },
+              {
+                "code": "3094-0",
+                "description": "BUN",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 6,
+                "normal_max": 20,
+                "abnormal_min": 2,
+                "abnormal_max": 50
+              },
+              {
+                "code": "2160-0",
+                "description": "Creatinine",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 0.6,
+                "normal_max": 1.2,
+                "abnormal_min": 0.4,
+                "abnormal_max": 3.5
+              },
+              {
+                "code": "17861-6",
+                "description": "Calcium",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 8.5,
+                "normal_max": 10.5,
+                "abnormal_min": 7.0,
+                "abnormal_max": 12.0
+              },
+              {
+                "code": "2885-2",
+                "description": "Total Protein",
+                "units": "g/dL",
+                "is_numeric": true,
+                "normal_min": 6.3,
+                "normal_max": 8.2,
+                "abnormal_min": 4.5,
+                "abnormal_max": 10.0
+              },
+              {
+                "code": "1751-7",
+                "description": "Albumin",
+                "units": "g/dL",
+                "is_numeric": true,
+                "normal_min": 3.5,
+                "normal_max": 5.0,
+                "abnormal_min": 2.0,
+                "abnormal_max": 6.0
+              },
+              {
+                "code": "1742-6",
+                "description": "ALT",
+                "units": "U/L",
+                "is_numeric": true,
+                "normal_min": 7,
+                "normal_max": 56,
+                "abnormal_min": 57,
+                "abnormal_max": 200
+              },
+              {
+                "code": "1920-8",
+                "description": "AST",
+                "units": "U/L",
+                "is_numeric": true,
+                "normal_min": 10,
+                "normal_max": 40,
+                "abnormal_min": 41,
+                "abnormal_max": 200
+              },
+              {
+                "code": "6768-6",
+                "description": "Alkaline Phosphatase",
+                "units": "U/L",
+                "is_numeric": true,
+                "normal_min": 44,
+                "normal_max": 147,
+                "abnormal_min": 148,
+                "abnormal_max": 350
+              },
+              {
+                "code": "1975-2",
+                "description": "Total Bilirubin",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 0.1,
+                "normal_max": 1.2,
+                "abnormal_min": 1.3,
+                "abnormal_max": 2.5
+              }
+            ]
+          },
+          {
+            "order_code": "57698-3",
+            "order_description": "Lipid panel",
+            "specimen": "Blood",
+            "abnormal_pct": 0.35,
+            "weight": 0.15,
+            "result_items": [
+              {
+                "code": "2093-3",
+                "description": "Total Cholesterol",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 130,
+                "normal_max": 200,
+                "abnormal_min": 201,
+                "abnormal_max": 340
+              },
+              {
+                "code": "2571-8",
+                "description": "Triglycerides",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 40,
+                "normal_max": 150,
+                "abnormal_min": 151,
+                "abnormal_max": 400
+              },
+              {
+                "code": "2085-9",
+                "description": "HDL Cholesterol",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 40,
+                "normal_max": 90,
+                "abnormal_min": 15,
+                "abnormal_max": 39
+              },
+              {
+                "code": "13457-7",
+                "description": "LDL Cholesterol",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 50,
+                "normal_max": 100,
+                "abnormal_min": 101,
+                "abnormal_max": 220
+              }
+            ]
+          },
+          {
+            "order_code": "14804-9",
+            "order_description": "Lactate dehydrogenase (LDH) panel",
+            "specimen": "Blood",
+            "abnormal_pct": 0.25,
+            "weight": 0.15,
+            "result_items": [
+              {
+                "code": "14804-9",
+                "description": "Lactate dehydrogenase [Enzymatic activity/volume] in Serum or Plasma",
+                "is_numeric": true,
+                "units": "U/L",
+                "normal_min": 100,
+                "normal_max": 250,
+                "abnormal_min": 251,
+                "abnormal_max": 800
+              }
+            ]
+          },
+          {
+            "order_code": "OVMIS-OAP-1",
+            "order_description": "OVMIS-Associated Protein (OAP) Assay",
+            "specimen": "Serum",
+            "fictional": true,
+            "result_items": [
+              {
+                "code": "OAP-SERUM",
+                "description": "OAP Serum Level",
+                "is_numeric": true,
+                "units": "U/mL",
+                "normal_min": 0.0,
+                "normal_max": 10.0,
+                "abnormal_min": 150.0,
+                "abnormal_max": 350.0,
+                "text_values": []
+              }
+            ],
+            "abnormal_pct": 0.95,
+            "weight": 0.85
+          }
+        ],
+        "observations": [
+          {
+            "code": "8480-6",
+            "description": "Systolic blood pressure",
+            "units": "mmHg",
+            "normal_min": 90,
+            "normal_max": 119,
+            "abnormal_min": 130,
+            "abnormal_max": 175,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.45,
+            "weight": 0.333333
+          },
+          {
+            "code": "8462-4",
+            "description": "Diastolic blood pressure",
+            "units": "mmHg",
+            "normal_min": 60,
+            "normal_max": 79,
+            "abnormal_min": 80,
+            "abnormal_max": 110,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.35,
+            "weight": 0.25
+          },
+          {
+            "code": "8310-5",
+            "description": "Body temperature",
+            "units": "F",
+            "normal_min": 97.0,
+            "normal_max": 99.0,
+            "abnormal_min": 100.4,
+            "abnormal_max": 104.0,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.25,
+            "weight": 0.166667
+          },
+          {
+            "code": "8867-4",
+            "description": "Heart rate",
+            "units": "bpm",
+            "normal_min": 60,
+            "normal_max": 100,
+            "abnormal_min": 110,
+            "abnormal_max": 150,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.3,
+            "weight": 0.25
+          }
+        ],
+        "encounter_pattern": {
+          "encounters_per_year": 6.0,
+          "encounter_type_weights": {
+            "O": 0.7,
+            "E": 0.2,
+            "I": 0.1
+          },
+          "lab_encounter_rate": 0.8,
+          "rad_encounter_rate": 0.2
+        },
+        "procedures": [
+          {
+            "code": "99223",
+            "description": "Initial hospital care, high complexity",
+            "encounter_type": "I",
+            "weight": 0.4
+          },
+          {
+            "code": "93306",
+            "description": "Echocardiography, transthoracic, real-time with image documentation",
+            "encounter_type": "O",
+            "weight": 0.3
+          },
+          {
+            "code": "93010",
+            "description": "Electrocardiogram, routine ECG with at least 12 leads; interpretation and report only",
+            "encounter_type": "O",
+            "weight": 0.3
+          }
+        ]
+      }
+    },
+    "general_population": {
+      "canonical_name": "General Population",
+      "keywords": [
+        "general population"
+      ],
+      "qa_status": "approved",
+      "source_template": "oh_novel_population.template.json",
+      "clinical_catalog": {
+        "diagnoses": [
+          {
+            "code": "Z00.00",
+            "description": "Encounter for general adult medical exam without abnormal findings",
+            "is_primary": true,
+            "onset_age_min": 0,
+            "onset_age_max": 120,
+            "only_encounter_types": []
+          }
+        ],
+        "comorbidities": [],
+        "medications": [],
+        "labs": [],
+        "observations": [],
+        "encounter_pattern": {
+          "encounters_per_year": 1.5,
+          "encounter_type_weights": {
+            "O": 0.9,
+            "E": 0.08,
+            "I": 0.02
+          },
+          "lab_encounter_rate": 0.25,
+          "rad_encounter_rate": 0.05
+        },
+        "procedures": [
+          {
+            "code": "99213",
+            "description": "Office or other outpatient visit, established patient",
+            "encounter_type": "O",
+            "weight": 1.0
           }
         ]
       }

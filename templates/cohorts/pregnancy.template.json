@@ -2715,7 +2715,7 @@
               "units": "K/uL",
               "normal_min": 150,
               "normal_max": 400,
-              "abnormal_min": 50,
+              "abnormal_min": 80,
               "abnormal_max": 600,
               "text_values": []
             }
@@ -2801,6 +2801,55 @@
           ],
           "abnormal_pct": 0.15,
           "weight": 0.15
+        },
+        {
+          "order_code": "57698-3",
+          "order_description": "Lipid panel",
+          "specimen": "Blood",
+          "result_items": [
+            {
+              "code": "2093-3",
+              "description": "Total Cholesterol",
+              "is_numeric": true,
+              "units": "mg/dL",
+              "normal_min": 150,
+              "normal_max": 250,
+              "abnormal_min": 251,
+              "abnormal_max": 360
+            },
+            {
+              "code": "2571-8",
+              "description": "Triglycerides",
+              "is_numeric": true,
+              "units": "mg/dL",
+              "normal_min": 60,
+              "normal_max": 250,
+              "abnormal_min": 251,
+              "abnormal_max": 500
+            },
+            {
+              "code": "2085-9",
+              "description": "HDL Cholesterol",
+              "is_numeric": true,
+              "units": "mg/dL",
+              "normal_min": 50,
+              "normal_max": 100,
+              "abnormal_min": 20,
+              "abnormal_max": 49
+            },
+            {
+              "code": "13457-7",
+              "description": "LDL Cholesterol",
+              "is_numeric": true,
+              "units": "mg/dL",
+              "normal_min": 60,
+              "normal_max": 160,
+              "abnormal_min": 161,
+              "abnormal_max": 260
+            }
+          ],
+          "abnormal_pct": 0.20,
+          "weight": 0.60
         }
       ],
       "observations": [

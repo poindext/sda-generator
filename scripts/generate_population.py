@@ -490,6 +490,19 @@ def _assign_facilities(
         if ed_ip_lock and etype == "E" and ei in ed_to_ip_pairs:
             ip_locked[ed_to_ip_pairs[ei]] = fac
 
+    # Guarantee: multi-facility patients visit at least one alternate facility.
+    if alternates and all(enc_facs.get(i) == home_fac for i in range(n_enc)):
+        # Find encounters that aren't already locked (paired IPs)
+        _locked_eis = set(ip_locked.keys())  # IP encounters already paired to an ED facility
+        _candidates = [i for i in range(n_enc) if i not in _locked_eis]
+        if _candidates:
+            _force_ei = rng.choice(_candidates)
+            _alt = rng.choice(alternates)
+            enc_facs[_force_ei] = _alt
+            # If this is an ED with a paired IP and ed_ip_lock is on, lock the IP too
+            if ed_ip_lock and enc_types[_force_ei] == "E" and _force_ei in ed_to_ip_pairs:
+                enc_facs[ed_to_ip_pairs[_force_ei]] = _alt
+
     return enc_facs
 
 
@@ -587,8 +600,8 @@ _HTN_REGIMENS = [
 
 def _build_lab_xml(lab, enc_num, enc_date, patient_id, prov_code, prov_name,
                    fac_code, fac_name, lab_idx, rng, a1c_override=None,
-                   enc_start_time=None, ckd_egfr=None):
-    result_dt = enc_date + timedelta(days=rng.randint(1, 3))
+                   enc_start_time=None, ckd_egfr=None, result_delay_hours: int = 0):
+    result_dt = enc_date + timedelta(days=rng.randint(1, 3)) + timedelta(hours=result_delay_hours)
     result_ts = _ts(result_dt.replace(hour=14, minute=30, second=0))
     _draw_base = enc_start_time if enc_start_time else enc_date.replace(hour=9, minute=0, second=0)
     enc_ts = _ts(_draw_base + timedelta(minutes=rng.randint(5, 20)))
@@ -768,6 +781,42 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     state_code = meta.get("state_code", "OH")
     state_name = _USPS_NAMES.get(state_code, state_code)
 
+    # ---- Scenario engine setup ----
+    scenarios = tmpl.get("scenarios", {})
+    sim_start = _REFERENCE_DATE - timedelta(days=history_months * 30)
+
+    def _enc_month(dt: datetime) -> float:
+        """Month offset from simulation start (1-based)."""
+        return max(1.0, (dt - sim_start).days / 30.0 + 1)
+
+    _is_novel_cohort = False  # set True after cohort is selected
+
+    # Scenario: lab_feed_gap
+    _lfg = scenarios.get("lab_feed_gap", {})
+    _lfg_enabled = _lfg.get("enabled", False)
+    _lfg_affected_types = set(_lfg.get("affected_facility_types", []))
+
+    def _in_lab_gap(enc_dt: datetime, fac_type: str) -> bool:
+        if not _lfg_enabled:
+            return False
+        if fac_type not in _lfg_affected_types:
+            return False
+        gap_start = sim_start + timedelta(days=_lfg.get("start_month_offset", 999) * 30)
+        gap_end = gap_start + timedelta(days=_lfg.get("duration_days", 0))
+        return gap_start <= enc_dt < gap_end
+
+    # Scenario: result_delay
+    _rd = scenarios.get("result_delay", {})
+    _rd_enabled = _rd.get("enabled", False)
+    _rd_affected_types = set(_rd.get("affected_facility_types", []))
+    _rd_min_h = int(_rd.get("delay_hours_min", 0))
+    _rd_max_h = int(_rd.get("delay_hours_max", 0))
+
+    def _result_delay_h(fac_type: str) -> int:
+        if not _rd_enabled or fac_type not in _rd_affected_types:
+            return 0
+        return rng.randint(_rd_min_h, max(_rd_min_h, _rd_max_h))
+
     # ---- Demographics ----
     geo = _wpick(tmpl["geography"]["locations"], "weight", rng)
     dem = tmpl["demographics"]
@@ -785,6 +834,61 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     cohort = _wpick(cohorts, "weight", rng)
     age = max(int(cohort.get("min_age", 18)), min(int(cohort.get("max_age", 85)), age))
     age = min(age, 105)  # hard biological cap — no survivable age beyond 105
+
+    # ---- Scenario: novel-cohort detection ----
+    _is_novel_cohort = any(
+        k in cohort.get("id", "").lower() or k in cohort.get("name", "").lower()
+        for k in ("novel", "ovmis", "novel_disease")
+    )
+
+    # ---- Scenario: outbreak_seeding — county biasing for novel cohorts ----
+    _ob = scenarios.get("outbreak_seeding", {})
+    _onset_month = 0.0  # will be set for novel cohorts when outbreak_seeding fires
+    if _is_novel_cohort and _ob.get("enabled"):
+        _onset_month = rng.uniform(1, history_months)
+        _ob_phase = None
+        for _ph in _ob.get("phases", []):
+            _pm = _ph.get("months", [1, history_months])
+            if _pm[0] <= _onset_month <= _pm[1]:
+                _ob_phase = _ph
+                break
+        if _ob_phase is None:
+            _ob_phase = (_ob.get("phases", [{}]) or [{}])[-1]
+        _origin_region = _ob.get("origin_region", "")
+        _ob_locs = tmpl["geography"]["locations"]
+        _origin_locs = [l for l in _ob_locs if l.get("region") == _origin_region]
+        _other_locs  = [l for l in _ob_locs if l.get("region") != _origin_region]
+        _total_origin_w = sum(l.get("weight", 0.001) for l in _origin_locs) or 1.0
+        _total_other_w  = sum(l.get("weight", 0.001) for l in _other_locs) or 1.0
+        _origin_share = float(_ob_phase.get("origin_region_share", 0.5))
+        _other_share  = 1.0 - _origin_share
+        _ob_weights = []
+        _ob_loc_list = []
+        for _l in _ob_locs:
+            if _l.get("region") == _origin_region:
+                _w = (_l.get("weight", 0.001) / _total_origin_w) * _origin_share
+            else:
+                _w = (_l.get("weight", 0.001) / _total_other_w) * _other_share
+            _ob_weights.append(_w)
+            _ob_loc_list.append(_l)
+        geo = rng.choices(_ob_loc_list, weights=_ob_weights, k=1)[0]
+
+    # ---- Scenario: acute_cluster — county weight boost for specific cohort/period ----
+    _ac = scenarios.get("acute_cluster", {})
+    _ac_enabled = _ac.get("enabled", False)
+    _ac_fips = _ac.get("county_fips", "")
+    _ac_months = (_ac.get("start_month", 0), _ac.get("end_month", 9999))
+    _ac_cohorts = set(_ac.get("affected_cohorts", []))
+    _ac_multiplier = float(_ac.get("incidence_multiplier", 1.0))
+    if _ac_enabled and cohort.get("id", "") in _ac_cohorts:
+        _onset_month_ac = _onset_month if _ob.get("enabled") else rng.uniform(1, history_months)
+        if _ac_months[0] <= _onset_month_ac <= _ac_months[1]:
+            _ac_loc_list = tmpl["geography"]["locations"]
+            _ac_weights = [
+                l.get("weight", 0.001) * (_ac_multiplier if l.get("county_fips") == _ac_fips else 1.0)
+                for l in _ac_loc_list
+            ]
+            geo = rng.choices(_ac_loc_list, weights=_ac_weights, k=1)[0]
 
     # Compute birth_dt HERE — before enc_dates — so every date in the record can
     # be clamped to >= DOB.  Moving these two rng calls early shifts the sequence
@@ -903,6 +1007,24 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         _seen_enc.add(_deduped[-1].date())
     enc_dates = _deduped
     n_encounters = len(enc_dates)
+
+    # ---- Scenario: diagnostic_learning — phase-based dx/lab strategy ----
+    _dl = scenarios.get("diagnostic_learning", {})
+    _dl_phases_raw = _dl.get("phases", []) if (_is_novel_cohort and _dl.get("enabled")) else []
+    # Normalize month_start/month_end keys into the "months": [start, end] format expected by _get_dl_phase
+    _dl_phases = []
+    for _ph in _dl_phases_raw:
+        if "months" not in _ph and ("month_start" in _ph or "month_end" in _ph):
+            _ph = dict(_ph, months=[_ph.get("month_start", 1), _ph.get("month_end", 9999)])
+        _dl_phases.append(_ph)
+
+    def _get_dl_phase(enc_dt: datetime) -> dict:
+        m = int(_enc_month(enc_dt))  # floor to month integer; avoids gaps between integer phase boundaries
+        for ph in _dl_phases:
+            pm = ph.get("months", [1, 9999])
+            if pm[0] <= m <= pm[1]:
+                return ph
+        return _dl_phases[-1] if _dl_phases else {}
 
     def _fu_text(gap_days):
         if gap_days is None or gap_days > 200:
@@ -1062,15 +1184,20 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     _ed_scen_matched: dict = {}        # ei -> True if selected via patient-matching ICD prefix
     for _ei, _et in enumerate(enc_types):
         if _et == "I":
-            # Prefer scenarios matching primary diagnoses; fall back to all diagnoses
+            # Prefer scenarios matching primary diagnoses; fall back to all diagnoses.
+            # Novel cohorts skip the comorbidity-based fallback so that incidental I10/E11
+            # comorbidities don't assign hypertension/hyperglycemia scenarios to OVMIS patients.
             _ip_primary = [
                 s for s in _INPATIENT_SCENARIOS
                 if any(c.startswith(tuple(s["icd_prefixes"])) for c in _primary_diag_codes)
             ]
-            _ip_matching = _ip_primary or [
-                s for s in _INPATIENT_SCENARIOS
-                if any(c.startswith(tuple(s["icd_prefixes"])) for c in _pt_diag_codes)
-            ]
+            if _is_novel_cohort:
+                _ip_matching = _ip_primary  # novel: primary OVMIS codes only
+            else:
+                _ip_matching = _ip_primary or [
+                    s for s in _INPATIENT_SCENARIOS
+                    if any(c.startswith(tuple(s["icd_prefixes"])) for c in _pt_diag_codes)
+                ]
             if _ip_matching:
                 _inpatient_scenes[_ei] = rng.choice(_ip_matching)
                 _inpatient_scen_matched[_ei] = True
@@ -1079,11 +1206,15 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 _inpatient_scenes[_ei] = rng.choice(_ip_fallback)
                 _inpatient_scen_matched[_ei] = False
         elif _et == "E":
-            # Prefer scenarios matching primary diagnoses; fall back to all diagnoses
+            # Prefer scenarios matching primary diagnoses; fall back to all diagnoses.
+            # Novel cohorts skip the comorbidity-based fallback (same reasoning as IP above).
             _ed_primary = [s for s in _INPATIENT_SCENARIOS
                            if any(c.startswith(tuple(s["icd_prefixes"])) for c in _primary_diag_codes)]
-            _ed_m = _ed_primary or [s for s in _INPATIENT_SCENARIOS
-                     if any(c.startswith(tuple(s["icd_prefixes"])) for c in _pt_diag_codes)]
+            if _is_novel_cohort:
+                _ed_m = _ed_primary  # novel: primary OVMIS codes only
+            else:
+                _ed_m = _ed_primary or [s for s in _INPATIENT_SCENARIOS
+                         if any(c.startswith(tuple(s["icd_prefixes"])) for c in _pt_diag_codes)]
             # Delivery is a planned inpatient-only event; exclude it from the ED pool so
             # pregnancy patients don't get spurious "Normal term delivery" ED encounters.
             if _is_pregnancy_cohort:
@@ -1302,6 +1433,16 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             _add_panel(_first_op, _bmp_panel_1 or (_cmp_panels or [None])[0])
             _add_panel(_first_op, _lipid_panel_1)
 
+        if _is_novel_cohort:
+            # Force OAP assay onto every encounter for novel cohorts so the diagnostic_learning
+            # gating (availability + ordering-rate) controls when results appear — not random selection.
+            _oap_panels = [l for l in _lab_list if l.get("fictional", False)
+                           or "OAP" in l.get("order_description", "").upper()]
+            if _oap_panels:
+                _oap_panel_1 = _oap_panels[0]
+                for _ei_n in range(n_encounters):
+                    _add_panel(_ei_n, _oap_panel_1)
+
     # Encounters where any panel contains an A1c result item
     _a1c_enc_set: set = {
         _li for _li, _plist in _lab_enc_plans.items()
@@ -1373,6 +1514,33 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     )
     ins_org_code = ins_plan.get("code", "COM")
     ins_org_name = ins_plan.get("name", "Commercial Insurance")
+
+    # ---- Scenario: data_imperfections — MRN/demographic mutations ----
+    _di = scenarios.get("data_imperfections", {})
+    _di_enabled = _di.get("enabled", False)
+    _dup_mrn_pct = float(_di.get("duplicate_mrn_across_facilities_pct", 0.0))
+    _outdated_demo_pct = float(_di.get("outdated_demographics_pct", 0.0))
+    _missing_id_pct = float(_di.get("missing_identifier_pct", 0.0))
+    _conflict_demo_pct = float(_di.get("conflicting_demographics_pct", 0.0))
+    _is_dup_mrn = _di_enabled and rng.random() < _dup_mrn_pct
+    _is_outdated_demo = _di_enabled and rng.random() < _outdated_demo_pct
+    _is_missing_id = _di_enabled and rng.random() < _missing_id_pct
+    _is_conflict_demo = _di_enabled and rng.random() < _conflict_demo_pct
+    if _is_outdated_demo:
+        _dob_shift = rng.randint(1, 3) * (1 if rng.random() < 0.5 else -1)
+        try:
+            birth_dt = datetime(birth_dt.year + _dob_shift, birth_dt.month, birth_dt.day)
+        except ValueError:
+            pass  # guard against out-of-range year
+    if _is_missing_id and ins_number_type != "MRN":
+        ins_number_type = "MRN"  # suppress the optional insurance identifier
+    _alt_family = family
+    if _is_conflict_demo:
+        if len(family) > 3:
+            _cf_pos = rng.randint(1, len(family) - 2)
+            _alt_family = family[:_cf_pos] + rng.choice("aeiou") + family[_cf_pos + 1:]
+        else:
+            _alt_family = family + rng.choice(["s", "n", "r"])
 
     patient_numbers = (
         f"    <PatientNumbers>\n"
@@ -1843,6 +2011,22 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             ]
             enc_secondary = enc_secondary + _forced_always
             _enc_secondary_diags[ei] = enc_secondary
+            # Scenario: diagnostic_learning — phase-based primary dx override for novel cohorts
+            if _is_novel_cohort and _dl_phases:
+                _dl_ph = _get_dl_phase(ed)
+                _dx_strategy = _dl_ph.get("primary_dx_strategy", "syndrome_codes")
+                if _dx_strategy == "symptom_codes":
+                    _symptom_dx_pool = [
+                        {"code": "R53.83", "description": "Other fatigue", "is_primary": True},
+                        {"code": "R50.9", "description": "Fever, unspecified", "is_primary": True},
+                        {"code": "M79.3", "description": "Panniculitis, unspecified", "is_primary": True},
+                    ]
+                    # Preserve displaced primary codes (e.g. scenario-injected I16.0) in secondary
+                    _sec_codes_existing = {d["code"] for d in enc_secondary}
+                    _displaced_primary = [d for d in enc_primary if d["code"] not in _sec_codes_existing]
+                    enc_secondary = enc_secondary + _displaced_primary
+                    enc_primary = [rng.choice(_symptom_dx_pool)]
+                # "mixed" and "syndrome_codes" use enc_primary as-is
             _enc_all_dx_codes[ei] = {d["code"] for d in enc_primary + enc_secondary}
             _enc_primary_dx[ei] = enc_primary[0] if enc_primary else None
             for d in enc_primary + enc_secondary:
@@ -1967,8 +2151,13 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     _hyperglycemic_enc_data: dict = {}  # ei0 -> glucose_admit for hyperglycemic encounters
 
     # ---- Documents: progress note at every encounter ----
-    # Per-patient antihypertensive regimen (ACE/ARB/CCB/THIA chosen once per patient)
-    _htn_regimen = rng.choices(_HTN_REGIMENS, weights=[0.45, 0.25, 0.20, 0.10])[0]
+    # Per-patient antihypertensive regimen (ACE/ARB/CCB/THIA chosen once per patient).
+    # Pregnancy patients must not receive ACE inhibitors or ARBs (Category D/X).
+    if _is_pregnancy_cohort:
+        _safe_htn = [r for r in _HTN_REGIMENS if r["label"] in ("CCB", "THIA")]
+        _htn_regimen = rng.choices(_safe_htn, weights=[0.70, 0.30])[0]
+    else:
+        _htn_regimen = rng.choices(_HTN_REGIMENS, weights=[0.45, 0.25, 0.20, 0.10])[0]
     _HTN_DRUG     = _htn_regimen["drug"]
     _ACE_DOSE_STEPS = _htn_regimen["doses"]  # reused variable name
     _HTN_RXNORM   = _htn_regimen["rxnorm"]
@@ -1987,7 +2176,16 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     _ace_esc_events: list = []        # [(enc_idx_0based, new_dose_mg), ...]
     # Second-line add-on: never the same molecule as the primary to avoid
     # impossible "amlodipine 10mg + amlodipine 5mg" notes when CCB is primary.
-    if _HTN_DRUG == "amlodipine":
+    # Pregnancy patients must not receive ACE inhibitors or ARBs (Category D/X);
+    # use hydrochlorothiazide as the safe second-line agent instead.
+    if _HTN_DRUG == "amlodipine" and _is_pregnancy_cohort:
+        _second_drug       = "hydrochlorothiazide"
+        _second_dose_steps = [12, 25]
+        _second_rxnorm     = {
+            12: ("310798", "Hydrochlorothiazide 12.5 MG Oral Tablet"),
+            25: ("310797", "Hydrochlorothiazide 25 MG Oral Tablet"),
+        }
+    elif _HTN_DRUG == "amlodipine":
         _second_drug       = "lisinopril"
         _second_dose_steps = [10, 20]
         _second_rxnorm     = {
@@ -2500,6 +2698,9 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                     d.get("description", "") for d in _enc_secondary_diags.get(ei0, [])
                 ),
                 "AcuteScenario": _acute_scenario_name,
+                "ScenarioMatched": "Yes" if (
+                    _inpatient_scen_matched.get(ei0, False) or _ed_scen_matched.get(ei0, False)
+                ) else "No",
                 "Disposition": (
                     "Inpatient Admission" if etype == "I"
                     else "Inpatient Admission" if (
@@ -2612,6 +2813,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                     d.get("description", "") for d in _enc_secondary_diags.get(_ei_r, [])
                 ),
                 "AcuteScenario": "",
+                "ScenarioMatched": "No",
                 "Disposition": "Inpatient Admission" if _et_r == "I" else "Home",
                 "AdmissionDecision": "Yes" if _et_r == "I" else "No",
                 "InitialSBP": "",
@@ -2654,6 +2856,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
 
     # ---- LabOrders: use pre-selected encounter/panel pairs ----
     _lab_result_values: dict = {}  # ei -> {loinc_code: computed_value_str}
+    _lab_processed_plans: dict = {}  # ei -> [panels that passed gating and were XML-generated]
     if _lab_enc_plans:
         lab_global_idx = 1
         for ei, (ed, en) in enumerate(zip(enc_dates, enc_nums)):
@@ -2663,20 +2866,47 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             fac_code = _ef_lab["code"]
             fac_name = _xe(_ef_lab["name"])
             prov_code, prov_name = _fac_prov_map[fac_code]
+            _ef_lab_type = _ef_lab.get("type", "")
+            # Scenario: lab_feed_gap — suppress labs for affected facility types during gap
+            if _in_lab_gap(ed, _ef_lab_type):
+                continue
             _ei_result_vals: dict = {}
             for lab in _lab_enc_plans[ei]:  # list of panels
+                # Scenario: diagnostic_learning — OAP assay availability + ordering-rate gate
+                if _is_novel_cohort and _dl_phases:
+                    _dl_ph_lab = _get_dl_phase(ed)
+                    _oap_available = _dl_ph_lab.get("oap_assay_available", True)
+                    _oap_fac_types = _dl_ph_lab.get("oap_assay_available_facility_types", [])
+                    _oap_order_rate = float(_dl_ph_lab.get("oap_ordering_rate", 1.0))
+                    _lab_desc_u = (lab.get("order_description", "") + " " + lab.get("name", "")).upper()
+                    _is_oap_lab = (
+                        "OAP" in _lab_desc_u or "OVMIS" in _lab_desc_u
+                        or lab.get("fictional", False)
+                    )
+                    if _is_oap_lab and not _oap_available:
+                        continue
+                    if _is_oap_lab and _oap_fac_types and not any(
+                        _ef_lab_type == t or t in _ef_lab_type for t in _oap_fac_types
+                    ):
+                        continue
+                    if _is_oap_lab and rng.random() > _oap_order_rate:
+                        continue
                 a1c_val = (
                     _a1c_by_enc.get(ei) if (
                         ei in _a1c_enc_set and
                         any(ri.get("code") == "4548-4" for ri in lab.get("result_items", []))
                     ) else None
                 )
+                # Scenario: result_delay — shift result timestamps for academic/tertiary
+                _rd_delay = _result_delay_h(_ef_lab_type)
+                _lab_processed_plans.setdefault(ei, []).append(lab)
                 _lab_xml_str, _lab_ri_vals = _build_lab_xml(
                     lab, en, ed, patient_id, prov_code, prov_name,
                     fac_code, fac_name, lab_global_idx, rng,
                     a1c_override=a1c_val,
                     enc_start_time=enc_start_times[ei],
-                    ckd_egfr=_ckd_enc_egfr.get(ei) if _is_ckd_cohort else None)
+                    ckd_egfr=_ckd_enc_egfr.get(ei) if _is_ckd_cohort else None,
+                    result_delay_hours=_rd_delay)
                 _fac_lab.setdefault(fac_code, []).append(_lab_xml_str)
                 for rv in _lab_ri_vals:
                     _ei_result_vals[rv["code"]] = rv
@@ -2695,7 +2925,9 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         fac_name = _xe(_ef_rad["name"])
         prov_code, prov_name = _fac_prov_map[fac_code]
         ets = _ts(_rad_start + timedelta(minutes=rng.randint(10, 30)))
-        rad_result_ts = _ts(_rad_start + timedelta(minutes=rng.randint(45, 90)))
+        _rad_fac_type = _ef_rad.get("type", "")
+        _rad_delay_h = _result_delay_h(_rad_fac_type)
+        rad_result_ts = _ts(_rad_start + timedelta(minutes=rng.randint(45, 90)) + timedelta(hours=_rad_delay_h))
         eod = _ts(last_ed.replace(hour=0, minute=0, second=0))
         result_text = rng.choice(rad.get("result_texts", ["No acute findings."]))
         reason = rad.get("reason_description", "Clinical evaluation")
@@ -3027,11 +3259,18 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             _seen_fcs.add(_ofc)
             _ordered_facs.append(_of)
     _result_xmls: list = []
+    _di_dup_mrn_applied = False  # track duplicate-MRN scenario (apply to first secondary fac only)
+    _di_dup_mrn_fcs: set = set()  # facility codes that got the duplicate MRN
     for _fac_d in _ordered_facs:
         _fc = _fac_d["code"]
         _fn = _xe(_fac_d["name"])
         _fpc, _fpn = _fac_prov_map[_fc]
         _fmrn = _facility_mrn(patient_id, _fc, use_prefix=_mf_prefix)
+        # Scenario: data_imperfections — duplicate MRN (secondary facility uses home MRN)
+        if _is_dup_mrn and _fc != _home_fac_code and not _di_dup_mrn_applied:
+            _fmrn = mrn
+            _di_dup_mrn_applied = True
+            _di_dup_mrn_fcs.add(_fc)
         _fxml = "<Container>\n"
         _fxml += (_patient_xml
                   .replace("__FAC_MRN__", _fmrn)
@@ -3039,6 +3278,12 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                   .replace("__FAC_NAME__", _fn)
                   .replace("__PROV_CODE__", _fpc)
                   .replace("__PROV_NAME__", _fpn))
+        # Scenario: data_imperfections — conflicting family name at secondary facilities
+        if _is_conflict_demo and _fc != _home_fac_code and _alt_family != family:
+            _fxml = _fxml.replace(
+                f"<FamilyName>{family}</FamilyName>",
+                f"<FamilyName>{_alt_family}</FamilyName>", 1
+            )
         if _fc in _fac_enc:
             _fxml += "  <Encounters>\n" + "".join(_fac_enc[_fc]) + "  </Encounters>\n"
         if _fc == _home_fac_code:
@@ -3067,7 +3312,8 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     for _fac_d in _ordered_facs:
         _fc = _fac_d["code"]
         _fn = _fac_d["name"]
-        _fmrn2 = _facility_mrn(patient_id, _fc, use_prefix=_mf_prefix)
+        _fmrn2 = (mrn if _fc in _di_dup_mrn_fcs
+                  else _facility_mrn(patient_id, _fc, use_prefix=_mf_prefix))
         _fac_enc_dates = [
             enc_dates[_oi] for _oi in range(n_encounters)
             if _enc_facility_map[_oi]["code"] == _fc
@@ -3079,6 +3325,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             "HealthSystemCode": _fac_d.get("health_system_code", ""),
             "HealthSystemName": _fac_d.get("health_system_name", ""),
             "FacilityMRN": _fmrn2,
+            "IsDupMrn": "Yes" if _fc in _di_dup_mrn_fcs else "No",
             "IsPrimaryFacility": "Yes" if _fc == _home_fac_code else "No",
             "FirstEncounterDate": (
                 min(_fac_enc_dates).strftime("%Y-%m-%d") if _fac_enc_dates else ""
@@ -3397,7 +3644,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     # ---- Lab rows ----
     _lab_rows: list = []
     _lab_evt_id = 1
-    for ei, panels in _lab_enc_plans.items():
+    for ei, panels in _lab_processed_plans.items():
         enc_date = enc_dates[ei]
         enc_num = enc_nums[ei]
         _ei_rv_map = _lab_result_values.get(ei, {})
@@ -3637,6 +3884,9 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         _scen_name = erow.get("AcuteScenario", "")
         if not _scen_name:
             continue
+        # Skip DX002 for fallback (unmatched) scenarios — they're used for structure, not clinical specificity
+        if erow.get("ScenarioMatched") == "No":
+            continue
         _scen_def = _scenario_by_name.get(_scen_name)
         if not _scen_def:
             continue
@@ -3809,6 +4059,8 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     # MF002: facility MRN prefix matches facility code (when prefix mode is on)
     if _mf_prefix:
         for _mf_row in _fac_rows:
+            if _mf_row.get("IsDupMrn") == "Yes":
+                continue  # intentional data imperfection — not a real prefix error
             _expected_prefix = _mf_row["FacilityCode"] + "-"
             if not _mf_row["FacilityMRN"].startswith(_expected_prefix):
                 _val_rows.append({
@@ -3829,7 +4081,9 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                     "RecordRegenerated": "No",
                 })
 
-    # MF004: ED→inpatient continuity — both must be at the same facility
+    # MF004: ED→inpatient continuity
+    # When ed_ip_same_facility_lock=False, cross-facility pairs are intentional transfers.
+    _ed_ip_lock_on = tmpl.get("multi_facility", {}).get("ed_ip_same_facility_lock", True)
     for _ed_ei, _ip_ei in _ed_to_ip_pairs.items():
         _ed_fac = _enc_facility_map[_ed_ei]["code"]
         _ip_fac = _enc_facility_map[_ip_ei]["code"]
@@ -3838,12 +4092,13 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 "PatientID": patient_id,
                 "EncounterNumber": enc_nums[_ed_ei] if _ed_ei < len(enc_nums) else "",
                 "ValidationRuleID": "MF004",
-                "Severity": "ERROR",
+                "Severity": "ERROR" if _ed_ip_lock_on else "INFO",
                 "Category": "MultiFacility",
                 "Description": (
+                    "ED→inpatient pair split across facilities (intentional transfer): "
+                    if not _ed_ip_lock_on else
                     "ED→inpatient pair split across facilities: "
-                    f"ED at {_ed_fac}, inpatient at {_ip_fac}"
-                ),
+                ) + f"ED at {_ed_fac}, inpatient at {_ip_fac}",
                 "Field1": "EDFacilityCode",
                 "Value1": _ed_fac,
                 "Field2": "IPFacilityCode",
@@ -4200,16 +4455,20 @@ def validate_template(tmpl: dict) -> list[str]:
                 )
 
         # ── for_diagnosis_code blocking check ───────────────────────────────
+        # Check both diagnoses AND comorbidities — meds gated on comorbidity
+        # codes are valid and will fire whenever that comorbidity is assigned.
+        comorbidity_codes = [d.get("code", "") for d in cohort.get("comorbidities", [])]
+        all_cohort_codes = diag_codes + comorbidity_codes
         for med in cohort.get("medications", []):
             fdc = med.get("for_diagnosis_code", "")
             if not fdc:
                 continue
-            matched = any(c.startswith(fdc) for c in diag_codes)
+            matched = any(c.startswith(fdc) for c in all_cohort_codes)
             if not matched:
                 warnings.append(
                     f"COHORT '{cname}': medication '{med.get('drug_description','')[:50]}' "
-                    f"has for_diagnosis_code='{fdc}' but NO diagnosis in this cohort starts "
-                    f"with that prefix — the medication will NEVER be prescribed to this cohort."
+                    f"has for_diagnosis_code='{fdc}' but NO diagnosis or comorbidity in this "
+                    f"cohort starts with that prefix — the medication will NEVER be prescribed."
                 )
 
     return warnings

@@ -1114,6 +1114,17 @@ def main() -> None:
     print("=" * width)
     if approved:
         print("  APPROVED — population passes clinical review")
+        # Push QA-approved definitions back into config catalogs automatically.
+        _design_script = Path(__file__).parent / "design_population.py"
+        if _design_script.exists() and args.template:
+            try:
+                subprocess.run(
+                    [sys.executable, str(_design_script),
+                     "--sync-configs", args.template],
+                    check=True,
+                )
+            except subprocess.CalledProcessError as _e:
+                print(f"  [WARN] Config sync failed: {_e}", file=sys.stderr)
     else:
         print(f"  ISSUES FOUND — {len(issues)} issue(s) require attention")
     print()
