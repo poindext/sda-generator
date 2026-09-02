@@ -77,16 +77,33 @@ async function streamPost(path, body, onEvent, onDone) {
   onDone({});
 }
 
-// Stream a GET SSE endpoint
+// Poll a job progress endpoint (IIS-compatible replacement for SSE EventSource).
+// path is like /jobs/{id}/stream — the /lines endpoint is derived from it.
 function streamGet(path, onLine, onDone) {
-  const es = new EventSource(API_BASE + '/api' + path);
-  es.onmessage = (e) => {
-    const raw = e.data;
-    if (raw.startsWith('[DONE:')) { es.close(); onDone(raw.slice(6, -1)); return; }
-    onLine(raw);
-  };
-  es.onerror = () => { es.close(); onDone('error'); };
-  return es;
+  const linesPath = path.replace('/stream', '/lines');
+  let since = 0;
+  let stopped = false;
+
+  async function poll() {
+    if (stopped) return;
+    try {
+      const resp = await api.get(linesPath + '?since=' + since);
+      for (const line of resp.lines) onLine(line);
+      since += resp.lines.length;
+      if (['completed', 'failed', 'cancelled'].includes(resp.status)) {
+        onDone(resp.status);
+        return;
+      }
+    } catch (e) {
+      console.error('streamGet poll error', e);
+      onDone('error');
+      return;
+    }
+    setTimeout(poll, 1000);
+  }
+
+  poll();
+  return { close() { stopped = true; } };
 }
 
 // ── Router ─────────────────────────────────────────────────

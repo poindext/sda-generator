@@ -80,6 +80,15 @@ async def get_job(job_id: str):
     return _job_dict(job)
 
 
+@router.get("/jobs/{job_id}/lines")
+async def get_job_lines(job_id: str, since: int = 0):
+    job = job_store.get_job(job_id)
+    if not job:
+        raise HTTPException(404, "Job not found")
+    lines = job_store.get_progress(job_id)
+    return {"lines": lines[since:], "status": job.status}
+
+
 @router.get("/jobs/{job_id}/stream")
 async def stream_job_progress(job_id: str):
     job = job_store.get_job(job_id)
