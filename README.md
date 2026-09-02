@@ -687,6 +687,45 @@ Currently holds **16 Ohio cohort definitions** seeded from the Ohio demo templat
 
 ---
 
+## IIS Deployment (Windows / HttpPlatformHandler)
+
+Genesis can be served under IIS as a sub-path application (e.g. `http://server/genesis`) using the `web.config` in the project root.
+
+### One-time server setup
+
+1. Install the **HttpPlatformHandler** IIS module.
+2. Install Python 3.11+ and run `pip install -r requirements.txt`.
+3. Create a `logs\` folder in the project root and grant the IIS application-pool identity write permission to it.
+4. In IIS Manager → your site → **Configuration Editor** → `system.webServer/handlers`, unlock the section (set **overrideModeDefault** to **Allow** or click **Unlock Section**). This is required for the `<clear />` in `web.config` to take effect.
+5. Create an IIS Application pointing to the project root and set the application pool to **No Managed Code**.
+
+### After every `git pull`
+
+**`web.config` stores `processPath` as `%SystemDrive%\Python311\python.exe`.**
+This is a placeholder. After each pull you must update that line to the actual Python executable on the server — for example:
+
+```xml
+processPath="C:\Program Files\Python314\python.exe"
+```
+
+The correct path will differ by server. Run `where python` or `py -0p` in a command prompt to find it. Updating the repo value is intentionally avoided because the correct path is server-specific.
+
+### Environment variables
+
+`GENESIS_ROOT_PATH` in `web.config` controls the sub-path prefix. Set it to match the IIS Application alias (e.g. `/genesis`). Leave it empty for root deployment.
+
+`OPENAI_API_KEY` is required only for the wizard / design / QA scripts — not for population generation. Leave the `web.config` value empty and inject the key via IIS Application Settings or Windows environment variables so it is not committed to source control.
+
+### Troubleshooting
+
+| Error | Likely cause | Fix |
+|-------|-------------|-----|
+| IIS 500.19 (win32=33) | `system.webServer/handlers` section locked | Unlock via Configuration Editor (see step 4 above) |
+| IIS 500 / no log file | Wrong `processPath` or `logs\` folder missing | Update processPath; create `logs\` folder |
+| CSS/JS 404 | `<clear />` missing from handlers, or `<serverRuntime>` element present | Verify `web.config` matches the repo version |
+
+---
+
 ## Security Notes
 
 - `.env` is gitignored — never commit API keys
