@@ -5,6 +5,7 @@
 fastapi>=0.111
 uvicorn[standard]>=0.29
 pydantic>=2.0
+python-multipart>=0.0.9
 
 # Population generator
 openai>=1.0
