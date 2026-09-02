@@ -5,16 +5,20 @@
 
 'use strict';
 
+// Base path for all API calls — auto-detected from the URL so the app works
+// at any mount point (root or a sub-path such as /genesis).
+const API_BASE = window.location.pathname.replace(/\/$/, '');
+
 // ── API helpers ────────────────────────────────────────────
 
 const api = {
   async get(path) {
-    const r = await fetch('/api' + path);
+    const r = await fetch(API_BASE + '/api' + path);
     if (!r.ok) throw new Error(await r.text());
     return r.json();
   },
   async post(path, body) {
-    const r = await fetch('/api' + path, {
+    const r = await fetch(API_BASE + '/api' + path, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
@@ -23,7 +27,7 @@ const api = {
     return r.json();
   },
   async put(path, body) {
-    const r = await fetch('/api' + path, {
+    const r = await fetch(API_BASE + '/api' + path, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
@@ -32,7 +36,7 @@ const api = {
     return r.json();
   },
   async del(path) {
-    const r = await fetch('/api' + path, { method: 'DELETE' });
+    const r = await fetch(API_BASE + '/api' + path, { method: 'DELETE' });
     if (!r.ok) throw new Error(await r.text());
     return r.json();
   },
@@ -40,7 +44,7 @@ const api = {
 
 // Stream a POST endpoint that returns text/event-stream
 async function streamPost(path, body, onEvent, onDone) {
-  const r = await fetch('/api' + path, {
+  const r = await fetch(API_BASE + '/api' + path, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: body !== null ? JSON.stringify(body) : null,
@@ -75,7 +79,7 @@ async function streamPost(path, body, onEvent, onDone) {
 
 // Stream a GET SSE endpoint
 function streamGet(path, onLine, onDone) {
-  const es = new EventSource('/api' + path);
+  const es = new EventSource(API_BASE + '/api' + path);
   es.onmessage = (e) => {
     const raw = e.data;
     if (raw.startsWith('[DONE:')) { es.close(); onDone(raw.slice(6, -1)); return; }
@@ -647,7 +651,7 @@ function renderPopResults(pop) {
         <div class="chunk-item">
           <span class="chunk-name">${c.name}</span>
           <span class="chunk-size">${c.size_mb} MB</span>
-          <a class="btn btn-sm btn-secondary" href="/api/populations/${pop.id}/chunks/${c.name}" download>Download</a>
+          <a class="btn btn-sm btn-secondary" href="${API_BASE}/api/populations/${pop.id}/chunks/${c.name}" download>Download</a>
         </div>`).join('') +
       '</div>';
   } else if (pop.run_qa && pop.qa_status === 'needs_review') {
@@ -758,7 +762,7 @@ async function loadTemplateList() {
           <button class="btn btn-sm btn-primary" onclick="generateFromTemplate('${t.id}')">Generate →</button>
           <button class="btn btn-sm btn-secondary" onclick="openTemplatePreview('${t.id}')">View</button>
           <button class="btn btn-sm btn-secondary" onclick="openTemplateEditor('${t.id}')">Edit</button>
-          <a class="btn btn-sm btn-secondary" href="/api/templates/${t.id}/export" download>Export</a>
+          <a class="btn btn-sm btn-secondary" href="${API_BASE}/api/templates/${t.id}/export" download>Export</a>
           <button class="btn btn-sm btn-danger" onclick="deleteTemplate('${t.id}')">Delete</button>
         </td>
       </tr>`).join('');
@@ -806,7 +810,7 @@ el('tmpl-import-file') && document.getElementById('tmpl-import-file').addEventLi
   if (!file) return;
   const fd = new FormData();
   fd.append('file', file);
-  const r = await fetch('/api/templates/import', { method: 'POST', body: fd });
+  const r = await fetch(API_BASE + '/api/templates/import', { method: 'POST', body: fd });
   if (r.ok) { await loadTemplateList(); }
   else { alert('Import failed'); }
   e.target.value = '';
@@ -1013,7 +1017,7 @@ function renderPopDetail(pop, stats) {
         <div class="chunk-item">
           <span class="chunk-name">${c.name}</span>
           <span class="chunk-size">${c.size_mb} MB</span>
-          <a class="btn btn-sm btn-secondary" href="/api/populations/${pop.id}/chunks/${c.name}" download>Download</a>
+          <a class="btn btn-sm btn-secondary" href="${API_BASE}/api/populations/${pop.id}/chunks/${c.name}" download>Download</a>
         </div>`).join('') +
       '</div>'
     : pop.run_qa && pop.qa_status !== 'approved'
@@ -1050,7 +1054,7 @@ function renderPopDetail(pop, stats) {
     for (let i = 0; i < chunks.length; i++) {
       statusEl.textContent = `Downloading chunk ${i + 1} of ${chunks.length}: ${chunks[i].name}…`;
       const a = document.createElement('a');
-      a.href = `/api/populations/${pop.id}/chunks/${chunks[i].name}`;
+      a.href = `${API_BASE}/api/populations/${pop.id}/chunks/${chunks[i].name}`;
       a.download = chunks[i].name;
       document.body.appendChild(a);
       a.click();
