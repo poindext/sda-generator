@@ -40,9 +40,17 @@ async def _generation_pipeline(
     run_qa: bool,
 ) -> None:
     job_store.update_status(job_id, "running")
-    success = await asyncio.to_thread(
-        _run_generator_sync, job_id, template_path, output_dir, count, history_months
-    )
+    job_store.append_progress(job_id,
+        f"Starting: {count} patients · template {Path(template_path).name}")
+
+    try:
+        success = await asyncio.to_thread(
+            _run_generator_sync, job_id, template_path, output_dir, count, history_months
+        )
+    except Exception as exc:
+        job_store.append_progress(job_id, f"[ERROR] {exc}")
+        job_store.update_status(job_id, "failed", error=str(exc))
+        return
 
     if not success:
         return
