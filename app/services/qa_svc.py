@@ -28,6 +28,7 @@ def run_qa_sync(job_id: str, template_path: str, output_dir: str) -> bool:
         cmd,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
+        stdin=subprocess.DEVNULL,
         text=True,
         cwd=str(BASE_DIR),
         env=env,
