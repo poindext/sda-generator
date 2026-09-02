@@ -8,8 +8,7 @@ IIS sub-path (e.g. /genesis):
   Set GENESIS_ROOT_PATH=/genesis in environment; see web.config.
 """
 import os
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from pathlib import Path
 
@@ -35,11 +34,12 @@ class _StripRootPath:
                 # Redirect bare sub-path to trailing-slash form so that
                 # relative asset URLs (static/css/app.css) resolve correctly.
                 from starlette.responses import RedirectResponse
-                await RedirectResponse(url=self.root + "/", status_code=301)(scope, receive, send)
+                await RedirectResponse(
+                    url=self.root + "/", status_code=301
+                )(scope, receive, send)
                 return
             if path.startswith(self.root + "/"):
                 scope = dict(scope)
-                scope["root_path"] = self.root + scope.get("root_path", "")
                 scope["path"] = path[len(self.root):] or "/"
         await self.inner(scope, receive, send)
 
@@ -58,8 +58,7 @@ _fastapi.include_router(jobs.router,        prefix="/api", tags=["jobs"])
 # Static files and SPA fallback
 # --------------------------------------------------------------------------
 _static = Path(__file__).parent / "static"
-
-_fastapi.mount("/static", StaticFiles(directory=_static), name="static")
+_static_resolved = _static.resolve()
 
 
 @_fastapi.get("/")
@@ -67,10 +66,21 @@ async def index():
     return FileResponse(_static / "index.html")
 
 
+@_fastapi.get("/static/{file_path:path}")
+async def serve_static(file_path: str):
+    # Explicit route so Starlette's routing picks this up as a FULL match
+    # before the catch-all, regardless of root_path in scope.
+    candidate = (_static / file_path).resolve()
+    if not str(candidate).startswith(str(_static_resolved)):
+        raise HTTPException(403)
+    if not candidate.exists():
+        raise HTTPException(404)
+    return FileResponse(candidate)
+
+
 @_fastapi.get("/{full_path:path}")
 async def spa_fallback(full_path: str):
     if full_path.startswith("api/"):
-        from fastapi import HTTPException
         raise HTTPException(404)
     return FileResponse(_static / "index.html")
 
