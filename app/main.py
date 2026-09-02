@@ -31,7 +31,13 @@ class _StripRootPath:
     async def __call__(self, scope, receive, send):
         if self.root and scope.get("type") in ("http", "websocket"):
             path = scope.get("path", "")
-            if path == self.root or path.startswith(self.root + "/"):
+            if path == self.root:
+                # Redirect bare sub-path to trailing-slash form so that
+                # relative asset URLs (static/css/app.css) resolve correctly.
+                from starlette.responses import RedirectResponse
+                await RedirectResponse(url=self.root + "/", status_code=301)(scope, receive, send)
+                return
+            if path.startswith(self.root + "/"):
                 scope = dict(scope)
                 scope["root_path"] = self.root + scope.get("root_path", "")
                 scope["path"] = path[len(self.root):] or "/"
