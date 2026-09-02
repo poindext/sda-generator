@@ -4095,9 +4095,9 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 "Severity": "ERROR" if _ed_ip_lock_on else "INFO",
                 "Category": "MultiFacility",
                 "Description": (
-                    "ED→inpatient pair split across facilities (intentional transfer): "
+                    "ED->inpatient pair split across facilities (intentional transfer): "
                     if not _ed_ip_lock_on else
-                    "ED→inpatient pair split across facilities: "
+                    "ED->inpatient pair split across facilities: "
                 ) + f"ED at {_ed_fac}, inpatient at {_ip_fac}",
                 "Field1": "EDFacilityCode",
                 "Value1": _ed_fac,

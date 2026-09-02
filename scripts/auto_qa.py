@@ -1143,8 +1143,8 @@ def main() -> None:
             lines.append(f"             Approach: {iss.get('suggested_approach','')[:80]}")
             print("\n".join(lines))
         print()
-    print(f"  Full results  → {issues_path}")
-    print(f"  Changelog     → {changelog_path}")
+    print(f"  Full results  -> {issues_path}")
+    print(f"  Changelog     -> {changelog_path}")
     print("=" * width)
 
     sys.exit(0 if approved else 1)

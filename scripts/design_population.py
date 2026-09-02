@@ -299,7 +299,7 @@ def update_catalog_from_template(
         print(f"  [{action}] {cohort.get('name', slug)}", flush=True)
 
     cpath.write_text(json.dumps(catalog, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(f"\n  Catalog saved → {cpath}", flush=True)
+    print(f"\n  Catalog saved -> {cpath}", flush=True)
     print(f"  {added} added, {updated} updated | total: {len(catalog['cohorts'])} cohorts",
           flush=True)
 
@@ -366,7 +366,7 @@ def sync_configs_from_template(
             lib_data = panels
         lib_path.write_text(json.dumps(lib_data, indent=2, ensure_ascii=False),
                             encoding="utf-8")
-        print(f"  Lab library saved → {lib_path}  ({added_panels} panel(s) added)",
+        print(f"  Lab library saved ->{lib_path}  ({added_panels} panel(s) added)",
               flush=True)
     else:
         print("  Lab library: no new panels to add.", flush=True)
@@ -900,7 +900,7 @@ async def _phase1b_complete(client, model: str, description: str,
                 merged[l["county"]] = l
                 added += 1
         locs = list(merged.values())
-        print(f"  Phase 1b supplement {round_n} ✓  +{added} counties → {len(locs)} total",
+        print(f"  Phase 1b supplement {round_n} ✓  +{added} counties ->{len(locs)} total",
               flush=True)
         if added == 0:
             # LLM returned only duplicates — no progress, stop early
@@ -1549,7 +1549,7 @@ Facility sample (first 20): {json.dumps(fac_summary)}
 Rules:
 - Set enabled=false for any scenario not mentioned in the description.
 - For outbreak_seeding: derive origin county from the description (e.g. "SE/Appalachian Ohio"
-  → use the most rural/remote county in that region). Set phase month ranges to match any
+  -> use the most rural/remote county in that region). Set phase month ranges to match any
   described timeline; if vague, use reasonable quarterly steps across the history window.
 - For diagnostic_learning: map the described awareness timeline to phase month ranges.
   If a specific assay or biomarker is mentioned, set oap_assay_available accordingly.
@@ -1720,7 +1720,7 @@ def _fix_template(template: dict) -> None:
             seen[key] = loc
     deduped = list(seen.values())
     if len(deduped) != len(locs):
-        print(f"  [FIX] Deduplicated geography: {len(locs)} → {len(deduped)} locations",
+        print(f"  [FIX] Deduplicated geography: {len(locs)} -> {len(deduped)} locations",
               flush=True)
     total_geo = sum(l.get("weight", 0) for l in deduped)
     if deduped and abs(total_geo - 1.0) > 0.001:
@@ -1863,7 +1863,7 @@ async def run(args):
 
     n_scenarios = len(template.get("scenarios", {}))
 
-    print(f"\n✓ Template written → {output_path}")
+    print(f"\n✓ Template written -> {output_path}")
     print(f"  {n_cohorts} cohorts  |  {n_facilities} facilities  |  {n_counties} counties")
     print(f"  {n_allergies} shared allergies  |  {n_scenarios} scenario(s)")
     print(f"\nNext step: python generate_population.py --template {output_path} --count 100")
