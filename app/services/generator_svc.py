@@ -109,6 +109,7 @@ def _run_generator_sync(
         cmd,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
+        stdin=subprocess.DEVNULL,
         text=True,
         cwd=str(BASE_DIR),
     )
