@@ -18,7 +18,7 @@ def run_qa_sync(job_id: str, template_path: str, output_dir: str) -> bool:
     """
     env = _env_with_key()
     cmd = [
-        sys.executable,
+        sys.executable, "-u",
         str(SCRIPTS_DIR / "auto_qa.py"),
         "--template", template_path,
         "--output", output_dir,

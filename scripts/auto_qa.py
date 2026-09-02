@@ -1061,14 +1061,14 @@ def main() -> None:
     # ── Load template-specific QA config ────────────────────────────────────
     qa_config = load_qa_config(args.template)
     if qa_config:
-        print(f"  QA config: {Path(args.template).stem.replace('.template','')}.qa_config.json loaded")
+        print(f"  QA config: {Path(args.template).stem.replace('.template','')}.qa_config.json loaded", flush=True)
 
     # ── Build review package ─────────────────────────────────────────────────
-    print("Building clinical review package...")
+    print("Building clinical review package...", flush=True)
     package = build_review_package(output_dir, args.template, qa_config=qa_config)
     pkg_path = output_dir / "qa_review_package.txt"
     pkg_path.write_text(package, encoding="utf-8")
-    print(f"  Package: {len(package):,} chars saved to {pkg_path}")
+    print(f"  Package: {len(package):,} chars saved to {pkg_path}", flush=True)
 
     # ── OpenAI review ────────────────────────────────────────────────────────
     review   = review_with_openai(package, args.model, args.base_url,
@@ -1121,6 +1121,7 @@ def main() -> None:
                 subprocess.run(
                     [sys.executable, str(_design_script),
                      "--sync-configs", args.template],
+                    stdin=subprocess.DEVNULL,
                     check=True,
                 )
             except subprocess.CalledProcessError as _e:
