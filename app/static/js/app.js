@@ -663,11 +663,7 @@ function renderPopResults(pop) {
   // Chunks / fix panel
   const chunksWrap = el('result-chunks');
   if (pop.downloadable && pop.chunks?.length) {
-    let html = '';
-    if (pop.qa_status === 'needs_review') {
-      html += `<div class="alert alert-warning mb-12">QA found issues — review them above before loading into HealthShare.</div>`;
-    }
-    html += '<div class="chunk-list">' +
+    let html = '<div class="chunk-list">' +
       pop.chunks.map(c => `
         <div class="chunk-item">
           <span class="chunk-name">${c.name}</span>
@@ -675,10 +671,27 @@ function renderPopResults(pop) {
           <a class="btn btn-sm btn-secondary" href="${API_BASE}/api/populations/${pop.id}/chunks/${c.name}" download>Download</a>
         </div>`).join('') +
       '</div>';
+    if (pop.qa_status === 'needs_review') {
+      html += `
+      <div class="mt-16">
+        <div class="flex items-c gap-16" style="justify-content:space-between">
+          <div>
+            <strong>Fix QA Issues</strong>
+            <p class="text-muted text-sm" style="margin:4px 0 0">Let the AI fix the template and regenerate, or re-run QA if you believe the findings are false positives.</p>
+          </div>
+          <div class="flex gap-8">
+            <button id="btn-reqa-results" class="btn btn-secondary" data-popid="${pop.id}">Re-run QA</button>
+            <button id="btn-fix-results" class="btn btn-primary" data-popid="${pop.id}">Fix &amp; Regenerate</button>
+          </div>
+        </div>
+        <div id="fix-results-log-wrap" class="hidden mt-12">
+          <div id="fix-results-log" class="log-box"></div>
+        </div>
+      </div>`;
+    }
     chunksWrap.innerHTML = html;
   } else if (pop.run_qa && pop.qa_status === 'needs_review') {
     chunksWrap.innerHTML = `
-      <div class="alert alert-warning mb-12">Download is blocked until this population passes QA review.</div>
       <div class="flex items-c gap-16" style="justify-content:space-between">
         <div>
           <strong>Resolve QA Issues</strong>
