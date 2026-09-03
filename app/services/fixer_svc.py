@@ -237,6 +237,12 @@ async def _fix_pipeline(
         job_id,
         f"Stopped after {MAX_ROUNDS} round(s). Remaining issues require manual review.",
     )
+    meta = _read_meta(pop_dir)
+    if not meta.get("chunks_built"):
+        job_store.append_progress(job_id, "Building download chunks…")
+        await asyncio.to_thread(chunker_svc.build_chunks, pop_dir)
+        meta["chunks_built"] = True
+        _write_meta(pop_dir, meta)
     job_store.update_status(
         job_id, "completed",
         result={"qa_status": "needs_review", "rounds": MAX_ROUNDS},

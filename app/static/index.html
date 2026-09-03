@@ -33,7 +33,7 @@
   <div id="page-dashboard" class="page">
     <div class="page-header">
       <h2>Dashboard</h2>
-      <button class="btn btn-primary" onclick="navigate('#new')">+ New Population</button>
+      <button class="btn btn-primary" onclick="navigate('#generate')">+ New Population</button>
     </div>
     <div id="dash-stats" class="stat-row"></div>
     <div class="card">
@@ -154,6 +154,12 @@
               Run clinical QA after generation
             </label>
           </div>
+          <div class="form-group" id="auto-fix-row" style="display:none; padding-left:24px;">
+            <label class="checkbox-label">
+              <input type="checkbox" id="gen-auto-fix" checked>
+              Auto-fix QA issues (up to 5 rounds)
+            </label>
+          </div>
           <button type="submit" id="btn-start-gen" class="btn btn-primary">Start Generation →</button>
         </form>
       </div>
@@ -213,6 +219,64 @@
     </div>
   </div>
 
+  <!-- Generate Population (quick flow — skip design wizard) -->
+  <div id="page-generate" class="page">
+    <div class="page-header"><h2>New Population</h2></div>
+    <div class="card" id="gen2-form-card">
+      <h3>Generation Settings</h3>
+      <form id="gen2-form">
+        <div class="form-group">
+          <label>Template</label>
+          <select id="gen2-template-select">
+            <option value="">— select a template —</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Population Name</label>
+          <input type="text" id="gen2-pop-name" placeholder="e.g. ohio_demo_500" required>
+        </div>
+        <div class="form-group">
+          <label>Patient Count</label>
+          <input type="number" id="gen2-count" value="100" min="1" max="500000" required>
+        </div>
+        <div class="form-group">
+          <label>History Months</label>
+          <input type="number" id="gen2-history-months" value="24" min="1" max="60" required>
+        </div>
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="gen2-run-qa">
+            Run clinical QA after generation
+          </label>
+        </div>
+        <div class="form-group" id="gen2-auto-fix-row" style="display:none; padding-left:24px;">
+          <label class="checkbox-label">
+            <input type="checkbox" id="gen2-auto-fix" checked>
+            Auto-fix QA issues (up to 5 rounds)
+          </label>
+        </div>
+        <button type="submit" id="btn-start-gen2" class="btn btn-primary">Start Generation →</button>
+      </form>
+    </div>
+    <div id="gen2-progress-card" class="card hidden" style="margin-top:16px">
+      <h3>Generation Progress</h3>
+      <div class="progress-bar-wrap"><div id="gen2-progress-fill" class="progress-bar-fill"></div></div>
+      <div id="gen2-log" class="log-box mt-8"></div>
+    </div>
+    <div id="gen2-results" class="card hidden" style="margin-top:16px">
+      <h3>Results — <span id="gen2-result-pop-name"></span></h3>
+      <div class="flex gap-16 mt-8 mb-16">
+        <div><span class="text-muted text-sm">QA Status: </span><span id="gen2-result-qa-status"></span></div>
+        <div><span class="text-muted text-sm">Patients: </span><strong id="gen2-result-patient-count"></strong></div>
+      </div>
+      <div id="gen2-result-qa-issues" class="mb-16"></div>
+      <div id="gen2-result-chunks"></div>
+      <div style="margin-top:16px">
+        <button class="btn btn-secondary" onclick="navigate('#dashboard')">&#8592; Back to Dashboard</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Population Detail -->
   <div id="page-population" class="page">
     <div class="page-header">
@@ -241,6 +305,6 @@
   </div>
 </div>
 
-<script src="static/js/app.js?v=5"></script>
+<script src="static/js/app.js?v=7"></script>
 </body>
 </html>

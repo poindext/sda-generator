@@ -208,7 +208,7 @@ register('dashboard', async () => {
       <div class="stat"><div class="label">Total Requested</div><div class="value">${pops.reduce((a,p)=>a+(p.count_requested||0),0).toLocaleString()}</div></div>`;
 
     if (!pops.length) {
-      tbody.innerHTML = `<tr><td colspan="6" style="padding:32px;text-align:center;color:var(--clr-muted)">No populations yet — <a href="#" onclick="navigate('#new');return false">create one</a></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="6" style="padding:32px;text-align:center;color:var(--clr-muted)">No populations yet — <a href="#" onclick="navigate('#generate');return false">create one</a></td></tr>`;
       return;
     }
 
@@ -570,6 +570,11 @@ async function initGenerateForm() {
   if (wizState.templateId) sel.value = wizState.templateId;
 }
 
+el('gen-run-qa') && el('gen-run-qa').addEventListener('change', () => {
+  const row = el('auto-fix-row');
+  if (row) row.style.display = el('gen-run-qa').checked ? '' : 'none';
+});
+
 el('gen-form') && document.getElementById('gen-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const form = new FormData(e.target);
@@ -578,6 +583,7 @@ el('gen-form') && document.getElementById('gen-form').addEventListener('submit',
   const count = parseInt(el('gen-count').value);
   const histMonths = parseInt(el('gen-history-months').value);
   const runQa = el('gen-run-qa').checked;
+  const autoFix = runQa && (el('gen-auto-fix') ? el('gen-auto-fix').checked : true);
 
   if (!templateId || !name) { alert('Template and population name are required.'); return; }
 
@@ -586,7 +592,7 @@ el('gen-form') && document.getElementById('gen-form').addEventListener('submit',
   const resp = await api.post('/jobs', {
     template_id: templateId,
     population_name: name,
-    count, history_months: histMonths, run_qa: runQa,
+    count, history_months: histMonths, run_qa: runQa, auto_fix: autoFix,
   });
   wizState.genJobId = resp.job_id;
   await showWizStep(4);
@@ -765,6 +771,143 @@ function renderPopResults(pop) {
     });
   } else {
     chunksWrap.innerHTML = '<div class="text-muted text-sm">No chunks available yet.</div>';
+  }
+}
+
+// =========================================================
+// =========================================================
+// PAGE: GENERATE (quick flow — pick a template and go)
+// =========================================================
+
+register('generate', async () => {
+  el('page-generate').classList.add('active');
+
+  // Reset to form view each time the page loads
+  hide('gen2-progress-card');
+  hide('gen2-results');
+  show('gen2-form-card');
+  el('btn-start-gen2').disabled = false;
+
+  // Populate template dropdown
+  try {
+    const resp = await api.get('/templates');
+    const sel = el('gen2-template-select');
+    sel.innerHTML = '<option value="">— select a template —</option>';
+    (resp.templates || []).forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t.id;
+      opt.textContent = t.name || t.id;
+      sel.appendChild(opt);
+    });
+  } catch (e) {
+    console.error('Could not load templates', e);
+  }
+
+  // Attach listeners only once
+  if (el('gen2-form')._init) return;
+  el('gen2-form')._init = true;
+
+  el('gen2-run-qa').addEventListener('change', () => {
+    el('gen2-auto-fix-row').style.display = el('gen2-run-qa').checked ? '' : 'none';
+  });
+
+  el('gen2-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const templateId = el('gen2-template-select').value;
+    const name = el('gen2-pop-name').value.trim();
+    const count = parseInt(el('gen2-count').value);
+    const histMonths = parseInt(el('gen2-history-months').value);
+    const runQa = el('gen2-run-qa').checked;
+    const autoFix = runQa && el('gen2-auto-fix').checked;
+
+    if (!templateId || !name) { alert('Template and population name are required.'); return; }
+
+    el('btn-start-gen2').disabled = true;
+    hide('gen2-form-card');
+    show('gen2-progress-card');
+    hide('gen2-results');
+
+    const resp = await api.post('/jobs', {
+      template_id: templateId,
+      population_name: name,
+      count, history_months: histMonths, run_qa: runQa, auto_fix: autoFix,
+    });
+
+    const logBox = el('gen2-log');
+    const bar = el('gen2-progress-fill');
+    logBox.innerHTML = '';
+    bar.style.width = '0%';
+
+    streamGet(`/jobs/${resp.job_id}/stream`,
+      (line) => {
+        logLine(logBox, line);
+        const p = parseProgress(line);
+        if (p && p.total > 0) bar.style.width = Math.min(100, Math.round(p.done / p.total * 100)) + '%';
+        if (line.includes('── Starting QA') || line.includes('── Round')) bar.style.width = '95%';
+      },
+      async (status) => {
+        bar.style.width = '100%';
+        if (status === 'completed') {
+          logLine(logBox, '✓ Complete');
+          try {
+            const job = await api.get(`/jobs/${resp.job_id}`);
+            const popId = (job.params?.output_dir || '').split('/').pop();
+            const pop = await api.get(`/populations/${popId}`);
+            renderGen2Results(pop);
+            show('gen2-results');
+          } catch (err) {
+            console.error('Could not load results', err);
+          }
+        } else {
+          logLine(logBox, `✗ Job ended with status: ${status}`);
+        }
+      }
+    );
+  });
+});
+
+function renderGen2Results(pop) {
+  el('gen2-result-pop-name').textContent = pop.population_name;
+  el('gen2-result-qa-status').innerHTML = badge(pop.qa_status);
+  el('gen2-result-patient-count').textContent = (pop.patient_count || 0).toLocaleString();
+
+  const issuesWrap = el('gen2-result-qa-issues');
+  if (pop.qa_issues?.length) {
+    issuesWrap.innerHTML = pop.qa_issues.map(i => `
+      <div class="qa-issue ${i.severity}">
+        <div class="flex items-c gap-8">
+          <span class="qi-sev">${i.severity}</span>
+          <span class="qi-title">${i.title}</span>
+        </div>
+        <div class="qi-evidence">${i.evidence || ''}</div>
+      </div>`).join('');
+  } else if (pop.run_qa) {
+    issuesWrap.innerHTML = '<div class="alert alert-success">No QA issues found — population approved.</div>';
+  } else {
+    issuesWrap.innerHTML = '<div class="text-muted text-sm">QA was not run.</div>';
+  }
+
+  const chunksWrap = el('gen2-result-chunks');
+  if (pop.downloadable && pop.chunks?.length) {
+    let html = '<div class="chunk-list">' +
+      pop.chunks.map(c => `
+        <div class="chunk-item">
+          <span class="chunk-name">${c.name}</span>
+          <span class="chunk-size">${c.size_mb} MB</span>
+          <a class="btn btn-sm btn-secondary" href="${API_BASE}/api/populations/${pop.id}/chunks/${c.name}" download>Download</a>
+        </div>`).join('') +
+      '</div>';
+    if (pop.qa_status === 'needs_review') {
+      html += `
+      <div style="margin-top:16px">
+        <strong>QA issues remain after auto-fix.</strong>
+        <p class="text-muted text-sm" style="margin:4px 0 8px">Download the population or view the full detail page to re-run fix rounds.</p>
+        <button class="btn btn-secondary" onclick="navigate('#populations/${pop.id}')">View Detail</button>
+      </div>`;
+    }
+    chunksWrap.innerHTML = html;
+  } else {
+    chunksWrap.innerHTML = '';
   }
 }
 

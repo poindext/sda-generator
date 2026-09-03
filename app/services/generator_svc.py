@@ -24,11 +24,12 @@ async def start_generation(
     count: int,
     history_months: int,
     run_qa: bool,
+    auto_fix: bool = True,
 ) -> None:
     """Fire-and-forget coroutine: run generation, then optionally QA + chunk."""
     asyncio.create_task(
         _generation_pipeline(job_id, template_path, output_dir,
-                             count, history_months, run_qa)
+                             count, history_months, run_qa, auto_fix)
     )
 
 
@@ -39,6 +40,7 @@ async def _generation_pipeline(
     count: int,
     history_months: int,
     run_qa: bool,
+    auto_fix: bool = True,
 ) -> None:
     job_store.update_status(job_id, "running")
     job_store.append_progress(job_id,
@@ -67,17 +69,33 @@ async def _generation_pipeline(
         if qa_success:
             meta["qa_status"] = "approved"
             job_store.append_progress(job_id, "QA: APPROVED — building download chunks")
+            await asyncio.to_thread(chunker_svc.build_chunks, pop_dir)
+            meta["chunks_built"] = True
+            _write_meta(pop_dir, meta)
+            job_store.update_status(
+                job_id, "completed",
+                result={"output_dir": output_dir, "qa_status": "approved"},
+            )
+        elif auto_fix:
+            meta["qa_status"] = "needs_review"
+            _write_meta(pop_dir, meta)
+            job_store.append_progress(
+                job_id, "QA: ISSUES FOUND — starting auto-fix loop…"
+            )
+            from app.services import fixer_svc as _fixer  # lazy to avoid circular import
+            await _fixer._fix_pipeline(
+                job_id, template_path, output_dir, count, history_months
+            )
         else:
             meta["qa_status"] = "needs_review"
             job_store.append_progress(job_id, "QA: ISSUES FOUND — building download chunks")
-        await asyncio.to_thread(chunker_svc.build_chunks, pop_dir)
-        meta["chunks_built"] = True
-        _write_meta(pop_dir, meta)
-        job_store.update_status(
-            job_id,
-            "completed",
-            result={"output_dir": output_dir, "qa_status": meta["qa_status"]},
-        )
+            await asyncio.to_thread(chunker_svc.build_chunks, pop_dir)
+            meta["chunks_built"] = True
+            _write_meta(pop_dir, meta)
+            job_store.update_status(
+                job_id, "completed",
+                result={"output_dir": output_dir, "qa_status": "needs_review"},
+            )
     else:
         pop_dir = Path(output_dir)
         meta = _read_meta(pop_dir)

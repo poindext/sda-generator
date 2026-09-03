@@ -371,6 +371,7 @@ def _assign_facilities(
     rng: random.Random,
     ed_to_ip_pairs: dict,
     is_pregnancy_cohort: bool = False,
+    population_size: int = 0,
 ) -> dict:
     """
     Assign a facility dict to each encounter index.
@@ -406,6 +407,11 @@ def _assign_facilities(
         n_target = 2
     else:
         n_target = max_facs
+
+    # For tiny runs (≤ 5 patients) guarantee at least 2 facilities so multi-facility
+    # behaviour is always visible regardless of the probabilistic draw.
+    if n_target == 1 and 0 < population_size <= 5:
+        n_target = 2
 
     if n_target == 1:
         return {i: home_fac for i in range(n_enc)}
@@ -1468,6 +1474,7 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         rng=rng,
         ed_to_ip_pairs=_ed_to_ip_pairs,
         is_pregnancy_cohort=_is_pregnancy_cohort,
+        population_size=tmpl.get("meta", {}).get("population_size", 0),
     )
 
     # Per-facility provider: select one provider per facility from that facility's pool,
@@ -4495,6 +4502,8 @@ def run_template_mode(count: int, output_dir: Path, template_path: str, resume: 
     delete_dir.mkdir(exist_ok=True)
 
     meta = tmpl.get("meta", {})
+    meta["population_size"] = count  # propagates to workers via tmpl_json serialisation
+    tmpl["meta"] = meta
     n_workers = max(1, min(concurrency, os.cpu_count() or 1))
     print(f"Template mode: {count} patients from {template_path}")
     print(f"  Population : {meta.get('name','(unnamed)')}")

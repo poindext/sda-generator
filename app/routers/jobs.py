@@ -20,6 +20,7 @@ class GenerateRequest(BaseModel):
     count: int = 100
     history_months: int = 24
     run_qa: bool = False
+    auto_fix: bool = True
 
 
 @router.post("/jobs")
@@ -39,6 +40,7 @@ async def create_job(body: GenerateRequest):
         "count": body.count,
         "history_months": body.history_months,
         "run_qa": body.run_qa,
+        "auto_fix": body.auto_fix,
     })
 
     # Write _meta.json immediately so the population appears in listings
@@ -50,6 +52,7 @@ async def create_job(body: GenerateRequest):
         "population_name": body.population_name,
         "count": body.count,
         "run_qa": body.run_qa,
+        "auto_fix": body.auto_fix,
         "qa_status": "pending" if body.run_qa else "skipped",
         "chunks_built": False,
     })
@@ -61,6 +64,7 @@ async def create_job(body: GenerateRequest):
         count=body.count,
         history_months=body.history_months,
         run_qa=body.run_qa,
+        auto_fix=body.auto_fix,
     )
 
     return {"job_id": job.id, "output_dir": output_dir}
