@@ -426,7 +426,7 @@
           "normal_min": 0,
           "normal_max": 0.04,
           "abnormal_min": 0.05,
-          "abnormal_max": 50.0
+          "abnormal_max": 10.0
         }
       ],
       "disease_tags": [

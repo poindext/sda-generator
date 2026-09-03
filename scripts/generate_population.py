@@ -692,6 +692,15 @@ def _build_lab_xml(lab, enc_num, enc_date, patient_id, prov_code, prov_name,
             val = str(_pth_int)
             is_abn = _pth_int > 65
             interp = "H" if is_abn else "N"
+        elif ri.get("code") == "1975-2":
+            # Total Bilirubin: normal in the vast majority of patients.
+            # ~7% background rate (Gilbert syndrome + incidental mild hepatic findings).
+            # Cohort-specific panels for sepsis/hepatic cohorts will still use these
+            # ranges, but at a realistic population frequency.
+            is_abn = rng.random() < 0.07
+            _bili = rng.uniform(1.3, 3.5) if is_abn else rng.uniform(0.1, 1.2)
+            val = f"{_bili:.1f}"
+            interp = "H" if is_abn else "N"
         else:
             is_abn = rng.random() < float(lab.get("abnormal_pct", 0.3))
             val = _result_value(ri, is_abn, rng)
