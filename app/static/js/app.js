@@ -259,6 +259,8 @@ register('dashboard', async () => {
 
 window.deletePop = async (id) => {
   if (!confirm_del('Delete this population? This cannot be undone.')) return;
+  const btn = event?.target;
+  if (btn) { btn.disabled = true; btn.textContent = 'Deleting…'; }
   await api.del(`/populations/${id}`);
   navigate('#dashboard');
 };
@@ -1389,8 +1391,11 @@ function renderPopDetail(pop, stats) {
 }
 
 el('pop-del-btn') && document.getElementById('pop-del-btn').addEventListener('click', async () => {
-  const id = el('pop-del-btn').dataset.id;
+  const btn = el('pop-del-btn');
+  const id = btn.dataset.id;
   if (!confirm_del('Delete this population? All files will be removed.')) return;
+  btn.disabled = true;
+  btn.textContent = 'Deleting…';
   await api.del(`/populations/${id}`);
   navigate('#dashboard');
 });

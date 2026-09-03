@@ -473,7 +473,7 @@ async def override_qa(pop_id: str):
 async def delete_population(pop_id: str):
     d = _find(pop_id)
     job_store.delete_jobs_for_population(str(d))
-    shutil.rmtree(d)
+    await asyncio.to_thread(shutil.rmtree, d)
     return {"deleted": True, "id": pop_id}
 
 
