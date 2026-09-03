@@ -701,6 +701,14 @@ def _build_lab_xml(lab, enc_num, enc_date, patient_id, prov_code, prov_name,
             _bili = rng.uniform(1.3, 3.5) if is_abn else rng.uniform(0.1, 1.2)
             val = f"{_bili:.1f}"
             interp = "H" if is_abn else "N"
+        elif ri.get("code") in ("42757-5", "89579-7", "6598-7", "71427-9"):
+            # Cardiac troponin: only elevated in ~8% of patients getting the test
+            # ordered (those with genuine acute cardiac concern). Normal is <0.04 ng/mL;
+            # realistic peak for most presentations is 0.04–2.0 ng/mL.
+            is_abn = rng.random() < 0.08
+            _trop = rng.uniform(0.04, 2.0) if is_abn else rng.uniform(0.001, 0.035)
+            val = f"{_trop:.3f}"
+            interp = "H" if is_abn else "N"
         else:
             is_abn = rng.random() < float(lab.get("abnormal_pct", 0.3))
             val = _result_value(ri, is_abn, rng)
