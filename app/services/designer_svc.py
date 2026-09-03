@@ -26,20 +26,27 @@ async def run_design(job_id: str, txt_path: str, template_path: str) -> None:
 def _run_design_sync(job_id: str, txt_path: str, template_path: str) -> None:
     env = _env_with_key()
     cmd = [
-        sys.executable,
+        sys.executable, "-u",
         str(SCRIPTS_DIR / "design_population.py"),
         txt_path,
         "--output", template_path,
         "--model", DEFAULT_MODEL,
     ]
-    proc = subprocess.Popen(
-        cmd,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        text=True,
-        cwd=str(BASE_DIR),
-        env=env,
-    )
+    try:
+        proc = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            stdin=subprocess.DEVNULL,
+            text=True,
+            cwd=str(BASE_DIR),
+            env=env,
+        )
+    except Exception as exc:
+        job_store.append_progress(job_id, f"[ERROR] {exc}")
+        job_store.update_status(job_id, "failed", error=str(exc))
+        return
+
     for line in proc.stdout:
         job_store.append_progress(job_id, line.rstrip())
     proc.wait()
