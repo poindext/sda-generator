@@ -50,7 +50,7 @@ def build_chunks(population_dir: Path, chunk_size: int = CHUNK_SIZE) -> list[Pat
     chunk_paths: list[Path] = []
     for i, pid_batch in enumerate(batches, 1):
         chunk_path = chunks_dir / f"{_pfx}_chunk_{i:03d}_of_{len(batches):03d}.zip"
-        with zipfile.ZipFile(chunk_path, "w", zipfile.ZIP_DEFLATED) as zf:
+        with zipfile.ZipFile(chunk_path, "w", zipfile.ZIP_STORED) as zf:
             for pid in pid_batch:
                 for xml_file in patient_files[pid]:
                     zf.write(xml_file, xml_file.name)
