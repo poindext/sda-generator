@@ -27,3 +27,7 @@ if _env.exists():
 OPENAI_API_KEY: str = os.environ.get("OPENAI_API_KEY", "")
 DEFAULT_MODEL: str  = "gpt-4o"
 CHUNK_SIZE: int     = 10_000
+# Workers for generate_population.py subprocess.
+# Windows (IIS) spawns a full Python interpreter per worker — keep at 1
+# to avoid multiple ~300 MB Python processes exhausting the app pool.
+GENERATION_WORKERS: int = int(os.environ.get("GENERATION_WORKERS", "1"))

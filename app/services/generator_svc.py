@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 from typing import AsyncIterator
 
-from app.config import BASE_DIR, SCRIPTS_DIR, POPULATIONS_DIR
+from app.config import BASE_DIR, SCRIPTS_DIR, POPULATIONS_DIR, GENERATION_WORKERS
 from app.services import job_store
 from app.services import qa_svc, chunker_svc
 
@@ -123,6 +123,7 @@ def _run_generator_sync(
         "--template", template_path,
         "--output", output_dir,
         "--count", str(count),
+        "--concurrency", str(GENERATION_WORKERS),
     ]
     proc = subprocess.Popen(
         cmd,

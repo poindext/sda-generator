@@ -4851,15 +4851,21 @@ def run_template_mode(count: int, output_dir: Path, template_path: str, resume: 
             (pid, str(xml_dir), str(delete_dir), resume)
             for pid in range(1, count + 1)
         ]
-        with concurrent.futures.ProcessPoolExecutor(
-            max_workers=n_workers,
-            initializer=_worker_init,
-            initargs=(tmpl_json, no_validate),
-        ) as executor:
-            futures = {executor.submit(_worker_generate, a): a[0] for a in worker_args}
-            for future in concurrent.futures.as_completed(futures):
-                patient_id, status, errors, patient_data = future.result()
-                _handle_result(patient_id, status, errors, patient_data)
+        try:
+            with concurrent.futures.ProcessPoolExecutor(
+                max_workers=n_workers,
+                initializer=_worker_init,
+                initargs=(tmpl_json, no_validate),
+            ) as executor:
+                futures = {executor.submit(_worker_generate, a): a[0] for a in worker_args}
+                for future in concurrent.futures.as_completed(futures):
+                    patient_id, status, errors, patient_data = future.result()
+                    _handle_result(patient_id, status, errors, patient_data)
+        except Exception as _mp_exc:
+            import traceback
+            print(f"\n[FATAL] Worker pool error: {_mp_exc}", flush=True)
+            traceback.print_exc()
+            raise
     else:
         # Single-process path — identical logic, no pickle overhead
         schema = None if no_validate else load_schema()
