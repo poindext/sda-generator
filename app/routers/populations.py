@@ -292,8 +292,13 @@ async def download_chunk(pop_id: str, chunk_name: str):
 _CSV_FILES = [
     "patients.csv",
     "encounters.csv",
+    "diagnoses.csv",
     "medications.csv",
     "labs.csv",
+    "observations.csv",
+    "procedures.csv",
+    "allergies.csv",
+    "vaccinations.csv",
     "patient_facilities.csv",
     "generator_validation.csv",
 ]

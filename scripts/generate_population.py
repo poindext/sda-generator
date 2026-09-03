@@ -1652,6 +1652,11 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     _fac_rad: dict = {}
     _fac_med: dict = {}
     _fac_vax: dict = {}
+    _dx_rows:      list = []
+    _obs_rows:     list = []
+    _proc_rows:    list = []
+    _allergy_rows: list = []
+    _vax_rows:     list = []
     enc_nums = []
     enc_end_times = []    # stored for doc-signing timestamps
     enc_start_times = []  # stored for obs/procedure timestamps
@@ -1742,6 +1747,20 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             f"    </Allergy>\n"
             f"  </Allergies>\n"
         )
+        _allergy_rows.append({
+            "PatientID": patient_id,
+            "AllergenCode": allergy.get("allergen_code", "PCN"),
+            "AllergenDescription": allergy.get("allergen_description", "Penicillin"),
+            "Reaction": reaction,
+            "Severity": "Moderate",
+            "Status": "Active",
+            "OnsetDate": allergy_onset.strftime("%Y-%m-%d"),
+            "ProviderCode": prov_code,
+            "ProviderName": prov_name,
+            "FacilityCode": fac_code,
+            "FacilityName": fac_name,
+            "EncounterNumber": enc_nums[0],
+        })
 
     # ---- IllnessHistories (once per patient) ----
     illness_tmpls = cohort.get("illness_history_templates", [])
@@ -2051,6 +2070,19 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                     f"      <ExternalId>Diagnoses_{diag_idx}</ExternalId>\n"
                     f"    </Diagnosis>\n"
                 )
+                _dx_rows.append({
+                    "PatientID": patient_id,
+                    "EncounterNumber": en,
+                    "DiagnosisCode": d["code"],
+                    "DiagnosisDescription": d["description"],
+                    "DiagnosisType": dtype_code,
+                    "DiagnosisTypeName": dtype_desc,
+                    "ProviderCode": prov_code,
+                    "ProviderName": prov_name,
+                    "FacilityCode": fac_code,
+                    "FacilityName": fac_name,
+                    "EnteredOn": ed.strftime("%Y-%m-%d"),
+                })
                 diag_idx += 1
 
     # COH001 guarantee: if a flagged condition is in diag_list but never reached any encounter
@@ -2125,6 +2157,19 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                     f"      <EnteredOn>{obs_time}</EnteredOn>\n"
                     f"    </Observation>\n"
                 )
+                _obs_rows.append({
+                    "PatientID": patient_id,
+                    "EncounterNumber": en,
+                    "ObservationTime": (enc_start_times[ei_o] + timedelta(minutes=3)).strftime("%Y-%m-%dT%H:%M:%S"),
+                    "ObservationCode": obs["code"],
+                    "ObservationDescription": obs["description"],
+                    "ObservationValue": val,
+                    "ObservationUnits": obs.get("units", obs.get("result_units", "")),
+                    "ProviderCode": prov_code,
+                    "ProviderName": prov_name,
+                    "FacilityCode": fac_code,
+                    "FacilityName": fac_name,
+                })
                 obs_idx += 1
 
     # ---- Procedures: one billing code per encounter ----
@@ -2153,6 +2198,19 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 f"      <ActionCode>A</ActionCode>\n"
                 f"    </Procedure>\n"
             )
+            _proc_rows.append({
+                "PatientID": patient_id,
+                "EncounterNumber": en,
+                "ProcedureCode": proc["code"],
+                "ProcedureDescription": proc["description"],
+                "CodingStandard": "CPT",
+                "ProcedureTime": enc_start_times[ep_i].strftime("%Y-%m-%dT%H:%M:%S"),
+                "ProviderCode": prov_code,
+                "ProviderName": prov_name,
+                "FacilityCode": fac_code,
+                "FacilityName": fac_name,
+                "EnteredOn": ed.strftime("%Y-%m-%d"),
+            })
 
     _enc_rows: list = []  # accumulated inside the document loop below
     _hyperglycemic_enc_data: dict = {}  # ei0 -> glucose_admit for hyperglycemic encounters
@@ -3251,6 +3309,17 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             f"      <Indication>vaccination</Indication>\n"
             f"    </Vaccination>\n"
         )
+        _vax_rows.append({
+            "PatientID": patient_id,
+            "CVXCode": vax.get("cvx_code", "140"),
+            "VaccineDescription": vax.get("description", "Influenza, seasonal"),
+            "AdministrationDate": vax_date.strftime("%Y-%m-%d"),
+            "EncounterNumber": vax_enc,
+            "ProviderCode": prov_code,
+            "ProviderName": prov_name,
+            "FacilityCode": fac_code,
+            "FacilityName": fac_name,
+        })
 
     # Build per-facility XMLs (Patient section has __FAC_*__ placeholders)
     _patient_xml = "".join(parts)
@@ -4387,6 +4456,11 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         "labs": _lab_rows,
         "validations": _val_rows,
         "facilities": _fac_rows,
+        "diagnoses": _dx_rows,
+        "observations": _obs_rows,
+        "procedures": _proc_rows,
+        "allergies": _allergy_rows,
+        "vaccinations": _vax_rows,
     }
 
     return _result_xmls, patient_data
@@ -4607,6 +4681,11 @@ def run_template_mode(count: int, output_dir: Path, template_path: str, resume: 
     all_labs = [r for i in ordered_ids for r in results_by_id[i]["labs"]]
     all_validations = [r for i in ordered_ids for r in results_by_id[i]["validations"]]
     all_facilities = [r for i in ordered_ids for r in results_by_id[i]["facilities"]]
+    all_diagnoses = [r for i in ordered_ids for r in results_by_id[i].get("diagnoses", [])]
+    all_observations = [r for i in ordered_ids for r in results_by_id[i].get("observations", [])]
+    all_procedures = [r for i in ordered_ids for r in results_by_id[i].get("procedures", [])]
+    all_allergies = [r for i in ordered_ids for r in results_by_id[i].get("allergies", [])]
+    all_vaccinations = [r for i in ordered_ids for r in results_by_id[i].get("vaccinations", [])]
 
     _FACILITY_FIELDNAMES = [
         "PatientID", "FacilityCode", "FacilityName",
@@ -4621,6 +4700,11 @@ def run_template_mode(count: int, output_dir: Path, template_path: str, resume: 
     _write_csv(all_encounters,  output_dir / "encounters.csv")
     _write_csv(all_medications, output_dir / "medications.csv")
     _write_csv(all_labs,        output_dir / "labs.csv")
+    _write_csv(all_diagnoses,   output_dir / "diagnoses.csv")
+    _write_csv(all_observations, output_dir / "observations.csv")
+    _write_csv(all_procedures,  output_dir / "procedures.csv")
+    _write_csv(all_allergies,   output_dir / "allergies.csv")
+    _write_csv(all_vaccinations, output_dir / "vaccinations.csv")
     _write_csv(
         all_facilities,
         output_dir / "patient_facilities.csv",
