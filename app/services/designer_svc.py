@@ -39,6 +39,7 @@ def _run_design_sync(job_id: str, txt_path: str, template_path: str) -> None:
             stderr=subprocess.STDOUT,
             stdin=subprocess.DEVNULL,
             text=True,
+            encoding="utf-8",
             cwd=str(BASE_DIR),
             env=env,
         )
@@ -77,6 +78,7 @@ async def stream_design(job_id: str) -> AsyncIterator[str]:
 def _env_with_key() -> dict:
     import os
     env = os.environ.copy()
+    env["PYTHONUTF8"] = "1"
     if OPENAI_API_KEY:
         env["OPENAI_API_KEY"] = OPENAI_API_KEY
     return env

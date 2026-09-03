@@ -30,6 +30,7 @@ def run_qa_sync(job_id: str, template_path: str, output_dir: str) -> bool:
         stderr=subprocess.STDOUT,
         stdin=subprocess.DEVNULL,
         text=True,
+        encoding="utf-8",
         cwd=str(BASE_DIR),
         env=env,
     )
@@ -44,6 +45,7 @@ def run_qa_sync(job_id: str, template_path: str, output_dir: str) -> bool:
 def _env_with_key() -> dict:
     import os
     env = os.environ.copy()
+    env["PYTHONUTF8"] = "1"
     if OPENAI_API_KEY:
         env["OPENAI_API_KEY"] = OPENAI_API_KEY
     return env

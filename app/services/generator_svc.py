@@ -6,6 +6,7 @@ asyncio.to_thread() call and streams stdout to the job_store progress buffer.
 After generation, optionally chains into QA, then builds zip chunks.
 """
 import asyncio
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -111,7 +112,9 @@ def _run_generator_sync(
         stderr=subprocess.STDOUT,
         stdin=subprocess.DEVNULL,
         text=True,
+        encoding="utf-8",
         cwd=str(BASE_DIR),
+        env={**os.environ, "PYTHONUTF8": "1"},
     )
     for line in proc.stdout:
         job_store.append_progress(job_id, line.rstrip())
