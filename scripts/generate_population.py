@@ -2376,10 +2376,16 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             ["stable", "worsen_then_improve", "improving"],
             weights=[0.25, 0.50, 0.25],
         )[0]
+        # 20% of DM patients are very well controlled (near-remission or tight
+        # management) and can produce A1c below 5.7% at stable encounters.
+        _well_controlled = rng.random() < 0.20
         for _i in range(n_encounters):
             frac = _i / max(1, n_encounters - 1)
             if a1c_scenario == "stable":
-                _a1c_by_enc[_i] = round(rng.uniform(6.2, 7.8), 1)
+                if _well_controlled:
+                    _a1c_by_enc[_i] = round(rng.uniform(4.8, 5.6), 1)
+                else:
+                    _a1c_by_enc[_i] = round(rng.uniform(6.2, 7.8), 1)
             elif a1c_scenario == "worsen_then_improve":
                 if frac < 0.35:
                     _a1c_by_enc[_i] = round(rng.uniform(6.5, 8.2), 1)
@@ -2387,8 +2393,10 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                     _a1c_by_enc[_i] = round(rng.uniform(9.0, 11.5), 1)
                 else:
                     _a1c_by_enc[_i] = round(rng.uniform(7.0, 8.5), 1)
-            else:  # improving
-                _a1c_by_enc[_i] = round(rng.uniform(9.5 - frac * 3.5, 11.5 - frac * 4.5), 1)
+            else:  # improving — trajectory reaches near-normal by end
+                lo = max(4.8, 9.5 - frac * 4.7)
+                hi = max(5.5, 11.5 - frac * 5.5)
+                _a1c_by_enc[_i] = round(rng.uniform(lo, hi), 1)
 
     doc_tmpls = cohort.get("document_templates", [])
     if doc_tmpls:
