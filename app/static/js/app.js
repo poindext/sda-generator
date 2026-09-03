@@ -314,7 +314,7 @@ async function initCohortSelection() {
   grid.innerHTML = '<div class="text-muted">Loading cohorts…</div>';
   try {
     const resp = await api.get('/cohorts');
-    const cohorts = resp.cohorts;
+    const cohorts = (resp.cohorts || []).sort((a, b) => a.name.localeCompare(b.name));
     wizState.selectedCohorts = [];
 
     grid.innerHTML = cohorts.map(c => `
