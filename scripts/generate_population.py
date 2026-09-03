@@ -4782,6 +4782,39 @@ def run_template_mode(count: int, output_dir: Path, template_path: str, resume: 
         "FirstEncounterDate", "LastEncounterDate", "EncounterCount",
         "ProviderCode", "ProviderName", "XMLFileName",
     ]
+    _ALLERGY_FIELDNAMES = [
+        "PatientID", "AllergenCode", "AllergenDescription",
+        "Reaction", "Severity", "Status", "OnsetDate",
+        "ProviderCode", "ProviderName", "FacilityCode", "FacilityName",
+        "EncounterNumber",
+    ]
+    _VAX_FIELDNAMES = [
+        "PatientID", "CVXCode", "VaccineDescription",
+        "AdministrationDate", "EncounterNumber",
+        "ProviderCode", "ProviderName", "FacilityCode", "FacilityName",
+    ]
+    _ILLNESS_FIELDNAMES = [
+        "PatientID", "ConditionText", "OnsetDate", "EnteredOn",
+        "ProviderCode", "ProviderName", "FacilityCode", "FacilityName",
+    ]
+    _SOCIAL_FIELDNAMES = [
+        "PatientID", "HabitCode", "HabitDescription", "Comments", "EnteredOn",
+        "ProviderCode", "ProviderName", "FacilityCode", "FacilityName",
+    ]
+    _FAMILY_FIELDNAMES = [
+        "PatientID", "RelationshipCode", "Relationship", "Condition", "EnteredOn",
+        "FacilityCode", "FacilityName",
+    ]
+    _RAD_FIELDNAMES = [
+        "PatientID", "EncounterNumber", "OrderCode", "OrderDescription",
+        "OrderTime", "ResultTime", "ResultText", "ReasonForStudy",
+        "ProviderCode", "ProviderName", "FacilityCode", "FacilityName", "EnteredOn",
+    ]
+    _DOC_FIELDNAMES = [
+        "PatientID", "EncounterNumber", "DocumentTypeCode", "DocumentType",
+        "DocumentName", "DocumentTime", "NoteText",
+        "ProviderCode", "ProviderName", "FacilityCode", "FacilityName",
+    ]
 
     print()
     _write_csv(all_patients,    output_dir / "patients.csv")
@@ -4791,13 +4824,20 @@ def run_template_mode(count: int, output_dir: Path, template_path: str, resume: 
     _write_csv(all_diagnoses,   output_dir / "diagnoses.csv")
     _write_csv(all_observations, output_dir / "observations.csv")
     _write_csv(all_procedures,  output_dir / "procedures.csv")
-    _write_csv(all_allergies,   output_dir / "allergies.csv")
-    _write_csv(all_vaccinations, output_dir / "vaccinations.csv")
-    _write_csv(all_illness_histories, output_dir / "illness_histories.csv")
-    _write_csv(all_social_histories,  output_dir / "social_histories.csv")
-    _write_csv(all_family_histories,  output_dir / "family_histories.csv")
-    _write_csv(all_radiology_orders,  output_dir / "radiology_orders.csv")
-    _write_csv(all_documents,         output_dir / "documents.csv")
+    _write_csv(all_allergies,   output_dir / "allergies.csv",
+               fieldnames=_ALLERGY_FIELDNAMES)
+    _write_csv(all_vaccinations, output_dir / "vaccinations.csv",
+               fieldnames=_VAX_FIELDNAMES)
+    _write_csv(all_illness_histories, output_dir / "illness_histories.csv",
+               fieldnames=_ILLNESS_FIELDNAMES)
+    _write_csv(all_social_histories,  output_dir / "social_histories.csv",
+               fieldnames=_SOCIAL_FIELDNAMES)
+    _write_csv(all_family_histories,  output_dir / "family_histories.csv",
+               fieldnames=_FAMILY_FIELDNAMES)
+    _write_csv(all_radiology_orders,  output_dir / "radiology_orders.csv",
+               fieldnames=_RAD_FIELDNAMES)
+    _write_csv(all_documents,         output_dir / "documents.csv",
+               fieldnames=_DOC_FIELDNAMES)
     _write_csv(
         all_facilities,
         output_dir / "patient_facilities.csv",
