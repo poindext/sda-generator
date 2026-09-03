@@ -48,10 +48,16 @@ Rules:
 
 MEDICATION THRESHOLD ISSUES — follow these rules:
 - If a medication shows as BLOCKED because for_diagnosis_code doesn't match any cohort diagnosis,
-  shorten the for_diagnosis_code prefix to the first 3-4 characters (e.g. "E84.0" -> "E84")
-  OR set it to "" if the medication should be available to all patients in that cohort.
-- Never remove a diagnosis-specific medication filter for medications that are only appropriate
-  for specific conditions (e.g., insulin stays gated to diabetes codes, not removed entirely).
+  shorten the for_diagnosis_code prefix to the first 3-4 characters (e.g. "E84.0" -> "E84").
+- NEVER set for_diagnosis_code to "" (empty string). An empty string removes the filter entirely
+  and causes the medication to be prescribed to ALL patients in the cohort regardless of diagnosis.
+  Always use the most permissive valid ICD-10 prefix instead (e.g. "E11" not "").
+- The following medications must ALWAYS remain gated to their diagnosis codes — never clear or
+  broaden their for_diagnosis_code beyond the disease class:
+    metformin, insulin (any formulation), glipizide, glimepiride, glyburide, sitagliptin,
+    empagliflozin, dapagliflozin, semaglutide, liraglutide (diabetes only — E10/E11)
+    warfarin, rivaroxaban, apixaban, dabigatran (anticoagulants — must stay indication-gated)
+    lithium, clozapine, valproate (narrow therapeutic index — must stay indication-gated)
 - If a QA issue says a required drug class is below threshold, check the BLOCKED list and fix
   the for_diagnosis_code values causing the blocking.
 
