@@ -19,10 +19,6 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
       Dashboard
     </a>
-    <a href="#" data-page="new">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-      New Population
-    </a>
     <a href="#" data-page="templates">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
       Templates
@@ -190,6 +186,7 @@
     <div class="page-header">
       <h2>Templates</h2>
       <div class="flex gap-8">
+        <button class="btn btn-primary" onclick="navigate('#new')">+ New Template</button>
         <button id="tmpl-import-btn" class="btn btn-secondary">Import JSON</button>
         <input type="file" id="tmpl-import-file" accept=".json" class="hidden">
       </div>
@@ -244,6 +241,6 @@
   </div>
 </div>
 
-<script src="static/js/app.js?v=2"></script>
+<script src="static/js/app.js?v=3"></script>
 </body>
 </html>
