@@ -180,6 +180,34 @@ function parseProgress(text) {
   return m ? { done: +m[1], total: +m[2] } : null;
 }
 
+// Enforce QA auto-fix rules for large populations
+const QA_AUTO_FIX_LIMIT = 5000;
+function _qaLargePopCheck(countEl, qaCheckEl, autoFixEl, autoFixRowEl) {
+  const count = parseInt(countEl?.value) || 0;
+  const qaOn  = qaCheckEl?.checked;
+  if (!autoFixRowEl) return;
+  autoFixRowEl.style.display = qaOn ? '' : 'none';
+
+  let warn = autoFixRowEl.nextElementSibling?.classList.contains('qa-large-warn')
+    ? autoFixRowEl.nextElementSibling : null;
+  if (!warn) {
+    warn = document.createElement('div');
+    warn.className = 'qa-large-warn text-sm';
+    warn.style.cssText = 'padding:4px 0 0 24px;color:#b45309;display:none';
+    autoFixRowEl.after(warn);
+  }
+
+  if (qaOn && count > QA_AUTO_FIX_LIMIT) {
+    autoFixEl.checked = false;
+    autoFixEl.disabled = true;
+    warn.textContent = `Auto-fix disabled for populations over ${QA_AUTO_FIX_LIMIT.toLocaleString()} patients. QA will report issues without regenerating.`;
+    warn.style.display = '';
+  } else {
+    autoFixEl.disabled = false;
+    warn.style.display = 'none';
+  }
+}
+
 // =========================================================
 // PAGE: DASHBOARD
 // =========================================================
@@ -571,8 +599,10 @@ async function initGenerateForm() {
 }
 
 el('gen-run-qa') && el('gen-run-qa').addEventListener('change', () => {
-  const row = el('auto-fix-row');
-  if (row) row.style.display = el('gen-run-qa').checked ? '' : 'none';
+  _qaLargePopCheck(el('gen-count'), el('gen-run-qa'), el('gen-auto-fix'), el('auto-fix-row'));
+});
+el('gen-count') && el('gen-count').addEventListener('input', () => {
+  _qaLargePopCheck(el('gen-count'), el('gen-run-qa'), el('gen-auto-fix'), el('auto-fix-row'));
 });
 
 el('gen-form') && document.getElementById('gen-form').addEventListener('submit', async (e) => {
@@ -808,7 +838,10 @@ register('generate', async () => {
   el('gen2-form')._init = true;
 
   el('gen2-run-qa').addEventListener('change', () => {
-    el('gen2-auto-fix-row').style.display = el('gen2-run-qa').checked ? '' : 'none';
+    _qaLargePopCheck(el('gen2-count'), el('gen2-run-qa'), el('gen2-auto-fix'), el('gen2-auto-fix-row'));
+  });
+  el('gen2-count').addEventListener('input', () => {
+    _qaLargePopCheck(el('gen2-count'), el('gen2-run-qa'), el('gen2-auto-fix'), el('gen2-auto-fix-row'));
   });
 
   el('gen2-form').addEventListener('submit', async (e) => {
@@ -1182,6 +1215,13 @@ function renderPopDetail(pop, stats) {
       <div id="fix-log-wrap" class="hidden mt-12">
         <div id="fix-log" class="log-box"></div>
       </div>
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--clr-border);display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <strong style="font-size:13px">Override QA</strong>
+          <p class="text-muted text-sm" style="margin:2px 0 0">Skip QA approval and unlock download as-is. Issues remain on record.</p>
+        </div>
+        <button id="btn-override-qa" class="btn btn-secondary" data-popid="${pop.id}" style="white-space:nowrap">Override / Allow Download</button>
+      </div>
     </div>` : '';
 
   // ── CSV downloads ─────────────────────────────────────────────
@@ -1316,6 +1356,22 @@ function renderPopDetail(pop, stats) {
       logLine(logBox, `Error starting QA: ${e.message}`);
       el('btn-reqa-pop').disabled = false;
       el('btn-reqa-pop').textContent = 'Re-run QA';
+    }
+  });
+
+  // Override QA handler
+  el('btn-override-qa') && el('btn-override-qa').addEventListener('click', async () => {
+    const popId = el('btn-override-qa').dataset.popid;
+    if (!window.confirm('Override QA and unlock this population for download?\n\nQA issues will remain on record but download will be allowed.')) return;
+    el('btn-override-qa').disabled = true;
+    el('btn-override-qa').textContent = 'Overriding…';
+    try {
+      await api.post(`/populations/${popId}/override-qa`, {});
+      setTimeout(() => navigate(`#populations/${popId}`), 500);
+    } catch (e) {
+      alert('Override failed: ' + e.message);
+      el('btn-override-qa').disabled = false;
+      el('btn-override-qa').textContent = 'Override / Allow Download';
     }
   });
 }

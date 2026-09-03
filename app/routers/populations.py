@@ -441,6 +441,31 @@ async def reqa_population(pop_id: str):
 
 
 # --------------------------------------------------------------------------
+# Override QA — force-approve and unlock download without a clean QA pass
+# --------------------------------------------------------------------------
+
+@router.post("/populations/{pop_id}/override-qa")
+async def override_qa(pop_id: str):
+    """Mark population as QA-overridden and build chunks so download is unlocked."""
+    from app.services import chunker_svc, generator_svc
+    d = _find(pop_id)
+    meta = _read_meta(d) or _infer_meta(d)
+    if not meta:
+        raise HTTPException(404, "Population metadata not found")
+    if meta.get("qa_status") != "needs_review":
+        raise HTTPException(
+            400,
+            f"Only 'needs_review' populations can be overridden (current: {meta.get('qa_status')})",
+        )
+    meta["qa_status"] = "overridden"
+    if not meta.get("chunks_built"):
+        await asyncio.to_thread(chunker_svc.build_chunks, d)
+        meta["chunks_built"] = True
+    generator_svc._write_meta(d, meta)
+    return {"qa_status": "overridden", "downloadable": True}
+
+
+# --------------------------------------------------------------------------
 # Delete
 # --------------------------------------------------------------------------
 
