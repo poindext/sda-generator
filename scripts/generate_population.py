@@ -606,7 +606,8 @@ _HTN_REGIMENS = [
 
 def _build_lab_xml(lab, enc_num, enc_date, patient_id, prov_code, prov_name,
                    fac_code, fac_name, lab_idx, rng, a1c_override=None,
-                   enc_start_time=None, ckd_egfr=None, result_delay_hours: int = 0):
+                   enc_start_time=None, ckd_egfr=None, result_delay_hours: int = 0,
+                   sex: str = "U"):
     result_dt = enc_date + timedelta(days=rng.randint(1, 3)) + timedelta(hours=result_delay_hours)
     result_ts = _ts(result_dt.replace(hour=14, minute=30, second=0))
     _draw_base = enc_start_time if enc_start_time else enc_date.replace(hour=9, minute=0, second=0)
@@ -726,6 +727,22 @@ def _build_lab_xml(lab, enc_num, enc_date, patient_id, prov_code, prov_name,
                 _wbc = rng.uniform(4.5, 11.0)
                 interp = "N"
             val = f"{_wbc:.1f}"
+        elif ri.get("code") == "718-7":
+            # Non-CKD hemoglobin: sex-specific normal ranges.
+            # CKD patients are handled by the ckd_egfr branch above.
+            # Female normal 12.0-16.0; male normal 13.5-17.5.
+            # Polycythemia is too rare to model here — no high-abnormal branch.
+            _is_female = sex == "F"
+            _abn_rate = 0.08 if _is_female else 0.05
+            is_abn = rng.random() < _abn_rate
+            if is_abn:
+                _hgb = rng.uniform(8.0, 11.9) if _is_female else rng.uniform(9.0, 13.4)
+                interp = "L"
+            else:
+                _hgb = rng.uniform(12.0, 16.0) if _is_female else rng.uniform(13.5, 17.5)
+                interp = "N"
+            val = f"{round(_hgb, 1):.1f}"
+            is_abn = interp == "L"
         else:
             is_abn = rng.random() < float(lab.get("abnormal_pct", 0.3))
             val = _result_value(ri, is_abn, rng)
@@ -3082,7 +3099,8 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                     a1c_override=a1c_val,
                     enc_start_time=enc_start_times[ei],
                     ckd_egfr=_ckd_enc_egfr.get(ei) if _is_ckd_cohort else None,
-                    result_delay_hours=_rd_delay)
+                    result_delay_hours=_rd_delay,
+                    sex=sex)
                 _fac_lab.setdefault(fac_code, []).append(_lab_xml_str)
                 for rv in _lab_ri_vals:
                     _ei_result_vals[rv["code"]] = rv
