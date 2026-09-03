@@ -4677,10 +4677,138 @@ def run_template_mode(count: int, output_dir: Path, template_path: str, resume: 
     print(f"  {validate_note}, {parallel_note}")
     print()
 
-    # Collected results keyed by patient_id; sorted before CSV write so output
-    # order is deterministic regardless of which worker finishes first.
-    results_by_id: dict = {}  # patient_id -> patient_data dict (or None if invalid/skipped)
     ok = invalid_count = skipped_count = 0
+
+    # ── CSV fieldname definitions ────────────────────────────────────────────
+    _PATIENT_FIELDNAMES = [
+        "PatientID", "MRN", "MedicaidID", "FirstName", "MiddleName", "LastName",
+        "DOB", "Age", "Sex", "Race", "Ethnicity", "Street", "City", "State", "ZIP",
+        "County", "PrimaryFacilityCode", "PrimaryFacilityName",
+        "PrimaryProviderCode", "PrimaryProviderName",
+        "HeightInches", "BaselineWeightLbs", "BaselineBMI",
+        "HasDiabetes", "HasHypertension", "HasCAD", "HasHeartFailure",
+        "HasAFib", "HasAsthmaCOPD",
+        "TotalEncounters", "OutpatientEncounters", "EDEncounters", "InpatientEncounters",
+        "FirstEncounterDate", "LastEncounterDate",
+        "IsMultiFacilityPatient", "DistinctFacilityCount", "DistinctHealthSystemCount",
+    ]
+    _ENCOUNTER_FIELDNAMES = [
+        "PatientID", "EncounterNumber", "EncounterType", "EncounterStart", "EncounterEnd",
+        "EncounterDurationMinutes", "FacilityCode", "FacilityName", "ProviderCode", "ProviderName",
+        "PrimaryDiagnosisCode", "PrimaryDiagnosisDescription", "AllEncounterDiagnosisCodes",
+        "SecondaryDiagnosisCodes", "SecondaryDiagnosisDescriptions",
+        "AcuteScenario", "ScenarioMatched", "Disposition", "AdmissionDecision",
+        "InitialSBP", "InitialDBP", "InitialHR", "InitialWeightLbs",
+        "A1c", "Glucose", "BNP", "LinkedEncounterNumber",
+        "ProcedureCount", "LabCount", "MedicationChangeCount", "FollowUpDays",
+        "NoteSignedTime", "NoteTemplateVariant", "NoteCharacterCount",
+        "IsAcuteEncounter", "HasMedicationEscalation", "HasDiabetesIntervention",
+        "HasHypertensionIntervention", "HasDispositionConflict",
+        "HasVitalScenarioConflict", "HasTemporalConflict",
+    ]
+    _MED_FIELDNAMES = [
+        "PatientID", "EncounterNumber", "MedicationEventID", "MedicationName",
+        "GenericIngredient", "DrugClass", "DoseValue", "DoseUnit", "Frequency", "Route",
+        "StartDateTime", "EndDateTime", "Action", "PreviousDoseValue", "NewDoseValue",
+        "IsActiveAfterEncounter", "IsChronicMaintenance",
+        "IsDuplicateActiveIngredient", "IsInvalidDoseChange",
+    ]
+    _LAB_FIELDNAMES = [
+        "PatientID", "EncounterNumber", "LabEventID", "LabCode", "LabName",
+        "ResultValue", "Unit", "ReferenceLow", "ReferenceHigh",
+        "ResultDateTime", "AbnormalFlag",
+    ]
+    _DX_FIELDNAMES = [
+        "PatientID", "EncounterNumber", "DiagnosisCode", "DiagnosisDescription",
+        "DiagnosisType", "DiagnosisTypeName",
+        "ProviderCode", "ProviderName", "FacilityCode", "FacilityName", "EnteredOn",
+    ]
+    _OBS_FIELDNAMES = [
+        "PatientID", "EncounterNumber", "ObservationTime",
+        "ObservationCode", "ObservationDescription", "ObservationValue", "ObservationUnits",
+        "ProviderCode", "ProviderName", "FacilityCode", "FacilityName",
+    ]
+    _PROC_FIELDNAMES = [
+        "PatientID", "EncounterNumber", "ProcedureCode", "ProcedureDescription",
+        "CodingStandard", "ProcedureTime",
+        "ProviderCode", "ProviderName", "FacilityCode", "FacilityName", "EnteredOn",
+    ]
+    _FACILITY_FIELDNAMES = [
+        "PatientID", "FacilityCode", "FacilityName",
+        "HealthSystemCode", "HealthSystemName",
+        "FacilityMRN", "IsPrimaryFacility",
+        "FirstEncounterDate", "LastEncounterDate", "EncounterCount",
+        "ProviderCode", "ProviderName", "XMLFileName",
+    ]
+    _ALLERGY_FIELDNAMES = [
+        "PatientID", "AllergenCode", "AllergenDescription",
+        "Reaction", "Severity", "Status", "OnsetDate",
+        "ProviderCode", "ProviderName", "FacilityCode", "FacilityName",
+        "EncounterNumber",
+    ]
+    _VAX_FIELDNAMES = [
+        "PatientID", "CVXCode", "VaccineDescription",
+        "AdministrationDate", "EncounterNumber",
+        "ProviderCode", "ProviderName", "FacilityCode", "FacilityName",
+    ]
+    _ILLNESS_FIELDNAMES = [
+        "PatientID", "ConditionText", "OnsetDate", "EnteredOn",
+        "ProviderCode", "ProviderName", "FacilityCode", "FacilityName",
+    ]
+    _SOCIAL_FIELDNAMES = [
+        "PatientID", "HabitCode", "HabitDescription", "Comments", "EnteredOn",
+        "ProviderCode", "ProviderName", "FacilityCode", "FacilityName",
+    ]
+    _FAMILY_FIELDNAMES = [
+        "PatientID", "RelationshipCode", "Relationship", "Condition", "EnteredOn",
+        "FacilityCode", "FacilityName",
+    ]
+    _RAD_FIELDNAMES = [
+        "PatientID", "EncounterNumber", "OrderCode", "OrderDescription",
+        "OrderTime", "ResultTime", "ResultText", "ReasonForStudy",
+        "ProviderCode", "ProviderName", "FacilityCode", "FacilityName", "EnteredOn",
+    ]
+    _DOC_FIELDNAMES = [
+        "PatientID", "EncounterNumber", "DocumentTypeCode", "DocumentType",
+        "DocumentName", "DocumentTime", "NoteText",
+        "ProviderCode", "ProviderName", "FacilityCode", "FacilityName",
+    ]
+    _VALIDATION_FIELDNAMES = [
+        "PatientID", "EncounterNumber", "ValidationRuleID", "Severity",
+        "Category", "Description", "Field1", "Value1", "Field2", "Value2",
+        "AutoCorrected", "RecordRegenerated",
+    ]
+
+    # ── Open all CSV files for incremental writing ───────────────────────────
+    _pfx = output_dir.name
+    _CSV_SCHEMA = {
+        "patients":            _PATIENT_FIELDNAMES,
+        "encounters":          _ENCOUNTER_FIELDNAMES,
+        "medications":         _MED_FIELDNAMES,
+        "labs":                _LAB_FIELDNAMES,
+        "diagnoses":           _DX_FIELDNAMES,
+        "observations":        _OBS_FIELDNAMES,
+        "procedures":          _PROC_FIELDNAMES,
+        "allergies":           _ALLERGY_FIELDNAMES,
+        "vaccinations":        _VAX_FIELDNAMES,
+        "illness_histories":   _ILLNESS_FIELDNAMES,
+        "social_histories":    _SOCIAL_FIELDNAMES,
+        "family_histories":    _FAMILY_FIELDNAMES,
+        "radiology_orders":    _RAD_FIELDNAMES,
+        "documents":           _DOC_FIELDNAMES,
+        "patient_facilities":  _FACILITY_FIELDNAMES,
+        "generator_validation": _VALIDATION_FIELDNAMES,
+    }
+
+    _csv_handles: dict = {}
+    _csv_writers: dict = {}
+    for _tbl, _fnames in _CSV_SCHEMA.items():
+        _p = output_dir / f"{_pfx}_{_tbl}.csv"
+        _h = open(_p, "w", newline="", encoding="utf-8")
+        _csv_handles[_tbl] = _h
+        _w = csv.DictWriter(_h, fieldnames=_fnames, extrasaction="ignore")
+        _w.writeheader()
+        _csv_writers[_tbl] = _w
 
     def _handle_result(patient_id, status, errors, patient_data):
         nonlocal ok, invalid_count, skipped_count
@@ -4694,26 +4822,26 @@ def run_template_mode(count: int, output_dir: Path, template_path: str, resume: 
             invalid_count += 1
         else:
             ok += 1
-            results_by_id[patient_id] = patient_data
+            if patient_data:
+                _csv_writers["patients"].writerow(patient_data["patient"])
+                for r in patient_data["encounters"]:         _csv_writers["encounters"].writerow(r)
+                for r in patient_data["medications"]:        _csv_writers["medications"].writerow(r)
+                for r in patient_data["labs"]:               _csv_writers["labs"].writerow(r)
+                for r in patient_data["diagnoses"]:          _csv_writers["diagnoses"].writerow(r)
+                for r in patient_data["observations"]:       _csv_writers["observations"].writerow(r)
+                for r in patient_data["procedures"]:         _csv_writers["procedures"].writerow(r)
+                for r in patient_data["validations"]:        _csv_writers["generator_validation"].writerow(r)
+                for r in patient_data["facilities"]:         _csv_writers["patient_facilities"].writerow(r)
+                for r in patient_data.get("allergies", []):            _csv_writers["allergies"].writerow(r)
+                for r in patient_data.get("vaccinations", []):         _csv_writers["vaccinations"].writerow(r)
+                for r in patient_data.get("illness_histories", []):    _csv_writers["illness_histories"].writerow(r)
+                for r in patient_data.get("social_histories", []):     _csv_writers["social_histories"].writerow(r)
+                for r in patient_data.get("family_histories", []):     _csv_writers["family_histories"].writerow(r)
+                for r in patient_data.get("radiology_orders", []):     _csv_writers["radiology_orders"].writerow(r)
+                for r in patient_data.get("documents", []):            _csv_writers["documents"].writerow(r)
         total_done = ok + invalid_count
         if total_done % 100 == 0 or total_done <= 10:
             print(f"  [OK] {ok}/{count}", flush=True)
-
-    _VALIDATION_FIELDNAMES = [
-        "PatientID", "EncounterNumber", "ValidationRuleID", "Severity",
-        "Category", "Description", "Field1", "Value1", "Field2", "Value2",
-        "AutoCorrected", "RecordRegenerated",
-    ]
-
-    def _write_csv(rows: list, path: Path, fieldnames: list | None = None):
-        if not rows:
-            return
-        _fnames = fieldnames if fieldnames is not None else list(rows[0].keys())
-        with open(path, "w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=_fnames, extrasaction="ignore")
-            writer.writeheader()
-            writer.writerows(rows)
-        print(f"  CSV: {path} ({len(rows)} rows)")
 
     if n_workers > 1:
         # Serialize the template once; each worker deserialises it in its own
@@ -4762,100 +4890,20 @@ def run_template_mode(count: int, output_dir: Path, template_path: str, resume: 
                 )
             _handle_result(patient_id, "ok", [], patient_data)
 
-    # Sort by patient_id so CSV rows are in deterministic order
-    ordered_ids = sorted(results_by_id.keys())
-    all_patients = [results_by_id[i]["patient"] for i in ordered_ids]
-    all_encounters = [r for i in ordered_ids for r in results_by_id[i]["encounters"]]
-    all_medications = [r for i in ordered_ids for r in results_by_id[i]["medications"]]
-    all_labs = [r for i in ordered_ids for r in results_by_id[i]["labs"]]
-    all_validations = [r for i in ordered_ids for r in results_by_id[i]["validations"]]
-    all_facilities = [r for i in ordered_ids for r in results_by_id[i]["facilities"]]
-    all_diagnoses = [r for i in ordered_ids for r in results_by_id[i].get("diagnoses", [])]
-    all_observations = [r for i in ordered_ids for r in results_by_id[i].get("observations", [])]
-    all_procedures = [r for i in ordered_ids for r in results_by_id[i].get("procedures", [])]
-    all_allergies = [r for i in ordered_ids for r in results_by_id[i].get("allergies", [])]
-    all_vaccinations = [r for i in ordered_ids for r in results_by_id[i].get("vaccinations", [])]
-    all_illness_histories = [r for i in ordered_ids for r in results_by_id[i].get("illness_histories", [])]
-    all_social_histories = [r for i in ordered_ids for r in results_by_id[i].get("social_histories", [])]
-    all_family_histories = [r for i in ordered_ids for r in results_by_id[i].get("family_histories", [])]
-    all_radiology_orders = [r for i in ordered_ids for r in results_by_id[i].get("radiology_orders", [])]
-    all_documents = [r for i in ordered_ids for r in results_by_id[i].get("documents", [])]
-
-    _FACILITY_FIELDNAMES = [
-        "PatientID", "FacilityCode", "FacilityName",
-        "HealthSystemCode", "HealthSystemName",
-        "FacilityMRN", "IsPrimaryFacility",
-        "FirstEncounterDate", "LastEncounterDate", "EncounterCount",
-        "ProviderCode", "ProviderName", "XMLFileName",
-    ]
-    _ALLERGY_FIELDNAMES = [
-        "PatientID", "AllergenCode", "AllergenDescription",
-        "Reaction", "Severity", "Status", "OnsetDate",
-        "ProviderCode", "ProviderName", "FacilityCode", "FacilityName",
-        "EncounterNumber",
-    ]
-    _VAX_FIELDNAMES = [
-        "PatientID", "CVXCode", "VaccineDescription",
-        "AdministrationDate", "EncounterNumber",
-        "ProviderCode", "ProviderName", "FacilityCode", "FacilityName",
-    ]
-    _ILLNESS_FIELDNAMES = [
-        "PatientID", "ConditionText", "OnsetDate", "EnteredOn",
-        "ProviderCode", "ProviderName", "FacilityCode", "FacilityName",
-    ]
-    _SOCIAL_FIELDNAMES = [
-        "PatientID", "HabitCode", "HabitDescription", "Comments", "EnteredOn",
-        "ProviderCode", "ProviderName", "FacilityCode", "FacilityName",
-    ]
-    _FAMILY_FIELDNAMES = [
-        "PatientID", "RelationshipCode", "Relationship", "Condition", "EnteredOn",
-        "FacilityCode", "FacilityName",
-    ]
-    _RAD_FIELDNAMES = [
-        "PatientID", "EncounterNumber", "OrderCode", "OrderDescription",
-        "OrderTime", "ResultTime", "ResultText", "ReasonForStudy",
-        "ProviderCode", "ProviderName", "FacilityCode", "FacilityName", "EnteredOn",
-    ]
-    _DOC_FIELDNAMES = [
-        "PatientID", "EncounterNumber", "DocumentTypeCode", "DocumentType",
-        "DocumentName", "DocumentTime", "NoteText",
-        "ProviderCode", "ProviderName", "FacilityCode", "FacilityName",
-    ]
-
-    _pfx = output_dir.name  # e.g. "population-oh_100"
+    # ── Close all CSV file handles ───────────────────────────────────────────
+    for _h in _csv_handles.values():
+        _h.close()
 
     print()
-    _write_csv(all_patients,    output_dir / f"{_pfx}_patients.csv")
-    _write_csv(all_encounters,  output_dir / f"{_pfx}_encounters.csv")
-    _write_csv(all_medications, output_dir / f"{_pfx}_medications.csv")
-    _write_csv(all_labs,        output_dir / f"{_pfx}_labs.csv")
-    _write_csv(all_diagnoses,   output_dir / f"{_pfx}_diagnoses.csv")
-    _write_csv(all_observations, output_dir / f"{_pfx}_observations.csv")
-    _write_csv(all_procedures,  output_dir / f"{_pfx}_procedures.csv")
-    _write_csv(all_allergies,   output_dir / f"{_pfx}_allergies.csv",
-               fieldnames=_ALLERGY_FIELDNAMES)
-    _write_csv(all_vaccinations, output_dir / f"{_pfx}_vaccinations.csv",
-               fieldnames=_VAX_FIELDNAMES)
-    _write_csv(all_illness_histories, output_dir / f"{_pfx}_illness_histories.csv",
-               fieldnames=_ILLNESS_FIELDNAMES)
-    _write_csv(all_social_histories,  output_dir / f"{_pfx}_social_histories.csv",
-               fieldnames=_SOCIAL_FIELDNAMES)
-    _write_csv(all_family_histories,  output_dir / f"{_pfx}_family_histories.csv",
-               fieldnames=_FAMILY_FIELDNAMES)
-    _write_csv(all_radiology_orders,  output_dir / f"{_pfx}_radiology_orders.csv",
-               fieldnames=_RAD_FIELDNAMES)
-    _write_csv(all_documents,         output_dir / f"{_pfx}_documents.csv",
-               fieldnames=_DOC_FIELDNAMES)
-    _write_csv(
-        all_facilities,
-        output_dir / f"{_pfx}_patient_facilities.csv",
-        fieldnames=_FACILITY_FIELDNAMES,
-    )
-    _write_csv(
-        all_validations,
-        output_dir / f"{_pfx}_generator_validation.csv",
-        fieldnames=_VALIDATION_FIELDNAMES,
-    )
+    for _tbl in _CSV_SCHEMA:
+        _p = output_dir / f"{_pfx}_{_tbl}.csv"
+        if _p.exists():
+            with open(_p, newline="", encoding="utf-8") as _f:
+                _n = sum(1 for _ in _f) - 1
+            if _n > 0:
+                print(f"  CSV: {_p.name} ({_n} rows)")
+            else:
+                _p.unlink()   # remove header-only files
 
     print(f"\nDone. {ok} written, {invalid_count} invalid.")
 
