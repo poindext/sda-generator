@@ -26,7 +26,7 @@ def build_chunks(population_dir: Path, chunk_size: int = CHUNK_SIZE) -> list[Pat
     """
     chunks_dir = population_dir / "chunks"
     if chunks_dir.exists():
-        for old in chunks_dir.glob("chunk_*.zip"):
+        for old in chunks_dir.glob("*.zip"):
             old.unlink()
     chunks_dir.mkdir(exist_ok=True)
 
@@ -46,9 +46,10 @@ def build_chunks(population_dir: Path, chunk_size: int = CHUNK_SIZE) -> list[Pat
     patient_ids = sorted(patient_files)
     batches = list(_batched(patient_ids, chunk_size))
 
+    _pfx = population_dir.name
     chunk_paths: list[Path] = []
     for i, pid_batch in enumerate(batches, 1):
-        chunk_path = chunks_dir / f"chunk_{i:03d}_of_{len(batches):03d}.zip"
+        chunk_path = chunks_dir / f"{_pfx}_chunk_{i:03d}_of_{len(batches):03d}.zip"
         with zipfile.ZipFile(chunk_path, "w", zipfile.ZIP_DEFLATED) as zf:
             for pid in pid_batch:
                 for xml_file in patient_files[pid]:
@@ -71,7 +72,7 @@ def list_chunks(population_dir: Path) -> list[dict]:
     if not chunks_dir.exists():
         return []
     result = []
-    for p in sorted(chunks_dir.glob("chunk_*.zip")):
+    for p in sorted(chunks_dir.glob("*.zip")):
         result.append({
             "name": p.name,
             "size_bytes": p.stat().st_size,

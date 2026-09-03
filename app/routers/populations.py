@@ -51,7 +51,7 @@ async def get_population(pop_id: str):
     detail = _pop_summary(d, meta)
 
     # Patient count from CSV
-    patients_csv = d / "patients.csv"
+    patients_csv = d / f"{pop_id}_patients.csv"
     if patients_csv.exists():
         with open(patients_csv, newline="", encoding="utf-8") as f:
             detail["patient_count"] = sum(1 for _ in csv.reader(f)) - 1
@@ -69,7 +69,7 @@ async def get_population(pop_id: str):
         detail["qa_summary"] = {}
 
     # Validation warnings
-    val_csv = d / "generator_validation.csv"
+    val_csv = d / f"{pop_id}_generator_validation.csv"
     if val_csv.exists():
         with open(val_csv, newline="", encoding="utf-8") as f:
             rows = list(csv.DictReader(f))
@@ -95,9 +95,10 @@ async def get_population_stats(pop_id: str):
 
 def _compute_stats(pop_dir: Path) -> dict:
     stats: dict = {}
+    _pfx = pop_dir.name
 
     # ── patients.csv ──────────────────────────────────────────
-    pat_csv = pop_dir / "patients.csv"
+    pat_csv = pop_dir / f"{_pfx}_patients.csv"
     if pat_csv.exists():
         sex_counts: dict = {}
         age_buckets = {"0–17": 0, "18–44": 0, "45–64": 0, "65–74": 0, "75+": 0}
@@ -161,7 +162,7 @@ def _compute_stats(pop_dir: Path) -> dict:
         }
 
     # ── encounters.csv ────────────────────────────────────────
-    enc_csv = pop_dir / "encounters.csv"
+    enc_csv = pop_dir / f"{_pfx}_encounters.csv"
     if enc_csv.exists():
         enc_types: dict = {}
         dx_counts: dict = {}
@@ -204,7 +205,7 @@ def _compute_stats(pop_dir: Path) -> dict:
         }
 
     # ── medications.csv ───────────────────────────────────────
-    med_csv = pop_dir / "medications.csv"
+    med_csv = pop_dir / f"{_pfx}_medications.csv"
     if med_csv.exists():
         med_counts: dict = {}
         drug_class_counts: dict = {}
@@ -233,7 +234,7 @@ def _compute_stats(pop_dir: Path) -> dict:
         }
 
     # ── labs.csv ──────────────────────────────────────────────
-    lab_csv = pop_dir / "labs.csv"
+    lab_csv = pop_dir / f"{_pfx}_labs.csv"
     if lab_csv.exists():
         lab_counts: dict = {}
         abnormal = 0
@@ -289,31 +290,24 @@ async def download_chunk(pop_id: str, chunk_name: str):
 # CSV downloads
 # --------------------------------------------------------------------------
 
-_CSV_FILES = [
-    "patients.csv",
-    "encounters.csv",
-    "diagnoses.csv",
-    "medications.csv",
-    "labs.csv",
-    "observations.csv",
-    "procedures.csv",
-    "allergies.csv",
-    "vaccinations.csv",
-    "illness_histories.csv",
-    "social_histories.csv",
-    "family_histories.csv",
-    "radiology_orders.csv",
-    "documents.csv",
-    "patient_facilities.csv",
-    "generator_validation.csv",
+_CSV_BASES = [
+    "patients", "encounters", "diagnoses", "medications", "labs",
+    "observations", "procedures", "allergies", "vaccinations",
+    "illness_histories", "social_histories", "family_histories",
+    "radiology_orders", "documents", "patient_facilities",
+    "generator_validation",
 ]
+
+
+def _csv_files(pop_id: str) -> list[str]:
+    return [f"{pop_id}_{b}.csv" for b in _CSV_BASES]
 
 
 @router.get("/populations/{pop_id}/csvs")
 async def list_csvs(pop_id: str):
     d = _find(pop_id)
     files = []
-    for name in _CSV_FILES:
+    for name in _csv_files(pop_id):
         p = d / name
         if p.exists():
             files.append({"name": name, "size_kb": round(p.stat().st_size / 1024, 1)})
@@ -323,7 +317,7 @@ async def list_csvs(pop_id: str):
 @router.get("/populations/{pop_id}/csvs/{filename}")
 async def download_csv(pop_id: str, filename: str):
     d = _find(pop_id)
-    if filename not in _CSV_FILES:
+    if filename not in _csv_files(pop_id):
         raise HTTPException(400, f"Invalid CSV filename: {filename}")
     p = d / filename
     if not p.exists():
@@ -341,7 +335,7 @@ async def download_csvs_zip(pop_id: str):
     d = _find(pop_id)
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
-        for name in _CSV_FILES:
+        for name in _csv_files(pop_id):
             p = d / name
             if p.exists():
                 zf.write(p, arcname=name)
@@ -481,7 +475,8 @@ def _read_meta(pop_dir: Path) -> dict | None:
 
 def _infer_meta(pop_dir: Path) -> dict | None:
     """Build minimal metadata for CLI-generated populations that have no _meta.json."""
-    patients_csv = pop_dir / "patients.csv"
+    pop_id = pop_dir.name
+    patients_csv = pop_dir / f"{pop_id}_patients.csv"
     if not patients_csv.exists():
         return None  # not a population directory
 

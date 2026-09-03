@@ -4822,36 +4822,38 @@ def run_template_mode(count: int, output_dir: Path, template_path: str, resume: 
         "ProviderCode", "ProviderName", "FacilityCode", "FacilityName",
     ]
 
+    _pfx = output_dir.name  # e.g. "population-oh_100"
+
     print()
-    _write_csv(all_patients,    output_dir / "patients.csv")
-    _write_csv(all_encounters,  output_dir / "encounters.csv")
-    _write_csv(all_medications, output_dir / "medications.csv")
-    _write_csv(all_labs,        output_dir / "labs.csv")
-    _write_csv(all_diagnoses,   output_dir / "diagnoses.csv")
-    _write_csv(all_observations, output_dir / "observations.csv")
-    _write_csv(all_procedures,  output_dir / "procedures.csv")
-    _write_csv(all_allergies,   output_dir / "allergies.csv",
+    _write_csv(all_patients,    output_dir / f"{_pfx}_patients.csv")
+    _write_csv(all_encounters,  output_dir / f"{_pfx}_encounters.csv")
+    _write_csv(all_medications, output_dir / f"{_pfx}_medications.csv")
+    _write_csv(all_labs,        output_dir / f"{_pfx}_labs.csv")
+    _write_csv(all_diagnoses,   output_dir / f"{_pfx}_diagnoses.csv")
+    _write_csv(all_observations, output_dir / f"{_pfx}_observations.csv")
+    _write_csv(all_procedures,  output_dir / f"{_pfx}_procedures.csv")
+    _write_csv(all_allergies,   output_dir / f"{_pfx}_allergies.csv",
                fieldnames=_ALLERGY_FIELDNAMES)
-    _write_csv(all_vaccinations, output_dir / "vaccinations.csv",
+    _write_csv(all_vaccinations, output_dir / f"{_pfx}_vaccinations.csv",
                fieldnames=_VAX_FIELDNAMES)
-    _write_csv(all_illness_histories, output_dir / "illness_histories.csv",
+    _write_csv(all_illness_histories, output_dir / f"{_pfx}_illness_histories.csv",
                fieldnames=_ILLNESS_FIELDNAMES)
-    _write_csv(all_social_histories,  output_dir / "social_histories.csv",
+    _write_csv(all_social_histories,  output_dir / f"{_pfx}_social_histories.csv",
                fieldnames=_SOCIAL_FIELDNAMES)
-    _write_csv(all_family_histories,  output_dir / "family_histories.csv",
+    _write_csv(all_family_histories,  output_dir / f"{_pfx}_family_histories.csv",
                fieldnames=_FAMILY_FIELDNAMES)
-    _write_csv(all_radiology_orders,  output_dir / "radiology_orders.csv",
+    _write_csv(all_radiology_orders,  output_dir / f"{_pfx}_radiology_orders.csv",
                fieldnames=_RAD_FIELDNAMES)
-    _write_csv(all_documents,         output_dir / "documents.csv",
+    _write_csv(all_documents,         output_dir / f"{_pfx}_documents.csv",
                fieldnames=_DOC_FIELDNAMES)
     _write_csv(
         all_facilities,
-        output_dir / "patient_facilities.csv",
+        output_dir / f"{_pfx}_patient_facilities.csv",
         fieldnames=_FACILITY_FIELDNAMES,
     )
     _write_csv(
         all_validations,
-        output_dir / "generator_validation.csv",
+        output_dir / f"{_pfx}_generator_validation.csv",
         fieldnames=_VALIDATION_FIELDNAMES,
     )
 
