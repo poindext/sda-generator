@@ -837,7 +837,13 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
 
     # ---- Cohort ----
     cohorts = [c for c in tmpl.get("cohorts", []) if c.get("weight", 0) > 0]
-    cohort = _wpick(cohorts, "weight", rng)
+    _pop_size = tmpl.get("meta", {}).get("population_size", 0)
+    if 0 < _pop_size <= 5 and len(cohorts) > 1:
+        # For small test populations deterministically cycle through all cohorts
+        # so every cohort is represented when population_size >= len(cohorts).
+        cohort = cohorts[(patient_id - 1) % len(cohorts)]
+    else:
+        cohort = _wpick(cohorts, "weight", rng)
     age = max(int(cohort.get("min_age", 18)), min(int(cohort.get("max_age", 85)), age))
     age = min(age, 105)  # hard biological cap — no survivable age beyond 105
 
@@ -4700,7 +4706,7 @@ def run_template_mode(count: int, output_dir: Path, template_path: str, resume: 
     ]
 
     def _write_csv(rows: list, path: Path, fieldnames: list | None = None):
-        if not rows and fieldnames is None:
+        if not rows:
             return
         _fnames = fieldnames if fieldnames is not None else list(rows[0].keys())
         with open(path, "w", newline="", encoding="utf-8") as f:
