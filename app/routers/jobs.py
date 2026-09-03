@@ -67,7 +67,7 @@ async def create_job(body: GenerateRequest):
         auto_fix=body.auto_fix,
     )
 
-    return {"job_id": job.id, "output_dir": output_dir}
+    return {"job_id": job.id, "output_dir": output_dir, "pop_id": slug}
 
 
 @router.get("/jobs")

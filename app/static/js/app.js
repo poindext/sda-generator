@@ -849,13 +849,7 @@ register('generate', async () => {
         bar.style.width = '100%';
         if (status === 'completed') {
           logLine(logBox, '✓ Complete — loading results…');
-          try {
-            const job = await api.get(`/jobs/${resp.job_id}`);
-            const popId = (job.params?.output_dir || '').split('/').pop();
-            setTimeout(() => navigate(`#populations/${popId}`), 800);
-          } catch (err) {
-            console.error('Could not load results', err);
-          }
+          setTimeout(() => navigate(`#populations/${resp.pop_id}`), 800);
         } else {
           logLine(logBox, `✗ Job ended with status: ${status}`);
         }
