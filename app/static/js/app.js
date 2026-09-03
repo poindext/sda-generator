@@ -663,7 +663,11 @@ function renderPopResults(pop) {
   // Chunks / fix panel
   const chunksWrap = el('result-chunks');
   if (pop.downloadable && pop.chunks?.length) {
-    chunksWrap.innerHTML = '<div class="chunk-list">' +
+    let html = '';
+    if (pop.qa_status === 'needs_review') {
+      html += `<div class="alert alert-warning mb-12">QA found issues — review them above before loading into HealthShare.</div>`;
+    }
+    html += '<div class="chunk-list">' +
       pop.chunks.map(c => `
         <div class="chunk-item">
           <span class="chunk-name">${c.name}</span>
@@ -671,6 +675,7 @@ function renderPopResults(pop) {
           <a class="btn btn-sm btn-secondary" href="${API_BASE}/api/populations/${pop.id}/chunks/${c.name}" download>Download</a>
         </div>`).join('') +
       '</div>';
+    chunksWrap.innerHTML = html;
   } else if (pop.run_qa && pop.qa_status === 'needs_review') {
     chunksWrap.innerHTML = `
       <div class="alert alert-warning mb-12">Download is blocked until this population passes QA review.</div>

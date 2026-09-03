@@ -67,11 +67,11 @@ async def _generation_pipeline(
         if qa_success:
             meta["qa_status"] = "approved"
             job_store.append_progress(job_id, "QA: APPROVED — building download chunks")
-            await asyncio.to_thread(chunker_svc.build_chunks, pop_dir)
-            meta["chunks_built"] = True
         else:
             meta["qa_status"] = "needs_review"
-            job_store.append_progress(job_id, "QA: ISSUES FOUND — download blocked pending review")
+            job_store.append_progress(job_id, "QA: ISSUES FOUND — building download chunks")
+        await asyncio.to_thread(chunker_svc.build_chunks, pop_dir)
+        meta["chunks_built"] = True
         _write_meta(pop_dir, meta)
         job_store.update_status(
             job_id,

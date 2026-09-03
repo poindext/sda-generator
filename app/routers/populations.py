@@ -463,9 +463,4 @@ def _pop_summary(d: Path, meta: dict) -> dict:
 
 
 def _is_downloadable(meta: dict) -> bool:
-    if not meta.get("chunks_built", False):
-        return False
-    qa_status = meta.get("qa_status", "skipped")
-    if meta.get("run_qa", False):
-        return qa_status == "approved"
-    return True
+    return meta.get("chunks_built", False)
