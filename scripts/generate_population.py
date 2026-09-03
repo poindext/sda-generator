@@ -709,6 +709,23 @@ def _build_lab_xml(lab, enc_num, enc_date, patient_id, prov_code, prov_name,
             _trop = rng.uniform(0.04, 2.0) if is_abn else rng.uniform(0.001, 0.035)
             val = f"{_trop:.3f}"
             interp = "H" if is_abn else "N"
+        elif ri.get("code") in ("6690-2", "26464-8", "804-5"):
+            # WBC: ~10% abnormal in an ambulatory/mixed population.
+            # Overwhelmingly HIGH (leukocytosis from infection/inflammation);
+            # low WBC without a bone-marrow or oncology context is rare —
+            # floor at 2.5 K/uL (mild leukopenia only, no critical values).
+            is_abn = rng.random() < 0.10
+            if is_abn:
+                if rng.random() < 0.15:   # 15% of abnormals are low
+                    _wbc = rng.uniform(2.5, 4.4)
+                    interp = "L"
+                else:                      # 85% are high
+                    _wbc = rng.uniform(11.5, 18.0)
+                    interp = "H"
+            else:
+                _wbc = rng.uniform(4.5, 11.0)
+                interp = "N"
+            val = f"{_wbc:.1f}"
         else:
             is_abn = rng.random() < float(lab.get("abnormal_pct", 0.3))
             val = _result_value(ri, is_abn, rng)
