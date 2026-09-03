@@ -170,11 +170,12 @@ def _infer_cohort(codes: list[str]) -> str:
 
 def build_review_package(output_dir: Path, template_name: str,
                          qa_config: dict | None = None) -> str:
-    patients  = {r["PatientID"]: r for r in _load_csv(output_dir / "patients.csv")}
-    encs_raw  = _load_csv(output_dir / "encounters.csv")
-    labs_raw  = _load_csv(output_dir / "labs.csv")
-    meds_raw  = _load_csv(output_dir / "medications.csv")
-    val_rows  = _load_csv(output_dir / "generator_validation.csv")
+    _pfx = output_dir.name
+    patients  = {r["PatientID"]: r for r in _load_csv(output_dir / f"{_pfx}_patients.csv")}
+    encs_raw  = _load_csv(output_dir / f"{_pfx}_encounters.csv")
+    labs_raw  = _load_csv(output_dir / f"{_pfx}_labs.csv")
+    meds_raw  = _load_csv(output_dir / f"{_pfx}_medications.csv")
+    val_rows  = _load_csv(output_dir / f"{_pfx}_generator_validation.csv")
 
     # Index by patient
     enc_by_pat: dict[str, list] = defaultdict(list)
@@ -826,7 +827,7 @@ import re as _re
 
 def _load_patient_meds(output_dir: Path) -> dict:
     """Return {patient_id_str: set_of_lowercase_med_names} from medications.csv."""
-    meds_path = output_dir / "medications.csv"
+    meds_path = output_dir / f"{output_dir.name}_medications.csv"
     result: dict = {}
     if not meds_path.exists():
         return result
@@ -841,7 +842,7 @@ def _load_patient_meds(output_dir: Path) -> dict:
 
 def _load_patient_labs(output_dir: Path) -> dict:
     """Return {patient_id_str: set_of_loinc_codes} from labs.csv."""
-    labs_path = output_dir / "labs.csv"
+    labs_path = output_dir / f"{output_dir.name}_labs.csv"
     result: dict = {}
     if not labs_path.exists():
         return result

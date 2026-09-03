@@ -4902,9 +4902,10 @@ def main():
                 f.unlink()
             for f in xml_sub.glob("patient_*.invalid.xml"):
                 f.unlink()
-        for csv_name in ("patients.csv", "encounters.csv", "medications.csv",
-                         "labs.csv", "generator_validation.csv"):
-            csv_path = output_dir / csv_name
+        _pfx_c = output_dir.name
+        for _base in ("patients", "encounters", "medications", "labs",
+                      "generator_validation"):
+            csv_path = output_dir / f"{_pfx_c}_{_base}.csv"
             if csv_path.exists():
                 csv_path.unlink()
         for f in delete_dir.glob("patient_*_delete.xml"):
