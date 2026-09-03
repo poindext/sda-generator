@@ -4,12 +4,14 @@ Download is gated: if QA was requested, the population must be approved first.
 """
 import asyncio
 import csv
+import io
 import json
 import shutil
+import zipfile
 from pathlib import Path
 
 from fastapi import APIRouter, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 
 from app.config import POPULATIONS_DIR, TEMPLATES_DIR
 from app.services import job_store, fixer_svc
@@ -280,6 +282,65 @@ async def download_chunk(pop_id: str, chunk_name: str):
         path=str(chunk_path),
         filename=chunk_name,
         media_type="application/zip",
+    )
+
+
+# --------------------------------------------------------------------------
+# CSV downloads
+# --------------------------------------------------------------------------
+
+_CSV_FILES = [
+    "patients.csv",
+    "encounters.csv",
+    "medications.csv",
+    "labs.csv",
+    "patient_facilities.csv",
+    "generator_validation.csv",
+]
+
+
+@router.get("/populations/{pop_id}/csvs")
+async def list_csvs(pop_id: str):
+    d = _find(pop_id)
+    files = []
+    for name in _CSV_FILES:
+        p = d / name
+        if p.exists():
+            files.append({"name": name, "size_kb": round(p.stat().st_size / 1024, 1)})
+    return {"files": files}
+
+
+@router.get("/populations/{pop_id}/csvs/{filename}")
+async def download_csv(pop_id: str, filename: str):
+    d = _find(pop_id)
+    if filename not in _CSV_FILES:
+        raise HTTPException(400, f"Invalid CSV filename: {filename}")
+    p = d / filename
+    if not p.exists():
+        raise HTTPException(404, f"{filename} not found")
+    return FileResponse(
+        path=str(p),
+        filename=filename,
+        media_type="text/csv",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
+@router.get("/populations/{pop_id}/csvs.zip")
+async def download_csvs_zip(pop_id: str):
+    d = _find(pop_id)
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
+        for name in _CSV_FILES:
+            p = d / name
+            if p.exists():
+                zf.write(p, arcname=name)
+    buf.seek(0)
+    zip_name = f"{pop_id}_csvs.zip"
+    return StreamingResponse(
+        buf,
+        media_type="application/zip",
+        headers={"Content-Disposition": f'attachment; filename="{zip_name}"'},
     )
 
 

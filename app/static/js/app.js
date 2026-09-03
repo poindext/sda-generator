@@ -997,10 +997,12 @@ register('populations', async (popId) => {
   if (!popId) { navigate('#dashboard'); return; }
   el('pop-detail-title').textContent = 'Loading…';
   try {
-    const [pop, stats] = await Promise.all([
+    const [pop, stats, csvResp] = await Promise.all([
       api.get(`/populations/${popId}`),
       api.get(`/populations/${popId}/stats`).catch(() => null),
+      api.get(`/populations/${popId}/csvs`).catch(() => null),
     ]);
+    pop.csvFiles = csvResp?.files || [];
     renderPopDetail(pop, stats);
   } catch (e) {
     el('pop-detail-body').innerHTML = `<div class="alert alert-error">${e.message}</div>`;
@@ -1182,6 +1184,24 @@ function renderPopDetail(pop, stats) {
       </div>
     </div>` : '';
 
+  // ── CSV downloads ─────────────────────────────────────────────
+  const csvSection = pop.csvFiles?.length
+    ? `<div class="card mt-16">
+        <div class="flex items-c gap-16" style="justify-content:space-between;margin-bottom:12px">
+          <h3 style="margin-bottom:0">CSV Data Files <span class="text-muted text-sm" style="font-weight:400">(for database import)</span></h3>
+          <a class="btn btn-sm btn-primary" href="${API_BASE}/api/populations/${pop.id}/csvs.zip" download>⬇ Download All (ZIP)</a>
+        </div>
+        <div class="chunk-list">${
+          pop.csvFiles.map(f => `
+            <div class="chunk-item">
+              <span class="chunk-name">${f.name}</span>
+              <span class="chunk-size">${f.size_kb} KB</span>
+              <a class="btn btn-sm btn-secondary" href="${API_BASE}/api/populations/${pop.id}/csvs/${f.name}" download>Download</a>
+            </div>`).join('')
+        }</div>
+      </div>`
+    : '';
+
   // ── Download manager ─────────────────────────────────────────
   const chunkRows = pop.downloadable && pop.chunks?.length
     ? '<div class="chunk-list">' +
@@ -1213,7 +1233,7 @@ function renderPopDetail(pop, stats) {
   // ── Render ───────────────────────────────────────────────────
   el('pop-detail-body').innerHTML =
     statCards + rateCards + condSection + demoSection + dxSection +
-    qaSection + fixPanel + dlSection;
+    qaSection + fixPanel + csvSection + dlSection;
 
   // Download All button handler
   el('btn-dl-all') && el('btn-dl-all').addEventListener('click', async () => {
