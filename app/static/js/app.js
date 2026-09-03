@@ -848,13 +848,11 @@ register('generate', async () => {
       async (status) => {
         bar.style.width = '100%';
         if (status === 'completed') {
-          logLine(logBox, '✓ Complete');
+          logLine(logBox, '✓ Complete — loading results…');
           try {
             const job = await api.get(`/jobs/${resp.job_id}`);
             const popId = (job.params?.output_dir || '').split('/').pop();
-            const pop = await api.get(`/populations/${popId}`);
-            renderGen2Results(pop);
-            show('gen2-results');
+            setTimeout(() => navigate(`#populations/${popId}`), 800);
           } catch (err) {
             console.error('Could not load results', err);
           }
