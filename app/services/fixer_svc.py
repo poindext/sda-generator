@@ -3,13 +3,15 @@ Fixer service — LLM-driven auto-fix loop for populations with QA issues.
 
 For each round:
   1. Read qa_issues.json
-  2. Ask OpenAI for a targeted patch (only changed key paths + new values)
+  2. Partition issues: generator-target issues are logged and skipped;
+     template/both issues are sent to the LLM for a patch.
   3. Apply the patch to the template in memory and save it
   4. Regenerate the population
   5. Re-run QA
   6. If approved → build chunks and stop; else loop up to MAX_ROUNDS
 """
 import asyncio
+import datetime
 import json
 import re
 from pathlib import Path
@@ -135,6 +137,55 @@ async def start_fix(
     )
 
 
+def _log_generator_issues(pop_dir: Path, template_path: str, issues: list) -> Path:
+    """Write generator-target issues to a structured log file for developer action.
+
+    Returns the path of the log file written.
+    """
+    log_path = pop_dir / "generator_fixes_needed.json"
+    existing: list = []
+    if log_path.exists():
+        try:
+            existing = json.loads(log_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            existing = []
+
+    entry = {
+        "logged_at": datetime.datetime.utcnow().isoformat(timespec="seconds") + "Z",
+        "population_dir": str(pop_dir),
+        "template": template_path,
+        "issues": [
+            {
+                "id":               iss.get("id"),
+                "severity":         iss.get("severity"),
+                "title":            iss.get("title"),
+                "category":         iss.get("category"),
+                "fix_target":       iss.get("fix_target"),
+                "description":      iss.get("description"),
+                "evidence":         iss.get("evidence"),
+                "approach":         iss.get("approach"),
+                "affected_count":   iss.get("affected_count"),
+                "affected_pct":     iss.get("affected_pct"),
+                "prevalence_method":iss.get("prevalence_method"),
+            }
+            for iss in issues
+        ],
+    }
+    existing.append(entry)
+    log_path.write_text(json.dumps(existing, indent=2), encoding="utf-8")
+
+    # Also append to the project-wide log for cross-population visibility
+    global_log = pop_dir.parent.parent / "logs" / "generator_fixes_needed.jsonl"
+    try:
+        global_log.parent.mkdir(parents=True, exist_ok=True)
+        with global_log.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(entry) + "\n")
+    except OSError:
+        pass
+
+    return log_path
+
+
 async def _fix_pipeline(
     job_id: str,
     template_path: str,
@@ -164,14 +215,50 @@ async def _fix_pipeline(
             job_store.append_progress(job_id, "No issues in qa_issues.json — population is clean.")
             break
 
-        # Log severity summary
+        # Partition: generator-target issues cannot be fixed here — log them and skip.
+        gen_issues = [i for i in issues if i.get("fix_target") == "generator"]
+        tmpl_issues = [i for i in issues if i.get("fix_target") != "generator"]
+
+        if gen_issues:
+            log_path = _log_generator_issues(pop_dir, template_path, gen_issues)
+            job_store.append_progress(
+                job_id,
+                f"⚠ {len(gen_issues)} issue(s) require a generator code change "
+                f"(cannot auto-fix on server) — logged to {log_path.name}",
+            )
+            for iss in gen_issues:
+                sev = iss.get("severity", "?")
+                title = iss.get("title", "unknown")
+                aff = iss.get("affected_count")
+                pct = iss.get("affected_pct")
+                prev = f" [{aff:,} patients / {pct}%]" if aff is not None else ""
+                job_store.append_progress(job_id, f"  [{sev}] {title}{prev}")
+            job_store.append_progress(
+                job_id,
+                "  → Retrieve generator_fixes_needed.json and apply fixes to "
+                "generate_population.py, then regenerate.",
+            )
+
+        # Log severity summary (all issues for visibility)
         by_sev: dict[str, int] = {}
         for iss in issues:
             s = iss.get("severity", "?")
             by_sev[s] = by_sev.get(s, 0) + 1
         summary = "  ".join(f"{s}: {n}" for s, n in sorted(by_sev.items()))
-        job_store.append_progress(job_id, f"{len(issues)} issue(s) — {summary}")
-        job_store.append_progress(job_id, "Calling LLM to compute template patch…")
+        job_store.append_progress(job_id, f"{len(issues)} issue(s) total — {summary}")
+
+        if not tmpl_issues:
+            job_store.append_progress(
+                job_id,
+                "All remaining issues require generator fixes. "
+                "Stopping auto-fix loop — manual code change needed.",
+            )
+            break
+
+        job_store.append_progress(
+            job_id,
+            f"Calling LLM to patch template for {len(tmpl_issues)} fixable issue(s)…",
+        )
 
         try:
             tmpl = json.loads(Path(template_path).read_text(encoding="utf-8"))
@@ -179,7 +266,7 @@ async def _fix_pipeline(
             job_store.update_status(job_id, "failed", error=f"Cannot read template: {e}")
             return
 
-        patches = await _call_llm_with_heartbeat(job_id, tmpl, issues)
+        patches = await _call_llm_with_heartbeat(job_id, tmpl, tmpl_issues)
         if patches is None:
             job_store.update_status(
                 job_id, "failed",
