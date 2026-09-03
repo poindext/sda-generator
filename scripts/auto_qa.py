@@ -1017,6 +1017,185 @@ def _is_false_positive(iss: dict, patient_meds: dict | None = None,
 
 
 # ---------------------------------------------------------------------------
+# Prevalence estimation — attach affected_count/affected_pct to each issue
+# ---------------------------------------------------------------------------
+
+# Common drug keywords for medication issue matching
+_KNOWN_DRUG_KWS = [
+    "metformin", "lisinopril", "amlodipine", "atorvastatin", "simvastatin",
+    "rosuvastatin", "pravastatin", "lovastatin", "losartan", "valsartan",
+    "irbesartan", "metoprolol", "carvedilol", "furosemide", "spironolactone",
+    "empagliflozin", "dapagliflozin", "canagliflozin", "semaglutide",
+    "liraglutide", "dulaglutide", "insulin", "glipizide", "glimepiride",
+    "albuterol", "fluticasone", "budesonide", "montelukast", "tiotropium",
+    "doxycycline", "amoxicillin", "azithromycin", "warfarin", "apixaban",
+    "rivaroxaban", "clopidogrel", "aspirin", "gabapentin", "sertraline",
+    "escitalopram", "buprenorphine", "naltrexone", "methadone", "naloxone",
+]
+
+# Reverse LOINC: short keyword → code (first meaningful word of the lab name)
+_LOINC_KW_TO_CODE: dict[str, str] = {}
+for _lcode, _lname in _LOINC_NAMES.items():
+    _kw = _lname.lower().split()[0].rstrip("(%)")
+    if len(_kw) >= 4:
+        _LOINC_KW_TO_CODE.setdefault(_kw, _lcode)
+# Manual aliases that the auto-derivation misses
+_LOINC_KW_TO_CODE.update({
+    "a1c": "4548-4", "hba1c": "4548-4", "glucose": "2339-0",
+    "egfr": "88294-4", "gfr": "88294-4", "creatinine": "2160-0",
+    "troponin": "42757-5", "bnp": "33762-6",
+})
+
+
+def _estimate_prevalence(
+    issue: dict,
+    patients_by_id: dict,
+    meds_raw: list,
+    labs_raw: list,
+    encs_raw: list,
+    val_rows: list,
+    n_total: int,
+) -> dict:
+    """Return {affected_count, affected_pct, prevalence_method} or {}."""
+    if not n_total:
+        return {}
+
+    cat      = (issue.get("category") or "").lower()
+    title    = (issue.get("title")    or "").lower()
+    desc     = (issue.get("description") or "").lower()
+    evid     = (issue.get("evidence") or "").lower()
+    combined = f"{title} {desc} {evid}"
+
+    # ── 1. Validator rule IDs (e.g. MED001, LAB004) ──────────────────────
+    rule_ids = set(_re.findall(
+        r'\b([A-Z]{2,4}\d{3,4})\b',
+        (issue.get("title","") + " " + issue.get("description","") + " " +
+         issue.get("evidence","")),
+    ))
+    if rule_ids and val_rows:
+        pids = {r["PatientID"] for r in val_rows
+                if r.get("ValidationRuleID","") in rule_ids}
+        if pids:
+            return {"affected_count": len(pids),
+                    "affected_pct": round(100 * len(pids) / n_total, 1),
+                    "prevalence_method": "validator findings"}
+
+    # ── 2. Medication issues ──────────────────────────────────────────────
+    if cat == "medications" and meds_raw:
+        drugs = [d for d in _KNOWN_DRUG_KWS if d in combined]
+        if drugs:
+            age_inappropriate = "inapprop" in combined and "age" in combined
+            affected: set[str] = set()
+            for row in meds_raw:
+                name_l = (row.get("MedicationName") or "").lower()
+                pid    = row.get("PatientID", "")
+                if not pid or not any(d in name_l for d in drugs):
+                    continue
+                if age_inappropriate:
+                    pat = patients_by_id.get(pid, {})
+                    age = _flt(pat.get("Age"))
+                    if age is not None and age < 18:
+                        affected.add(pid)
+                else:
+                    affected.add(pid)
+            if affected:
+                return {"affected_count": len(affected),
+                        "affected_pct": round(100 * len(affected) / n_total, 1),
+                        "prevalence_method": "patients with matching medication"}
+
+    # ── 3. Lab issues ─────────────────────────────────────────────────────
+    if cat == "labs" and labs_raw:
+        loincs: set[str] = set()
+        for kw, code in _LOINC_KW_TO_CODE.items():
+            if kw in combined:
+                loincs.add(code)
+        if loincs:
+            # Try to extract a numeric threshold (e.g. "above 9", "> 500")
+            m_above = _re.search(r'(?:above|greater than|exceeds?|>)\s*(\d+(?:\.\d+)?)', combined)
+            m_below = _re.search(r'(?:below|less than|<|under)\s*(\d+(?:\.\d+)?)', combined)
+            threshold = float(m_above.group(1)) if m_above else (
+                        float(m_below.group(1)) if m_below else None)
+            direction = "above" if m_above else ("below" if m_below else None)
+
+            affected: set[str] = set()
+            for row in labs_raw:
+                code = (row.get("LabCode") or "").strip()
+                pid  = row.get("PatientID", "")
+                if not pid or code not in loincs:
+                    continue
+                if threshold is not None and direction:
+                    val = _flt(row.get("ResultValue"))
+                    if val is None:
+                        continue
+                    if direction == "above" and val > threshold:
+                        affected.add(pid)
+                    elif direction == "below" and val < threshold:
+                        affected.add(pid)
+                else:
+                    flag = (row.get("AbnormalFlag") or "").strip().upper()
+                    if "implaus" in combined or "abnormal" in combined:
+                        if flag in ("H", "L", "HH", "LL", "A", "C"):
+                            affected.add(pid)
+                    else:
+                        affected.add(pid)
+            if affected:
+                return {"affected_count": len(affected),
+                        "affected_pct": round(100 * len(affected) / n_total, 1),
+                        "prevalence_method": "patients with matching lab result"}
+
+    # ── 4. Diagnosis / comorbidity issues ─────────────────────────────────
+    if cat in ("diagnoses", "comorbidities") and encs_raw:
+        raw_text = issue.get("description","") + " " + issue.get("evidence","")
+        icd_codes = _re.findall(r'\b([A-Z]\d{2}(?:\.\d+)?)\b', raw_text)
+        if icd_codes:
+            affected: set[str] = set()
+            icd_set = set(icd_codes)
+            for row in encs_raw:
+                pid = row.get("PatientID", "")
+                if not pid:
+                    continue
+                all_dx = (row.get("PrimaryDiagnosisCode","") + "|" +
+                           row.get("AllEncounterDiagnosisCodes",""))
+                if any(c in all_dx for c in icd_set):
+                    affected.add(pid)
+            if affected:
+                return {"affected_count": len(affected),
+                        "affected_pct": round(100 * len(affected) / n_total, 1),
+                        "prevalence_method": "patients with matching diagnosis"}
+
+    return {}
+
+
+def _add_prevalence(issues: list[dict], output_dir: Path) -> None:
+    """Load CSVs and attach prevalence estimates to each issue in-place."""
+    if not issues:
+        return
+    _pfx = output_dir.name
+    cats = {(i.get("category") or "").lower() for i in issues}
+
+    patients_by_id = {r["PatientID"]: r
+                      for r in _load_csv(output_dir / f"{_pfx}_patients.csv")}
+    n_total = len(patients_by_id)
+    if not n_total:
+        return
+
+    meds_raw = (_load_csv(output_dir / f"{_pfx}_medications.csv")
+                if "medications" in cats else [])
+    labs_raw = (_load_csv(output_dir / f"{_pfx}_labs.csv")
+                if "labs" in cats else [])
+    encs_raw = (_load_csv(output_dir / f"{_pfx}_encounters.csv")
+                if cats & {"diagnoses", "comorbidities"} else [])
+    val_rows = _load_csv(output_dir / f"{_pfx}_generator_validation.csv")
+
+    for iss in issues:
+        prev = _estimate_prevalence(
+            iss, patients_by_id, meds_raw, labs_raw, encs_raw, val_rows, n_total
+        )
+        if prev:
+            iss.update(prev)
+
+
+# ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
 
@@ -1083,6 +1262,11 @@ def main() -> None:
     issues = _filter_false_positives(issues, output_dir=output_dir)
     if not issues:
         approved = True
+
+    # ── Attach prevalence estimates ───────────────────────────────────────────
+    if issues:
+        print("  Estimating issue prevalence across full population…", flush=True)
+        _add_prevalence(issues, output_dir)
 
     # ── Write qa_issues.json ─────────────────────────────────────────────────
     issues_payload = {

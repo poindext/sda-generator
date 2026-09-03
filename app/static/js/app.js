@@ -682,14 +682,20 @@ function renderPopResults(pop) {
   // QA issues
   const issuesWrap = el('result-qa-issues');
   if (pop.qa_issues?.length) {
-    issuesWrap.innerHTML = pop.qa_issues.map(i => `
+    issuesWrap.innerHTML = pop.qa_issues.map(i => {
+      const prev = (i.affected_count != null)
+        ? `<span class="qi-prev">${i.affected_count.toLocaleString()} patients (${i.affected_pct}%)</span>`
+        : '';
+      return `
       <div class="qa-issue ${i.severity}">
-        <div class="flex items-c gap-8">
+        <div class="flex items-c gap-8" style="flex-wrap:wrap">
           <span class="qi-sev">${i.severity}</span>
           <span class="qi-title">${i.title}</span>
+          ${prev}
         </div>
         <div class="qi-evidence">${i.evidence || ''}</div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
   } else if (pop.run_qa) {
     issuesWrap.innerHTML = '<div class="alert alert-success">No QA issues found — population approved.</div>';
   } else {
@@ -1188,14 +1194,20 @@ function renderPopDetail(pop, stats) {
   const qaSection = pop.qa_issues?.length
     ? `<div class="card mt-16">
         <h3>QA Issues (${pop.qa_issues.length})</h3>
-        ${pop.qa_issues.map(i => `
+        ${pop.qa_issues.map(i => {
+          const prev = (i.affected_count != null)
+            ? `<span class="qi-prev">${i.affected_count.toLocaleString()} patients (${i.affected_pct}%)</span>`
+            : '';
+          return `
           <div class="qa-issue ${i.severity}">
-            <div class="flex items-c gap-8">
+            <div class="flex items-c gap-8" style="flex-wrap:wrap">
               <span class="qi-sev">${i.severity}</span>
               <span class="qi-title">${i.title || i.category}</span>
+              ${prev}
             </div>
             <div class="qi-evidence">${i.evidence || i.recommendation || ''}</div>
-          </div>`).join('')}
+          </div>`;
+        }).join('')}
       </div>`
     : pop.run_qa ? '<div class="alert alert-success mt-16">QA passed — no issues found.</div>' : '';
 

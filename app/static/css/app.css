@@ -520,6 +520,9 @@ input[type=checkbox] { width: auto; margin-right: 6px; }
 .qa-issue .qi-title    { font-weight: 600; font-size: 13px; }
 .qa-issue .qi-sev      { font-size: 11px; font-weight: 700; text-transform: uppercase; }
 .qa-issue .qi-evidence { font-size: 12px; color: var(--clr-muted); margin-top: 4px; }
+.qa-issue .qi-prev     { font-size: 11px; font-weight: 600; color: #6b7280;
+                          background: #e5e7eb; border-radius: 10px;
+                          padding: 1px 8px; margin-left: 4px; white-space: nowrap; }
 
 /* ── Chunk list ───────────────────────────────────────────── */
 
