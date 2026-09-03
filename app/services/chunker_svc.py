@@ -11,9 +11,25 @@ Chunk zips are written to <population_dir>/chunks/.
 import re
 import zipfile
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 from app.config import CHUNK_SIZE
+
+# Max parallel workers for chunk writing and file deletion.
+# Bound at 4 — beyond that, Windows I/O scheduler sees diminishing returns
+# and memory pressure from concurrent file reads grows.
+_MAX_WORKERS = 4
+
+
+def _write_one_chunk(chunk_path: Path, pid_batch: list[int],
+                     patient_files: dict) -> Path:
+    """Write a single zip chunk. Runs in a thread pool worker."""
+    with zipfile.ZipFile(chunk_path, "w", zipfile.ZIP_STORED) as zf:
+        for pid in pid_batch:
+            for xml_file in patient_files[pid]:
+                zf.write(xml_file, xml_file.name)
+    return chunk_path
 
 
 def build_chunks(population_dir: Path, chunk_size: int = CHUNK_SIZE) -> list[Path]:
@@ -45,21 +61,28 @@ def build_chunks(population_dir: Path, chunk_size: int = CHUNK_SIZE) -> list[Pat
 
     patient_ids = sorted(patient_files)
     batches = list(_batched(patient_ids, chunk_size))
-
+    n_batches = len(batches)
     _pfx = population_dir.name
-    chunk_paths: list[Path] = []
-    for i, pid_batch in enumerate(batches, 1):
-        chunk_path = chunks_dir / f"{_pfx}_chunk_{i:03d}_of_{len(batches):03d}.zip"
-        with zipfile.ZipFile(chunk_path, "w", zipfile.ZIP_STORED) as zf:
-            for pid in pid_batch:
-                for xml_file in patient_files[pid]:
-                    zf.write(xml_file, xml_file.name)
-        chunk_paths.append(chunk_path)
 
-    # Remove source XML files now that they're safely in the zips
-    for xml_files in patient_files.values():
-        for f in xml_files:
-            f.unlink(missing_ok=True)
+    # Build all chunks in parallel — each worker writes one zip independently.
+    workers = min(_MAX_WORKERS, n_batches)
+    chunk_paths: list[Path] = [
+        chunks_dir / f"{_pfx}_chunk_{i:03d}_of_{n_batches:03d}.zip"
+        for i in range(1, n_batches + 1)
+    ]
+    futures_map: dict = {}
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        for path, batch in zip(chunk_paths, batches):
+            fut = pool.submit(_write_one_chunk, path, batch, patient_files)
+            futures_map[fut] = path
+        for fut in as_completed(futures_map):
+            fut.result()  # re-raise any exception from the worker
+
+    # Delete source XML files in parallel now that they're safely in the zips.
+    all_xml: list[Path] = [f for files in patient_files.values() for f in files]
+    with ThreadPoolExecutor(max_workers=_MAX_WORKERS) as pool:
+        list(pool.map(lambda f: f.unlink(missing_ok=True), all_xml))
+
     if search_dir != population_dir and not any(search_dir.iterdir()):
         search_dir.rmdir()
 
