@@ -1657,6 +1657,11 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
     _proc_rows:    list = []
     _allergy_rows: list = []
     _vax_rows:     list = []
+    _illness_rows: list = []
+    _social_rows:  list = []
+    _family_rows:  list = []
+    _rad_rows:     list = []
+    _doc_rows:     list = []
     enc_nums = []
     enc_end_times = []    # stored for doc-signing timestamps
     enc_start_times = []  # stored for obs/procedure timestamps
@@ -1794,6 +1799,16 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 f"      <ExternalId>IllnessHistories_{idx}</ExternalId>\n"
                 f"    </IllnessHistory>\n"
             )
+            _illness_rows.append({
+                "PatientID": patient_id,
+                "ConditionText": cond_text,
+                "OnsetDate": onset.strftime("%Y-%m-%d"),
+                "EnteredOn": enc_dates[0].strftime("%Y-%m-%d"),
+                "ProviderCode": prov_code,
+                "ProviderName": prov_name,
+                "FacilityCode": fac_code,
+                "FacilityName": fac_name,
+            })
         _home_shared_parts.append("  </IllnessHistories>\n")
 
     # ---- SocialHistories ----
@@ -1816,6 +1831,17 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             f"    </SocialHistory>\n"
             f"  </SocialHistories>\n"
         )
+        _social_rows.append({
+            "PatientID": patient_id,
+            "HabitCode": sh.get("habit_code", "NS"),
+            "HabitDescription": sh.get("habit_description", "Non Smoker"),
+            "Comments": comment,
+            "EnteredOn": enc_dates[0].strftime("%Y-%m-%d"),
+            "ProviderCode": prov_code,
+            "ProviderName": prov_name,
+            "FacilityCode": fac_code,
+            "FacilityName": fac_name,
+        })
 
     # ---- FamilyHistories ----
     fam_tmpls = cohort.get("family_history_templates", [])
@@ -1835,6 +1861,15 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 f"      <ExternalId>FamilyHistories_{idx}</ExternalId>\n"
                 f"    </FamilyHistory>\n"
             )
+            _family_rows.append({
+                "PatientID": patient_id,
+                "RelationshipCode": rel_code,
+                "Relationship": rel,
+                "Condition": cond,
+                "EnteredOn": enc_dates[0].strftime("%Y-%m-%d"),
+                "FacilityCode": fac_code,
+                "FacilityName": fac_name,
+            })
         _home_shared_parts.append("  </FamilyHistories>\n")
 
     # ---- Diagnoses: primary at every encounter; comorbidities at even-indexed ones ----
@@ -2095,6 +2130,8 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         ("I50",),
         ("I48",),
         ("J45", "J44"),
+        ("O",),
+        ("Z34",),
     ]
     _all_enc_dx_flat: set = set()
     for _adx_set in _enc_all_dx_codes.values():
@@ -2124,6 +2161,19 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             f"      <ExternalId>Diagnoses_{diag_idx}</ExternalId>\n"
             f"    </Diagnosis>\n"
         )
+        _dx_rows.append({
+            "PatientID": patient_id,
+            "EncounterNumber": enc_nums[_target_ei],
+            "DiagnosisCode": _gd["code"],
+            "DiagnosisDescription": _gd["description"],
+            "DiagnosisType": "C",
+            "DiagnosisTypeName": "Chronic",
+            "ProviderCode": _fpc_g,
+            "ProviderName": _fpn_g,
+            "FacilityCode": _ef_g["code"],
+            "FacilityName": _ef_g["name"],
+            "EnteredOn": enc_dates[_target_ei].strftime("%Y-%m-%d"),
+        })
         diag_idx += 1
 
     # ---- Observations: vitals at every encounter ----
@@ -2836,6 +2886,19 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
                 f"      <ExternalId>Documents_{doc_idx}</ExternalId>\n"
                 f"    </Document>\n"
             )
+            _doc_rows.append({
+                "PatientID": patient_id,
+                "EncounterNumber": en,
+                "DocumentTypeCode": type_code,
+                "DocumentType": type_desc,
+                "DocumentName": type_desc,
+                "DocumentTime": doc_time,
+                "NoteText": note.replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">"),
+                "ProviderCode": prov_code,
+                "ProviderName": prov_name,
+                "FacilityCode": fac_code,
+                "FacilityName": fac_name,
+            })
 
     # Fallback: cohort has no document_templates, so the doc loop never ran and _enc_rows is empty.
     # Build minimal encounter rows so COH001 validation and downstream CSV analysis still work.
@@ -3018,6 +3081,21 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             f"      <EncounterNumber>{last_en}</EncounterNumber>\n"
             f"    </RadOrder>\n"
         )
+        _rad_rows.append({
+            "PatientID": patient_id,
+            "EncounterNumber": last_en,
+            "OrderCode": rad["order_code"],
+            "OrderDescription": rad["order_description"],
+            "OrderTime": ets,
+            "ResultTime": rad_result_ts,
+            "ResultText": result_text,
+            "ReasonForStudy": reason,
+            "ProviderCode": prov_code,
+            "ProviderName": prov_name,
+            "FacilityCode": fac_code,
+            "FacilityName": fac_name,
+            "EnteredOn": last_ed.strftime("%Y-%m-%d"),
+        })
 
     # ---- Medications: prescribed at first encounter, active throughout ----
     # Medications and vaccinations are attributed to the home facility
@@ -4461,6 +4539,11 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
         "procedures": _proc_rows,
         "allergies": _allergy_rows,
         "vaccinations": _vax_rows,
+        "illness_histories": _illness_rows,
+        "social_histories": _social_rows,
+        "family_histories": _family_rows,
+        "radiology_orders": _rad_rows,
+        "documents": _doc_rows,
     }
 
     return _result_xmls, patient_data
@@ -4686,6 +4769,11 @@ def run_template_mode(count: int, output_dir: Path, template_path: str, resume: 
     all_procedures = [r for i in ordered_ids for r in results_by_id[i].get("procedures", [])]
     all_allergies = [r for i in ordered_ids for r in results_by_id[i].get("allergies", [])]
     all_vaccinations = [r for i in ordered_ids for r in results_by_id[i].get("vaccinations", [])]
+    all_illness_histories = [r for i in ordered_ids for r in results_by_id[i].get("illness_histories", [])]
+    all_social_histories = [r for i in ordered_ids for r in results_by_id[i].get("social_histories", [])]
+    all_family_histories = [r for i in ordered_ids for r in results_by_id[i].get("family_histories", [])]
+    all_radiology_orders = [r for i in ordered_ids for r in results_by_id[i].get("radiology_orders", [])]
+    all_documents = [r for i in ordered_ids for r in results_by_id[i].get("documents", [])]
 
     _FACILITY_FIELDNAMES = [
         "PatientID", "FacilityCode", "FacilityName",
@@ -4705,6 +4793,11 @@ def run_template_mode(count: int, output_dir: Path, template_path: str, resume: 
     _write_csv(all_procedures,  output_dir / "procedures.csv")
     _write_csv(all_allergies,   output_dir / "allergies.csv")
     _write_csv(all_vaccinations, output_dir / "vaccinations.csv")
+    _write_csv(all_illness_histories, output_dir / "illness_histories.csv")
+    _write_csv(all_social_histories,  output_dir / "social_histories.csv")
+    _write_csv(all_family_histories,  output_dir / "family_histories.csv")
+    _write_csv(all_radiology_orders,  output_dir / "radiology_orders.csv")
+    _write_csv(all_documents,         output_dir / "documents.csv")
     _write_csv(
         all_facilities,
         output_dir / "patient_facilities.csv",

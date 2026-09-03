@@ -299,6 +299,11 @@ _CSV_FILES = [
     "procedures.csv",
     "allergies.csv",
     "vaccinations.csv",
+    "illness_histories.csv",
+    "social_histories.csv",
+    "family_histories.csv",
+    "radiology_orders.csv",
+    "documents.csv",
     "patient_facilities.csv",
     "generator_validation.csv",
 ]
