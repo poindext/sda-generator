@@ -849,7 +849,9 @@ register('generate', async () => {
         bar.style.width = '100%';
         if (status === 'completed') {
           logLine(logBox, '✓ Complete — loading results…');
-          setTimeout(() => navigate(`#populations/${resp.pop_id}`), 800);
+          const popId = resp.pop_id ||
+            (resp.output_dir || '').replace(/\\/g, '/').split('/').filter(Boolean).pop();
+          setTimeout(() => navigate(`#populations/${popId}`), 800);
         } else {
           logLine(logBox, `✗ Job ended with status: ${status}`);
         }
