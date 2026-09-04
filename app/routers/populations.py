@@ -466,6 +466,31 @@ async def override_qa(pop_id: str):
 
 
 # --------------------------------------------------------------------------
+# Rebuild Chunks — retry chunk building for an approved population
+# --------------------------------------------------------------------------
+
+@router.post("/populations/{pop_id}/rebuild-chunks")
+async def rebuild_chunks(pop_id: str):
+    """(Re)build zip chunks for an approved population whose chunks are missing."""
+    from app.services import chunker_svc, generator_svc
+    d = _find(pop_id)
+    meta = _read_meta(d) or _infer_meta(d)
+    if not meta:
+        raise HTTPException(404, "Population metadata not found")
+    qa_status = meta.get("qa_status", "")
+    if qa_status not in ("approved", "overridden", "skipped"):
+        raise HTTPException(
+            400,
+            f"Chunks can only be rebuilt for approved/overridden populations "
+            f"(current qa_status: {qa_status})",
+        )
+    await asyncio.to_thread(chunker_svc.build_chunks, d)
+    meta["chunks_built"] = True
+    generator_svc._write_meta(d, meta)
+    return {"chunks_built": True}
+
+
+# --------------------------------------------------------------------------
 # Delete
 # --------------------------------------------------------------------------
 

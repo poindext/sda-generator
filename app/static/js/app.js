@@ -1257,6 +1257,7 @@ function renderPopDetail(pop, stats) {
     : '';
 
   // ── Download manager ─────────────────────────────────────────
+  const _approvedNoChunks = pop.downloadable && !pop.chunks?.length;
   const chunkRows = pop.downloadable && pop.chunks?.length
     ? '<div class="chunk-list">' +
       pop.chunks.map(c => `
@@ -1266,6 +1267,11 @@ function renderPopDetail(pop, stats) {
           <a class="btn btn-sm btn-secondary" href="${API_BASE}/api/populations/${pop.id}/chunks/${c.name}" download>Download</a>
         </div>`).join('') +
       '</div>'
+    : _approvedNoChunks
+      ? `<div class="alert alert-warning" style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+           <span>Population is approved but chunks were not built. Click to build them now.</span>
+           <button id="btn-rebuild-chunks" class="btn btn-sm btn-primary" data-popid="${pop.id}" style="white-space:nowrap">Build Chunks</button>
+         </div>`
     : pop.run_qa && pop.qa_status !== 'approved'
       ? '<div class="alert alert-warning">Downloads are locked until QA is approved.</div>'
       : '<div class="text-muted text-sm">No chunks available.</div>';
@@ -1370,6 +1376,22 @@ function renderPopDetail(pop, stats) {
       logLine(logBox, `Error starting QA: ${e.message}`);
       el('btn-reqa-pop').disabled = false;
       el('btn-reqa-pop').textContent = 'Re-run QA';
+    }
+  });
+
+  // Rebuild Chunks handler
+  el('btn-rebuild-chunks') && el('btn-rebuild-chunks').addEventListener('click', async () => {
+    const btn = el('btn-rebuild-chunks');
+    const popId = btn.dataset.popid;
+    btn.disabled = true;
+    btn.textContent = 'Building…';
+    try {
+      await api.post(`/populations/${popId}/rebuild-chunks`, {});
+      setTimeout(() => navigate(`#populations/${popId}`), 500);
+    } catch (e) {
+      alert('Chunk build failed: ' + e.message);
+      btn.disabled = false;
+      btn.textContent = 'Build Chunks';
     }
   });
 

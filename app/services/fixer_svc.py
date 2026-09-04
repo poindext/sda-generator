@@ -312,9 +312,16 @@ async def _fix_pipeline(
             _write_meta(pop_dir, meta)
             job_store.append_progress(job_id, "")
             job_store.append_progress(job_id, "✓ QA APPROVED — building download chunks")
-            await asyncio.to_thread(chunker_svc.build_chunks, pop_dir)
-            meta["chunks_built"] = True
-            _write_meta(pop_dir, meta)
+            try:
+                await asyncio.to_thread(chunker_svc.build_chunks, pop_dir)
+                meta["chunks_built"] = True
+                _write_meta(pop_dir, meta)
+            except Exception as chunk_err:
+                job_store.append_progress(
+                    job_id,
+                    f"⚠ Chunk build failed: {chunk_err} — "
+                    "population is approved; use 'Rebuild Chunks' to retry.",
+                )
             job_store.update_status(
                 job_id, "completed",
                 result={"qa_status": "approved", "rounds": round_num},
@@ -333,9 +340,15 @@ async def _fix_pipeline(
     meta = _read_meta(pop_dir)
     if not meta.get("chunks_built"):
         job_store.append_progress(job_id, "Building download chunks…")
-        await asyncio.to_thread(chunker_svc.build_chunks, pop_dir)
-        meta["chunks_built"] = True
-        _write_meta(pop_dir, meta)
+        try:
+            await asyncio.to_thread(chunker_svc.build_chunks, pop_dir)
+            meta["chunks_built"] = True
+            _write_meta(pop_dir, meta)
+        except Exception as chunk_err:
+            job_store.append_progress(
+                job_id,
+                f"⚠ Chunk build failed: {chunk_err} — use 'Rebuild Chunks' to retry.",
+            )
     job_store.update_status(
         job_id, "completed",
         result={"qa_status": "needs_review", "rounds": MAX_ROUNDS},
