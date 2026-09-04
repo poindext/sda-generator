@@ -728,18 +728,18 @@ def _build_lab_xml(lab, enc_num, enc_date, patient_id, prov_code, prov_name,
                 interp = "N"
             val = f"{_wbc:.1f}"
         elif ri.get("code") == "718-7":
-            # Non-CKD hemoglobin: sex-specific normal ranges.
-            # CKD patients are handled by the ckd_egfr branch above.
-            # Female normal 12.0-16.0; male normal 13.5-17.5.
-            # Polycythemia is too rare to model here — no high-abnormal branch.
+            # Non-CKD hemoglobin: sex-aware, consistent with config normal_min=11.5.
+            # Anemia ceiling is 11.4 for both sexes so "L" never contradicts
+            # the validator's range check (LAB003). Normal upper bound is
+            # sex-specific: females cap at 16.0 to prevent implausible values.
             _is_female = sex == "F"
             _abn_rate = 0.08 if _is_female else 0.05
             is_abn = rng.random() < _abn_rate
             if is_abn:
-                _hgb = rng.uniform(8.0, 11.9) if _is_female else rng.uniform(9.0, 13.4)
+                _hgb = rng.uniform(8.0, 11.4) if _is_female else rng.uniform(9.5, 11.4)
                 interp = "L"
             else:
-                _hgb = rng.uniform(12.0, 16.0) if _is_female else rng.uniform(13.5, 17.5)
+                _hgb = rng.uniform(11.5, 16.0) if _is_female else rng.uniform(11.5, 17.5)
                 interp = "N"
             val = f"{round(_hgb, 1):.1f}"
             is_abn = interp == "L"
