@@ -1623,11 +1623,15 @@ function loadPrHistory() {
              onclick="window.location.href='/api/patient-record/download-zip?path=${encodeURIComponent(r.zip_path)}'">
              Download ZIP</button>`
         : '<span class="text-muted text-sm">—</span>';
-      const filesTip = r.files ? r.files.join('\n') : '';
+      const desc = r.description
+        ? `<div style="font-size:11px;color:var(--text-muted);margin-top:2px;font-weight:normal;font-family:inherit">${r.description}</div>`
+        : '';
       return `<tr>
-        <td style="font-family:monospace;font-size:13px;padding:6px 12px" title="${filesTip}">${r.name}</td>
-        <td style="padding:6px 12px">${r.file_count} file${r.file_count !== 1 ? 's' : ''}</td>
-        <td style="padding:6px 12px;color:var(--text-muted);font-size:13px">${date}</td>
+        <td style="padding:6px 12px">
+          <span style="font-family:monospace;font-size:13px">${r.name}</span>${desc}
+        </td>
+        <td style="padding:6px 12px;white-space:nowrap">${r.file_count} file${r.file_count !== 1 ? 's' : ''}</td>
+        <td style="padding:6px 12px;color:var(--text-muted);font-size:13px;white-space:nowrap">${date}</td>
         <td style="padding:6px 12px">${dlBtn}</td>
       </tr>`;
     }).join('');
@@ -1721,8 +1725,13 @@ register('patient-record', () => {
         btn.textContent = 'Generate SDA3 Record →';
         hide('pr-progress-card');
 
-        if (evt.error && !evt.files) {
-          statusEl.textContent = 'Error: ' + evt.error;
+        if (evt.parse_error) {
+          // XML parse failed — show the error prominently so it can be reported
+          el('pr-file-list').innerHTML =
+            `<p style="color:#dc3545;font-size:13px">⚠ XML parse error — saved as single file. Details: ${evt.parse_error}</p>`;
+        }
+        if (!evt.files || !evt.files.length) {
+          statusEl.textContent = 'Generation failed.';
           show('pr-progress-card');
           return;
         }

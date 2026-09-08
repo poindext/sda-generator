@@ -46,6 +46,11 @@ async def list_patient_records():
         xml_files = sorted(pkg.glob("*.xml"))
         zip_files = list(pkg.glob("*.zip"))
         zip_path = str(zip_files[0].relative_to(BASE_DIR)) if zip_files else ""
+        scenario_file = pkg / "scenario.txt"
+        description = ""
+        if scenario_file.exists():
+            first_line = scenario_file.read_text(encoding="utf-8").split("\n")[0].strip()
+            description = first_line[:140]
         results.append({
             "name": pkg.name,
             "type": "package",
@@ -53,6 +58,7 @@ async def list_patient_records():
             "files": [f.name for f in xml_files],
             "created": datetime.fromtimestamp(pkg.stat().st_mtime).isoformat(),
             "zip_path": zip_path,
+            "description": description,
         })
 
     # Legacy single XML files (fallback / pre-split format)

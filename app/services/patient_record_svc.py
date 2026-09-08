@@ -197,12 +197,17 @@ def _split_by_facility(
     if raw.startswith("<?xml"):
         raw = raw[raw.index("?>") + 2:].strip()
 
-    # Escape bare & that the LLM sometimes emits in description text
+    # Remove XML-invalid control characters (keep tab \x09, LF \x0a, CR \x0d)
+    raw = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f]", "", raw)
+    # Escape bare & not already part of a valid XML entity reference
     raw = re.sub(
         r"&(?!(?:amp|lt|gt|apos|quot|#\d+|#x[0-9a-fA-F]+);)",
         "&amp;",
         raw,
     )
+    # Escape bare < that is NOT the start of a tag, comment, or PI
+    # (e.g. "EFW < 10th percentile" in note text)
+    raw = re.sub(r"<(?![a-zA-Z/!?])", "&lt;", raw)
 
     root = ET.fromstring(raw)
     patient_el = root.find("Patient")
@@ -363,6 +368,8 @@ async def generate_record(
 
     try:
         files, zip_path = _split_by_facility(xml, base_name, out_dir)
+        # Persist scenario description for history display
+        (out_dir / "scenario.txt").write_text(scenario.strip(), encoding="utf-8")
         yield {
             "type": "done",
             "files": files,
@@ -381,5 +388,5 @@ async def generate_record(
                         "facility": "", "type": "add"}],
             "zip_path": "",
             "zip_name": "",
-            "error": f"Could not split by facility: {exc}",
+            "parse_error": str(exc),
         }
