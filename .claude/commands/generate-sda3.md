@@ -36,6 +36,7 @@ The XSD enforces strict section ordering inside `<Container>`. **Never reorder, 
 ```
 
 **Common ordering mistakes that cause validation failure:**
+- Putting `<PatientNumbers>` before `<Name>` inside `<Patient>` — `<Name>` must come first
 - Putting `<IllnessHistories>` after `<SocialHistories>` or `<Diagnoses>` — invalid
 - Putting `<SocialHistories>` or `<FamilyHistories>` after `<Diagnoses>` — invalid
 - Putting `<Medications>` before `<Observations>` — invalid
@@ -89,10 +90,18 @@ Required date fields by type:
 6. `OnsetTime` for a long-standing diagnosis (e.g., hypertension, diabetes) should plausibly predate the current encounter by years.
 
 ### Patient identity
+**CRITICAL XSD field order inside `<Patient>`**: `<Name>` must come BEFORE `<PatientNumbers>`. Putting `<PatientNumbers>` first will fail schema validation.
+
 `<PatientNumbers>` is a required wrapper around all `<PatientNumber>` entries. Each `<PatientNumber>` must include `<NumberType>` and `<Organization>` (the assigning authority). Always include at least the MRN. Add a second entry for Medicaid (MA) or Medicare (MC) if the patient has one.
 
 ```xml
 <Patient>
+  <Name>
+    <FamilyName>Smith</FamilyName>
+    <GivenName>Jane</GivenName>
+    <MiddleName>A.</MiddleName>
+    <Type>Legal</Type>
+  </Name>
   <PatientNumbers>
     <PatientNumber>
       <Number>MRN123456</Number>
@@ -111,12 +120,6 @@ Required date fields by type:
       </Organization>
     </PatientNumber>
   </PatientNumbers>
-  <Name>
-    <FamilyName>Smith</FamilyName>
-    <GivenName>Jane</GivenName>
-    <MiddleName>A.</MiddleName>
-    <Type>Legal</Type>
-  </Name>
   <BirthTime>1968-04-22T00:00:00Z</BirthTime>
   <Gender>
     <SDACodingStandard>HL7</SDACodingStandard>
@@ -252,7 +255,7 @@ Most clinical records should reference an encounter via `<EncounterNumber>`. Use
 
 **CRITICAL internal order**: EncounterNumber → EncounterType → AttendingClinicians → ReferringClinician → HealthCareFacility → HealthFunds → ActionCode → EnteredBy → EnteredAt → EnteredOn → FromTime → ToTime
 
-`HealthFunds.HealthFund.HealthFund.SDACodingStandard` = `QD_HealthPlanCodeList`. Priority=1 for primary insurance. No `SendingFacility` on Encounter.
+`HealthFunds.HealthFund.HealthFund.SDACodingStandard` = `QD_HealthPlanCodeList`. **`SDACodingStandard` must be the very first child** of the inner `<HealthFund>` element (before `<Code>` and `<Description>`). Priority=1 for primary insurance. No `SendingFacility` on Encounter.
 
 ```xml
 <Encounters>
@@ -278,9 +281,9 @@ Most clinical records should reference an encounter via `<EncounterNumber>`. Use
     <HealthFunds>
       <HealthFund>
         <HealthFund>
+          <SDACodingStandard>QD_HealthPlanCodeList</SDACodingStandard>
           <Code>BCBS</Code>
           <Description>Blue Cross Blue Shield</Description>
-          <SDACodingStandard>QD_HealthPlanCodeList</SDACodingStandard>
         </HealthFund>
         <HealthFundPlan>
           <Code>BCBS-PPO</Code>
@@ -359,6 +362,8 @@ Comes **after `<Allergies>`** and **before `<SocialHistories>`** in the XSD. Pop
 
 `Condition.Code` and `Condition.Description` are **both set to the same plain-text description** — not a coded ICD value. No `SDACodingStandard`. No `EncounterNumber` (encounter-less). `ExternalId` REQUIRED. `FromTime` = onset date; `ToTime` = resolution date (omit for ongoing). Include chronic conditions, prior surgeries, and significant past illnesses.
 
+XSD field order: `Condition → Clinician → EnteredBy → EnteredAt → EnteredOn → FromTime → ExternalId`
+
 ```xml
 <IllnessHistories>
   <IllnessHistory>
@@ -366,8 +371,8 @@ Comes **after `<Allergies>`** and **before `<SocialHistories>`** in the XSD. Pop
       <Code>Essential hypertension</Code>
       <Description>Essential hypertension</Description>
     </Condition>
-    <EnteredBy><Code>DR456</Code><Description>Dr. Smith</Description></EnteredBy>
     <Clinician><Code>DR456</Code><Description>Dr. Smith</Description></Clinician>
+    <EnteredBy><Code>DR456</Code><Description>Dr. Smith</Description></EnteredBy>
     <EnteredAt><Code>GH001</Code><Description>General Hospital</Description></EnteredAt>
     <EnteredOn>2024-03-15T00:00:00Z</EnteredOn>
     <FromTime>2018-04-10T00:00:00Z</FromTime>
@@ -378,8 +383,8 @@ Comes **after `<Allergies>`** and **before `<SocialHistories>`** in the XSD. Pop
       <Code>Appendectomy (remote surgical history)</Code>
       <Description>Appendectomy (remote surgical history)</Description>
     </Condition>
-    <EnteredBy><Code>DR456</Code><Description>Dr. Smith</Description></EnteredBy>
     <Clinician><Code>DR456</Code><Description>Dr. Smith</Description></Clinician>
+    <EnteredBy><Code>DR456</Code><Description>Dr. Smith</Description></EnteredBy>
     <EnteredAt><Code>GH001</Code><Description>General Hospital</Description></EnteredAt>
     <EnteredOn>2024-03-15T00:00:00Z</EnteredOn>
     <FromTime>1995-06-01T00:00:00Z</FromTime>
@@ -719,7 +724,7 @@ For **inpatient encounters** include two documents: an H&P (`Code="HP"`) on admi
 
 ### Procedure example
 
-**Critical**: The procedure code lives in a **child `<Procedure>` element** (same name as the parent record). Never put `<SDACodingStandard>` directly inside the outer `<Procedure>` — it must be wrapped in the inner `<Procedure>`.
+**Critical**: The procedure code lives in a **child `<Procedure>` element** (same name as the parent record). Never put `<SDACodingStandard>` directly inside the outer `<Procedure>` — it must be wrapped in the inner `<Procedure>`. **No `SendingFacility` on Procedure records.**
 
 ```xml
 <Procedures>
@@ -735,7 +740,6 @@ For **inpatient encounters** include two documents: an H&P (`Code="HP"`) on admi
     <EnteredAt><Code>GH001</Code><Description>General Hospital</Description></EnteredAt>
     <EnteredOn>2024-03-15T00:00:00Z</EnteredOn>
     <ActionCode>A</ActionCode>
-    <SendingFacility>GH001</SendingFacility>
   </Procedure>
 </Procedures>
 ```
@@ -769,8 +773,8 @@ For **inpatient encounters** include two documents: an H&P (`Code="HP"`) on admi
     <Result>
       <ResultTime>2024-03-15T11:00:00Z</ResultTime>
       <ResultText>No acute cardiopulmonary process. Borderline cardiac enlargement. Lungs clear bilaterally.</ResultText>
-      <EnteredOn>2024-03-15T08:30:00Z</EnteredOn>
       <AuthorizationTime>2024-03-15T11:00:00Z</AuthorizationTime>
+      <EnteredOn>2024-03-15T08:30:00Z</EnteredOn>
     </Result>
     <ReasonForStudy>
       <Description>Evaluate for cardiomegaly</Description>
@@ -787,18 +791,24 @@ Common `OrderItem` codes for Diagnostic Studies: `CXR-PA-LAT` Chest X-Ray · `EK
 
 Comes **after `<Vaccinations>`** and **before `<SocialDeterminants>`**. `AdjudicatedCoverage` is a **plain string** (insurer name). `ProcedureCode` in `MedicalClaimLine` uses `Description` only (free text). `MedicalClaimNumber` = unique claim identifier.
 
+**CRITICAL XSD field order: all SuperClass fields (`EnteredBy`, `EnteredAt`, `EnteredOn`, `UpdatedOn`, `FromTime`, `ToTime`, `ExternalId`) come BEFORE MedicalClaim-specific fields like `MedicalClaimNumber`.**
+
 ```xml
 <MedicalClaims>
   <MedicalClaim>
-    <MedicalClaimNumber>CLM-20240315-001</MedicalClaimNumber>
+    <EnteredBy><Code>DR456</Code><Description>Dr. Smith</Description></EnteredBy>
+    <EnteredAt><Code>GH001</Code><Description>General Hospital</Description></EnteredAt>
+    <EnteredOn>2024-03-15T00:00:00Z</EnteredOn>
     <UpdatedOn>2024-03-20T00:00:00Z</UpdatedOn>
     <FromTime>2024-03-15T08:00:00Z</FromTime>
     <ToTime>2024-03-15T14:00:00Z</ToTime>
+    <ExternalId>MedicalClaims_1</ExternalId>
+    <MedicalClaimNumber>CLM-20240315-001</MedicalClaimNumber>
+    <AdjudicatedCoverage>Blue Cross Blue Shield</AdjudicatedCoverage>
+    <AdjudicationStatus><Code>complete</Code><Description>complete</Description></AdjudicationStatus>
     <ClaimProcessedDate>2024-03-20T00:00:00Z</ClaimProcessedDate>
     <ReceivedDate>2024-03-16T00:00:00Z</ReceivedDate>
     <SubmissionDate>2024-03-16T00:00:00Z</SubmissionDate>
-    <AdjudicatedCoverage>Blue Cross Blue Shield</AdjudicatedCoverage>
-    <AdjudicationStatus><Code>complete</Code><Description>complete</Description></AdjudicationStatus>
     <Priority><Code>N</Code><Description>normal</Description></Priority>
     <Status><Code>active</Code><Description>active</Description></Status>
     <BillingProvider><Code>GH001</Code><Description>General Hospital</Description></BillingProvider>
