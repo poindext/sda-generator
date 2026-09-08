@@ -950,6 +950,8 @@ ObservationValue = f"{ga_weeks}w {ga_days}d"   e.g. "8w 0d", "14w 0d", "27w 3d"
 
 Apply this calculation to **every** encounter across **both** FAC001 and FAC002. Never independently compose a GA string in notes and generate a different value in the Observation. All GA text in notes must be consistent with the calculated value. If LMP is 2023-11-13 and an encounter is 2024-01-08, the GA is exactly 8w 0d — not 8w 6d.
 
+**Cross-facility pregnancy clock — MANDATORY:** FAC002 (MFM) and any other facility must derive GA from the **exact same LMP** established in the patient record. Never independently estimate GA for FAC002 encounters. Run the same integer formula on every FAC002 date. A value like `26w7d` is invalid — weeks contain exactly 0–6 days; `ga_days = days % 7` never yields 7. Example: 189 days since LMP = `189 // 7` = 27w `189 % 7` = 0d → `27w 0d`, not `26w7d`.
+
 **6b — Trimester code by calculated GA (derived from LMP, not assumed)**
 
 | GA at encounter | ICD-10 suffix | Example |
@@ -984,10 +986,11 @@ Generate structured `<Observation>` records — not note-text only — for each 
 
 For a scenario with one mildly elevated BP + reassuring repeat: generate **two** sequential BP observation pairs (systolic+diastolic) at the same encounter — the initial elevated reading must be **at minimum systolic ≥ 140 mmHg or diastolic ≥ 90 mmHg** (e.g., 142/90), followed by a normal repeat 15–30 minutes later (e.g., 124/76). Document in the encounter note that the repeat normalized and there were no preeclampsia symptoms or proteinuria. Do **not** assign a gestational hypertension or preeclampsia diagnosis.
 
-**Visit count and endpoint:**
+**Visit count and endpoint — HARD REQUIREMENTS:**
 - FAC001 must contain **at least 8** routine prenatal encounters.
-- At least one FAC001 encounter must fall at **34–35 weeks GA**.
+- The **last FAC001 encounter must be at 34–35 weeks GA** — a record that ends at 30–32 weeks fails this rule even if it has 8 visits.
 - The record must end at approximately **34–36 weeks**, with the patient still pregnant. Document stable maternal/fetal status and planned mode of delivery (e.g., repeat cesarean), but do **not** generate any delivery or postpartum data.
+- If the encounter count reaches 8 before 34 weeks, **add one more visit at 34–35 weeks**. Do not stop generating encounters just because you have reached a visit-count target.
 
 **6d — Initial prenatal lab panel (as a single `<LabOrder>` with discrete `<ResultItems>`)**
 
@@ -1009,9 +1012,9 @@ A note that says "routine prenatal labs ordered" is NOT acceptable. Each compone
 | Urine culture | `13115-0` |
 | Chlamydia/GC NAAT | `45084-1` |
 
-At 24–28 weeks: **1-hour glucose challenge test** — `OrderItem` LOINC `20436-2`, result < 140 mg/dL, **no GDM diagnosis**. This lab order with its result is mandatory; a note mentioning "GDM screen normal" is not sufficient.
+At 24–28 weeks: **1-hour glucose challenge test** — `OrderItem` LOINC `20436-2`, result < 140 mg/dL, **no GDM diagnosis**. This lab order with its result is mandatory; a note mentioning "GDM screen normal" is not sufficient. **Do NOT order the GCT before 24w0d** — a test dated at 22 weeks is clinically premature and fails this rule.
 
-For iron-deficiency anemia: the supporting CBC must include Hgb, Hct, **MCV**, and ferritin — all abnormal — dated before the D50.9 diagnosis. A follow-up CBC **at the 34–35 week visit** (2–4 weeks after iron is started) **must** be present and must show improvement: Hgb increased by 0.5–1.5 g/dL, MCV trending upward, confirming treatment response. If the record ends before 34 weeks, add a dedicated follow-up lab encounter for this purpose.
+For iron-deficiency anemia: the supporting CBC must include Hgb, Hct, **MCV**, and ferritin — all abnormal — dated before the D50.9 diagnosis. A follow-up CBC **at the 34–35 week visit** (approximately 6–8 weeks after iron is started) **must** be present as a discrete `<LabOrder>` and must show improvement: Hgb increased by 0.5–1.5 g/dL, MCV trending upward. **A record that ends at 30–32 weeks will be missing this CBC — this is one reason the last FAC001 visit must be at 34–35 weeks.**
 
 At 35–37 weeks: GBS culture — LOINC `43080-8`.
 
