@@ -244,10 +244,17 @@ def _split_by_facility(
             for r in recs:
                 sec.append(copy.deepcopy(r))
 
-        # Build delete container — Patient section only, no clinical records
+        # Build delete container — Patient section only, MRN filtered to this facility
         del_root = ET.Element("Container")
         if patient_el is not None:
-            del_root.append(copy.deepcopy(patient_el))
+            del_patient = copy.deepcopy(patient_el)
+            pn_wrapper = del_patient.find("PatientNumbers")
+            if pn_wrapper is not None:
+                for pn in list(pn_wrapper):
+                    org_code = pn.findtext("Organization/Code") or ""
+                    if org_code and org_code != fac:
+                        pn_wrapper.remove(pn)
+            del_root.append(del_patient)
 
         ET.indent(add_root, space="  ")
         ET.indent(del_root, space="  ")
