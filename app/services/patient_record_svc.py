@@ -368,8 +368,22 @@ async def generate_record(
 
     try:
         files, zip_path = _split_by_facility(xml, base_name, out_dir)
-        # Persist scenario description for history display
+
+        # Save scenario (for history display) and full prompt (for reproducibility)
         (out_dir / "scenario.txt").write_text(scenario.strip(), encoding="utf-8")
+        prompt_content = (
+            "=== SYSTEM PROMPT ===\n\n"
+            + system_prompt
+            + "\n\n=== USER MESSAGE ===\n\n"
+            + user_message
+        )
+        (out_dir / "prompt.txt").write_text(prompt_content, encoding="utf-8")
+
+        # Append both metadata files to the existing ZIP
+        with zipfile.ZipFile(zip_path, "a", zipfile.ZIP_DEFLATED) as zf:
+            zf.write(out_dir / "prompt.txt", "prompt.txt")
+            zf.write(out_dir / "scenario.txt", "scenario.txt")
+
         yield {
             "type": "done",
             "files": files,
