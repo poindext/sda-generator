@@ -300,6 +300,10 @@ def _split_by_facility(
             ac.text = "D"
             del_root.append(del_patient)
 
+        # Container-level SendingFacility — required by HealthShare MPI Update Manager
+        ET.SubElement(add_root, "SendingFacility").text = fac
+        ET.SubElement(del_root, "SendingFacility").text = fac
+
         ET.indent(add_root, space="  ")
         ET.indent(del_root, space="  ")
 
