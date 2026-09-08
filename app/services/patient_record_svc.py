@@ -360,11 +360,16 @@ async def generate_record(
         if stripped.endswith("</Container>"):
             break
         yield {"type": "status", "message": f"Output limit reached — requesting continuation (pass {_cont + 2})…"}
-        # Build clean assistant content: strip any leading markdown fence so the
-        # continuation model sees raw XML ending mid-element, not a fenced block.
+        # Build clean assistant content: strip fence, then trim to the last
+        # complete '>' so the model never sees a half-written tag and cannot
+        # produce overlapping/duplicate content in its continuation.
         assistant_content = full_text.strip()
         if assistant_content.startswith("```"):
             assistant_content = re.sub(r"^```(?:xml)?\s*\n?", "", assistant_content)
+        last_close = assistant_content.rfind(">")
+        if last_close > 0:
+            assistant_content = assistant_content[: last_close + 1]
+            full_text = assistant_content  # keep full_text in sync so continuation appends cleanly
         messages = [
             {"role": "system", "content": system_prompt},
             {"role": "user",   "content": user_message},
