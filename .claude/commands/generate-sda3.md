@@ -826,6 +826,83 @@ Comes **after `<Vaccinations>`** and **before `<SocialDeterminants>`**. `Adjudic
 </MedicalClaims>
 ```
 
+### Obstetric record coding rules
+
+These rules apply whenever generating antepartum, prenatal, or obstetric SDA3 records. They address issues that cause downstream rules-engine false positives or prevent structured extraction.
+
+#### 1 — Trimester code / encounter linkage consistency
+
+ICD-10 pregnancy supervision codes carry trimester specificity: `O09.291` = first trimester, `O09.292` = second trimester, `O09.293` = third trimester. The same applies to other pregnancy complication codes (O14.x, O36.x, etc.).
+
+**Rule:** In the consolidated `<Diagnoses>` section, the active/current pregnancy supervision diagnosis must be linked to an encounter that falls within the same trimester as the code. In practice this means linking the current diagnosis to the **most recent** encounter (not the first). The encounter-level inline `<Diagnoses>` element should carry the trimester code that matches that specific visit's gestational age.
+
+```xml
+<!-- WRONG: O09.293 (third trimester) linked to 8-week first encounter -->
+<Diagnosis><Code>O09.293</Code>...<EncounterNumber>ENC-001</EncounterNumber>...</Diagnosis>
+
+<!-- CORRECT: O09.293 linked to most recent encounter (35w visit) -->
+<Diagnosis><Code>O09.293</Code>...<EncounterNumber>ENC-008</EncounterNumber><EnteredOn>20260901</EnteredOn>...</Diagnosis>
+```
+
+#### 2 — Historical obstetric complications: use Z87.59, not active O-codes
+
+Conditions that were obstetric complications of a **prior pregnancy** (fully resolved, documented only for context in the current pregnancy) must be coded with `Z87.59` — *Personal history of complications of pregnancy, childbirth and the puerperium* — rather than the active obstetric complication code.
+
+Using an active complication code such as `O14.12` with `<Status>H</Status>` or a "HISTORICAL" comment still exposes the code to downstream rules engines that match on code alone, potentially triggering false-positive active preeclampsia or FGR alerts.
+
+| Historical condition | Correct code | Do NOT use |
+|---|---|---|
+| Prior severe preeclampsia | `Z87.59` | `O14.12`, `O14.02` |
+| Prior FGR | `Z87.59` | `O36.5190` |
+| Prior placental abruption | `Z87.59` | `O45.x` |
+| Prior preterm birth | `Z87.59` + `O09.211` (current supervision) | `O60.x` from prior pregnancy |
+
+```xml
+<!-- WRONG: active O14 code on a historical prior-pregnancy condition -->
+<Diagnosis><Code>O14.12</Code><Description>Severe pre-eclampsia — HISTORICAL</Description>...</Diagnosis>
+
+<!-- CORRECT: Z87.59 with narrative context -->
+<Diagnosis><Code>Z87.59</Code><Description>Personal history of severe preeclampsia, first pregnancy 2022</Description>
+  <Status><Code>H</Code><Description>Historical</Description></Status>
+  <Comments>Severe early-onset preeclampsia, prior pregnancy 2022, fully resolved postpartum.</Comments>
+</Diagnosis>
+```
+
+#### 3 — Discrete obstetric ultrasound biometry
+
+For all obstetric ultrasound `<Procedure>` records, all clinically significant measurements must appear as discrete `<ProcedureObservation>` elements — not only in `<Comments>`. A downstream system extracting fetal growth data must be able to parse these without NLP.
+
+**Required biometry in every obstetric US:**
+
+| Measurement | LOINC | Units |
+|---|---|---|
+| Biparietal Diameter (BPD) | `11820-8` | cm |
+| Head Circumference (HC) | `11984-2` | cm |
+| Abdominal Circumference (AC) | `11979-2` | cm |
+| Femur Length (FL) | `11892-7` | cm |
+| Estimated Fetal Weight (EFW) | `11727-5` | g |
+
+**Include as discrete when clinically obtained:**
+
+| Measurement | LOINC | Notes |
+|---|---|---|
+| EFW Percentile | `57063-3` | %ile — growth and anatomy US |
+| Amniotic Fluid Index (AFI) | `59132-4` | cm — all trimester 2/3 US |
+| Umbilical Artery S/D ratio | `59130-8` | growth US, high-risk |
+| Fetal Presentation | `73772-1` | third trimester US |
+| Cervical Length | `60355-5` | mm — anatomy US |
+| Fetal Heart Rate by US | `55283-6` | /min |
+
+**Never** carry these measurements only in `<Comments>` or `<NoteText>`. The comment may also contain the narrative interpretation, but the measurement value must be in a `<ProcedureObservation>`.
+
+#### 4 — No literature citations in clinical note text
+
+Clinical note `<NoteText>` content must not reference specific trial names, journal citations, or publication details (e.g., "per PRISM trial evidence", "NEJM 2020", "USPSTF grade B recommendation per Rolnik et al."). 
+
+State clinical decisions plainly: *"Continue aspirin 81mg daily for preeclampsia prophylaxis."* Synthetic data is not an appropriate venue for attributed literature; cited trial names may be incorrect, nonexistent, or misleading to reviewers who cannot verify them in context.
+
+---
+
 ### What NOT to include unless specifically relevant
 - `CustomPairs`, `ProvenanceIds`, `SdaID`, `SourceFormat` — system/internal fields, omit
 - `Extension` elements — omit unless testing extensions
