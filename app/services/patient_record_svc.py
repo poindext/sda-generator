@@ -16,6 +16,38 @@ from app.config import BASE_DIR, OPENAI_API_KEY, POPULATIONS_DIR, TEMPLATES_DIR
 
 _SKILL_PATH = BASE_DIR / ".claude" / "commands" / "generate-sda3.md"
 _RECORDS_DIR = POPULATIONS_DIR / "single-records"
+_SCHEMA_PATH = BASE_DIR / "schema" / "SDA_validator.xsd"
+
+# Lazy-loaded lxml schema — None if lxml or schema file unavailable
+_xsd_schema = None
+
+
+def _get_xsd_schema():
+    global _xsd_schema
+    if _xsd_schema is not None:
+        return _xsd_schema
+    try:
+        from lxml import etree
+        if _SCHEMA_PATH.exists():
+            _xsd_schema = etree.XMLSchema(etree.parse(str(_SCHEMA_PATH)))
+    except Exception:
+        pass
+    return _xsd_schema
+
+
+def _validate_file(path: Path) -> list[str]:
+    """Return a list of XSD validation error strings for a written XML file."""
+    schema = _get_xsd_schema()
+    if schema is None:
+        return []
+    try:
+        from lxml import etree
+        doc = etree.parse(str(path))
+        if not schema.validate(doc):
+            return [f"L{e.line}: {e.message}" for e in schema.error_log]
+    except Exception as exc:
+        return [str(exc)]
+    return []
 
 
 # --------------------------------------------------------------------------
@@ -244,7 +276,8 @@ def _split_by_facility(
             for r in recs:
                 sec.append(copy.deepcopy(r))
 
-        # Build delete container — Patient section only, MRN filtered to this facility
+        # Build delete container — Patient section only, MRN filtered to this
+        # facility, ActionCode=D on the Patient element
         del_root = ET.Element("Container")
         if patient_el is not None:
             del_patient = copy.deepcopy(patient_el)
@@ -254,6 +287,10 @@ def _split_by_facility(
                     org_code = pn.findtext("Organization/Code") or ""
                     if org_code and org_code != fac:
                         pn_wrapper.remove(pn)
+            ac = del_patient.find("ActionCode")
+            if ac is None:
+                ac = ET.SubElement(del_patient, "ActionCode")
+            ac.text = "D"
             del_root.append(del_patient)
 
         ET.indent(add_root, space="  ")
@@ -269,9 +306,19 @@ def _split_by_facility(
             header + ET.tostring(del_root, encoding="unicode"), encoding="utf-8"
         )
 
-        rel = lambda n: str((out_dir / n).relative_to(BASE_DIR))
-        written.append({"name": add_name, "path": rel(add_name), "facility": fac, "type": "add"})
-        written.append({"name": del_name, "path": rel(del_name), "facility": fac, "type": "delete"})
+        def rel(n):
+            return str((out_dir / n).relative_to(BASE_DIR))
+
+        add_errors = _validate_file(out_dir / add_name)
+        del_errors = _validate_file(out_dir / del_name)
+        written.append({
+            "name": add_name, "path": rel(add_name), "facility": fac, "type": "add",
+            "xsd_errors": add_errors,
+        })
+        written.append({
+            "name": del_name, "path": rel(del_name), "facility": fac, "type": "delete",
+            "xsd_errors": del_errors,
+        })
 
     zip_path = out_dir / f"{base_name}.zip"
     with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:

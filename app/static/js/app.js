@@ -1750,10 +1750,15 @@ register('patient-record', () => {
             const typeHtml = isDelete
               ? '<span style="color:#dc3545;font-weight:600">Delete</span>'
               : '<span style="color:#28a745;font-weight:600">Add</span>';
+            const errs = f.xsd_errors || [];
+            const xsdHtml = errs.length === 0
+              ? '<span style="color:#28a745;font-size:12px">✓ Valid</span>'
+              : `<span style="color:#dc3545;font-size:12px" title="${errs.join('\n')}">✗ ${errs.length} error${errs.length > 1 ? 's' : ''}</span>`;
             return `<tr>
               <td style="font-family:monospace;font-size:13px;padding:6px 12px">${f.name}</td>
               <td style="padding:6px 12px">${f.facility || '—'}</td>
               <td style="padding:6px 12px">${typeHtml}</td>
+              <td style="padding:6px 12px">${xsdHtml}</td>
             </tr>`;
           }).join('');
           el('pr-file-list').innerHTML = `
@@ -1763,6 +1768,7 @@ register('patient-record', () => {
                   <th style="text-align:left;padding:6px 12px;font-size:12px;color:var(--text-muted)">File</th>
                   <th style="text-align:left;padding:6px 12px;font-size:12px;color:var(--text-muted)">Facility</th>
                   <th style="text-align:left;padding:6px 12px;font-size:12px;color:var(--text-muted)">Type</th>
+                  <th style="text-align:left;padding:6px 12px;font-size:12px;color:var(--text-muted)">XSD</th>
                 </tr>
               </thead>
               <tbody>${rows}</tbody>
