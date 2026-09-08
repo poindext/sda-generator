@@ -12,7 +12,7 @@ router = APIRouter()
 class RecordRequest(BaseModel):
     scenario: str
     filename: str = ""
-    model: str = "gpt-4o"
+    model: str = "gpt-4.1"
     template_file: str = ""
     cohort_id: str = ""
 

@@ -332,7 +332,7 @@ async def generate_record(
     try:
         stream = await client.chat.completions.create(
             model=model,
-            max_tokens=12000,
+            max_tokens=32000 if model.startswith("gpt-4.1") else 16000,
             temperature=0.4,
             messages=[
                 {"role": "system", "content": system_prompt},
