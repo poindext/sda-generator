@@ -901,6 +901,7 @@ For all obstetric ultrasound `<Procedure>` records, all clinically significant m
 | Fetal Presentation | `73772-1` | third trimester US |
 | Cervical Length | `60355-5` | mm — anatomy US |
 | Fetal Heart Rate by US | `55283-6` | /min |
+| Placental location | `54097-5` | text — anatomy US |
 
 **Never** carry these measurements only in `<Comments>` or `<NoteText>`. The comment may also contain the narrative interpretation, but the measurement value must be in a `<ProcedureObservation>`.
 
@@ -938,7 +939,16 @@ These rules define the minimum structured content for antepartum/prenatal record
 | EDD by LMP | `11779-6` | EDD in a note |
 | GA at each visit | `11884-6` | GA mentioned in a note |
 
-Generate a gestational age `<Observation>` at **every** prenatal and MFM encounter. The value must be **calculated** from the authoritative LMP for that specific encounter date — never copy a value from a note. Use the same LMP/EDD consistently across all encounters and both facilities.
+Generate a gestational age `<Observation>` at **every** prenatal and MFM encounter. The value must be **calculated** from the authoritative LMP using integer arithmetic:
+
+```
+days_since_lmp = (encounter_date − lmp_date).days
+ga_weeks = days_since_lmp // 7
+ga_days  = days_since_lmp % 7
+ObservationValue = f"{ga_weeks}w {ga_days}d"   e.g. "8w 0d", "14w 0d", "27w 3d"
+```
+
+Apply this calculation to **every** encounter across **both** FAC001 and FAC002. Never independently compose a GA string in notes and generate a different value in the Observation. All GA text in notes must be consistent with the calculated value. If LMP is 2023-11-13 and an encounter is 2024-01-08, the GA is exactly 8w 0d — not 8w 6d.
 
 **6b — Trimester code by calculated GA (derived from LMP, not assumed)**
 
@@ -952,7 +962,7 @@ Compute the GA for each encounter from `(encounter_date − LMP_date) / 7`. Assi
 
 **6c — Routine prenatal observations (at every prenatal encounter)**
 
-Generate structured `<Observation>` records — not note-text only — for each of the following at every routine prenatal visit:
+Generate structured `<Observation>` records — not note-text only — for each of the following at **every** routine prenatal visit. Do not populate only the first and last encounters; every mid-pregnancy visit must carry its own full observation set.
 
 | What | LOINC | Starts at |
 |---|---|---|
@@ -966,6 +976,8 @@ Generate structured `<Observation>` records — not note-text only — for each 
 | Urine glucose (dipstick) | `25428-4` | Every visit |
 | Edema (assessment) | `44966-4` | Every visit |
 | Fetal presentation | `73772-1` | ≥ 28 weeks |
+
+**Every encounter row in the record must have its own weight, BP, and urine observations.** A visit that lists only a progress note and a diagnosis but has no structured maternal vitals or fetal data fails this rule — even if the prior or next visit is well-populated.
 
 For a scenario with one mildly elevated BP + reassuring repeat: generate **two** sequential BP observation pairs (systolic+diastolic) at the same encounter — elevated first, normal repeat 15–30 minutes later.
 
@@ -991,7 +1003,7 @@ A note that says "routine prenatal labs ordered" is NOT acceptable. Each compone
 
 At 24–28 weeks: **1-hour glucose challenge test** — `OrderItem` LOINC `20436-2`, result < 140 mg/dL, **no GDM diagnosis**. This lab order with its result is mandatory; a note mentioning "GDM screen normal" is not sufficient.
 
-For iron-deficiency anemia: the supporting CBC must include Hgb, Hct, **MCV**, and ferritin — all abnormal — dated before the D50.9 diagnosis. A later encounter must include a follow-up CBC showing improvement.
+For iron-deficiency anemia: the supporting CBC must include Hgb, Hct, **MCV**, and ferritin — all abnormal — dated before the D50.9 diagnosis. A follow-up CBC 2–4 weeks after iron is started **must** be present and must show improvement: Hgb increased by 0.5–1.5 g/dL, MCV trending upward, confirming treatment response.
 
 At 35–37 weeks: GBS culture — LOINC `43080-8`.
 
@@ -1002,7 +1014,7 @@ Every obstetric ultrasound procedure must have discrete `<ProcedureObservation>`
 | Ultrasound | CPT | Required `ProcedureObservation` measurements |
 |---|---|---|
 | Dating US (~8–12w) | `76801` | CRL (`11956-0`), GA by US (`11884-6`), FHR (`55283-6`) |
-| Anatomy US (~18–22w) | `76805` | BPD, HC, AC, FL, EFW, EFW %ile, AFI, FHR, placental location, cervical length |
+| Anatomy US (~18–22w) | `76805` | BPD, HC, AC, FL, EFW, EFW %ile, AFI, FHR, placental location (`54097-5`), cervical length |
 | Growth US (serial) | `76816` | BPD, HC, AC, FL, EFW, EFW %ile, AFI, S/D ratio (high-risk), fetal presentation |
 
 Generate **at least two** serial growth ultrasounds in the third trimester (CPT `76816`), each with a full discrete biometry set. All measurements must be clinically consistent with the gestational age at that visit (see Rule 3 for LOINC codes and Rule 3 reference ranges).
