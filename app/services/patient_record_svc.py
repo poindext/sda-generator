@@ -244,6 +244,22 @@ def _split_by_facility(
     root = ET.fromstring(raw)
     patient_el = root.find("Patient")
 
+    # Validate encounter referential integrity — remove orphaned EncounterNumber references
+    declared_encounters: set[str] = {
+        (e.findtext("EncounterNumber") or "").strip()
+        for e in root.findall(".//Encounters/Encounter")
+    }
+    declared_encounters.discard("")
+    for section in root:
+        if section.tag in ("Patient", "Encounters"):
+            continue
+        for record in section:
+            en = (record.findtext("EncounterNumber") or "").strip()
+            if en and en not in declared_encounters:
+                en_el = record.find("EncounterNumber")
+                if en_el is not None:
+                    record.remove(en_el)
+
     # Group records by SendingFacility
     fac_records: dict[str, dict[str, list]] = {}
     for section in root:
