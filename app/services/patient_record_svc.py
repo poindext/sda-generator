@@ -244,21 +244,57 @@ def _split_by_facility(
     root = ET.fromstring(raw)
     patient_el = root.find("Patient")
 
-    # Validate encounter referential integrity — remove orphaned EncounterNumber references
-    declared_encounters: set[str] = {
-        (e.findtext("EncounterNumber") or "").strip()
-        for e in root.findall(".//Encounters/Encounter")
-    }
-    declared_encounters.discard("")
+    # Build encounter map: number -> FromTime (for nearest-date remapping)
+    enc_date_map: dict[str, str] = {}
+    for e in root.findall(".//Encounters/Encounter"):
+        num = (e.findtext("EncounterNumber") or "").strip()
+        ft = (e.findtext("FromTime") or e.findtext("EnteredOn") or "").strip()
+        if num:
+            enc_date_map[num] = ft
+
+    def _nearest_encounter(record_date: str) -> str | None:
+        """Return the EncounterNumber of the encounter closest to record_date."""
+        if not enc_date_map:
+            return None
+        # Use lexicographic ISO 8601 comparison — close enough for date proximity
+        best = min(enc_date_map.items(), key=lambda kv: abs(
+            _iso_ordinal(kv[1]) - _iso_ordinal(record_date)
+        ))
+        return best[0]
+
+    def _iso_ordinal(ts: str) -> int:
+        """Convert ISO 8601 timestamp to an integer for distance comparison."""
+        # Strip time portion and non-digit chars; treat missing as epoch
+        digits = "".join(c for c in (ts or "")[:10] if c.isdigit())
+        try:
+            from datetime import date
+            return date(int(digits[:4]), int(digits[4:6]), int(digits[6:8])).toordinal()
+        except Exception:
+            return 0
+
+    def _record_date(record) -> str:
+        """Best date field from a clinical record."""
+        for field in ("FromTime", "EnteredOn", "ObservationTime",
+                      "SpecimenCollectedTime", "ProcedureTime"):
+            v = record.findtext(field)
+            if v:
+                return v.strip()
+        return ""
+
+    # Remap any orphaned EncounterNumber to the nearest existing encounter
     for section in root:
         if section.tag in ("Patient", "Encounters"):
             continue
         for record in section:
             en = (record.findtext("EncounterNumber") or "").strip()
-            if en and en not in declared_encounters:
+            if en and en not in enc_date_map:
                 en_el = record.find("EncounterNumber")
                 if en_el is not None:
-                    record.remove(en_el)
+                    nearest = _nearest_encounter(_record_date(record))
+                    if nearest:
+                        en_el.text = nearest
+                    else:
+                        record.remove(en_el)
 
     # Group records by SendingFacility
     fac_records: dict[str, dict[str, list]] = {}
