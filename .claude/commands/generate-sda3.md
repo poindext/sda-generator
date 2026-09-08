@@ -939,18 +939,41 @@ These rules define the minimum structured content for antepartum/prenatal record
 | EDD by LMP | `11779-6` | EDD in a note |
 | GA at each visit | `11884-6` | GA mentioned in a note |
 
-Generate a gestational age `<Observation>` at **every** prenatal and MFM encounter. The value must be **calculated** from the authoritative LMP using integer arithmetic:
+**Encounter dates must be derived from GA targets — not the reverse.**
 
+Do NOT pick convenient calendar dates and then assign GA labels. Instead, decide the target GA for each visit, then compute the date:
+
+```
+encounter_date = lmp_date + timedelta(days = ga_weeks * 7)
+```
+
+Example with LMP = 2023-11-13:
+| Target GA | Calculation | Encounter date |
+|---|---|---|
+| 8w0d | 2023-11-13 + 56d | 2024-01-08 |
+| 10w0d | 2023-11-13 + 70d | 2024-01-22 |
+| 12w0d | 2023-11-13 + 84d | 2024-02-05 |
+| 14w0d | 2023-11-13 + 98d | 2024-02-19 |
+| 18w0d | 2023-11-13 + 126d | 2024-03-18 |
+| 20w0d | 2023-11-13 + 140d | 2024-04-01 |
+| 24w0d | 2023-11-13 + 168d | 2024-04-29 |
+| 28w0d | 2023-11-13 + 196d | 2024-05-27 |
+| 30w0d | 2023-11-13 + 210d | 2024-06-10 |
+| 32w0d | 2023-11-13 + 224d | 2024-06-24 |
+| 34w0d | 2023-11-13 + 238d | 2024-07-08 |
+| 36w0d | 2023-11-13 + 252d | 2024-07-22 |
+
+**If the scenario provides an explicit date/GA timeline, follow it exactly — do not substitute your own dates.**
+
+After writing every encounter date, verify it against the LMP:
 ```
 days_since_lmp = (encounter_date − lmp_date).days
 ga_weeks = days_since_lmp // 7
 ga_days  = days_since_lmp % 7
-ObservationValue = f"{ga_weeks}w {ga_days}d"   e.g. "8w 0d", "14w 0d", "27w 3d"
 ```
+If the computed GA does not match the GA you wrote in the Observation, the encounter date is wrong — fix it before continuing.
 
-Apply this calculation to **every** encounter across **both** FAC001 and FAC002. Never independently compose a GA string in notes and generate a different value in the Observation. All GA text in notes must be consistent with the calculated value. If LMP is 2023-11-13 and an encounter is 2024-01-08, the GA is exactly 8w 0d — not 8w 6d.
-
-**Cross-facility pregnancy clock — MANDATORY:** FAC002 (MFM) and any other facility must derive GA from the **exact same LMP** established in the patient record. Never independently estimate GA for FAC002 encounters. Run the same integer formula on every FAC002 date. A value like `26w7d` is invalid — weeks contain exactly 0–6 days; `ga_days = days % 7` never yields 7. Example: 189 days since LMP = `189 // 7` = 27w `189 % 7` = 0d → `27w 0d`, not `26w7d`.
+**Cross-facility pregnancy clock — MANDATORY:** FAC002 (MFM) and any other facility must derive dates from the **exact same LMP** established in the patient record. A value like `26w7d` is invalid — weeks contain exactly 0–6 days; `ga_days = days % 7` never yields 7. Example: 189 days since LMP = 27w0d, not 26w7d.
 
 **6b — Trimester code by calculated GA (derived from LMP, not assumed)**
 
@@ -962,7 +985,15 @@ Apply this calculation to **every** encounter across **both** FAC001 and FAC002.
 
 Compute the GA for each encounter using the same integer arithmetic as Rule 6a: `ga_weeks = (encounter_date − lmp_date).days // 7`. Assign the trimester suffix that matches that computed week count.
 
-**Hard validation: the trimester suffix on every O09.x / O14.x / O36.x diagnosis code must agree with the GA observation recorded at the same encounter. A diagnosis coded as second-trimester at a visit where the structured GA is 8w 0d is a data error — generate it correctly the first time.**
+**Hard validation: the trimester suffix on every O09.x / O14.x / O36.x diagnosis code must agree with the GA observation recorded at the same encounter.**
+
+| GA | Trimester suffix | Example |
+|---|---|---|
+| 8w0d | `.1` first | `O09.291` — NOT `O09.292` |
+| 14w0d | `.2` second | `O09.292` |
+| 28w0d | `.3` third | `O09.293` |
+
+A diagnosis coded as `.2` (second trimester) at a visit where the structured GA is 8w0d is a data error. An 8-week visit is always first trimester — `..1`. Generate it correctly the first time.
 
 **6c — Routine prenatal observations (at every prenatal encounter)**
 
