@@ -1616,6 +1616,20 @@ register('patient-record', () => {
   el('pr-xml-output').value = '';
   el('pr-result-path').textContent = '';
 
+  // Load cohort template options (once — skip if already populated)
+  const tmplSelect = el('pr-template');
+  if (tmplSelect.options.length <= 1) {
+    api.get('/patient-record/cohort-templates').then(resp => {
+      const opts = resp.options || [];
+      opts.forEach(o => {
+        const opt = document.createElement('option');
+        opt.value = JSON.stringify({ template_file: o.template_file, cohort_id: o.cohort_id });
+        opt.textContent = o.label;
+        tmplSelect.appendChild(opt);
+      });
+    }).catch(() => {});
+  }
+
   const btn = el('btn-generate-record');
 
   // Avoid stacking listeners on repeat visits
@@ -1625,6 +1639,17 @@ register('patient-record', () => {
 
     const model    = el('pr-model').value;
     const filename = el('pr-filename').value.trim();
+
+    let template_file = '';
+    let cohort_id = '';
+    const tmplVal = tmplSelect.value;
+    if (tmplVal) {
+      try {
+        const parsed = JSON.parse(tmplVal);
+        template_file = parsed.template_file || '';
+        cohort_id     = parsed.cohort_id     || '';
+      } catch (_) {}
+    }
 
     btn.disabled = true;
     btn.textContent = 'Generating…';
@@ -1637,7 +1662,7 @@ register('patient-record', () => {
 
     streamPost(
       '/patient-record/generate',
-      { scenario, model, filename },
+      { scenario, model, filename, template_file, cohort_id },
       evt => {
         // token event — append to streaming display
         if (evt.type === 'token' && evt.content) {
