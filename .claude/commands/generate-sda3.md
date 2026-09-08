@@ -954,32 +954,40 @@ Apply this calculation to **every** encounter across **both** FAC001 and FAC002.
 
 | GA at encounter | ICD-10 suffix | Example |
 |---|---|---|
-| ≤ 13w 6d | `..1` — first trimester | `O09.291` |
-| 14w 0d – 26w 6d | `..2` — second trimester | `O09.292` |
-| ≥ 27w 0d | `..3` — third trimester | `O09.293` |
+| < 14w 0d | `..1` — first trimester | `O09.291` |
+| 14w 0d – 27w 6d | `..2` — second trimester | `O09.292` |
+| ≥ 28w 0d | `..3` — third trimester | `O09.293` |
 
-Compute the GA for each encounter from `(encounter_date − LMP_date) / 7`. Assign the code that matches that computed GA. An initial prenatal visit at 8–12 weeks must never carry an `..3` code.
+Compute the GA for each encounter using the same integer arithmetic as Rule 6a: `ga_weeks = (encounter_date − lmp_date).days // 7`. Assign the trimester suffix that matches that computed week count.
+
+**Hard validation: the trimester suffix on every O09.x / O14.x / O36.x diagnosis code must agree with the GA observation recorded at the same encounter. A diagnosis coded as second-trimester at a visit where the structured GA is 8w 0d is a data error — generate it correctly the first time.**
 
 **6c — Routine prenatal observations (at every prenatal encounter)**
 
 Generate structured `<Observation>` records — not note-text only — for each of the following at **every** routine prenatal visit. Do not populate only the first and last encounters; every mid-pregnancy visit must carry its own full observation set.
 
-| What | LOINC | Starts at |
-|---|---|---|
-| Maternal weight | `3141-9` | Every visit |
-| BP systolic | `8480-6` | Every visit |
-| BP diastolic | `8462-4` | Every visit |
-| Fundal height | `11881-2` | ~20 weeks |
-| Fetal heart rate | `55283-6` | ~10–12 weeks |
-| Fetal movement | `57088-0` | ~16–20 weeks |
-| Urine protein (dipstick) | `5804-0` | Every visit |
-| Urine glucose (dipstick) | `25428-4` | Every visit |
-| Edema (assessment) | `44966-4` | Every visit |
-| Fetal presentation | `73772-1` | ≥ 28 weeks |
+| What | LOINC | Starts at | Notes |
+|---|---|---|---|
+| Maternal weight | `3141-9` | Every visit | kg or lbs, consistent units |
+| BP systolic | `8480-6` | Every visit | mmHg |
+| BP diastolic | `8462-4` | Every visit | mmHg |
+| Fundal height | `11881-2` | ~20 weeks | cm; value ≈ GA in weeks (e.g., 23w → ~23 cm, 29w → ~29 cm, 32w → ~32 cm) |
+| Fetal heart rate | `55283-6` | ~10–12 weeks | bpm |
+| Fetal movement | `57088-0` | ~18–20 weeks | text ("active", "present") |
+| Urine protein (dipstick) | `5804-0` | Every visit | "negative", "trace", "1+" |
+| Urine glucose (dipstick) | `25428-4` | Every visit | "negative", "trace" |
+| Edema (assessment) | `44966-4` | Every visit | "none", "trace", "1+" |
+| PTL symptoms (preterm labor) | `57083-1` | ≥ 24 weeks | "none reported", "absent" |
+| Fetal presentation | `73772-1` | ≥ 28 weeks | "cephalic", "vertex", "breech" |
 
 **Every encounter row in the record must have its own weight, BP, and urine observations.** A visit that lists only a progress note and a diagnosis but has no structured maternal vitals or fetal data fails this rule — even if the prior or next visit is well-populated.
 
-For a scenario with one mildly elevated BP + reassuring repeat: generate **two** sequential BP observation pairs (systolic+diastolic) at the same encounter — elevated first, normal repeat 15–30 minutes later.
+For a scenario with one mildly elevated BP + reassuring repeat: generate **two** sequential BP observation pairs (systolic+diastolic) at the same encounter — the initial elevated reading must be **at minimum systolic ≥ 140 mmHg or diastolic ≥ 90 mmHg** (e.g., 142/90), followed by a normal repeat 15–30 minutes later (e.g., 124/76). Document in the encounter note that the repeat normalized and there were no preeclampsia symptoms or proteinuria. Do **not** assign a gestational hypertension or preeclampsia diagnosis.
+
+**Visit count and endpoint:**
+- FAC001 must contain **at least 8** routine prenatal encounters.
+- At least one FAC001 encounter must fall at **34–35 weeks GA**.
+- The record must end at approximately **34–36 weeks**, with the patient still pregnant. Document stable maternal/fetal status and planned mode of delivery (e.g., repeat cesarean), but do **not** generate any delivery or postpartum data.
 
 **6d — Initial prenatal lab panel (as a single `<LabOrder>` with discrete `<ResultItems>`)**
 
@@ -1003,7 +1011,7 @@ A note that says "routine prenatal labs ordered" is NOT acceptable. Each compone
 
 At 24–28 weeks: **1-hour glucose challenge test** — `OrderItem` LOINC `20436-2`, result < 140 mg/dL, **no GDM diagnosis**. This lab order with its result is mandatory; a note mentioning "GDM screen normal" is not sufficient.
 
-For iron-deficiency anemia: the supporting CBC must include Hgb, Hct, **MCV**, and ferritin — all abnormal — dated before the D50.9 diagnosis. A follow-up CBC 2–4 weeks after iron is started **must** be present and must show improvement: Hgb increased by 0.5–1.5 g/dL, MCV trending upward, confirming treatment response.
+For iron-deficiency anemia: the supporting CBC must include Hgb, Hct, **MCV**, and ferritin — all abnormal — dated before the D50.9 diagnosis. A follow-up CBC **at the 34–35 week visit** (2–4 weeks after iron is started) **must** be present and must show improvement: Hgb increased by 0.5–1.5 g/dL, MCV trending upward, confirming treatment response. If the record ends before 34 weeks, add a dedicated follow-up lab encounter for this purpose.
 
 At 35–37 weeks: GBS culture — LOINC `43080-8`.
 
