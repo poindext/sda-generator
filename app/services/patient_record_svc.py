@@ -181,43 +181,6 @@ def _load_system_prompt() -> str:
 # --------------------------------------------------------------------------
 
 # --------------------------------------------------------------------------
-# Truncation repair
-# --------------------------------------------------------------------------
-
-_SDA3_SECTION_TAGS = [
-    "Encounters", "Diagnoses", "Problems", "Medications", "Allergies",
-    "LabOrders", "Observations", "Documents", "Procedures", "Vaccinations",
-    "PhysicalExams", "Appointments", "Consents", "NoteTexts",
-    "IllnessHistories", "SocialHistories", "FamilyHistories",
-    "CarePlans", "Goals", "Results",
-]
-
-
-def _repair_truncated_xml(raw: str) -> str:
-    """
-    Salvage XML that was cut off mid-generation (token limit).
-    Strategy: strip any trailing incomplete open-tag, then truncate to the
-    last complete SDA3 section closing tag and re-close <Container>.
-    """
-    # Drop anything from a '<' that never got its closing '>'
-    raw = re.sub(r"<[^>]*$", "", raw).rstrip()
-
-    last_pos = -1
-    for tag in _SDA3_SECTION_TAGS:
-        close = f"</{tag}>"
-        pos = raw.rfind(close)
-        if pos >= 0:
-            candidate = pos + len(close)
-            if candidate > last_pos:
-                last_pos = candidate
-
-    if last_pos > 0:
-        raw = raw[:last_pos] + "\n</Container>"
-
-    return raw
-
-
-# --------------------------------------------------------------------------
 # Facility splitter
 # --------------------------------------------------------------------------
 
@@ -246,11 +209,7 @@ def _split_by_facility(
     # (e.g. "EFW < 10th percentile" in note text)
     raw = re.sub(r"<(?![a-zA-Z/!?])", "&lt;", raw)
 
-    try:
-        root = ET.fromstring(raw)
-    except ET.ParseError:
-        raw = _repair_truncated_xml(raw)
-        root = ET.fromstring(raw)
+    root = ET.fromstring(raw)
     patient_el = root.find("Patient")
 
     # Group records by SendingFacility
@@ -392,11 +351,48 @@ async def generate_record(
             full_text += delta
             yield {"type": "token", "content": delta}
 
+    # If the output was cut off before </Container>, continue up to 3 times
+    max_tokens = 32000 if model.startswith("gpt-4.1") else 16000
+    for _cont in range(3):
+        stripped = full_text.strip().rstrip("`").rstrip()
+        if stripped.endswith("</Container>"):
+            break
+        yield {"type": "token", "content": "\n<!-- continuing… -->"}
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user",   "content": user_message},
+            {"role": "assistant", "content": full_text},
+            {"role": "user",   "content": (
+                "The XML was cut off before </Container>. "
+                "Continue exactly where you left off — output only the "
+                "remaining XML, ending with </Container>. "
+                "Do not repeat any content already written."
+            )},
+        ]
+        try:
+            cont_stream = await client.chat.completions.create(
+                model=model,
+                max_tokens=max_tokens,
+                temperature=0.4,
+                messages=messages,
+                stream=True,
+            )
+        except Exception as exc:
+            yield {"type": "error", "message": f"Continuation failed: {exc}"}
+            return
+        async for event in cont_stream:
+            delta = event.choices[0].delta.content
+            if delta:
+                full_text += delta
+                yield {"type": "token", "content": delta}
+
     # Strip markdown fence to get clean XML
     xml = full_text.strip()
     if xml.startswith("```"):
         xml = re.sub(r"^```(?:xml)?\s*\n?", "", xml)
         xml = re.sub(r"\n?```\s*$", "", xml)
+    # Remove any continuation comment markers injected above
+    xml = xml.replace("<!-- continuing… -->", "")
 
     # Derive base name from optional filename param
     if not filename:
