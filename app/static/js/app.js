@@ -1612,9 +1612,7 @@ register('patient-record', () => {
   // Reset to form state on each navigation
   hide('pr-progress-card');
   hide('pr-result-card');
-  el('pr-stream-box').textContent = '';
-  el('pr-xml-output').value = '';
-  el('pr-result-path').textContent = '';
+  el('pr-file-list').innerHTML = '';
 
   // Load cohort template options (once — skip if already populated)
   const tmplSelect = el('pr-template');
@@ -1632,7 +1630,6 @@ register('patient-record', () => {
 
   const btn = el('btn-generate-record');
 
-  // Avoid stacking listeners on repeat visits
   btn.onclick = async () => {
     const scenario = el('pr-scenario').value.trim();
     if (!scenario) { alert('Please describe the patient scenario.'); return; }
@@ -1654,63 +1651,80 @@ register('patient-record', () => {
     btn.disabled = true;
     btn.textContent = 'Generating…';
     hide('pr-result-card');
+    el('pr-file-list').innerHTML = '';
     show('pr-progress-card');
-    const streamBox = el('pr-stream-box');
-    streamBox.textContent = '';
 
-    let xmlAccum = '';
+    // Animate status dots while waiting
+    const statusEl = el('pr-status-text');
+    let dots = 0;
+    const dotTimer = setInterval(() => {
+      dots = (dots + 1) % 4;
+      statusEl.textContent = 'Building SDA3 record — this takes 20–40 seconds' + '.'.repeat(dots);
+    }, 600);
 
     streamPost(
       '/patient-record/generate',
       { scenario, model, filename, template_file, cohort_id },
       evt => {
-        // token event — append to streaming display
-        if (evt.type === 'token' && evt.content) {
-          xmlAccum += evt.content;
-          streamBox.textContent = xmlAccum;
-          streamBox.scrollTop = streamBox.scrollHeight;
-        }
         if (evt.type === 'error') {
-          streamBox.textContent += '\n\nERROR: ' + evt.message;
+          clearInterval(dotTimer);
+          statusEl.textContent = 'Error: ' + evt.message;
         }
       },
       evt => {
+        clearInterval(dotTimer);
         btn.disabled = false;
         btn.textContent = 'Generate SDA3 Record →';
+        hide('pr-progress-card');
 
-        if (evt.error) {
-          streamBox.textContent += '\n\nERROR: ' + evt.error;
+        if (evt.error && !evt.files) {
+          statusEl.textContent = 'Error: ' + evt.error;
+          show('pr-progress-card');
           return;
         }
 
-        const xml  = evt.xml  || xmlAccum;
-        const path = evt.file_path || '';
+        const files   = evt.files   || [];
+        const zipPath = evt.zip_path || '';
+        const zipName = evt.zip_name || 'package.zip';
 
-        hide('pr-progress-card');
-        el('pr-xml-output').value = xml;
-        el('pr-result-path').textContent = path ? 'Saved to: ' + path : '';
+        // Build file list table
+        if (files.length) {
+          const rows = files.map(f => {
+            const isDelete = f.type === 'delete';
+            const typeHtml = isDelete
+              ? '<span style="color:#dc3545;font-weight:600">Delete</span>'
+              : '<span style="color:#28a745;font-weight:600">Add</span>';
+            return `<tr>
+              <td style="font-family:monospace;font-size:13px;padding:6px 12px">${f.name}</td>
+              <td style="padding:6px 12px">${f.facility || '—'}</td>
+              <td style="padding:6px 12px">${typeHtml}</td>
+            </tr>`;
+          }).join('');
+          el('pr-file-list').innerHTML = `
+            <table style="width:100%;border-collapse:collapse">
+              <thead>
+                <tr style="border-bottom:1px solid var(--border)">
+                  <th style="text-align:left;padding:6px 12px;font-size:12px;color:var(--text-muted)">File</th>
+                  <th style="text-align:left;padding:6px 12px;font-size:12px;color:var(--text-muted)">Facility</th>
+                  <th style="text-align:left;padding:6px 12px;font-size:12px;color:var(--text-muted)">Type</th>
+                </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>`;
+        }
+
+        // Wire Download ZIP
+        const zipBtn = el('btn-pr-download-zip');
+        if (zipPath) {
+          zipBtn.disabled = false;
+          zipBtn.onclick = () => {
+            window.location.href = '/api/patient-record/download-zip?path=' + encodeURIComponent(zipPath);
+          };
+        } else {
+          zipBtn.disabled = true;
+        }
+
         show('pr-result-card');
-
-        // Wire download button
-        el('btn-pr-download').onclick = () => {
-          const name = path.split('/').pop() || 'patient_record.xml';
-          const blob = new Blob([xml], { type: 'application/xml' });
-          const a = Object.assign(document.createElement('a'), {
-            href: URL.createObjectURL(blob),
-            download: name,
-          });
-          a.click();
-          URL.revokeObjectURL(a.href);
-        };
-
-        // Wire copy button
-        el('btn-pr-copy').onclick = () => {
-          navigator.clipboard.writeText(xml).then(() => {
-            const c = el('btn-pr-copy');
-            c.textContent = 'Copied!';
-            setTimeout(() => { c.textContent = 'Copy'; }, 2000);
-          });
-        };
       }
     );
   };

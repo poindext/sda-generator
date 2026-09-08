@@ -4,10 +4,13 @@ generate-sda3 skill as a system prompt and an OpenAI model as the generator.
 Optionally enriches the prompt with clinical context extracted from an existing
 population template cohort (validated ICD-10, RxNorm, LOINC codes).
 """
+import copy
 import json
 import re
+import zipfile
 from pathlib import Path
 from typing import AsyncIterator
+from xml.etree import ElementTree as ET
 
 from app.config import BASE_DIR, OPENAI_API_KEY, POPULATIONS_DIR, TEMPLATES_DIR
 
@@ -177,6 +180,98 @@ def _load_system_prompt() -> str:
 # Record generation
 # --------------------------------------------------------------------------
 
+# --------------------------------------------------------------------------
+# Facility splitter
+# --------------------------------------------------------------------------
+
+def _split_by_facility(
+    xml: str, base_name: str, out_dir: Path
+) -> tuple[list[dict], Path]:
+    """
+    Parse generated SDA3 XML and write one add + one delete file per
+    unique SendingFacility found in clinical records.  Returns a list of
+    file-info dicts and the path to the ZIP package.
+    """
+    # Strip XML declaration before parsing (ET.fromstring chokes on it)
+    raw = xml.strip()
+    if raw.startswith("<?xml"):
+        raw = raw[raw.index("?>") + 2:].strip()
+
+    root = ET.fromstring(raw)
+    patient_el = root.find("Patient")
+
+    # Group records by SendingFacility
+    fac_records: dict[str, dict[str, list]] = {}
+    for section in root:
+        if section.tag == "Patient":
+            continue
+        for record in section:
+            fac = (
+                record.findtext("SendingFacility")
+                or record.findtext("EnteredAt/Code")
+                or "FACILITY"
+            ).strip()
+            fac_records.setdefault(fac, {}).setdefault(section.tag, []).append(record)
+
+    if not fac_records:
+        fac_records["FACILITY"] = {}
+
+    out_dir.mkdir(parents=True, exist_ok=True)
+    written: list[dict] = []
+    header = '<?xml version="1.0" encoding="UTF-8"?>\n'
+
+    for fac in sorted(fac_records):
+        sections = fac_records[fac]
+
+        # Build add container (unindented first so deepcopy is clean)
+        add_root = ET.Element("Container")
+        if patient_el is not None:
+            add_root.append(copy.deepcopy(patient_el))
+        for stag, recs in sections.items():
+            sec = ET.SubElement(add_root, stag)
+            for r in recs:
+                sec.append(copy.deepcopy(r))
+
+        # Build delete container before indenting
+        del_root = copy.deepcopy(add_root)
+        for sec in del_root:
+            if sec.tag == "Patient":
+                continue
+            for rec in sec:
+                ac = rec.find("ActionCode")
+                if ac is None:
+                    ac = ET.SubElement(rec, "ActionCode")
+                ac.text = "D"
+
+        ET.indent(add_root, space="  ")
+        ET.indent(del_root, space="  ")
+
+        add_name = f"{base_name}_{fac}.xml"
+        del_name = f"{base_name}_{fac}_DELETE.xml"
+
+        (out_dir / add_name).write_text(
+            header + ET.tostring(add_root, encoding="unicode"), encoding="utf-8"
+        )
+        (out_dir / del_name).write_text(
+            header + ET.tostring(del_root, encoding="unicode"), encoding="utf-8"
+        )
+
+        rel = lambda n: str((out_dir / n).relative_to(BASE_DIR))
+        written.append({"name": add_name, "path": rel(add_name), "facility": fac, "type": "add"})
+        written.append({"name": del_name, "path": rel(del_name), "facility": fac, "type": "delete"})
+
+    zip_path = out_dir / f"{base_name}.zip"
+    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+        for f in written:
+            zf.write(BASE_DIR / f["path"], f["name"])
+
+    return written, zip_path
+
+
+# --------------------------------------------------------------------------
+# Record generation
+# --------------------------------------------------------------------------
+
 async def generate_record(
     scenario: str,
     filename: str | None = None,
@@ -189,7 +284,7 @@ async def generate_record(
 
     Yields:
         {"type": "token",  "content": str}
-        {"type": "done",   "file_path": str, "xml": str}
+        {"type": "done",   "files": list, "zip_path": str, "zip_name": str}
         {"type": "error",  "message": str}
     """
     try:
@@ -213,7 +308,10 @@ async def generate_record(
             yield {"type": "error", "message": f"Failed to load template: {exc}"}
             return
 
-    user_message = "Generate realistic InterSystems HealthShare SDA3 XML sample data for the following scenario:\n\n"
+    user_message = (
+        "Generate realistic InterSystems HealthShare SDA3 XML sample data "
+        "for the following scenario:\n\n"
+    )
     if template_context:
         user_message += template_context + "\n\n"
     user_message += scenario.strip()
@@ -247,19 +345,34 @@ async def generate_record(
         xml = re.sub(r"^```(?:xml)?\s*\n?", "", xml)
         xml = re.sub(r"\n?```\s*$", "", xml)
 
-    # Persist to populations/single-records/
-    _RECORDS_DIR.mkdir(parents=True, exist_ok=True)
+    # Derive base name from optional filename param
     if not filename:
         from datetime import datetime
-        filename = f"patient_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xml"
-    elif not filename.endswith(".xml"):
-        filename += ".xml"
+        base_name = f"patient_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    else:
+        base_name = filename.removesuffix(".xml")
 
-    file_path = _RECORDS_DIR / filename
-    file_path.write_text(xml, encoding="utf-8")
+    out_dir = _RECORDS_DIR / base_name
 
-    yield {
-        "type": "done",
-        "file_path": str(file_path.relative_to(BASE_DIR)),
-        "xml": xml,
-    }
+    try:
+        files, zip_path = _split_by_facility(xml, base_name, out_dir)
+        yield {
+            "type": "done",
+            "files": files,
+            "zip_path": str(zip_path.relative_to(BASE_DIR)),
+            "zip_name": zip_path.name,
+        }
+    except Exception as exc:
+        # Fallback: save single file if XML is unparseable
+        _RECORDS_DIR.mkdir(parents=True, exist_ok=True)
+        fallback = _RECORDS_DIR / f"{base_name}.xml"
+        fallback.write_text(xml, encoding="utf-8")
+        yield {
+            "type": "done",
+            "files": [{"name": fallback.name,
+                        "path": str(fallback.relative_to(BASE_DIR)),
+                        "facility": "", "type": "add"}],
+            "zip_path": "",
+            "zip_name": "",
+            "error": f"Could not split by facility: {exc}",
+        }

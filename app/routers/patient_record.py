@@ -2,8 +2,8 @@
 Patient Record router — single-patient SDA3 XML generation.
 """
 import json
-from fastapi import APIRouter
-from fastapi.responses import StreamingResponse
+from fastapi import APIRouter, HTTPException
+from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 
 router = APIRouter()
@@ -15,6 +15,18 @@ class RecordRequest(BaseModel):
     model: str = "gpt-4o"
     template_file: str = ""
     cohort_id: str = ""
+
+
+@router.get("/patient-record/download-zip")
+async def download_zip(path: str):
+    from app.config import BASE_DIR, POPULATIONS_DIR
+    full = (BASE_DIR / path).resolve()
+    pop_resolved = POPULATIONS_DIR.resolve()
+    if not str(full).startswith(str(pop_resolved)):
+        raise HTTPException(403)
+    if not full.exists():
+        raise HTTPException(404)
+    return FileResponse(full, media_type="application/zip", filename=full.name)
 
 
 @router.get("/patient-record/cohort-templates")
