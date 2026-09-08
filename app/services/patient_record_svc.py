@@ -351,21 +351,28 @@ async def generate_record(
             full_text += delta
             yield {"type": "token", "content": delta}
 
-    # If the output was cut off before </Container>, continue up to 3 times
+    # If the output was cut off before </Container>, continue up to 3 times.
+    # Strip the markdown fence before using full_text as the assistant message so
+    # the model doesn't inject a second ```xml fence into the middle of the XML.
     max_tokens = 32000 if model.startswith("gpt-4.1") else 16000
     for _cont in range(3):
         stripped = full_text.strip().rstrip("`").rstrip()
         if stripped.endswith("</Container>"):
             break
         yield {"type": "token", "content": "\n<!-- continuing… -->"}
+        # Build clean assistant content: strip any leading markdown fence so the
+        # continuation model sees raw XML ending mid-element, not a fenced block.
+        assistant_content = full_text.strip()
+        if assistant_content.startswith("```"):
+            assistant_content = re.sub(r"^```(?:xml)?\s*\n?", "", assistant_content)
         messages = [
             {"role": "system", "content": system_prompt},
             {"role": "user",   "content": user_message},
-            {"role": "assistant", "content": full_text},
+            {"role": "assistant", "content": assistant_content},
             {"role": "user",   "content": (
                 "The XML was cut off before </Container>. "
-                "Continue exactly where you left off — output only the "
-                "remaining XML, ending with </Container>. "
+                "Continue exactly where you left off — output raw XML only, "
+                "no markdown code fences, ending with </Container>. "
                 "Do not repeat any content already written."
             )},
         ]
@@ -391,8 +398,9 @@ async def generate_record(
     if xml.startswith("```"):
         xml = re.sub(r"^```(?:xml)?\s*\n?", "", xml)
         xml = re.sub(r"\n?```\s*$", "", xml)
-    # Remove any continuation comment markers injected above
+    # Remove continuation markers and any stray fence artifacts from mid-content
     xml = xml.replace("<!-- continuing… -->", "")
+    xml = re.sub(r"```(?:xml)?\s*", "", xml)
 
     # Derive base name from optional filename param
     if not filename:
