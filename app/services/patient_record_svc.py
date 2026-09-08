@@ -267,10 +267,17 @@ def _split_by_facility(
     for fac in sorted(fac_records):
         sections = fac_records[fac]
 
-        # Build add container (unindented first so deepcopy is clean)
+        # Build add container — Patient with MRN filtered to this facility only
         add_root = ET.Element("Container")
         if patient_el is not None:
-            add_root.append(copy.deepcopy(patient_el))
+            add_patient = copy.deepcopy(patient_el)
+            pn_wrapper = add_patient.find("PatientNumbers")
+            if pn_wrapper is not None:
+                for pn in list(pn_wrapper):
+                    org_code = pn.findtext("Organization/Code") or ""
+                    if org_code and org_code != fac:
+                        pn_wrapper.remove(pn)
+            add_root.append(add_patient)
         for stag, recs in sections.items():
             sec = ET.SubElement(add_root, stag)
             for r in recs:
