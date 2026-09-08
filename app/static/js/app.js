@@ -1707,7 +1707,7 @@ register('patient-record', () => {
     let dots = 0;
     const dotTimer = setInterval(() => {
       dots = (dots + 1) % 4;
-      statusEl.textContent = 'Building SDA3 record — this takes 20–40 seconds' + '.'.repeat(dots);
+      statusEl.textContent = 'Generating SDA3 record' + '.'.repeat(dots);
     }, 600);
 
     streamPost(
@@ -1717,6 +1717,9 @@ register('patient-record', () => {
         if (evt.type === 'error') {
           clearInterval(dotTimer);
           statusEl.textContent = 'Error: ' + evt.message;
+        } else if (evt.type === 'status') {
+          clearInterval(dotTimer);
+          statusEl.textContent = evt.message;
         }
       },
       evt => {

@@ -359,7 +359,7 @@ async def generate_record(
         stripped = full_text.strip().rstrip("`").rstrip()
         if stripped.endswith("</Container>"):
             break
-        yield {"type": "token", "content": "\n<!-- continuing… -->"}
+        yield {"type": "status", "message": f"Output limit reached — requesting continuation (pass {_cont + 2})…"}
         # Build clean assistant content: strip any leading markdown fence so the
         # continuation model sees raw XML ending mid-element, not a fenced block.
         assistant_content = full_text.strip()
@@ -391,15 +391,15 @@ async def generate_record(
             delta = event.choices[0].delta.content
             if delta:
                 full_text += delta
-                yield {"type": "token", "content": delta}
+
+    yield {"type": "status", "message": "Packaging files…"}
 
     # Strip markdown fence to get clean XML
     xml = full_text.strip()
     if xml.startswith("```"):
         xml = re.sub(r"^```(?:xml)?\s*\n?", "", xml)
         xml = re.sub(r"\n?```\s*$", "", xml)
-    # Remove continuation markers and any stray fence artifacts from mid-content
-    xml = xml.replace("<!-- continuing… -->", "")
+    # Remove any stray fence artifacts from mid-content (injected by continuation)
     xml = re.sub(r"```(?:xml)?\s*", "", xml)
 
     # Derive base name from optional filename param
