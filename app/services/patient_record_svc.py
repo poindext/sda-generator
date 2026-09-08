@@ -65,7 +65,7 @@ def list_cohort_options() -> list[dict]:
                 "cohort_id": c.get("id", ""),
             })
 
-    return options
+    return sorted(options, key=lambda o: o["label"].lower())
 
 
 # --------------------------------------------------------------------------
