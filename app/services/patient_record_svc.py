@@ -244,16 +244,10 @@ def _split_by_facility(
             for r in recs:
                 sec.append(copy.deepcopy(r))
 
-        # Build delete container before indenting
-        del_root = copy.deepcopy(add_root)
-        for sec in del_root:
-            if sec.tag == "Patient":
-                continue
-            for rec in sec:
-                ac = rec.find("ActionCode")
-                if ac is None:
-                    ac = ET.SubElement(rec, "ActionCode")
-                ac.text = "D"
+        # Build delete container — Patient section only, no clinical records
+        del_root = ET.Element("Container")
+        if patient_el is not None:
+            del_root.append(copy.deepcopy(patient_el))
 
         ET.indent(add_root, space="  ")
         ET.indent(del_root, space="  ")
