@@ -910,6 +910,52 @@ Clinical note `<NoteText>` content must not reference specific trial names, jour
 
 State clinical decisions plainly: *"Continue aspirin 81mg daily for preeclampsia prophylaxis."* Synthetic data is not an appropriate venue for attributed literature; cited trial names may be incorrect, nonexistent, or misleading to reviewers who cannot verify them in context.
 
+#### 5 — Structured data completeness (applies to all scenarios)
+
+**Critical clinical findings must exist as discrete structured SDA data — not only in narrative note text.** A downstream clinical abstraction tool must be able to reconstruct the clinical picture from structured elements alone. Mentioning a finding only in `<NoteText>` is insufficient when that finding drives a diagnosis, treatment decision, or quality measure.
+
+**Rule:** For every important clinical datum, ask: *Can a downstream tool extract this without NLP?* If not, add a structured element.
+
+Examples by data type:
+- Vital signs → `<Observation>` with LOINC code, not only a number in a progress note
+- Lab findings that justify a diagnosis → `<LabOrder>` with `<ResultItems>`, dated before the diagnosis
+- Procedures → `<Procedure>` with `<ProcedureObservations>` for discrete measurements, not only a narrative summary
+- Diagnoses → present in both encounter-level inline section and the consolidated `<Diagnoses>` section
+
+**Evidence-before-diagnosis:** Never generate a diagnosis without corresponding structured evidence (lab result, vital sign, or procedure finding) already dated on or before the encounter where the diagnosis is first assigned. A diagnosis must be derivable from the structured record; a clinician's note asserting it without supporting data is insufficient for extraction purposes.
+
+**Encounter count:** Generate a realistic number of encounters for the scenario's time span and care pattern. A chronic disease or ongoing pregnancy scenario spanning months should not be compressed into 3–4 visits unless the scenario specifies otherwise. Match the expected standard-of-care visit cadence.
+
+#### 6 — Obstetric structured data (extends Rules 1–5 for prenatal scenarios)
+
+When generating prenatal or antepartum records, in addition to the general completeness rules above:
+
+**Structured obstetric dating observations** — generate as discrete `<Observation>` records at the initial prenatal visit (not embedded in note text):
+
+| Observation | LOINC |
+|---|---|
+| Gravida | `11996-6` |
+| Para | `11977-6` |
+| LMP | `8665-2` |
+| EDD (by LMP) | `11779-6` |
+| Gestational age at visit | `11884-6` |
+
+Generate a gestational age `<Observation>` (LOINC `11884-6`) at **every** prenatal encounter. The value must be the calculated GA for that specific encounter date. Never assign a third-trimester GA value to a first- or second-trimester encounter.
+
+**Trimester code by calculated GA:**
+
+| GA at encounter | ICD-10 suffix |
+|---|---|
+| ≤ 13w 6d | `..1` (first trimester) |
+| 14w – 26w 6d | `..2` (second trimester) |
+| ≥ 27w | `..3` (third trimester) |
+
+**Routine prenatal visit observations** — at every prenatal encounter generate structured `<Observation>` records (not note-text only) for: maternal weight (`3141-9`), BP systolic (`8480-6`), BP diastolic (`8462-4`), fundal height (`11881-2`), fetal heart rate (`55283-6`), fetal movement (`57088-0`), urine protein dipstick (`5804-0`), urine glucose dipstick (`25428-4`).
+
+**Initial prenatal lab panel** — the initial prenatal visit requires a complete panel, not only a CBC. At minimum: blood type (`882-1`), Rh factor (`10331-7`), CBC (hemoglobin `718-7`, hematocrit `4544-3`, platelets `26515-7`), rubella IgG (`8013-4`), hepatitis B surface antigen (`5196-1`), HIV screen (`75622-1`), RPR/syphilis (`5292-8`), urine culture (`13115-0`), chlamydia/GC NAAT (`45084-1`). At 24–28 weeks: glucose challenge test (`20436-2`). At 35–37 weeks: GBS culture (`43080-8`).
+
+**Ultrasound count** — for a scenario describing serial fetal surveillance, generate at least two growth ultrasound procedures (CPT `76816`), each with a full discrete biometry set (see Rule 3). One anatomy ultrasound (CPT `76805`) at ~20 weeks must include BPD, HC, AC, FL, EFW, EFW percentile, AFI, fetal heart rate, fetal presentation, and cervical length as discrete `<ProcedureObservation>` elements.
+
 ---
 
 ### What NOT to include unless specifically relevant
