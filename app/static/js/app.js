@@ -1601,3 +1601,92 @@ function renderTemplatePreview(t) {
 
   body.innerHTML = html;
 }
+
+// =========================================================
+// PAGE: SINGLE PATIENT RECORD
+// =========================================================
+
+register('patient-record', () => {
+  el('page-patient-record').classList.add('active');
+
+  // Reset to form state on each navigation
+  hide('pr-progress-card');
+  hide('pr-result-card');
+  el('pr-stream-box').textContent = '';
+  el('pr-xml-output').value = '';
+  el('pr-result-path').textContent = '';
+
+  const btn = el('btn-generate-record');
+
+  // Avoid stacking listeners on repeat visits
+  btn.onclick = async () => {
+    const scenario = el('pr-scenario').value.trim();
+    if (!scenario) { alert('Please describe the patient scenario.'); return; }
+
+    const model    = el('pr-model').value;
+    const filename = el('pr-filename').value.trim();
+
+    btn.disabled = true;
+    btn.textContent = 'Generating…';
+    hide('pr-result-card');
+    show('pr-progress-card');
+    const streamBox = el('pr-stream-box');
+    streamBox.textContent = '';
+
+    let xmlAccum = '';
+
+    streamPost(
+      '/patient-record/generate',
+      { scenario, model, filename },
+      evt => {
+        // token event — append to streaming display
+        if (evt.type === 'token' && evt.content) {
+          xmlAccum += evt.content;
+          streamBox.textContent = xmlAccum;
+          streamBox.scrollTop = streamBox.scrollHeight;
+        }
+        if (evt.type === 'error') {
+          streamBox.textContent += '\n\nERROR: ' + evt.message;
+        }
+      },
+      evt => {
+        btn.disabled = false;
+        btn.textContent = 'Generate SDA3 Record →';
+
+        if (evt.error) {
+          streamBox.textContent += '\n\nERROR: ' + evt.error;
+          return;
+        }
+
+        const xml  = evt.xml  || xmlAccum;
+        const path = evt.file_path || '';
+
+        hide('pr-progress-card');
+        el('pr-xml-output').value = xml;
+        el('pr-result-path').textContent = path ? 'Saved to: ' + path : '';
+        show('pr-result-card');
+
+        // Wire download button
+        el('btn-pr-download').onclick = () => {
+          const name = path.split('/').pop() || 'patient_record.xml';
+          const blob = new Blob([xml], { type: 'application/xml' });
+          const a = Object.assign(document.createElement('a'), {
+            href: URL.createObjectURL(blob),
+            download: name,
+          });
+          a.click();
+          URL.revokeObjectURL(a.href);
+        };
+
+        // Wire copy button
+        el('btn-pr-copy').onclick = () => {
+          navigator.clipboard.writeText(xml).then(() => {
+            const c = el('btn-pr-copy');
+            c.textContent = 'Copied!';
+            setTimeout(() => { c.textContent = 'Copy'; }, 2000);
+          });
+        };
+      }
+    );
+  };
+});

@@ -12,7 +12,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from pathlib import Path
 
-from app.routers import wizard, templates, populations, jobs
+from app.routers import wizard, templates, populations, jobs, patient_record
 
 _root_path = os.environ.get("GENESIS_ROOT_PATH", "").rstrip("/")
 
@@ -49,10 +49,11 @@ _fastapi = FastAPI(title="SDA3 Population Generator", docs_url="/api/docs")
 # --------------------------------------------------------------------------
 # API routers
 # --------------------------------------------------------------------------
-_fastapi.include_router(wizard.router,      prefix="/api", tags=["wizard"])
-_fastapi.include_router(templates.router,   prefix="/api", tags=["templates"])
-_fastapi.include_router(populations.router, prefix="/api", tags=["populations"])
-_fastapi.include_router(jobs.router,        prefix="/api", tags=["jobs"])
+_fastapi.include_router(wizard.router,          prefix="/api", tags=["wizard"])
+_fastapi.include_router(templates.router,       prefix="/api", tags=["templates"])
+_fastapi.include_router(populations.router,     prefix="/api", tags=["populations"])
+_fastapi.include_router(jobs.router,            prefix="/api", tags=["jobs"])
+_fastapi.include_router(patient_record.router,  prefix="/api", tags=["patient-record"])
 
 # --------------------------------------------------------------------------
 # Static files and SPA fallback

@@ -23,6 +23,10 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
       Templates
     </a>
+    <a href="#" data-page="patient-record">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Single Patient
+    </a>
   </nav>
 </aside>
 
@@ -277,6 +281,53 @@
     </div>
   </div>
 
+  <!-- Single Patient Record -->
+  <div id="page-patient-record" class="page">
+    <div class="page-header"><h2>Single Patient Record</h2></div>
+
+    <div class="card">
+      <h3>Describe the Patient</h3>
+      <p class="text-muted text-sm mb-8">Describe the patient scenario in plain English — demographics, diagnoses, medications, encounter types, key clinical events. The more specific you are, the more accurate the SDA3 will be.</p>
+      <div class="form-group">
+        <label>Scenario</label>
+        <textarea id="pr-scenario" class="txt-preview" style="height:160px"
+          placeholder="Example: 34-year-old female with Type 2 diabetes and hypertension presenting for quarterly follow-up. A1c 8.2%, BP 148/92. Currently on metformin 1000mg BID and lisinopril 10mg daily. Lab orders needed."></textarea>
+      </div>
+      <div class="flex gap-16">
+        <div class="form-group" style="flex:1">
+          <label>Model</label>
+          <select id="pr-model">
+            <option value="gpt-4o">GPT-4o (recommended)</option>
+            <option value="gpt-4o-mini">GPT-4o-mini (faster / cheaper)</option>
+          </select>
+        </div>
+        <div class="form-group" style="flex:1">
+          <label>Output Filename <span class="text-muted text-sm">(optional — auto-generated if blank)</span></label>
+          <input type="text" id="pr-filename" placeholder="e.g. patient_jane_doe">
+        </div>
+      </div>
+      <button id="btn-generate-record" class="btn btn-primary">Generate SDA3 Record →</button>
+    </div>
+
+    <div id="pr-progress-card" class="card hidden" style="margin-top:16px">
+      <h3>Generating…</h3>
+      <p class="text-muted text-sm mb-8">This takes 20–40 seconds for a detailed record.</p>
+      <div id="pr-stream-box" class="log-box" style="height:140px;font-family:monospace;font-size:11px;white-space:pre-wrap;word-break:break-all"></div>
+    </div>
+
+    <div id="pr-result-card" class="card hidden" style="margin-top:16px">
+      <div class="flex items-c gap-16 mb-8" style="justify-content:space-between">
+        <h3>Generated SDA3 XML</h3>
+        <div class="flex gap-8">
+          <button id="btn-pr-copy" class="btn btn-secondary">Copy</button>
+          <button id="btn-pr-download" class="btn btn-primary">Download XML</button>
+        </div>
+      </div>
+      <p id="pr-result-path" class="text-muted text-sm mb-8"></p>
+      <textarea id="pr-xml-output" class="txt-preview mono" style="height:560px" readonly spellcheck="false"></textarea>
+    </div>
+  </div>
+
   <!-- Population Detail -->
   <div id="page-population" class="page">
     <div class="page-header">
@@ -305,6 +356,6 @@
   </div>
 </div>
 
-<script src="static/js/app.js?v=15"></script>
+<script src="static/js/app.js?v=16"></script>
 </body>
 </html>
