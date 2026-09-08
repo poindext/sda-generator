@@ -150,8 +150,9 @@ def _build_template_context(template_file: str, cohort_id: str) -> str:
     if ep:
         visits = ep.get("encounters_per_year", "")
         weights = ep.get("encounter_type_weights", {})
+        _type_labels = {'O': 'outpatient', 'E': 'ED', 'I': 'inpatient'}
         type_str = ", ".join(
-            f"{{'O':'outpatient','E':'ED','I':'inpatient'}.get(k,k)} {int(v*100)}%"
+            f"{_type_labels.get(k, k)} {int(v*100)}%"
             for k, v in weights.items()
         )
         lines.append(f"ENCOUNTER PATTERN: ~{visits} visits/year ({type_str})")
