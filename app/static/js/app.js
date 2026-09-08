@@ -1606,6 +1606,48 @@ function renderTemplatePreview(t) {
 // PAGE: SINGLE PATIENT RECORD
 // =========================================================
 
+function loadPrHistory() {
+  const list = el('pr-history-list');
+  if (!list) return;
+  list.innerHTML = '<p class="text-muted text-sm">Loading…</p>';
+  api.get('/patient-record/list').then(resp => {
+    const records = resp.records || [];
+    if (!records.length) {
+      list.innerHTML = '<p class="text-muted text-sm">No records yet.</p>';
+      return;
+    }
+    const rows = records.map(r => {
+      const date = new Date(r.created).toLocaleString();
+      const dlBtn = r.zip_path
+        ? `<button class="btn btn-secondary" style="padding:4px 10px;font-size:12px"
+             onclick="window.location.href='/api/patient-record/download-zip?path=${encodeURIComponent(r.zip_path)}'">
+             Download ZIP</button>`
+        : '<span class="text-muted text-sm">—</span>';
+      const filesTip = r.files ? r.files.join('\n') : '';
+      return `<tr>
+        <td style="font-family:monospace;font-size:13px;padding:6px 12px" title="${filesTip}">${r.name}</td>
+        <td style="padding:6px 12px">${r.file_count} file${r.file_count !== 1 ? 's' : ''}</td>
+        <td style="padding:6px 12px;color:var(--text-muted);font-size:13px">${date}</td>
+        <td style="padding:6px 12px">${dlBtn}</td>
+      </tr>`;
+    }).join('');
+    list.innerHTML = `
+      <table style="width:100%;border-collapse:collapse">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border)">
+            <th style="text-align:left;padding:6px 12px;font-size:12px;color:var(--text-muted)">Name</th>
+            <th style="text-align:left;padding:6px 12px;font-size:12px;color:var(--text-muted)">Files</th>
+            <th style="text-align:left;padding:6px 12px;font-size:12px;color:var(--text-muted)">Generated</th>
+            <th style="text-align:left;padding:6px 12px;font-size:12px;color:var(--text-muted)">Download</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+  }).catch(() => {
+    list.innerHTML = '<p class="text-muted text-sm">Could not load records.</p>';
+  });
+}
+
 register('patient-record', () => {
   el('page-patient-record').classList.add('active');
 
@@ -1613,6 +1655,8 @@ register('patient-record', () => {
   hide('pr-progress-card');
   hide('pr-result-card');
   el('pr-file-list').innerHTML = '';
+
+  loadPrHistory();
 
   // Load cohort template options (once — skip if already populated)
   const tmplSelect = el('pr-template');
@@ -1725,6 +1769,7 @@ register('patient-record', () => {
         }
 
         show('pr-result-card');
+        loadPrHistory();
       }
     );
   };

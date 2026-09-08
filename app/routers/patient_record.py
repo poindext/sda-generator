@@ -29,6 +29,46 @@ async def download_zip(path: str):
     return FileResponse(full, media_type="application/zip", filename=full.name)
 
 
+@router.get("/patient-record/list")
+async def list_patient_records():
+    from datetime import datetime
+    from app.config import BASE_DIR, POPULATIONS_DIR
+
+    records_dir = POPULATIONS_DIR / "single-records"
+    records_dir.mkdir(parents=True, exist_ok=True)
+
+    results = []
+
+    # Package directories (new format — one dir per generation)
+    for pkg in sorted(records_dir.iterdir(), key=lambda p: p.stat().st_mtime, reverse=True):
+        if not pkg.is_dir():
+            continue
+        xml_files = sorted(pkg.glob("*.xml"))
+        zip_files = list(pkg.glob("*.zip"))
+        zip_path = str(zip_files[0].relative_to(BASE_DIR)) if zip_files else ""
+        results.append({
+            "name": pkg.name,
+            "type": "package",
+            "file_count": len(xml_files),
+            "files": [f.name for f in xml_files],
+            "created": datetime.fromtimestamp(pkg.stat().st_mtime).isoformat(),
+            "zip_path": zip_path,
+        })
+
+    # Legacy single XML files (fallback / pre-split format)
+    for f in sorted(records_dir.glob("*.xml"), key=lambda p: p.stat().st_mtime, reverse=True):
+        results.append({
+            "name": f.name,
+            "type": "single",
+            "file_count": 1,
+            "files": [f.name],
+            "created": datetime.fromtimestamp(f.stat().st_mtime).isoformat(),
+            "zip_path": "",
+        })
+
+    return {"records": results}
+
+
 @router.get("/patient-record/cohort-templates")
 async def list_cohort_templates():
     from app.services import patient_record_svc
