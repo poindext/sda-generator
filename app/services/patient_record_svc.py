@@ -197,6 +197,13 @@ def _split_by_facility(
     if raw.startswith("<?xml"):
         raw = raw[raw.index("?>") + 2:].strip()
 
+    # Escape bare & that the LLM sometimes emits in description text
+    raw = re.sub(
+        r"&(?!(?:amp|lt|gt|apos|quot|#\d+|#x[0-9a-fA-F]+);)",
+        "&amp;",
+        raw,
+    )
+
     root = ET.fromstring(raw)
     patient_el = root.find("Patient")
 
