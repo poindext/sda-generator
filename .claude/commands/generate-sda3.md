@@ -912,49 +912,108 @@ State clinical decisions plainly: *"Continue aspirin 81mg daily for preeclampsia
 
 #### 5 — Structured data completeness (applies to all scenarios)
 
-**Critical clinical findings must exist as discrete structured SDA data — not only in narrative note text.** A downstream clinical abstraction tool must be able to reconstruct the clinical picture from structured elements alone. Mentioning a finding only in `<NoteText>` is insufficient when that finding drives a diagnosis, treatment decision, or quality measure.
+**THE ACCEPTANCE TEST:** If the narrative documents a clinical fact that is important to the care record and SDA has a reasonable structured location for that fact, the same fact **must also exist as discrete structured SDA data**. A downstream clinical tool must be able to reconstruct the clinical picture from structured elements alone — without NLP on note text.
 
-**Rule:** For every important clinical datum, ask: *Can a downstream tool extract this without NLP?* If not, add a structured element.
+**These are NOT acceptable substitutes for structured data:**
+- Writing a lab value or vital sign only inside `<NoteText>` — it must also be in `<Observations>` or `<LabOrders>`
+- Generating a procedure CPT code without `<ProcedureObservations>` for the measurements — the code alone proves the procedure happened, not what it found
+- Mentioning a diagnosis in a note without a `<Diagnoses>` entry — notes are supplementary
+- Writing "G2P1" or "LMP 10/15/2023" only in prose — these must be structured `<Observation>` records
 
-Examples by data type:
-- Vital signs → `<Observation>` with LOINC code, not only a number in a progress note
-- Lab findings that justify a diagnosis → `<LabOrder>` with `<ResultItems>`, dated before the diagnosis
-- Procedures → `<Procedure>` with `<ProcedureObservations>` for discrete measurements, not only a narrative summary
-- Diagnoses → present in both encounter-level inline section and the consolidated `<Diagnoses>` section
+**Evidence-before-diagnosis:** Never generate a diagnosis without corresponding structured evidence (lab result, vital sign, or procedure finding) already dated on or before the encounter where the diagnosis is first assigned. The supporting data must be in the structured record, not only the note.
 
-**Evidence-before-diagnosis:** Never generate a diagnosis without corresponding structured evidence (lab result, vital sign, or procedure finding) already dated on or before the encounter where the diagnosis is first assigned. A diagnosis must be derivable from the structured record; a clinician's note asserting it without supporting data is insufficient for extraction purposes.
-
-**Encounter count:** Generate a realistic number of encounters for the scenario's time span and care pattern. A chronic disease or ongoing pregnancy scenario spanning months should not be compressed into 3–4 visits unless the scenario specifies otherwise. Match the expected standard-of-care visit cadence.
+**Encounter count:** Match the expected standard-of-care visit cadence for the scenario's time span. A condition managed over months must not be compressed into 3–4 visits.
 
 #### 6 — Obstetric structured data (extends Rules 1–5 for prenatal scenarios)
 
-When generating prenatal or antepartum records, in addition to the general completeness rules above:
+These rules define the minimum structured content for antepartum/prenatal records. For every item below, generating a note that mentions it is **not sufficient** — the structured SDA element is mandatory.
 
-**Structured obstetric dating observations** — generate as discrete `<Observation>` records at the initial prenatal visit (not embedded in note text):
+**6a — Pregnancy dating (initial prenatal visit, as `<Observation>` records)**
 
-| Observation | LOINC |
+| What | LOINC | NOT acceptable substitute |
+|---|---|---|
+| Gravida | `11996-6` | "G2" in a note |
+| Para | `11977-6` | "P1" in a note |
+| LMP | `8665-2` | LMP in a note |
+| EDD by LMP | `11779-6` | EDD in a note |
+| GA at each visit | `11884-6` | GA mentioned in a note |
+
+Generate a gestational age `<Observation>` at **every** prenatal and MFM encounter. The value must be **calculated** from the authoritative LMP for that specific encounter date — never copy a value from a note. Use the same LMP/EDD consistently across all encounters and both facilities.
+
+**6b — Trimester code by calculated GA (derived from LMP, not assumed)**
+
+| GA at encounter | ICD-10 suffix | Example |
+|---|---|---|
+| ≤ 13w 6d | `..1` — first trimester | `O09.291` |
+| 14w 0d – 26w 6d | `..2` — second trimester | `O09.292` |
+| ≥ 27w 0d | `..3` — third trimester | `O09.293` |
+
+Compute the GA for each encounter from `(encounter_date − LMP_date) / 7`. Assign the code that matches that computed GA. An initial prenatal visit at 8–12 weeks must never carry an `..3` code.
+
+**6c — Routine prenatal observations (at every prenatal encounter)**
+
+Generate structured `<Observation>` records — not note-text only — for each of the following at every routine prenatal visit:
+
+| What | LOINC | Starts at |
+|---|---|---|
+| Maternal weight | `3141-9` | Every visit |
+| BP systolic | `8480-6` | Every visit |
+| BP diastolic | `8462-4` | Every visit |
+| Fundal height | `11881-2` | ~20 weeks |
+| Fetal heart rate | `55283-6` | ~10–12 weeks |
+| Fetal movement | `57088-0` | ~16–20 weeks |
+| Urine protein (dipstick) | `5804-0` | Every visit |
+| Urine glucose (dipstick) | `25428-4` | Every visit |
+| Edema (assessment) | `44966-4` | Every visit |
+| Fetal presentation | `73772-1` | ≥ 28 weeks |
+
+For a scenario with one mildly elevated BP + reassuring repeat: generate **two** sequential BP observation pairs (systolic+diastolic) at the same encounter — elevated first, normal repeat 15–30 minutes later.
+
+**6d — Initial prenatal lab panel (as a single `<LabOrder>` with discrete `<ResultItems>`)**
+
+A note that says "routine prenatal labs ordered" is NOT acceptable. Each component must be a `LabResultItem` with LOINC code, value, and interpretation:
+
+| Test | LOINC |
 |---|---|
-| Gravida | `11996-6` |
-| Para | `11977-6` |
-| LMP | `8665-2` |
-| EDD (by LMP) | `11779-6` |
-| Gestational age at visit | `11884-6` |
+| ABO blood type | `882-1` |
+| Rh factor | `10331-7` |
+| Antibody screen | `890-4` |
+| Hemoglobin | `718-7` |
+| Hematocrit | `4544-3` |
+| Platelets | `26515-7` |
+| MCV | `787-2` |
+| Rubella IgG | `8013-4` |
+| Hepatitis B sAg | `5196-1` |
+| HIV screen | `75622-1` |
+| RPR (syphilis) | `5292-8` |
+| Urine culture | `13115-0` |
+| Chlamydia/GC NAAT | `45084-1` |
 
-Generate a gestational age `<Observation>` (LOINC `11884-6`) at **every** prenatal encounter. The value must be the calculated GA for that specific encounter date. Never assign a third-trimester GA value to a first- or second-trimester encounter.
+At 24–28 weeks: **1-hour glucose challenge test** — `OrderItem` LOINC `20436-2`, result < 140 mg/dL, **no GDM diagnosis**. This lab order with its result is mandatory; a note mentioning "GDM screen normal" is not sufficient.
 
-**Trimester code by calculated GA:**
+For iron-deficiency anemia: the supporting CBC must include Hgb, Hct, **MCV**, and ferritin — all abnormal — dated before the D50.9 diagnosis. A later encounter must include a follow-up CBC showing improvement.
 
-| GA at encounter | ICD-10 suffix |
-|---|---|
-| ≤ 13w 6d | `..1` (first trimester) |
-| 14w – 26w 6d | `..2` (second trimester) |
-| ≥ 27w | `..3` (third trimester) |
+At 35–37 weeks: GBS culture — LOINC `43080-8`.
 
-**Routine prenatal visit observations** — at every prenatal encounter generate structured `<Observation>` records (not note-text only) for: maternal weight (`3141-9`), BP systolic (`8480-6`), BP diastolic (`8462-4`), fundal height (`11881-2`), fetal heart rate (`55283-6`), fetal movement (`57088-0`), urine protein dipstick (`5804-0`), urine glucose dipstick (`25428-4`).
+**6e — Ultrasound procedures (CPT code alone is NOT sufficient)**
 
-**Initial prenatal lab panel** — the initial prenatal visit requires a complete panel, not only a CBC. At minimum: blood type (`882-1`), Rh factor (`10331-7`), CBC (hemoglobin `718-7`, hematocrit `4544-3`, platelets `26515-7`), rubella IgG (`8013-4`), hepatitis B surface antigen (`5196-1`), HIV screen (`75622-1`), RPR/syphilis (`5292-8`), urine culture (`13115-0`), chlamydia/GC NAAT (`45084-1`). At 24–28 weeks: glucose challenge test (`20436-2`). At 35–37 weeks: GBS culture (`43080-8`).
+Every obstetric ultrasound procedure must have discrete `<ProcedureObservation>` elements. A procedure record with only a CPT code fails this rule.
 
-**Ultrasound count** — for a scenario describing serial fetal surveillance, generate at least two growth ultrasound procedures (CPT `76816`), each with a full discrete biometry set (see Rule 3). One anatomy ultrasound (CPT `76805`) at ~20 weeks must include BPD, HC, AC, FL, EFW, EFW percentile, AFI, fetal heart rate, fetal presentation, and cervical length as discrete `<ProcedureObservation>` elements.
+| Ultrasound | CPT | Required `ProcedureObservation` measurements |
+|---|---|---|
+| Dating US (~8–12w) | `76801` | CRL (`11956-0`), GA by US (`11884-6`), FHR (`55283-6`) |
+| Anatomy US (~18–22w) | `76805` | BPD, HC, AC, FL, EFW, EFW %ile, AFI, FHR, placental location, cervical length |
+| Growth US (serial) | `76816` | BPD, HC, AC, FL, EFW, EFW %ile, AFI, S/D ratio (high-risk), fetal presentation |
+
+Generate **at least two** serial growth ultrasounds in the third trimester (CPT `76816`), each with a full discrete biometry set. All measurements must be clinically consistent with the gestational age at that visit (see Rule 3 for LOINC codes and Rule 3 reference ranges).
+
+**6f — FAC002 (MFM) minimum structured content**
+
+FAC002 must contain more than a consultation note. Required structured content:
+- At least **two** MFM encounters (initial consultation + ≥1 surveillance visit)
+- Gestational age observation (`11884-6`) at each MFM encounter
+- At least two growth ultrasound procedures (CPT `76816`) with full discrete biometry
+- MFM-specific diagnoses in the `<Diagnoses>` section (not only encounter notes)
 
 ---
 
