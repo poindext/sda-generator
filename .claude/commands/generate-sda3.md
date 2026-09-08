@@ -848,21 +848,30 @@ ICD-10 pregnancy supervision codes carry trimester specificity: `O09.291` = firs
 
 Conditions that were obstetric complications of a **prior pregnancy** (fully resolved, documented only for context in the current pregnancy) must be coded with `Z87.59` — *Personal history of complications of pregnancy, childbirth and the puerperium* — rather than the active obstetric complication code.
 
-Using an active complication code such as `O14.12` with `<Status>H</Status>` or a "HISTORICAL" comment still exposes the code to downstream rules engines that match on code alone, potentially triggering false-positive active preeclampsia or FGR alerts.
+**This applies everywhere a diagnosis appears** — both in the consolidated `<Diagnoses>` section and in encounter-level inline `<Diagnoses>` elements. A downstream processor that ingests only encounter-level diagnoses must also see the correct historical code.
+
+Using an active complication code such as `O14.12` or `O36.x` anywhere — even with `<Status>H</Status>` or a "HISTORICAL" comment — still exposes the code to downstream rules engines that match on code alone, potentially triggering false-positive active preeclampsia or FGR alerts.
 
 | Historical condition | Correct code | Do NOT use |
 |---|---|---|
-| Prior severe preeclampsia | `Z87.59` | `O14.12`, `O14.02` |
-| Prior FGR | `Z87.59` | `O36.5190` |
+| Prior severe preeclampsia | `Z87.59` | `O14.12`, `O14.02`, any `O14.x` |
+| Prior FGR | `Z87.59` | `O36.5190`, any `O36.x` |
 | Prior placental abruption | `Z87.59` | `O45.x` |
 | Prior preterm birth | `Z87.59` + `O09.211` (current supervision) | `O60.x` from prior pregnancy |
 
 ```xml
-<!-- WRONG: active O14 code on a historical prior-pregnancy condition -->
-<Diagnosis><Code>O14.12</Code><Description>Severe pre-eclampsia — HISTORICAL</Description>...</Diagnosis>
+<!-- WRONG: active O14 or O36 code anywhere — encounter-level OR consolidated — for a prior-pregnancy condition -->
+<Diagnoses>
+  <Diagnosis><Code>O14.12</Code><Description>Severe pre-eclampsia — history</Description>...</Diagnosis>
+</Diagnoses>
 
-<!-- CORRECT: Z87.59 with narrative context -->
-<Diagnosis><Code>Z87.59</Code><Description>Personal history of severe preeclampsia, first pregnancy 2022</Description>
+<!-- CORRECT: Z87.59 at both levels -->
+<!-- Encounter-level inline diagnosis -->
+<Diagnoses>
+  <Diagnosis><Code>Z87.59</Code><Description>Personal history of severe preeclampsia, prior pregnancy 2022</Description><SDACodingStandard>ICD10</SDACodingStandard></Diagnosis>
+</Diagnoses>
+<!-- Consolidated Diagnoses section -->
+<Diagnosis><Code>Z87.59</Code><Description>Personal history of severe preeclampsia, prior pregnancy 2022</Description>
   <Status><Code>H</Code><Description>Historical</Description></Status>
   <Comments>Severe early-onset preeclampsia, prior pregnancy 2022, fully resolved postpartum.</Comments>
 </Diagnosis>
