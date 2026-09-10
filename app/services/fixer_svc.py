@@ -254,41 +254,43 @@ async def _fix_pipeline(
         job_store.append_progress(job_id, f"{len(issues)} issue(s) total — {summary}")
 
         if not tmpl_issues:
+            # All issues are generator-target — no template patch to apply.
+            # Still regenerate so any already-applied code fixes take effect.
             job_store.append_progress(
                 job_id,
-                "All remaining issues require generator fixes. "
-                "Stopping auto-fix loop — manual code change needed.",
+                "All remaining issues require generator code fixes (no template patch). "
+                "Regenerating to pick up any deployed code changes…",
             )
-            break
-
-        job_store.append_progress(
-            job_id,
-            f"Calling LLM to patch template for {len(tmpl_issues)} fixable issue(s)…",
-        )
-
-        try:
-            tmpl = json.loads(Path(template_path).read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError) as e:
-            job_store.update_status(job_id, "failed", error=f"Cannot read template: {e}")
-            return
-
-        patches = await _call_llm_with_heartbeat(job_id, tmpl, tmpl_issues)
-        if patches is None:
-            job_store.update_status(
-                job_id, "failed",
-                error="LLM patch call failed — check OPENAI_API_KEY",
+        else:
+            job_store.append_progress(
+                job_id,
+                f"Calling LLM to patch template for {len(tmpl_issues)} fixable issue(s)…",
             )
-            return
 
-        job_store.append_progress(job_id, f"Applying {len(patches)} patch(es) to template…")
-        fixed_tmpl, patch_errors = _apply_patch(tmpl, patches)
-        for err in patch_errors:
-            job_store.append_progress(job_id, f"  ⚠ {err}")
+            try:
+                tmpl = json.loads(Path(template_path).read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError) as e:
+                job_store.update_status(job_id, "failed", error=f"Cannot read template: {e}")
+                return
 
-        Path(template_path).write_text(
-            json.dumps(fixed_tmpl, indent=2), encoding="utf-8"
-        )
-        job_store.append_progress(job_id, "Template updated. Regenerating population…")
+            patches = await _call_llm_with_heartbeat(job_id, tmpl, tmpl_issues)
+            if patches is None:
+                job_store.update_status(
+                    job_id, "failed",
+                    error="LLM patch call failed — check OPENAI_API_KEY",
+                )
+                return
+
+            job_store.append_progress(job_id, f"Applying {len(patches)} patch(es) to template…")
+            fixed_tmpl, patch_errors = _apply_patch(tmpl, patches)
+            for err in patch_errors:
+                job_store.append_progress(job_id, f"  ⚠ {err}")
+
+            Path(template_path).write_text(
+                json.dumps(fixed_tmpl, indent=2), encoding="utf-8"
+            )
+
+        job_store.append_progress(job_id, "Regenerating population…")
 
         gen_ok = await asyncio.to_thread(
             _run_generator_sync, job_id, template_path, output_dir,
