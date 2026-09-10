@@ -249,6 +249,7 @@ register('dashboard', async () => {
         <td class="text-muted">${fmt_date(p.modified)}</td>
         <td>
           <button class="btn btn-sm btn-secondary" onclick="navigate('#populations/${p.id}')">View</button>
+          <button class="btn btn-sm btn-secondary" onclick="regenPop('${p.id}')">Regenerate</button>
           <button class="btn btn-sm btn-danger" onclick="deletePop('${p.id}')">Delete</button>
         </td>
       </tr>`).join('');
@@ -263,6 +264,19 @@ window.deletePop = async (id) => {
   if (btn) { btn.disabled = true; btn.textContent = 'Deleting…'; }
   await api.del(`/populations/${id}`);
   navigate('#dashboard');
+};
+
+window.regenPop = async (id) => {
+  const pop = await api.get(`/populations/${id}`);
+  window._regenState = {
+    template_id:    pop.template_id     || '',
+    population_name: pop.population_name || id,
+    count:          pop.count_requested || 100,
+    history_months: pop.history_months  || 24,
+    run_qa:         pop.run_qa          ?? true,
+    auto_fix:       pop.auto_fix        ?? true,
+  };
+  navigate('#generate');
 };
 
 // =========================================================
@@ -839,6 +853,22 @@ register('generate', async () => {
     });
   } catch (e) {
     console.error('Could not load templates', e);
+  }
+
+  // Pre-fill form if arriving via Regenerate
+  if (window._regenState) {
+    const s = window._regenState;
+    window._regenState = null;
+    el('gen2-template-select').value = s.template_id;
+    el('gen2-pop-name').value         = s.population_name;
+    el('gen2-count').value            = s.count;
+    el('gen2-history-months').value   = s.history_months;
+    el('gen2-run-qa').checked         = s.run_qa;
+    el('gen2-auto-fix').checked       = s.auto_fix;
+    el('gen2-auto-fix-row').style.display = s.run_qa ? '' : 'none';
+    el('btn-start-gen2').textContent  = 'Regenerate →';
+  } else {
+    el('btn-start-gen2').textContent  = 'Start Generation →';
   }
 
   // Attach listeners only once
