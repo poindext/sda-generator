@@ -210,6 +210,7 @@ _LOINC_PLAUSIBILITY: dict = {
     "2339-0":  (50.0, 500.0),  # Glucose mg/dL
     "2571-8":  (40.0, 500.0),  # Triglycerides mg/dL (LAB004 floor = 40)
     "13457-7": (0.0,  300.0),  # LDL (calculated) mg/dL
+    "2028-9":  (18.0,  38.0), # CO2/Bicarbonate mEq/L (outpatient floor; <18 = urgent eval)
 }
 
 

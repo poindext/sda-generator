@@ -841,7 +841,7 @@
           {
             "code": "8310-5",
             "description": "Body temperature",
-            "units": "\u00b0F",
+            "units": "°F",
             "normal_min": 97.0,
             "normal_max": 99.0,
             "abnormal_min": 100.0,
@@ -1172,7 +1172,7 @@
           {
             "code": "8310-5",
             "description": "Body temperature",
-            "units": "\u00b0F",
+            "units": "°F",
             "normal_min": 97.0,
             "normal_max": 99.0,
             "abnormal_min": 100.0,
@@ -1623,7 +1623,7 @@
                 "normal_min": 0,
                 "normal_max": 0.04,
                 "abnormal_min": 0.05,
-                "abnormal_max": 10.0
+                "abnormal_max": 50.0
               }
             ]
           }
@@ -1678,16 +1678,6 @@
             "weight": 0.214286
           }
         ],
-        "encounter_pattern": {
-          "encounters_per_year": 6.0,
-          "encounter_type_weights": {
-            "O": 0.7,
-            "E": 0.2,
-            "I": 0.1
-          },
-          "lab_encounter_rate": 0.8,
-          "rad_encounter_rate": 0.2
-        },
         "procedures": [
           {
             "code": "99213",
@@ -1707,7 +1697,17 @@
             "encounter_type": "O",
             "weight": 0.2
           }
-        ]
+        ],
+        "encounter_pattern": {
+          "encounters_per_year": 6.0,
+          "encounter_type_weights": {
+            "O": 0.7,
+            "E": 0.2,
+            "I": 0.1
+          },
+          "lab_encounter_rate": 0.8,
+          "rad_encounter_rate": 0.2
+        }
       }
     },
     "pregnancy": {
@@ -1982,7 +1982,7 @@
           },
           {
             "order_code": "58410-2",
-            "order_description": "CBC panel \u2014 Blood by Automated count",
+            "order_description": "CBC panel — Blood by Automated count",
             "specimen": "Blood",
             "result_items": [
               {
@@ -3410,7 +3410,7 @@
           {
             "code": "8310-5",
             "description": "Body temperature",
-            "units": "\u00b0F",
+            "units": "°F",
             "normal_min": 97.0,
             "normal_max": 99.0,
             "abnormal_min": 100.0,
@@ -3785,7 +3785,7 @@
           {
             "code": "8310-5",
             "description": "Body temperature",
-            "units": "\u00b0F",
+            "units": "°F",
             "normal_min": 97.0,
             "normal_max": 99.0,
             "abnormal_min": 100.0,
@@ -4818,8 +4818,8 @@
                 "abnormal_max": null,
                 "abnormal_flag": "A",
                 "text_values": [
-                  "Hemoglobin S present \u2014 consistent with sickle cell disease",
-                  "Hemoglobin S detected \u2014 Hb-SS pattern on electrophoresis"
+                  "Hemoglobin S present — consistent with sickle cell disease",
+                  "Hemoglobin S detected — Hb-SS pattern on electrophoresis"
                 ]
               }
             ]
@@ -5182,7 +5182,7 @@
           {
             "code": "8310-5",
             "description": "Body temperature",
-            "units": "\u00b0F",
+            "units": "°F",
             "normal_min": 97.0,
             "normal_max": 99.0,
             "abnormal_min": 100.0,
@@ -5955,7 +5955,7 @@
           {
             "code": "8310-5",
             "description": "Body temperature",
-            "units": "\u00b0F",
+            "units": "°F",
             "normal_min": 97.0,
             "normal_max": 99.0,
             "abnormal_min": 100.4,
@@ -6898,7 +6898,7 @@
           {
             "code": "8310-5",
             "description": "Body temperature",
-            "units": "\u00b0F",
+            "units": "°F",
             "normal_min": 97.0,
             "normal_max": 99.0,
             "abnormal_min": 100.4,
@@ -7363,7 +7363,7 @@
       }
     },
     "oud_mat": {
-      "canonical_name": "Opioid Use Disorder \u2014 Medication-Assisted Treatment",
+      "canonical_name": "Opioid Use Disorder — Medication-Assisted Treatment",
       "keywords": [
         "opioid use disorder",
         "OUD",
@@ -7464,7 +7464,7 @@
           {
             "drug_code": "2105765",
             "drug_description": "Buprenorphine/Naloxone 8 MG/2 MG sublingual tablet",
-            "drug_class": "MAT \u2014 Partial Opioid Agonist",
+            "drug_class": "MAT — Partial Opioid Agonist",
             "weight": 0.92,
             "for_diagnosis_code": "",
             "dose_options": [
@@ -7533,51 +7533,6 @@
                 "unit": "mg",
                 "route": "PO",
                 "frequency": "QHS"
-              }
-            ]
-          },
-          {
-            "drug_code": "864978",
-            "drug_description": "Methadone HCl 40 MG dispersible tablet",
-            "drug_class": "MAT \u2014 Full Opioid Agonist",
-            "weight": 0.92,
-            "for_diagnosis_code": "",
-            "dose_options": [
-              {
-                "amount": "40-120",
-                "unit": "mg",
-                "route": "PO",
-                "frequency": "QD"
-              }
-            ]
-          },
-          {
-            "drug_code": "314076",
-            "drug_description": "Lisinopril 10 MG Oral Tablet",
-            "drug_class": "ACE inhibitor",
-            "weight": 0.4,
-            "for_diagnosis_code": "I10",
-            "dose_options": [
-              {
-                "amount": "10",
-                "unit": "mg",
-                "route": "PO",
-                "frequency": "QD"
-              }
-            ]
-          },
-          {
-            "drug_code": "1113834",
-            "drug_description": "Naltrexone 380 MG IM extended-release injectable",
-            "drug_class": "MAT \u2014 Opioid Antagonist",
-            "weight": 0.92,
-            "for_diagnosis_code": "",
-            "dose_options": [
-              {
-                "amount": "380",
-                "unit": "mg",
-                "route": "IM",
-                "frequency": "Monthly"
               }
             ]
           }
@@ -7739,16 +7694,6 @@
             "weight": 0.3
           }
         ],
-        "encounter_pattern": {
-          "encounters_per_year": 13.0,
-          "encounter_type_weights": {
-            "O": 0.87,
-            "E": 0.09,
-            "I": 0.04
-          },
-          "lab_encounter_rate": 0.5,
-          "rad_encounter_rate": 0.04
-        },
         "procedures": [
           {
             "code": "H0020",
@@ -7765,11 +7710,21 @@
             "description": "Psychotherapy, 60 min",
             "weight": 0.3
           }
-        ]
+        ],
+        "encounter_pattern": {
+          "encounters_per_year": 13.0,
+          "encounter_type_weights": {
+            "O": 0.87,
+            "E": 0.09,
+            "I": 0.04
+          },
+          "lab_encounter_rate": 0.5,
+          "rad_encounter_rate": 0.04
+        }
       }
     },
     "ckd_progression": {
-      "canonical_name": "Chronic Kidney Disease \u2014 Stages 3\u20135",
+      "canonical_name": "Chronic Kidney Disease — Stages 3–5",
       "keywords": [
         "CKD",
         "chronic kidney disease",
@@ -8217,16 +8172,6 @@
             "weight": 0.3
           }
         ],
-        "encounter_pattern": {
-          "encounters_per_year": 8.0,
-          "encounter_type_weights": {
-            "O": 0.82,
-            "E": 0.12,
-            "I": 0.06
-          },
-          "lab_encounter_rate": 0.9,
-          "rad_encounter_rate": 0.1
-        },
         "procedures": [
           {
             "code": "99214",
@@ -8247,35 +8192,16 @@
             "weight": 0.2
           }
         ],
-        "ckd_progression": true,
-        "initial_egfr_min": 20,
-        "initial_egfr_max": 55,
-        "progression_trajectories": [
-          {
-            "name": "stable",
-            "rate_min": 0.0,
-            "rate_max": 0.5,
-            "weight": 0.2
+        "encounter_pattern": {
+          "encounters_per_year": 8.0,
+          "encounter_type_weights": {
+            "O": 0.82,
+            "E": 0.12,
+            "I": 0.06
           },
-          {
-            "name": "slow",
-            "rate_min": -3.0,
-            "rate_max": -0.5,
-            "weight": 0.35
-          },
-          {
-            "name": "moderate",
-            "rate_min": -6.0,
-            "rate_max": -3.1,
-            "weight": 0.3
-          },
-          {
-            "name": "rapid",
-            "rate_min": -12.0,
-            "rate_max": -6.1,
-            "weight": 0.15
-          }
-        ]
+          "lab_encounter_rate": 0.9,
+          "rad_encounter_rate": 0.1
+        }
       }
     },
     "maternal_morbidity": {
@@ -8313,54 +8239,6 @@
             "is_primary": true,
             "only_encounter_types": [
               "O",
-              "I"
-            ],
-            "onset_age_min": 18,
-            "onset_age_max": 45
-          },
-          {
-            "code": "O13.9",
-            "description": "Gestational hypertension, unspecified trimester",
-            "is_primary": true,
-            "only_encounter_types": [
-              "O"
-            ],
-            "onset_age_min": 18,
-            "onset_age_max": 45
-          },
-          {
-            "code": "O14.00",
-            "description": "Mild to moderate pre-eclampsia, unspecified trimester",
-            "is_primary": false,
-            "only_encounter_types": [
-              "I",
-              "E"
-            ],
-            "onset_age_min": 18,
-            "onset_age_max": 45
-          },
-          {
-            "code": "O14.10",
-            "description": "Severe pre-eclampsia, unspecified trimester",
-            "is_primary": true,
-            "onset_age_min": 18,
-            "onset_age_max": 45
-          },
-          {
-            "code": "O15.02",
-            "description": "Eclampsia in labor",
-            "is_primary": false,
-            "only_encounter_types": [
-              "I"
-            ],
-            "onset_age_min": 18,
-            "onset_age_max": 45
-          },
-          {
-            "code": "O72.1",
-            "description": "Other immediate postpartum hemorrhage",
-            "is_primary": true,
-            "only_encounter_types": [
               "I"
             ],
             "onset_age_min": 18,
@@ -8409,82 +8287,6 @@
             "status": "active",
             "for_diagnosis_code": "Z34",
             "weight": 0.92
-          },
-          {
-            "drug_code": "310798",
-            "drug_description": "Labetalol 200 MG Oral Tablet",
-            "dose_quantity": "200",
-            "dose_uom": "mg",
-            "dosage_form_code": "TAB",
-            "dosage_form_description": "Tablet",
-            "route_code": "PO",
-            "route_description": "Oral",
-            "frequency_code": "BID",
-            "frequency_description": "Twice daily",
-            "status": "active",
-            "for_diagnosis_code": "O13",
-            "weight": 0.7
-          },
-          {
-            "drug_code": "203549",
-            "drug_description": "Methyldopa 250 MG Oral Tablet",
-            "dose_quantity": "250",
-            "dose_uom": "mg",
-            "dosage_form_code": "TAB",
-            "dosage_form_description": "Tablet",
-            "route_code": "PO",
-            "route_description": "Oral",
-            "frequency_code": "BID",
-            "frequency_description": "Twice daily",
-            "status": "active",
-            "for_diagnosis_code": "O13",
-            "weight": 0.5
-          },
-          {
-            "drug_code": "310429",
-            "drug_description": "Nifedipine 10 MG Oral Capsule",
-            "dose_quantity": "10",
-            "dose_uom": "mg",
-            "dosage_form_code": "CAP",
-            "dosage_form_description": "Capsule",
-            "route_code": "PO",
-            "route_description": "Oral",
-            "frequency_code": "PRN",
-            "frequency_description": "As needed",
-            "status": "active",
-            "for_diagnosis_code": "O14",
-            "weight": 0.45
-          },
-          {
-            "drug_code": "308167",
-            "drug_description": "Magnesium sulfate 50% Injection",
-            "dose_quantity": "50",
-            "dose_uom": "%",
-            "dosage_form_code": "INJ",
-            "dosage_form_description": "Injection",
-            "route_code": "IV",
-            "route_description": "Intravenous",
-            "frequency_code": "INFUSION",
-            "frequency_description": "Continuous infusion",
-            "status": "active",
-            "for_diagnosis_code": "O14",
-            "weight": 0.9,
-            "is_acute": true
-          },
-          {
-            "drug_code": "310463",
-            "drug_description": "Ferrous sulfate 325 MG Oral Tablet",
-            "dose_quantity": "325",
-            "dose_uom": "mg",
-            "dosage_form_code": "TAB",
-            "dosage_form_description": "Tablet",
-            "route_code": "PO",
-            "route_description": "Oral",
-            "frequency_code": "BID",
-            "frequency_description": "Twice daily",
-            "status": "active",
-            "for_diagnosis_code": "O72",
-            "weight": 0.7
           }
         ],
         "labs": [
@@ -8553,84 +8355,6 @@
                 "normal_max": 400,
                 "abnormal_min": 50,
                 "abnormal_max": 149
-              }
-            ]
-          },
-          {
-            "order_code": "5767-9",
-            "order_description": "Pre-eclampsia labs",
-            "specimen": "Blood/Urine",
-            "abnormal_pct": 0.15,
-            "weight": 0.35,
-            "result_items": [
-              {
-                "code": "5767-9",
-                "description": "Protein [Mass/volume] in Urine",
-                "units": "mg/dL",
-                "is_numeric": true,
-                "normal_min": 0,
-                "normal_max": 20,
-                "abnormal_min": 21,
-                "abnormal_max": 500
-              },
-              {
-                "code": "1742-6",
-                "description": "Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
-                "units": "U/L",
-                "is_numeric": true,
-                "normal_min": 7,
-                "normal_max": 56,
-                "abnormal_min": 57,
-                "abnormal_max": 300
-              },
-              {
-                "code": "1920-8",
-                "description": "Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
-                "units": "U/L",
-                "is_numeric": true,
-                "normal_min": 10,
-                "normal_max": 40,
-                "abnormal_min": 41,
-                "abnormal_max": 300
-              },
-              {
-                "code": "777-3",
-                "description": "Platelets [#/volume] in Blood by Automated count",
-                "units": "K/uL",
-                "is_numeric": true,
-                "normal_min": 150,
-                "normal_max": 400,
-                "abnormal_min": 50,
-                "abnormal_max": 149
-              }
-            ]
-          },
-          {
-            "order_code": "89247-1",
-            "order_description": "Iron panel",
-            "specimen": "Blood",
-            "abnormal_pct": 0.5,
-            "weight": 0.25,
-            "result_items": [
-              {
-                "code": "2498-4",
-                "description": "Iron [Mass/volume] in Serum or Plasma",
-                "units": "mcg/dL",
-                "is_numeric": true,
-                "normal_min": 60,
-                "normal_max": 170,
-                "abnormal_min": 20,
-                "abnormal_max": 59
-              },
-              {
-                "code": "2276-4",
-                "description": "Ferritin [Mass/volume] in Serum or Plasma",
-                "units": "ng/mL",
-                "is_numeric": true,
-                "normal_min": 12,
-                "normal_max": 150,
-                "abnormal_min": 5,
-                "abnormal_max": 11
               }
             ]
           }
@@ -9494,7 +9218,7 @@
           {
             "code": "8310-5",
             "description": "Body temperature",
-            "units": "\u00b0F",
+            "units": "°F",
             "normal_min": 97.0,
             "normal_max": 99.0,
             "abnormal_min": 100.4,
@@ -9951,7 +9675,7 @@
           {
             "code": "8310-5",
             "description": "Body temperature",
-            "units": "\u00b0F",
+            "units": "°F",
             "normal_min": 97.0,
             "normal_max": 99.0,
             "abnormal_min": 100.4,
@@ -10530,7 +10254,7 @@
           {
             "code": "8310-5",
             "description": "Body temperature",
-            "units": "\u00b0F",
+            "units": "°F",
             "normal_min": 97.0,
             "normal_max": 99.0,
             "abnormal_min": 100.4,
@@ -11046,7 +10770,7 @@
           {
             "code": "8310-5",
             "description": "Body temperature",
-            "units": "\u00b0F",
+            "units": "°F",
             "normal_min": 97.0,
             "normal_max": 99.0,
             "abnormal_min": 100.4,
