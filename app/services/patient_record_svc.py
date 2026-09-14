@@ -561,6 +561,15 @@ Rule 7 — Medication reconciliation completeness (deduct 5–10 pts from Cross-
   viewing only PC001 cannot see the complete active medication list. Each missing reconciled \
   medication counts as one deduction instance.
 
+Rule 8 — Medication duplication (HARD FAILURE, deduct 8–12 pts from Structured Data Completeness):
+- Each unique drug name must appear AT MOST ONCE per facility file. Count the Medication \
+  elements in each facility's XML and check for duplicate DrugProduct descriptions. If the \
+  same drug appears multiple times in one facility's record (e.g., three Metformin entries \
+  with different EncounterNumbers), that is duplication — the medication list is showing the \
+  same drug once per encounter instead of once per drug. This inflates the medication list \
+  and is always wrong. The correct EncounterNumber is the most recent encounter at that \
+  facility where the medication was active.
+
 Do not give 100 unless all semantic cross-checks pass. A structurally clean record with \
 any of the above contradictions is NOT a 100.
 

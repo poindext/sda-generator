@@ -1165,44 +1165,50 @@ Apply this check to **every** medication, lab order, procedure, diagnosis, and o
 
 #### Medication reconciliation at reviewing facilities — MANDATORY
 
-**Rule:** Every medication that was active during a facility's encounter must appear in that facility's XML — regardless of where it was originally prescribed.
+**Rule:** Every medication that was active during a facility's encounter must appear **once** in that facility's XML — regardless of where it was originally prescribed.
 
-Do not think in terms of "which facility originated this medication." Think in terms of "what medications were active on the date of this encounter?" Every active medication on that date belongs in that facility's Medications section.
+**ONE entry per drug per facility file.** If a facility has 3 encounters, do NOT create 3 entries for the same drug. Create exactly one entry and set `<EncounterNumber>` to the **most recent encounter at that facility** where the medication was active.
+
+```
+WRONG: PC001 has 3 encounters and creates 3 entries for Metformin, one per encounter.
+       → The medication list shows 18 entries instead of 6 — everything triplicated.
+
+CORRECT: PC001.xml has exactly 6 Medication elements — one per active drug.
+         Each medication's EncounterNumber references PC001-20260820-01 (the most recent PC001 visit).
+```
 
 **Mechanical pre-generation step — complete this before writing any XML:**
 
-For each facility in the scenario, list the active medications at the time of that facility's last (or most relevant) encounter:
+For each facility in the scenario, list the active medications **once** as of that facility's most recent encounter. Do not repeat for earlier encounters:
 
 ```
-Facility PC001, last encounter 08/20/2026 — active medications on that date:
-  1. Metformin 1000mg  → originated PC001  → include in PC001.xml ✓
-  2. Empagliflozin 10mg → originated ENDO001 → still active on 08/20/2026 → include in PC001.xml ✓
-  3. Lisinopril 20mg   → originated PC001  → include in PC001.xml ✓
-  4. Amlodipine 5mg    → originated PC001  → include in PC001.xml ✓
-  5. Atorvastatin 40mg → originated PC001  → include in PC001.xml ✓
-  6. Aspirin 81mg      → originated PC001  → include in PC001.xml ✓
+Facility PC001, most recent encounter 08/20/2026 — active medications (one entry each):
+  1. Metformin 1000mg  → originated PC001   → EnteredAt=PC001,   Enc=PC001-20260820-01 ✓
+  2. Empagliflozin 10mg → originated ENDO001 → EnteredAt=ENDO001, Enc=PC001-20260820-01 ✓
+  3. Lisinopril 20mg   → originated PC001   → EnteredAt=PC001,   Enc=PC001-20260820-01 ✓
+  4. Amlodipine 5mg    → originated PC001   → EnteredAt=PC001,   Enc=PC001-20260820-01 ✓
+  5. Atorvastatin 40mg → originated PC001   → EnteredAt=PC001,   Enc=PC001-20260820-01 ✓
+  6. Aspirin 81mg      → originated PC001   → EnteredAt=PC001,   Enc=PC001-20260820-01 ✓
+  → 6 Medication elements total in PC001.xml ✓
 
-Facility ENDO001, encounter 05/15/2026 — active medications on that date:
-  1. Metformin 1000mg  → originated PC001  → active on 05/15/2026 → include in ENDO001.xml ✓
-  2. Empagliflozin 10mg → originated ENDO001 → include in ENDO001.xml ✓
+Facility ENDO001, encounter 05/15/2026 — active medications (one entry each):
+  1. Metformin 1000mg  → originated PC001   → EnteredAt=PC001,   Enc=ENDO001-20260515-01 ✓
+  2. Empagliflozin 10mg → originated ENDO001 → EnteredAt=ENDO001, Enc=ENDO001-20260515-01 ✓
+  → 6 Medication elements total in ENDO001.xml ✓
 ```
-
-If you skip this step, you will omit cross-facility medications from the reviewing facility's record.
 
 **For cross-facility medications (originated elsewhere, reconciled here):**
 - Use the **original `EnteredAt`** (the prescribing facility's code) and the original `FromTime`
-- Set `<EncounterNumber>` to the **current facility's own encounter number** for the visit where the medication was active
+- Set `<EncounterNumber>` to the **current facility's own most recent encounter number**
 - Do NOT change `EnteredAt` — the prescribing facility remains the source
 
 ```
-WRONG: PC001 record contains only the 5 medications PC001 originated.
-       → A clinician viewing PC001's record sees no Jardiance despite the
-         patient actively taking it and the care plan explicitly continuing it.
+WRONG: PC001 record omits empagliflozin entirely (source-ownership thinking).
+ALSO WRONG: PC001 record has 4 empagliflozin entries, one per encounter number.
 
 CORRECT:
   ENDO001.xml: Empagliflozin, EnteredAt=ENDO001, Enc=ENDO001-20260515-01, FromTime=09/01/2022
-  PC001.xml:   Empagliflozin, EnteredAt=ENDO001, Enc=PC001-20260820-01, FromTime=09/01/2022
-               (PC001 is documenting the medication was active and continued at this visit)
+  PC001.xml:   Empagliflozin, EnteredAt=ENDO001, Enc=PC001-20260820-01,   FromTime=09/01/2022
 ```
 
 #### Medication lifecycle
