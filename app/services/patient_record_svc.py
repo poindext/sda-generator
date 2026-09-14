@@ -303,6 +303,12 @@ def _split_by_facility(
         fac_records["FACILITY"] = {}
 
     out_dir.mkdir(parents=True, exist_ok=True)
+
+    # Remove stale XML files from prior generations so the output only reflects
+    # the current generation (avoids ghost facilities when GPT drops a facility)
+    for stale in out_dir.glob("*.xml"):
+        stale.unlink()
+
     written: list[dict] = []
     header = '<?xml version="1.0" encoding="UTF-8"?>\n'
 
@@ -689,7 +695,7 @@ def _reconcile_medications(xml: str) -> tuple[str, list[str]]:
     changes: list[str] = []
 
     # ── Step 1: find facility codes and their latest encounters ───────────────
-    # Encounter numbers follow the pattern FAC_CODE-YYYYMMDD-NN
+    # Primary detection: encounter numbers following FAC_CODE-YYYYMMDD-NN
     enc_to_fac: dict[str, str] = {}
     fac_encs: dict[str, list[tuple[str, str]]] = defaultdict(list)  # fac → [(date, enc)]
     for enc in re.findall(r"<EncounterNumber>([^<]+)</EncounterNumber>", xml):
@@ -700,10 +706,23 @@ def _reconcile_medications(xml: str) -> tuple[str, list[str]]:
             enc_to_fac[enc] = fac
             fac_encs[fac].append((date, enc))
 
-    if len(fac_encs) <= 1:
-        return xml, changes  # single-facility record, nothing to reconcile
+    # Secondary detection: facilities mentioned in EnteredAt/Code or SendingFacility
+    # on any record (catches facilities that generated no structured encounters)
+    all_fac_codes: set[str] = set(fac_encs.keys())
+    for tag in ("SendingFacility", "EnteredAt"):
+        if tag == "EnteredAt":
+            for code in re.findall(r"<EnteredAt>\s*<Code>([^<]+)</Code>", xml):
+                all_fac_codes.add(code.strip())
+        else:
+            for code in re.findall(r"<SendingFacility>([^<]+)</SendingFacility>", xml):
+                all_fac_codes.add(code.strip())
 
-    # Latest encounter per facility (by embedded date)
+    if len(all_fac_codes) <= 1:
+        return xml, changes  # truly single-facility record, nothing to reconcile
+
+    # Latest encounter per facility (by embedded date); facilities without
+    # structured encounter numbers get no latest_enc entry — Rule 6 fixes are
+    # skipped for them but injection into other facilities still proceeds.
     latest_enc: dict[str, str] = {
         fac: max(pairs, key=lambda p: p[0])[1]
         for fac, pairs in fac_encs.items()
