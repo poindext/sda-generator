@@ -276,6 +276,8 @@ Most clinical records should reference an encounter via `<EncounterNumber>`. Use
       <Description>Dr. Jones</Description>
     </ReferringClinician>
     <HealthCareFacility>
+      <Code>GH001</Code>
+      <Description>General Hospital</Description>
       <Organization>
         <Code>GH001</Code>
         <Description>General Hospital</Description>

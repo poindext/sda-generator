@@ -1764,6 +1764,8 @@ def generate_from_template(patient_id: int, tmpl: dict) -> str:
             f"      <EncounterType>{etype}</EncounterType>\n"
             f"      <AdmittingClinician><Code>{prov_code}</Code><Description>{prov_name}</Description></AdmittingClinician>\n"
             f"      <HealthCareFacility>\n"
+            f"        <Code>{fac_code}</Code>\n"
+            f"        <Description>{fac_name}</Description>\n"
             f"        <Organization><Code>{fac_code}</Code><Description>{fac_name}</Description></Organization>\n"
             f"      </HealthCareFacility>\n"
             + this_hf +
