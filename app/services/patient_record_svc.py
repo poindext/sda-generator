@@ -668,6 +668,56 @@ async def _refine_scenario(
     return None
 
 
+def _deterministic_checks(xml: str) -> list[str]:
+    """
+    Regex-based checks that do not rely on GPT.
+    Returns confirmed defect strings to inject into the scoring result.
+    """
+    issues: list[str] = []
+
+    # Collect all facility codes that appear as SendingFacility anywhere in the doc
+    all_fac_codes = set(re.findall(r"<SendingFacility>([^<]+)</SendingFacility>", xml))
+
+    # Process each Container independently
+    for container in re.findall(r"<Container>(.*?)</Container>", xml, re.DOTALL):
+        sf_m = re.search(r"<SendingFacility>([^<]+)</SendingFacility>", container)
+        sending_fac = sf_m.group(1).strip() if sf_m else ""
+
+        drug_names_seen: list[str] = []
+        for med in re.findall(r"<Medication>(.*?)</Medication>", container, re.DOTALL):
+            enc_m  = re.search(r"<EncounterNumber>([^<]+)</EncounterNumber>", med)
+            drug_m = re.search(
+                r"<DrugProduct>.*?<Description>([^<]+)</Description>", med, re.DOTALL
+            )
+            if not (enc_m and drug_m):
+                continue
+            enc_num   = enc_m.group(1).strip()
+            drug_name = drug_m.group(1).strip()
+
+            # Rule 6 — EncounterNumber must belong to this container's facility,
+            # not to a different facility's encounter
+            if sending_fac:
+                for other in all_fac_codes:
+                    if other != sending_fac and other in enc_num:
+                        issues.append(
+                            f"Rule 6 CONFIRMED — [{sending_fac}] '{drug_name}': "
+                            f"EncounterNumber '{enc_num}' belongs to {other}, "
+                            f"not to {sending_fac}. Must use a {sending_fac} encounter number."
+                        )
+                        break
+
+            # Rule 8 — duplicate drug within same facility
+            if drug_name in drug_names_seen:
+                issues.append(
+                    f"Rule 8 CONFIRMED — [{sending_fac}] '{drug_name}' appears more than once "
+                    f"(one entry per drug per facility is the rule)."
+                )
+            else:
+                drug_names_seen.append(drug_name)
+
+    return issues
+
+
 def _strip_xml_fences(text: str) -> str:
     xml = text.strip()
     if xml.startswith("```"):
@@ -787,9 +837,22 @@ async def generate_record(
             zf.write(out_dir / "prompt.txt", "prompt.txt")
             zf.write(out_dir / "scenario.txt", "scenario.txt")
 
+        # ── Deterministic pre-checks (regex, no GPT) ─────────────────────────────
+        det_issues = _deterministic_checks(xml)
+
         # ── Pass 2 review: score and offer another round before signalling done ─
         yield {"type": "status", "message": "Scoring clinical quality…"}
         review = await _score_record(active_scenario, xml, model, client)
+
+        # Merge deterministic findings — these override GPT's optimism
+        if det_issues:
+            if review is None:
+                review = {"score": 55, "dimensions": {}, "issues": [], "refined_scenario": ""}
+            review["issues"] = det_issues + review.get("issues", [])
+            # Cap score: confirmed defects cannot yield a passing grade
+            if review.get("score", 100) > 65:
+                review["score"] = 65
+
         if review:
             next_scenario = review.get("refined_scenario", "")
             if next_scenario:
