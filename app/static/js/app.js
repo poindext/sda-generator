@@ -1693,8 +1693,10 @@ register('patient-record', () => {
   loadPrHistory();
 
   // Load cohort template pills (once — skip if already populated)
+  // Store selection map on the element so it persists across page re-entries
   const pillGrid = el('pr-template-pills');
-  const _selectedCohorts = new Map(); // label -> {template_file, cohort_id}
+  if (!pillGrid._selectedCohorts) pillGrid._selectedCohorts = new Map();
+  const _selectedCohorts = pillGrid._selectedCohorts;
 
   if (!pillGrid._loaded) {
     pillGrid._loaded = true;
@@ -1706,7 +1708,12 @@ register('patient-record', () => {
       opts.forEach(o => {
         const pill = document.createElement('span');
         pill.className = 'template-pill';
-        pill.textContent = o.label;
+        const label = document.createTextNode(o.label);
+        const check = document.createElement('span');
+        check.className = 'pill-check';
+        check.textContent = '✓';
+        pill.appendChild(label);
+        pill.appendChild(check);
         pill.dataset.ref = JSON.stringify({ template_file: o.template_file, cohort_id: o.cohort_id });
         pill.addEventListener('click', () => {
           if (_selectedCohorts.has(o.label)) {
