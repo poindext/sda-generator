@@ -84,12 +84,25 @@ def list_cohort_options() -> list[dict]:
 # Template context builder
 # --------------------------------------------------------------------------
 
-def _build_template_context(template_file: str, cohort_id: str) -> str:
+def _build_template_context(cohort_refs: list[dict]) -> str:
     """
-    Extract clinical reference material from a template cohort and format it
-    as a structured prompt block for the model.
+    Extract clinical reference material from one or more template cohorts and
+    merge into a single structured prompt block for the model.
     """
+    all_sections: list[str] = []
+    for ref in cohort_refs:
+        section = _build_single_cohort_context(ref.get("template_file", ""), ref.get("cohort_id", ""))
+        if section:
+            all_sections.append(section)
+    return "\n\n".join(all_sections)
+
+
+def _build_single_cohort_context(template_file: str, cohort_id: str) -> str:
+    if not template_file:
+        return ""
     path = TEMPLATES_DIR / template_file
+    if not path.exists():
+        return ""
     data = json.loads(path.read_text(encoding="utf-8"))
 
     cohorts = data.get("cohorts", [])
@@ -376,8 +389,7 @@ async def generate_record(
     scenario: str,
     filename: str | None = None,
     model: str = "gpt-4o",
-    template_file: str = "",
-    cohort_id: str = "",
+    cohort_refs: list[dict] | None = None,
 ) -> AsyncIterator[dict]:
     """
     Stream SDA3 XML generation for a single patient scenario.
@@ -401,9 +413,9 @@ async def generate_record(
 
     # Build user message, optionally prefixed with template clinical context
     template_context = ""
-    if template_file and cohort_id:
+    if cohort_refs:
         try:
-            template_context = _build_template_context(template_file, cohort_id)
+            template_context = _build_template_context(cohort_refs)
         except Exception as exc:
             yield {"type": "error", "message": f"Failed to load template: {exc}"}
             return

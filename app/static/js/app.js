@@ -1692,18 +1692,36 @@ register('patient-record', () => {
 
   loadPrHistory();
 
-  // Load cohort template options (once — skip if already populated)
-  const tmplSelect = el('pr-template');
-  if (tmplSelect.options.length <= 1) {
+  // Load cohort template pills (once — skip if already populated)
+  const pillGrid = el('pr-template-pills');
+  const _selectedCohorts = new Map(); // label -> {template_file, cohort_id}
+
+  if (!pillGrid._loaded) {
+    pillGrid._loaded = true;
+    pillGrid.innerHTML = '<span class="template-pill-placeholder">Loading…</span>';
     api.get('/patient-record/cohort-templates').then(resp => {
       const opts = resp.options || [];
+      pillGrid.innerHTML = opts.length ? '' :
+        '<span class="template-pill-placeholder">No templates available</span>';
       opts.forEach(o => {
-        const opt = document.createElement('option');
-        opt.value = JSON.stringify({ template_file: o.template_file, cohort_id: o.cohort_id });
-        opt.textContent = o.label;
-        tmplSelect.appendChild(opt);
+        const pill = document.createElement('span');
+        pill.className = 'template-pill';
+        pill.textContent = o.label;
+        pill.dataset.ref = JSON.stringify({ template_file: o.template_file, cohort_id: o.cohort_id });
+        pill.addEventListener('click', () => {
+          if (_selectedCohorts.has(o.label)) {
+            _selectedCohorts.delete(o.label);
+            pill.classList.remove('selected');
+          } else {
+            _selectedCohorts.set(o.label, { template_file: o.template_file, cohort_id: o.cohort_id });
+            pill.classList.add('selected');
+          }
+        });
+        pillGrid.appendChild(pill);
       });
-    }).catch(() => {});
+    }).catch(() => {
+      pillGrid.innerHTML = '<span class="template-pill-placeholder">Could not load templates</span>';
+    });
   }
 
   const btn = el('btn-generate-record');
@@ -1714,17 +1732,7 @@ register('patient-record', () => {
 
     const model    = el('pr-model').value;
     const filename = el('pr-filename').value.trim();
-
-    let template_file = '';
-    let cohort_id = '';
-    const tmplVal = tmplSelect.value;
-    if (tmplVal) {
-      try {
-        const parsed = JSON.parse(tmplVal);
-        template_file = parsed.template_file || '';
-        cohort_id     = parsed.cohort_id     || '';
-      } catch (_) {}
-    }
+    const cohort_refs = Array.from(_selectedCohorts.values());
 
     btn.disabled = true;
     btn.textContent = 'Generating…';
@@ -1742,7 +1750,7 @@ register('patient-record', () => {
 
     streamPost(
       '/patient-record/generate',
-      { scenario, model, filename, template_file, cohort_id },
+      { scenario, model, filename, cohort_refs },
       evt => {
         if (evt.type === 'error') {
           clearInterval(dotTimer);

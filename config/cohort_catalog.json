@@ -12,7 +12,7 @@
         "glycemic"
       ],
       "qa_status": "approved",
-      "source_template": "cohorts/diabetes_t2.template.json",
+      "source_template": "pa_t2diabetes_htn.template.json",
       "clinical_catalog": {
         "diagnoses": [
           {
@@ -159,7 +159,7 @@
             "order_code": "17855-8",
             "order_description": "Hemoglobin A1c panel",
             "specimen": "Blood",
-            "weight": 0.35,
+            "weight": 0.304348,
             "abnormal_pct": 0.55,
             "result_items": [
               {
@@ -178,7 +178,7 @@
             "order_code": "51990-0",
             "order_description": "Basic metabolic panel",
             "specimen": "Blood",
-            "weight": 0.3,
+            "weight": 0.26087,
             "abnormal_pct": 0.3,
             "result_items": [
               {
@@ -189,7 +189,8 @@
                 "normal_min": 136,
                 "normal_max": 145,
                 "abnormal_min": 129,
-                "abnormal_max": 152
+                "abnormal_max": 152,
+                "abnormal_pct": 0.05
               },
               {
                 "code": "2823-3",
@@ -209,7 +210,8 @@
                 "normal_min": 98,
                 "normal_max": 107,
                 "abnormal_min": 90,
-                "abnormal_max": 115
+                "abnormal_max": 115,
+                "abnormal_pct": 0.03
               },
               {
                 "code": "2028-9",
@@ -218,8 +220,9 @@
                 "is_numeric": true,
                 "normal_min": 22,
                 "normal_max": 29,
-                "abnormal_min": 16,
-                "abnormal_max": 34
+                "abnormal_min": 18,
+                "abnormal_max": 34,
+                "abnormal_pct": 0.08
               },
               {
                 "code": "2339-0",
@@ -229,7 +232,8 @@
                 "normal_min": 70,
                 "normal_max": 99,
                 "abnormal_min": 50,
-                "abnormal_max": 450
+                "abnormal_max": 450,
+                "abnormal_pct": 0.2
               },
               {
                 "code": "3094-0",
@@ -259,7 +263,8 @@
                 "normal_min": 8.5,
                 "normal_max": 10.5,
                 "abnormal_min": 7.0,
-                "abnormal_max": 12.0
+                "abnormal_max": 12.0,
+                "abnormal_pct": 0.05
               }
             ]
           },
@@ -267,7 +272,7 @@
             "order_code": "57698-3",
             "order_description": "Lipid panel",
             "specimen": "Blood",
-            "weight": 0.15,
+            "weight": 0.130435,
             "abnormal_pct": 0.45,
             "result_items": [
               {
@@ -278,7 +283,8 @@
                 "normal_min": 130,
                 "normal_max": 200,
                 "abnormal_min": 201,
-                "abnormal_max": 340
+                "abnormal_max": 340,
+                "abnormal_pct": 0.28
               },
               {
                 "code": "2571-8",
@@ -288,7 +294,8 @@
                 "normal_min": 40,
                 "normal_max": 150,
                 "abnormal_min": 151,
-                "abnormal_max": 400
+                "abnormal_max": 400,
+                "abnormal_pct": 0.22
               },
               {
                 "code": "2085-9",
@@ -298,7 +305,8 @@
                 "normal_min": 40,
                 "normal_max": 90,
                 "abnormal_min": 15,
-                "abnormal_max": 39
+                "abnormal_max": 39,
+                "abnormal_pct": 0.18
               },
               {
                 "code": "13457-7",
@@ -308,7 +316,8 @@
                 "normal_min": 50,
                 "normal_max": 100,
                 "abnormal_min": 101,
-                "abnormal_max": 220
+                "abnormal_max": 220,
+                "abnormal_pct": 0.28
               }
             ]
           },
@@ -316,7 +325,7 @@
             "order_code": "14959-1",
             "order_description": "Urine Albumin/Creatinine ratio",
             "specimen": "Urine",
-            "weight": 0.1,
+            "weight": 0.086957,
             "abnormal_pct": 0.45,
             "result_items": [
               {
@@ -327,7 +336,8 @@
                 "normal_min": 0,
                 "normal_max": 30,
                 "abnormal_min": 31,
-                "abnormal_max": 300
+                "abnormal_max": 300,
+                "abnormal_pct": 0.22
               }
             ]
           },
@@ -335,7 +345,7 @@
             "order_code": "88294-4",
             "order_description": "Glomerular filtration rate panel",
             "specimen": "Blood",
-            "weight": 0.1,
+            "weight": 0.086957,
             "abnormal_pct": 0.35,
             "result_items": [
               {
@@ -354,7 +364,7 @@
             "order_code": "59574-4",
             "order_description": "Ankle-Brachial Index",
             "specimen": "Vascular",
-            "weight": 0.15,
+            "weight": 0.130435,
             "abnormal_pct": 0.25,
             "result_items": [
               {
@@ -421,6 +431,44 @@
             "weight": 0.285714
           }
         ],
+        "procedures": [
+          {
+            "code": "99213",
+            "description": "Office or other outpatient visit, moderate complexity",
+            "encounter_type": "O",
+            "weight": 0.37594
+          },
+          {
+            "code": "83036",
+            "description": "Hemoglobin A1c",
+            "encounter_type": "O",
+            "weight": 0.225564
+          },
+          {
+            "code": "93000",
+            "description": "Electrocardiogram, routine ECG with at least 12 leads; with interpretation and report",
+            "encounter_type": "O",
+            "weight": 0.150376
+          },
+          {
+            "code": "27880",
+            "description": "Amputation, leg, below knee",
+            "encounter_type": "I",
+            "weight": 0.06015
+          },
+          {
+            "code": "97597",
+            "description": "Debridement, open wound; first 20 sq cm",
+            "encounter_type": "O",
+            "weight": 0.112782
+          },
+          {
+            "code": "97605",
+            "description": "Negative pressure wound therapy",
+            "encounter_type": "O",
+            "weight": 0.075188
+          }
+        ],
         "encounter_pattern": {
           "encounters_per_year": 4.0,
           "encounter_type_weights": {
@@ -430,45 +478,7 @@
           },
           "lab_encounter_rate": 0.75,
           "rad_encounter_rate": 0.15
-        },
-        "procedures": [
-          {
-            "code": "99213",
-            "description": "Office or other outpatient visit, moderate complexity",
-            "encounter_type": "O",
-            "weight": 0.5
-          },
-          {
-            "code": "83036",
-            "description": "Hemoglobin A1c",
-            "encounter_type": "O",
-            "weight": 0.3
-          },
-          {
-            "code": "93000",
-            "description": "Electrocardiogram, routine ECG with at least 12 leads; with interpretation and report",
-            "encounter_type": "O",
-            "weight": 0.2
-          },
-          {
-            "code": "27880",
-            "description": "Amputation, leg, below knee",
-            "encounter_type": "I",
-            "weight": 0.08
-          },
-          {
-            "code": "97597",
-            "description": "Debridement, open wound; first 20 sq cm",
-            "encounter_type": "O",
-            "weight": 0.15
-          },
-          {
-            "code": "97605",
-            "description": "Negative pressure wound therapy",
-            "encounter_type": "O",
-            "weight": 0.1
-          }
-        ]
+        }
       }
     },
     "hypertension": {
@@ -480,7 +490,7 @@
         "htn"
       ],
       "qa_status": "approved",
-      "source_template": "cohorts/hypertension.template.json",
+      "source_template": "pa_t2diabetes_htn.template.json",
       "clinical_catalog": {
         "diagnoses": [
           {
@@ -591,7 +601,8 @@
                 "normal_min": 136,
                 "normal_max": 145,
                 "abnormal_min": 129,
-                "abnormal_max": 152
+                "abnormal_max": 152,
+                "abnormal_pct": 0.05
               },
               {
                 "code": "2823-3",
@@ -611,7 +622,8 @@
                 "normal_min": 98,
                 "normal_max": 107,
                 "abnormal_min": 90,
-                "abnormal_max": 115
+                "abnormal_max": 115,
+                "abnormal_pct": 0.03
               },
               {
                 "code": "2028-9",
@@ -620,8 +632,9 @@
                 "is_numeric": true,
                 "normal_min": 22,
                 "normal_max": 29,
-                "abnormal_min": 16,
-                "abnormal_max": 34
+                "abnormal_min": 18,
+                "abnormal_max": 34,
+                "abnormal_pct": 0.08
               },
               {
                 "code": "2339-0",
@@ -631,7 +644,8 @@
                 "normal_min": 70,
                 "normal_max": 99,
                 "abnormal_min": 50,
-                "abnormal_max": 450
+                "abnormal_max": 450,
+                "abnormal_pct": 0.2
               },
               {
                 "code": "3094-0",
@@ -661,7 +675,8 @@
                 "normal_min": 8.5,
                 "normal_max": 10.5,
                 "abnormal_min": 7.0,
-                "abnormal_max": 12.0
+                "abnormal_max": 12.0,
+                "abnormal_pct": 0.05
               }
             ]
           },
@@ -680,7 +695,8 @@
                 "normal_min": 130,
                 "normal_max": 200,
                 "abnormal_min": 201,
-                "abnormal_max": 340
+                "abnormal_max": 340,
+                "abnormal_pct": 0.28
               },
               {
                 "code": "2571-8",
@@ -690,7 +706,8 @@
                 "normal_min": 40,
                 "normal_max": 150,
                 "abnormal_min": 151,
-                "abnormal_max": 400
+                "abnormal_max": 400,
+                "abnormal_pct": 0.22
               },
               {
                 "code": "2085-9",
@@ -700,7 +717,8 @@
                 "normal_min": 40,
                 "normal_max": 90,
                 "abnormal_min": 15,
-                "abnormal_max": 39
+                "abnormal_max": 39,
+                "abnormal_pct": 0.18
               },
               {
                 "code": "13457-7",
@@ -710,7 +728,8 @@
                 "normal_min": 50,
                 "normal_max": 100,
                 "abnormal_min": 101,
-                "abnormal_max": 220
+                "abnormal_max": 220,
+                "abnormal_pct": 0.28
               }
             ]
           },
@@ -758,7 +777,8 @@
                 "normal_min": 3.9,
                 "normal_max": 5.9,
                 "abnormal_min": 2.0,
-                "abnormal_max": 7.0
+                "abnormal_max": 7.0,
+                "abnormal_pct": 0.08
               },
               {
                 "code": "718-7",
@@ -778,7 +798,8 @@
                 "normal_min": 35,
                 "normal_max": 52,
                 "abnormal_min": 20,
-                "abnormal_max": 60
+                "abnormal_max": 60,
+                "abnormal_pct": 0.08
               },
               {
                 "code": "777-3",
@@ -788,7 +809,8 @@
                 "normal_min": 150,
                 "normal_max": 400,
                 "abnormal_min": 50,
-                "abnormal_max": 600
+                "abnormal_max": 600,
+                "abnormal_pct": 0.05
               },
               {
                 "code": "731-0",
@@ -798,7 +820,8 @@
                 "normal_min": 20,
                 "normal_max": 45,
                 "abnormal_min": 5,
-                "abnormal_max": 80
+                "abnormal_max": 80,
+                "abnormal_pct": 0.12
               },
               {
                 "code": "752-6",
@@ -808,7 +831,8 @@
                 "normal_min": 40,
                 "normal_max": 75,
                 "abnormal_min": 5,
-                "abnormal_max": 95
+                "abnormal_max": 95,
+                "abnormal_pct": 0.12
               }
             ]
           }
@@ -863,16 +887,6 @@
             "weight": 0.166667
           }
         ],
-        "encounter_pattern": {
-          "encounters_per_year": 4.0,
-          "encounter_type_weights": {
-            "O": 0.9,
-            "E": 0.05,
-            "I": 0.05
-          },
-          "lab_encounter_rate": 0.75,
-          "rad_encounter_rate": 0.15
-        },
         "procedures": [
           {
             "code": "99213",
@@ -892,7 +906,17 @@
             "encounter_type": "O",
             "weight": 0.2
           }
-        ]
+        ],
+        "encounter_pattern": {
+          "encounters_per_year": 4.0,
+          "encounter_type_weights": {
+            "O": 0.9,
+            "E": 0.05,
+            "I": 0.05
+          },
+          "lab_encounter_rate": 0.75,
+          "rad_encounter_rate": 0.15
+        }
       }
     },
     "asthma": {
@@ -3445,7 +3469,7 @@
       }
     },
     "low_risk_preventive": {
-      "canonical_name": "Low Risk Preventive/Wellness",
+      "canonical_name": "Low Risk Preventive / Wellness",
       "keywords": [
         "preventive",
         "wellness",
@@ -3457,7 +3481,7 @@
         "screening"
       ],
       "qa_status": "approved",
-      "source_template": "oh_novel_population.template.json",
+      "source_template": "pa_t2diabetes_htn.template.json",
       "clinical_catalog": {
         "diagnoses": [
           {
@@ -3504,7 +3528,8 @@
                 "normal_min": 3.9,
                 "normal_max": 5.9,
                 "abnormal_min": 2.0,
-                "abnormal_max": 7.0
+                "abnormal_max": 7.0,
+                "abnormal_pct": 0.08
               },
               {
                 "code": "718-7",
@@ -3524,7 +3549,8 @@
                 "normal_min": 35,
                 "normal_max": 52,
                 "abnormal_min": 20,
-                "abnormal_max": 60
+                "abnormal_max": 60,
+                "abnormal_pct": 0.08
               },
               {
                 "code": "777-3",
@@ -3534,7 +3560,8 @@
                 "normal_min": 150,
                 "normal_max": 400,
                 "abnormal_min": 50,
-                "abnormal_max": 600
+                "abnormal_max": 600,
+                "abnormal_pct": 0.05
               },
               {
                 "code": "731-0",
@@ -3544,7 +3571,8 @@
                 "normal_min": 20,
                 "normal_max": 45,
                 "abnormal_min": 5,
-                "abnormal_max": 80
+                "abnormal_max": 80,
+                "abnormal_pct": 0.12
               },
               {
                 "code": "752-6",
@@ -3554,7 +3582,8 @@
                 "normal_min": 40,
                 "normal_max": 75,
                 "abnormal_min": 5,
-                "abnormal_max": 95
+                "abnormal_max": 95,
+                "abnormal_pct": 0.12
               }
             ]
           },
@@ -3573,7 +3602,8 @@
                 "normal_min": 136,
                 "normal_max": 145,
                 "abnormal_min": 129,
-                "abnormal_max": 152
+                "abnormal_max": 152,
+                "abnormal_pct": 0.05
               },
               {
                 "code": "2823-3",
@@ -3593,7 +3623,8 @@
                 "normal_min": 98,
                 "normal_max": 107,
                 "abnormal_min": 90,
-                "abnormal_max": 115
+                "abnormal_max": 115,
+                "abnormal_pct": 0.03
               },
               {
                 "code": "2028-9",
@@ -3602,8 +3633,9 @@
                 "is_numeric": true,
                 "normal_min": 22,
                 "normal_max": 29,
-                "abnormal_min": 16,
-                "abnormal_max": 34
+                "abnormal_min": 18,
+                "abnormal_max": 34,
+                "abnormal_pct": 0.08
               },
               {
                 "code": "2339-0",
@@ -3613,7 +3645,8 @@
                 "normal_min": 70,
                 "normal_max": 99,
                 "abnormal_min": 50,
-                "abnormal_max": 450
+                "abnormal_max": 450,
+                "abnormal_pct": 0.2
               },
               {
                 "code": "3094-0",
@@ -3643,7 +3676,8 @@
                 "normal_min": 8.5,
                 "normal_max": 10.5,
                 "abnormal_min": 7.0,
-                "abnormal_max": 12.0
+                "abnormal_max": 12.0,
+                "abnormal_pct": 0.05
               },
               {
                 "code": "2885-2",
@@ -3653,7 +3687,8 @@
                 "normal_min": 6.3,
                 "normal_max": 8.2,
                 "abnormal_min": 4.5,
-                "abnormal_max": 10.0
+                "abnormal_max": 10.0,
+                "abnormal_pct": 0.05
               },
               {
                 "code": "1751-7",
@@ -3663,7 +3698,8 @@
                 "normal_min": 3.5,
                 "normal_max": 5.0,
                 "abnormal_min": 2.0,
-                "abnormal_max": 6.0
+                "abnormal_max": 6.0,
+                "abnormal_pct": 0.08
               },
               {
                 "code": "1742-6",
@@ -3673,7 +3709,8 @@
                 "normal_min": 7,
                 "normal_max": 56,
                 "abnormal_min": 57,
-                "abnormal_max": 200
+                "abnormal_max": 200,
+                "abnormal_pct": 0.1
               },
               {
                 "code": "1920-8",
@@ -3683,7 +3720,8 @@
                 "normal_min": 10,
                 "normal_max": 40,
                 "abnormal_min": 41,
-                "abnormal_max": 200
+                "abnormal_max": 200,
+                "abnormal_pct": 0.1
               },
               {
                 "code": "6768-6",
@@ -3693,7 +3731,8 @@
                 "normal_min": 44,
                 "normal_max": 147,
                 "abnormal_min": 148,
-                "abnormal_max": 350
+                "abnormal_max": 350,
+                "abnormal_pct": 0.08
               },
               {
                 "code": "1975-2",
@@ -3722,7 +3761,8 @@
                 "normal_min": 130,
                 "normal_max": 200,
                 "abnormal_min": 201,
-                "abnormal_max": 340
+                "abnormal_max": 340,
+                "abnormal_pct": 0.28
               },
               {
                 "code": "2571-8",
@@ -3732,7 +3772,8 @@
                 "normal_min": 40,
                 "normal_max": 150,
                 "abnormal_min": 151,
-                "abnormal_max": 400
+                "abnormal_max": 400,
+                "abnormal_pct": 0.22
               },
               {
                 "code": "2085-9",
@@ -3742,7 +3783,8 @@
                 "normal_min": 40,
                 "normal_max": 90,
                 "abnormal_min": 15,
-                "abnormal_max": 39
+                "abnormal_max": 39,
+                "abnormal_pct": 0.18
               },
               {
                 "code": "13457-7",
@@ -3752,7 +3794,8 @@
                 "normal_min": 50,
                 "normal_max": 100,
                 "abnormal_min": 101,
-                "abnormal_max": 220
+                "abnormal_max": 220,
+                "abnormal_pct": 0.28
               }
             ]
           }
@@ -11375,7 +11418,7 @@
         "general population"
       ],
       "qa_status": "approved",
-      "source_template": "oh_novel_population.template.json",
+      "source_template": "pa_t2diabetes_htn.template.json",
       "clinical_catalog": {
         "diagnoses": [
           {
@@ -11391,6 +11434,14 @@
         "medications": [],
         "labs": [],
         "observations": [],
+        "procedures": [
+          {
+            "code": "99213",
+            "description": "Office or other outpatient visit, established patient",
+            "encounter_type": "O",
+            "weight": 1.0
+          }
+        ],
         "encounter_pattern": {
           "encounters_per_year": 1.5,
           "encounter_type_weights": {
@@ -11400,15 +11451,500 @@
           },
           "lab_encounter_rate": 0.25,
           "rad_encounter_rate": 0.05
-        },
+        }
+      }
+    },
+    "multiple_chronic_conditions": {
+      "canonical_name": "Multiple Chronic Conditions",
+      "keywords": [
+        "multiple chronic",
+        "multimorbidity",
+        "complex chronic",
+        "multi chronic",
+        "multiple comorbid"
+      ],
+      "qa_status": "approved",
+      "source_template": "pa_t2diabetes_htn.template.json",
+      "clinical_catalog": {
+        "diagnoses": [
+          {
+            "code": "E11.9",
+            "description": "Type 2 diabetes mellitus without complications",
+            "is_primary": true,
+            "onset_age_min": 30,
+            "onset_age_max": 85
+          },
+          {
+            "code": "I10",
+            "description": "Essential hypertension",
+            "is_primary": false,
+            "onset_age_min": 30,
+            "onset_age_max": 85
+          },
+          {
+            "code": "I25.10",
+            "description": "Atherosclerotic heart disease of native coronary artery without angina pectoris",
+            "is_primary": false,
+            "onset_age_min": 40,
+            "onset_age_max": 85
+          }
+        ],
+        "comorbidities": [
+          {
+            "code": "E11.9",
+            "description": "Type 2 diabetes mellitus without complications",
+            "prevalence_pct": 0.35
+          },
+          {
+            "code": "I10",
+            "description": "Essential hypertension",
+            "prevalence_pct": 0.65
+          },
+          {
+            "code": "E78.5",
+            "description": "Hyperlipidemia, unspecified",
+            "prevalence_pct": 0.5
+          },
+          {
+            "code": "E66.9",
+            "description": "Morbid obesity",
+            "is_primary": false
+          }
+        ],
+        "medications": [
+          {
+            "drug_code": "860975",
+            "drug_description": "Metformin 500 MG Oral Tablet",
+            "dose_quantity": "500",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "BID",
+            "frequency_description": "Twice daily",
+            "status": "active",
+            "for_diagnosis_code": "E11.9",
+            "weight": 0.4
+          },
+          {
+            "drug_code": "197361",
+            "drug_description": "Lisinopril 10 MG Oral Tablet",
+            "dose_quantity": "10",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "QD",
+            "frequency_description": "Once daily",
+            "status": "active",
+            "for_diagnosis_code": "I10",
+            "weight": 0.333333
+          },
+          {
+            "drug_code": "617314",
+            "drug_description": "Atorvastatin 20 MG Oral Tablet",
+            "dose_quantity": "20",
+            "dose_uom": "mg",
+            "dosage_form_code": "TAB",
+            "dosage_form_description": "Tablet",
+            "route_code": "PO",
+            "route_description": "Oral",
+            "frequency_code": "QD",
+            "frequency_description": "Once daily",
+            "status": "active",
+            "for_diagnosis_code": "E78.5",
+            "weight": 0.266667
+          }
+        ],
+        "labs": [
+          {
+            "order_code": "17855-8",
+            "order_description": "Hemoglobin A1c panel",
+            "specimen": "Blood",
+            "weight": 0.25,
+            "abnormal_pct": 0.55,
+            "result_items": [
+              {
+                "code": "4548-4",
+                "description": "Hemoglobin A1c/Hemoglobin.total in Blood",
+                "units": "%",
+                "is_numeric": true,
+                "normal_min": 0,
+                "normal_max": 5.6,
+                "abnormal_min": 5.7,
+                "abnormal_max": 14.0
+              }
+            ]
+          },
+          {
+            "order_code": "24323-8",
+            "order_description": "Comprehensive metabolic panel",
+            "specimen": "Blood",
+            "weight": 0.25,
+            "abnormal_pct": 0.3,
+            "result_items": [
+              {
+                "code": "2951-2",
+                "description": "Sodium",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 136,
+                "normal_max": 145,
+                "abnormal_min": 129,
+                "abnormal_max": 152,
+                "abnormal_pct": 0.05
+              },
+              {
+                "code": "2823-3",
+                "description": "Potassium",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 3.5,
+                "normal_max": 5.0,
+                "abnormal_min": 2.8,
+                "abnormal_max": 6.2
+              },
+              {
+                "code": "2075-0",
+                "description": "Chloride",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 98,
+                "normal_max": 107,
+                "abnormal_min": 90,
+                "abnormal_max": 115,
+                "abnormal_pct": 0.03
+              },
+              {
+                "code": "2028-9",
+                "description": "CO2 (Bicarbonate)",
+                "units": "mEq/L",
+                "is_numeric": true,
+                "normal_min": 22,
+                "normal_max": 29,
+                "abnormal_min": 18,
+                "abnormal_max": 34,
+                "abnormal_pct": 0.08
+              },
+              {
+                "code": "2339-0",
+                "description": "Glucose",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 70,
+                "normal_max": 99,
+                "abnormal_min": 50,
+                "abnormal_max": 450,
+                "abnormal_pct": 0.2
+              },
+              {
+                "code": "3094-0",
+                "description": "BUN",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 6,
+                "normal_max": 20,
+                "abnormal_min": 2,
+                "abnormal_max": 50
+              },
+              {
+                "code": "2160-0",
+                "description": "Creatinine",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 0.6,
+                "normal_max": 1.2,
+                "abnormal_min": 0.4,
+                "abnormal_max": 3.5
+              },
+              {
+                "code": "17861-6",
+                "description": "Calcium",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 8.5,
+                "normal_max": 10.5,
+                "abnormal_min": 7.0,
+                "abnormal_max": 12.0,
+                "abnormal_pct": 0.05
+              },
+              {
+                "code": "2885-2",
+                "description": "Total Protein",
+                "units": "g/dL",
+                "is_numeric": true,
+                "normal_min": 6.3,
+                "normal_max": 8.2,
+                "abnormal_min": 4.5,
+                "abnormal_max": 10.0,
+                "abnormal_pct": 0.05
+              },
+              {
+                "code": "1751-7",
+                "description": "Albumin",
+                "units": "g/dL",
+                "is_numeric": true,
+                "normal_min": 3.5,
+                "normal_max": 5.0,
+                "abnormal_min": 2.0,
+                "abnormal_max": 6.0,
+                "abnormal_pct": 0.08
+              },
+              {
+                "code": "1742-6",
+                "description": "ALT",
+                "units": "U/L",
+                "is_numeric": true,
+                "normal_min": 7,
+                "normal_max": 56,
+                "abnormal_min": 57,
+                "abnormal_max": 200,
+                "abnormal_pct": 0.1
+              },
+              {
+                "code": "1920-8",
+                "description": "AST",
+                "units": "U/L",
+                "is_numeric": true,
+                "normal_min": 10,
+                "normal_max": 40,
+                "abnormal_min": 41,
+                "abnormal_max": 200,
+                "abnormal_pct": 0.1
+              },
+              {
+                "code": "6768-6",
+                "description": "Alkaline Phosphatase",
+                "units": "U/L",
+                "is_numeric": true,
+                "normal_min": 44,
+                "normal_max": 147,
+                "abnormal_min": 148,
+                "abnormal_max": 350,
+                "abnormal_pct": 0.08
+              },
+              {
+                "code": "1975-2",
+                "description": "Total Bilirubin",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 0.1,
+                "normal_max": 1.2,
+                "abnormal_min": 1.3,
+                "abnormal_max": 5.0
+              }
+            ]
+          },
+          {
+            "order_code": "57698-3",
+            "order_description": "Lipid panel",
+            "specimen": "Blood",
+            "weight": 0.2,
+            "abnormal_pct": 0.45,
+            "result_items": [
+              {
+                "code": "2093-3",
+                "description": "Total Cholesterol",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 130,
+                "normal_max": 200,
+                "abnormal_min": 201,
+                "abnormal_max": 340,
+                "abnormal_pct": 0.28
+              },
+              {
+                "code": "2571-8",
+                "description": "Triglycerides",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 40,
+                "normal_max": 150,
+                "abnormal_min": 151,
+                "abnormal_max": 400,
+                "abnormal_pct": 0.22
+              },
+              {
+                "code": "2085-9",
+                "description": "HDL Cholesterol",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 40,
+                "normal_max": 90,
+                "abnormal_min": 15,
+                "abnormal_max": 39,
+                "abnormal_pct": 0.18
+              },
+              {
+                "code": "13457-7",
+                "description": "LDL Cholesterol",
+                "units": "mg/dL",
+                "is_numeric": true,
+                "normal_min": 50,
+                "normal_max": 100,
+                "abnormal_min": 101,
+                "abnormal_max": 220,
+                "abnormal_pct": 0.28
+              }
+            ]
+          },
+          {
+            "order_code": "58410-2",
+            "order_description": "CBC panel - Blood by Automated count",
+            "specimen": "Blood",
+            "weight": 0.15,
+            "abnormal_pct": 0.2,
+            "result_items": [
+              {
+                "code": "6690-2",
+                "description": "WBC",
+                "units": "K/uL",
+                "is_numeric": true,
+                "normal_min": 4.5,
+                "normal_max": 11.0,
+                "abnormal_min": 0.5,
+                "abnormal_max": 18.0
+              },
+              {
+                "code": "789-8",
+                "description": "RBC",
+                "units": "M/uL",
+                "is_numeric": true,
+                "normal_min": 3.9,
+                "normal_max": 5.9,
+                "abnormal_min": 2.0,
+                "abnormal_max": 7.0,
+                "abnormal_pct": 0.08
+              },
+              {
+                "code": "718-7",
+                "description": "Hemoglobin",
+                "units": "g/dL",
+                "is_numeric": true,
+                "normal_min": 11.5,
+                "normal_max": 17.5,
+                "abnormal_min": 6.0,
+                "abnormal_max": 20.0
+              },
+              {
+                "code": "4544-3",
+                "description": "Hematocrit",
+                "units": "%",
+                "is_numeric": true,
+                "normal_min": 35,
+                "normal_max": 52,
+                "abnormal_min": 20,
+                "abnormal_max": 60,
+                "abnormal_pct": 0.08
+              },
+              {
+                "code": "777-3",
+                "description": "Platelets",
+                "units": "K/uL",
+                "is_numeric": true,
+                "normal_min": 150,
+                "normal_max": 400,
+                "abnormal_min": 50,
+                "abnormal_max": 600,
+                "abnormal_pct": 0.05
+              },
+              {
+                "code": "731-0",
+                "description": "Lymphocytes",
+                "units": "%",
+                "is_numeric": true,
+                "normal_min": 20,
+                "normal_max": 45,
+                "abnormal_min": 5,
+                "abnormal_max": 80,
+                "abnormal_pct": 0.12
+              },
+              {
+                "code": "752-6",
+                "description": "Neutrophils",
+                "units": "%",
+                "is_numeric": true,
+                "normal_min": 40,
+                "normal_max": 75,
+                "abnormal_min": 5,
+                "abnormal_max": 95,
+                "abnormal_pct": 0.12
+              }
+            ]
+          },
+          {
+            "order_code": "14959-1",
+            "order_description": "Urine Albumin/Creatinine ratio",
+            "specimen": "Urine",
+            "weight": 0.15,
+            "abnormal_pct": 0.45,
+            "result_items": [
+              {
+                "code": "14959-1",
+                "description": "Microalbumin/Creatinine [Ratio] in Urine",
+                "units": "mg/g",
+                "is_numeric": true,
+                "normal_min": 0,
+                "normal_max": 30,
+                "abnormal_min": 31,
+                "abnormal_max": 300,
+                "abnormal_pct": 0.22
+              }
+            ]
+          }
+        ],
+        "observations": [
+          {
+            "code": "8480-6",
+            "description": "Systolic blood pressure",
+            "units": "mmHg",
+            "normal_min": 90,
+            "normal_max": 119,
+            "abnormal_min": 130,
+            "abnormal_max": 175,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.45,
+            "weight": 0.5
+          },
+          {
+            "code": "8462-4",
+            "description": "Diastolic blood pressure",
+            "units": "mmHg",
+            "normal_min": 60,
+            "normal_max": 79,
+            "abnormal_min": 80,
+            "abnormal_max": 110,
+            "abnormal_flag": "H",
+            "abnormal_pct": 0.4,
+            "weight": 0.5
+          }
+        ],
         "procedures": [
           {
             "code": "99213",
-            "description": "Office or other outpatient visit, established patient",
+            "description": "Office or other outpatient visit, moderate complexity",
             "encounter_type": "O",
-            "weight": 1.0
+            "weight": 0.625
+          },
+          {
+            "code": "93000",
+            "description": "Electrocardiogram, routine ECG with at least 12 leads; with interpretation and report",
+            "encounter_type": "O",
+            "weight": 0.375
           }
-        ]
+        ],
+        "encounter_pattern": {
+          "encounters_per_year": 4.0,
+          "encounter_type_weights": {
+            "O": 0.9,
+            "E": 0.05,
+            "I": 0.05
+          },
+          "lab_encounter_rate": 0.75,
+          "rad_encounter_rate": 0.15
+        }
       }
     }
   }

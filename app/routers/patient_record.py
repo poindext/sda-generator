@@ -9,10 +9,17 @@ from pydantic import BaseModel
 router = APIRouter()
 
 
+class CohortRef(BaseModel):
+    template_file: str = ""
+    cohort_id: str = ""
+
+
 class RecordRequest(BaseModel):
     scenario: str
     filename: str = ""
     model: str = "gpt-4.1"
+    cohort_refs: list[CohortRef] = []
+    # legacy single-cohort fields kept for backwards compat
     template_file: str = ""
     cohort_id: str = ""
 
@@ -86,12 +93,16 @@ async def generate_patient_record(body: RecordRequest):
     from app.services import patient_record_svc
 
     async def _stream():
+        # Normalise: merge legacy single-cohort fields into cohort_refs list
+        refs = [{"template_file": r.template_file, "cohort_id": r.cohort_id}
+                for r in body.cohort_refs]
+        if not refs and body.template_file:
+            refs = [{"template_file": body.template_file, "cohort_id": body.cohort_id}]
         async for event in patient_record_svc.generate_record(
             scenario=body.scenario,
             filename=body.filename or None,
             model=body.model,
-            template_file=body.template_file,
-            cohort_id=body.cohort_id,
+            cohort_refs=refs,
         ):
             yield f"data: {json.dumps(event)}\n\n"
 

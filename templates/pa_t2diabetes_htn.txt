@@ -1,0 +1,61 @@
+**Synthetic Patient Population Configuration for Pennsylvania**
+
+**Purpose & Scope**
+
+This synthetic patient population is designed for a dashboard and analytics platform focusing on comorbidities related to Type 2 Diabetes and Hypertension. The population will consist of 25,000 patients, providing a medium-sized cohort with a comprehensive 36-month history. This dataset will facilitate the analysis of healthcare trends, patient management, and care gaps within the state of Pennsylvania.
+
+**Geography**
+
+The population will cover the entire state of Pennsylvania, divided into six distinct regions for facility-routing logic:
+
+1. **Southeastern Pennsylvania**: Includes Philadelphia and surrounding counties such as Montgomery, Bucks, Chester, and Delaware. This region is adjacent to South Central Pennsylvania.
+2. **South Central Pennsylvania**: Encompasses counties like Dauphin, Lancaster, York, and Cumberland. It is adjacent to Southeastern Pennsylvania and Central Pennsylvania.
+3. **Northeastern Pennsylvania**: Covers counties such as Lackawanna, Luzerne, and Monroe. It is adjacent to Central Pennsylvania.
+4. **Northwestern Pennsylvania**: Includes counties like Erie, Crawford, and Warren. It is adjacent to Southwestern Pennsylvania.
+5. **Southwestern Pennsylvania**: Comprises Pittsburgh and surrounding counties like Allegheny, Westmoreland, and Washington. It is adjacent to Northwestern Pennsylvania and Central Pennsylvania.
+6. **Central Pennsylvania**: Encompasses counties such as Centre, Blair, and Lycoming. It is adjacent to South Central Pennsylvania, Northeastern Pennsylvania, and Southwestern Pennsylvania.
+
+**Facilities & Health Systems**
+
+The configuration includes 45 facilities distributed across the state, representing a variety of types essential for treating hypertension, diabetes, and related comorbidities. These facilities include academic medical centers, community hospitals, FQHCs, urgent care centers, specialty clinics, independent labs, and long-term care facilities.
+
+- **UPMC Health System**: Includes 10 facilities, primarily in Southwestern Pennsylvania, with major centers in Pittsburgh.
+- **Penn Medicine**: Comprises 8 facilities, concentrated in Southeastern Pennsylvania, particularly around Philadelphia.
+- **Geisinger Health System**: Consists of 7 facilities, mainly in Central and Northeastern Pennsylvania.
+- **Jefferson Health**: Operates 6 facilities, primarily in Southeastern Pennsylvania.
+- **Independent Facilities**: 14 facilities spread across various regions, providing a mix of multi-specialty and single-specialty services.
+
+**Providers**
+
+Each facility will have 3 to 4 providers, focusing on specialties such as primary care, endocrinology, cardiology, nephrology, and nutrition. This ensures comprehensive care for patients with Type 2 Diabetes, Hypertension, and related conditions.
+
+**Disease Cohorts**
+
+The population will include the following clinical cohorts:
+
+- **HTN + Type 2 Diabetes**: Representing 20% of the population, approximately 5,000 patients.
+- **Multiple Chronic Conditions**: Comprising 15% of the population, around 3,750 patients.
+- **Low Risk Preventive / Wellness**: Accounting for 30% of the population, approximately 7,500 patients.
+
+**Demographics**
+
+The demographic distribution will reflect Pennsylvania's census data:
+
+- **Age Distribution**: Balanced across age groups, with a focus on adults.
+- **Sex Distribution**: 50% male and 50% female.
+- **Race/Ethnicity**: 75% White, 12% Black or African American, 7% Hispanic or Latino, 4% Asian, and 2% other races.
+- **Insurance/Payer Mix**: 30% Medicaid (Pennsylvania Medical Assistance), 25% Medicare, 40% commercial insurance, and 5% uninsured.
+
+**Multi-Facility HIE Configuration**
+
+- **Patient Records**: 20% of patients will appear in more than one facility's records.
+- **Geographic Affinity**: Patients will mostly stay within their region, with occasional travel to major medical centers.
+- **ED-to-Inpatient Admissions**: These will always remain at the same facility for consistency.
+
+**Special Scenarios & Deliberate Imperfections**
+
+To highlight care gaps, the configuration will include diabetic patients overdue for essential exams:
+
+- **Care Gap Demonstrations**: 10% of diabetic patients will be overdue for foot exams, and another 10% for eye exams. This will help illustrate the importance of routine care in managing diabetes.
+
+This comprehensive configuration will provide a realistic and detailed synthetic patient population for effective dashboard demonstration and analytics in Pennsylvania.

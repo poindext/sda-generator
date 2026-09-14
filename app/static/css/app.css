@@ -695,3 +695,25 @@ input[type=checkbox] { width: auto; margin-right: 6px; }
   font-size: 12px; color: var(--clr-muted); margin-top: 8px;
 }
 .cohort-enc-row span { color: var(--clr-text); font-weight: 500; }
+
+/* ── Template pill multi-selector ─────────────────────── */
+.template-pill-grid {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;
+  min-height: 36px;
+}
+.template-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px; border-radius: 16px; font-size: 12px; font-weight: 500;
+  border: 1.5px solid var(--border); background: var(--bg-card);
+  color: var(--clr-text); cursor: pointer; user-select: none;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.template-pill:hover { border-color: var(--clr-primary); color: var(--clr-primary); }
+.template-pill.selected {
+  background: var(--clr-primary); border-color: var(--clr-primary);
+  color: #fff;
+}
+.template-pill.selected::before { content: "✓ "; font-size: 11px; }
+.template-pill-placeholder {
+  font-size: 12px; color: var(--clr-muted); align-self: center;
+}
