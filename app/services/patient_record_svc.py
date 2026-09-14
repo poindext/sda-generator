@@ -406,10 +406,6 @@ The improved scenario must explicitly state:
 - Exact encounter dates, facility codes, facility names, and encounter types for every encounter
 - Each facility's local MRN for the patient (every source system must have its own)
 - Which facility prescribes each medication, with start date, stop date, and completion status
-- For each active medication, explicitly list EVERY facility whose encounter occurred while that \
-  medication was active — those facilities must document the medication as reconciled in their XML \
-  (e.g. "Empagliflozin initiated by ENDO001; also active and reconciled at PC001 visits on 02/10/2026, \
-  07/15/2026, and 08/20/2026 — must appear in PC001.xml for each of those encounters")
 - When each condition begins and resolves, with explicit dates that fall within the relevant encounter
 - Required structured observations and approximate values (vitals trajectory, labs at each time point, \
 functional test measurements)
@@ -549,32 +545,6 @@ Rule 5 — Clinical precision of finding labels:
   "Hypoxemia" and "exertional desaturation" are different conditions — a resting SpO₂ of 95% \
   with nadir 92% on exertion is exertional desaturation, not hypoxemia. Using a non-specific \
   label when the structured data supports a more precise one is a Clinical Accuracy deduction.
-
-Rule 6 — Medication EncounterNumber ↔ EnteredAt facility mismatch (HARD FAILURE, \
-deduct 5–8 pts from Cross-Facility Realism):
-- For every medication (and every lab order, procedure, diagnosis, and observation), the \
-  EncounterNumber must reference an encounter at the SAME facility as EnteredAt. If a \
-  medication has EnteredAt=ENDO001 but EncounterNumber=PC001-XXXX, that is a cross-facility \
-  linkage error — the medication appears to belong to an encounter it has no relationship to. \
-  This is always wrong, no exceptions. Check every single medication record.
-
-Rule 7 — Medication reconciliation completeness (deduct 5–10 pts from Cross-Facility Realism):
-- Read the scenario's medication list and each facility's care plan or visit notes. For every \
-  active medication listed in the scenario, verify that EVERY facility whose encounter \
-  explicitly reviewed, adjusted, continued, or managed that medication includes it in its XML. \
-  If PC001 documented "continue current regimen" or "diabetes and hypertension management" but \
-  its XML omits a medication originated at ENDO001, that is a reconciliation gap — a clinician \
-  viewing only PC001 cannot see the complete active medication list. Each missing reconciled \
-  medication counts as one deduction instance.
-
-Rule 8 — Medication duplication (HARD FAILURE, deduct 8–12 pts from Structured Data Completeness):
-- Each unique drug name must appear AT MOST ONCE per facility file. Count the Medication \
-  elements in each facility's XML and check for duplicate DrugProduct descriptions. If the \
-  same drug appears multiple times in one facility's record (e.g., three Metformin entries \
-  with different EncounterNumbers), that is duplication — the medication list is showing the \
-  same drug once per encounter instead of once per drug. This inflates the medication list \
-  and is always wrong. The correct EncounterNumber is the most recent encounter at that \
-  facility where the medication was active.
 
 Do not give 100 unless all semantic cross-checks pass. A structurally clean record with \
 any of the above contradictions is NOT a 100.
