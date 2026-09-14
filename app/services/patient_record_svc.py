@@ -206,6 +206,28 @@ def _load_system_prompt() -> str:
 # Facility splitter
 # --------------------------------------------------------------------------
 
+# XSD-required order of direct children of <Patient>
+_PATIENT_FIELD_ORDER = [
+    "Name", "BlankNameReason", "MothersMaidenName", "MothersFullName", "Aliases",
+    "PrimaryLanguage", "OtherLanguages", "Religion", "MaritalStatus",
+    "Gender", "BirthGender", "LegalSex", "Race", "Races", "EthnicGroup", "EthnicGroups",
+    "SupportContacts", "BirthTime", "BirthPlace", "BirthOrder",
+    "IsProtected", "DeathTime", "IsDead",
+    "PatientNumbers", "PriorPatientNumbers", "Addresses", "ContactInfo",
+    "FamilyDoctor", "InactiveMRNs", "Occupation",
+    "PublicityCode", "PublicityEffectiveDate", "Comments",
+    "ImmunizationRegistryStatus", "CommunicationPreference",
+    "EnteredBy", "EnteredAt", "EnteredOn", "ActionCode", "EncounterNumber", "ExternalId",
+]
+_PATIENT_FIELD_RANK = {tag: i for i, tag in enumerate(_PATIENT_FIELD_ORDER)}
+
+
+def _reorder_patient(patient_el):
+    """Re-order direct children of a Patient element to match XSD sequence."""
+    children = sorted(patient_el, key=lambda e: _PATIENT_FIELD_RANK.get(e.tag, 999))
+    patient_el[:] = children
+
+
 def _split_by_facility(
     xml: str, base_name: str, out_dir: Path
 ) -> tuple[list[dict], Path]:
@@ -325,6 +347,7 @@ def _split_by_facility(
                     org_code = pn.findtext("Organization/Code") or ""
                     if org_code and org_code != fac:
                         pn_wrapper.remove(pn)
+            _reorder_patient(add_patient)
             add_root.append(add_patient)
         for stag, recs in sections.items():
             sec = ET.SubElement(add_root, stag)
@@ -346,6 +369,7 @@ def _split_by_facility(
             if ac is None:
                 ac = ET.SubElement(del_patient, "ActionCode")
             ac.text = "D"
+            _reorder_patient(del_patient)
             del_root.append(del_patient)
 
         # Container-level SendingFacility — required by HealthShare MPI Update Manager

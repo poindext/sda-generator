@@ -36,7 +36,7 @@ The XSD enforces strict section ordering inside `<Container>`. **Never reorder, 
 ```
 
 **Common ordering mistakes that cause validation failure:**
-- Putting `<PatientNumbers>` before `<Name>` inside `<Patient>` — `<Name>` must come first
+- Wrong order inside `<Patient>` — required sequence is `<Name>` → `<Gender>` → `<Race>` → `<EthnicGroup>` → `<BirthTime>` → `<PatientNumbers>` → `<Addresses>`
 - Putting `<IllnessHistories>` after `<SocialHistories>` or `<Diagnoses>` — invalid
 - Putting `<SocialHistories>` or `<FamilyHistories>` after `<Diagnoses>` — invalid
 - Putting `<Medications>` before `<Observations>` — invalid
@@ -90,7 +90,7 @@ Required date fields by type:
 6. `OnsetTime` for a long-standing diagnosis (e.g., hypertension, diabetes) should plausibly predate the current encounter by years.
 
 ### Patient identity
-**CRITICAL XSD field order inside `<Patient>`**: `<Name>` must come BEFORE `<PatientNumbers>`. Putting `<PatientNumbers>` first will fail schema validation.
+**CRITICAL XSD field order inside `<Patient>`**: The required sequence is `<Name>` → `<Gender>` → `<Race>` → `<EthnicGroup>` → `<BirthTime>` → `<PatientNumbers>` → `<Addresses>`. `<BirthTime>` must come **before** `<PatientNumbers>` — placing it after will fail schema validation.
 
 `<PatientNumbers>` is a required wrapper around all `<PatientNumber>` entries. Each `<PatientNumber>` must include `<NumberType>` and `<Organization>` (the assigning authority). Always include at least the MRN. Add a second entry for Medicaid (MA) or Medicare (MC) if the patient has one.
 
@@ -102,6 +102,22 @@ Required date fields by type:
     <MiddleName>A.</MiddleName>
     <Type>Legal</Type>
   </Name>
+  <Gender>
+    <SDACodingStandard>HL7</SDACodingStandard>
+    <Code>F</Code>
+    <Description>Female</Description>
+  </Gender>
+  <Race>
+    <SDACodingStandard>CDCREC</SDACodingStandard>
+    <Code>2106-3</Code>
+    <Description>White</Description>
+  </Race>
+  <EthnicGroup>
+    <SDACodingStandard>CDCREC</SDACodingStandard>
+    <Code>2186-5</Code>
+    <Description>Not Hispanic or Latino</Description>
+  </EthnicGroup>
+  <BirthTime>1968-04-22T00:00:00Z</BirthTime>
   <PatientNumbers>
     <PatientNumber>
       <Number>MRN123456</Number>
@@ -120,22 +136,6 @@ Required date fields by type:
       </Organization>
     </PatientNumber>
   </PatientNumbers>
-  <BirthTime>1968-04-22T00:00:00Z</BirthTime>
-  <Gender>
-    <SDACodingStandard>HL7</SDACodingStandard>
-    <Code>F</Code>
-    <Description>Female</Description>
-  </Gender>
-  <Race>
-    <SDACodingStandard>CDCREC</SDACodingStandard>
-    <Code>2106-3</Code>
-    <Description>White</Description>
-  </Race>
-  <EthnicGroup>
-    <SDACodingStandard>CDCREC</SDACodingStandard>
-    <Code>2186-5</Code>
-    <Description>Not Hispanic or Latino</Description>
-  </EthnicGroup>
   <Addresses>
     <Address>
       <Street>742 Maple Street</Street>
