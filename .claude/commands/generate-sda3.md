@@ -231,7 +231,7 @@ The XSD sequence requires `SDACodingStandard` before `Code`. Putting `Code` or `
 | Allergy `Reaction`, `Severity` | `SNM` | 271807003 rash · 255604002 mild |
 | Procedures | `CPT` or `SNM` | 99213, 93000 |
 | Vaccines (`DrugProduct`/`OrderItem`) | `CVX` | 08 (hep B) · 140 (flu) · 207 (COVID mRNA) |
-| Observation vital signs | **none** — omit `SDACodingStandard` entirely | 8310-5 temp · 3141-9 weight · 8480-6 systolic BP · 8462-4 diastolic BP · 8867-4 heart rate · 9279-1 resp rate · 8306-3 height |
+| Observation vital signs | **none** — omit `SDACodingStandard` entirely | 8480-6 BP systolic · 8462-4 BP diastolic · 8867-4 heart rate · 9279-1 resp rate · 8310-5 temp · 8302-2 height · 29463-7 weight · 39156-5 BMI · 59408-5 O2 sat |
 | Route (medications) | `HL7` | PO, IV, IM, SC, INH, TOP |
 | DosageForm | `NCI` | TAB, CAP, SOL, INJ |
 | DoseUoM | `UCUM` | mg, mL, mcg, mg/kg |
@@ -488,22 +488,78 @@ Comes **after `<Vaccinations>`** near the end of `<Container>`. `Status` is plai
 
 **CRITICAL**: `ExternalId` is the **very first** element — never place it after `ObservationCode`, `ObservationValue`, `EnteredAt`, or `EnteredOn`. `ObservationCode` must **NOT** include `SDACodingStandard`. No `ActionCode` on Observations.
 
-Confirmed vital-sign codes: `8480-6` BP Systolic · `8462-4` BP Diastolic · `8867-4` Heart Rate · `8310-5` Temperature · `9279-1` Respiratory Rate · `3141-9` Weight · `8306-3` Height
+**Vital-sign LOINC codes** (no `SDACodingStandard` on these):
+
+| Vital | LOINC | Units |
+|---|---|---|
+| BP Systolic | `8480-6` | mmHg |
+| BP Diastolic | `8462-4` | mmHg |
+| Heart Rate | `8867-4` | /min |
+| Respiratory Rate | `9279-1` | /min |
+| Temperature | `8310-5` | °F |
+| **Height** | **`8302-2`** | **in** (or cm) |
+| **Weight** | **`29463-7`** | **lbs** (or kg) |
+| **BMI** | **`39156-5`** | **kg/m2** |
+| O2 Saturation | `59408-5` | % |
+
+**Height, Weight, and BMI are mandatory whenever the scenario mentions them.** If the visit note records weight or height, those values MUST appear as discrete `<Observation>` elements — not only in note text. Every encounter that includes an anthropometric measurement must have all three (height, weight, BMI) as separate observations.
 
 ```xml
 <Observations>
   <Observation>
     <ExternalId>Observations_1</ExternalId>
     <EncounterNumber>ENC-2024031501</EncounterNumber>
-    <ObservationTime>2024-03-15T10:00:00Z</ObservationTime>
-    <ObservationCode>
-      <Code>8480-6</Code>
-      <Description>BP Systolic</Description>
-    </ObservationCode>
-    <ObservationValue>142</ObservationValue>
+    <ObservationTime>2024-03-15T09:00:00Z</ObservationTime>
+    <ObservationCode><Code>8480-6</Code><Description>BP Systolic</Description></ObservationCode>
+    <ObservationValue>128</ObservationValue>
+    <ObservationValueUnits>mmHg</ObservationValueUnits>
     <Clinician><Code>DR456</Code><Description>Dr. Smith</Description></Clinician>
     <EnteredAt><Code>GH001</Code><Description>General Hospital</Description></EnteredAt>
-    <EnteredOn>2024-03-15T10:00:00Z</EnteredOn>
+    <EnteredOn>2024-03-15T09:00:00Z</EnteredOn>
+  </Observation>
+  <Observation>
+    <ExternalId>Observations_2</ExternalId>
+    <EncounterNumber>ENC-2024031501</EncounterNumber>
+    <ObservationTime>2024-03-15T09:00:00Z</ObservationTime>
+    <ObservationCode><Code>8462-4</Code><Description>BP Diastolic</Description></ObservationCode>
+    <ObservationValue>76</ObservationValue>
+    <ObservationValueUnits>mmHg</ObservationValueUnits>
+    <Clinician><Code>DR456</Code><Description>Dr. Smith</Description></Clinician>
+    <EnteredAt><Code>GH001</Code><Description>General Hospital</Description></EnteredAt>
+    <EnteredOn>2024-03-15T09:00:00Z</EnteredOn>
+  </Observation>
+  <Observation>
+    <ExternalId>Observations_3</ExternalId>
+    <EncounterNumber>ENC-2024031501</EncounterNumber>
+    <ObservationTime>2024-03-15T09:00:00Z</ObservationTime>
+    <ObservationCode><Code>8302-2</Code><Description>Body height</Description></ObservationCode>
+    <ObservationValue>70</ObservationValue>
+    <ObservationValueUnits>in</ObservationValueUnits>
+    <Clinician><Code>DR456</Code><Description>Dr. Smith</Description></Clinician>
+    <EnteredAt><Code>GH001</Code><Description>General Hospital</Description></EnteredAt>
+    <EnteredOn>2024-03-15T09:00:00Z</EnteredOn>
+  </Observation>
+  <Observation>
+    <ExternalId>Observations_4</ExternalId>
+    <EncounterNumber>ENC-2024031501</EncounterNumber>
+    <ObservationTime>2024-03-15T09:00:00Z</ObservationTime>
+    <ObservationCode><Code>29463-7</Code><Description>Body weight</Description></ObservationCode>
+    <ObservationValue>222</ObservationValue>
+    <ObservationValueUnits>lbs</ObservationValueUnits>
+    <Clinician><Code>DR456</Code><Description>Dr. Smith</Description></Clinician>
+    <EnteredAt><Code>GH001</Code><Description>General Hospital</Description></EnteredAt>
+    <EnteredOn>2024-03-15T09:00:00Z</EnteredOn>
+  </Observation>
+  <Observation>
+    <ExternalId>Observations_5</ExternalId>
+    <EncounterNumber>ENC-2024031501</EncounterNumber>
+    <ObservationTime>2024-03-15T09:00:00Z</ObservationTime>
+    <ObservationCode><Code>39156-5</Code><Description>Body mass index (BMI)</Description></ObservationCode>
+    <ObservationValue>31.8</ObservationValue>
+    <ObservationValueUnits>kg/m2</ObservationValueUnits>
+    <Clinician><Code>DR456</Code><Description>Dr. Smith</Description></Clinician>
+    <EnteredAt><Code>GH001</Code><Description>General Hospital</Description></EnteredAt>
+    <EnteredOn>2024-03-15T09:00:00Z</EnteredOn>
   </Observation>
 </Observations>
 ```
