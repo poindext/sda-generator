@@ -1081,6 +1081,83 @@ FAC002 must contain more than a consultation note. Required structured content:
 
 ---
 
+### Longitudinal data quality
+
+These rules apply to all multi-encounter or multi-facility scenarios, not only obstetric records.
+
+#### Cross-facility patient identity — MANDATORY
+
+When a scenario spans multiple facilities, **every facility that generates records must assign the patient its own distinct local MRN**. Never leave `<PatientNumbers>` empty for any facility. This is the core demonstration value of an HIE/EMPI: the same person has different identifiers at different organizations, and the identity system links them.
+
+```xml
+<!-- PC001 source record -->
+<PatientNumbers>
+  <PatientNumber>
+    <Number>PC-438291</Number>
+    <NumberType>MRN</NumberType>
+    <Organization><Code>PC001</Code><Description>Primary Care Clinic</Description></Organization>
+  </PatientNumber>
+</PatientNumbers>
+
+<!-- CMC001 source record — same patient, different local MRN -->
+<PatientNumbers>
+  <PatientNumber>
+    <Number>CMC-102938</Number>
+    <NumberType>MRN</NumberType>
+    <Organization><Code>CMC001</Code><Description>Community Medical Center</Description></Organization>
+  </PatientNumber>
+</PatientNumbers>
+```
+
+#### Medication lifecycle
+
+- **Time-limited medications** (antivirals, antibiotics, short-course steroids, acute anticoagulants) **must have a `ToTime`** matching the prescribed course duration. An antiviral or steroid without `ToTime` will appear as ongoing therapy indefinitely.
+- A medication first prescribed at an earlier encounter must carry the **original prescription date** as `FromTime`, even if it appears in a later encounter's record.
+- **Never restart a completed medication.** If facility B is documenting a medication that facility A prescribed and the patient has already completed, record it with `Status=C` and the original `FromTime`/`ToTime` — do not create a new active prescription.
+- A medication prescribed elsewhere but active at the current encounter should carry the prescribing facility's `EnteredAt` and original `FromTime`.
+
+#### Condition lifecycle — problems and diagnoses
+
+- Acute conditions **must transition to resolved** when the narrative describes recovery. A discharge summary that says "hypoxemia resolved" means the Problem and Diagnosis entries must also show resolved — not still active.
+- **Resolution dates must be clinically coherent**: a condition cannot resolve *after* the discharge date if the discharge summary says it resolved *during* the hospitalization. Resolve it at or before discharge.
+- When a condition is resolved at a subsequent encounter, generate an updated `<Problem>` with `ActionCode=U`, the same ICD-10 code, `Status=Resolved`, and `ToTime` set to the resolution date.
+- **Include the principal inpatient diagnosis as a structured `<Diagnosis>` entry** even when complication codes are also present. A discharge summary that lists U07.1 as the principal diagnosis must produce a U07.1 `<Diagnosis>` record — not only complication or symptom codes.
+
+#### Inpatient serial observations
+
+For inpatient stays ≥2 days, generate **periodic observations** showing clinical trajectory — not only admission values.
+
+| Timing | Required observations |
+|---|---|
+| Admission (day 0) | Full vital signs + key disease indicator (e.g., SpO₂ for respiratory illness, GCS for neuro) |
+| Each intervening day | At minimum SpO₂, HR, and RR, or the primary disease-specific indicator |
+| Discharge day | Final vitals demonstrating discharge criteria met |
+
+For respiratory illness: SpO₂ observations must trace the trajectory from impaired (e.g., 89% on supplemental O₂) through intermediate improvement to discharge-ready (e.g., 95% room air). A record that has only admission SpO₂ does not demonstrate improvement.
+
+#### Inpatient serial labs
+
+For inpatient stays, generate **at minimum three lab snapshots**:
+1. **Admission panel** — establishes baseline severity
+2. **Mid-course panel** (≥2 days after admission) — reflects treatment response
+3. **Pre-discharge panel** (day before or day of discharge) — demonstrates safe-to-discharge values
+
+Results must show clinically coherent improvement where expected (e.g., CRP falling, WBC normalizing). A single lab panel for a 5-day hospitalization is not acceptable.
+
+#### Encounter type coherence
+
+Telehealth/virtual encounters (`EncounterType=V`) must not contain specimen collection, physical examination measurements, or in-person diagnostic testing. If the scenario includes a telehealth encounter and a same-day diagnostic test:
+- Create a **separate in-person testing encounter** on the same date (e.g., `EncounterType=O` at a testing facility)
+- Link the specimens, lab results, and swabs to the in-person encounter — not to the telehealth encounter
+
+#### Coding coherence
+
+- **Two different lab panels cannot share the same LOINC order code.** If no appropriate LOINC panel code exists for a combination, use an institutional local code (e.g., `LCL-INFLAM`) with a clear `Description` rather than misusing a LOINC that has a different clinical meaning.
+- **CPT codes must exactly match the procedure description**: 71045 = single portable/AP chest X-ray; 71046 = two-view PA and lateral chest X-ray. If the note or radiology order says "PA and lateral," use CPT 71046 — not 71045.
+- **CTA pulmonary arteries for PE evaluation** (CPT 71275) is distinct from CT chest with contrast (71250). If PE evaluation is explicitly part of the reason for the study, order and code CTA pulmonary arteries — not generic CT chest with contrast.
+
+---
+
 ### What NOT to include unless specifically relevant
 - `CustomPairs`, `ProvenanceIds`, `SdaID`, `SourceFormat` — system/internal fields, omit
 - `Extension` elements — omit unless testing extensions
