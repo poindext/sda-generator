@@ -70,19 +70,12 @@ def list_cohort_options() -> list[dict]:
         template_name = data.get("meta", {}).get("name", path.stem)
         cohorts = data.get("cohorts", [])
         rel = str(path.relative_to(TEMPLATES_DIR))
-        if len(cohorts) == 1:
+        for c in cohorts:
             options.append({
-                "label": cohorts[0].get("name", template_name),
+                "label": c.get("name") or template_name,
                 "template_file": rel,
-                "cohort_id": cohorts[0].get("id", ""),
+                "cohort_id": c.get("id", ""),
             })
-        else:
-            for c in cohorts:
-                options.append({
-                    "label": f"{template_name} — {c.get('name', c.get('id', ''))}",
-                    "template_file": rel,
-                    "cohort_id": c.get("id", ""),
-                })
 
     return sorted(options, key=lambda o: o["label"].lower())
 
