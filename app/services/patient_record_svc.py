@@ -385,54 +385,45 @@ def _split_by_facility(
 # Record generation
 # --------------------------------------------------------------------------
 
-async def generate_record(
-    scenario: str,
-    filename: str | None = None,
-    model: str = "gpt-4o",
-    cohort_refs: list[dict] | None = None,
+_REFINE_SYSTEM_PROMPT = """\
+You are a clinical data quality reviewer for InterSystems HealthShare SDA3 patient records.
+
+You will be given:
+1. The original scenario description used to generate a patient record
+2. The generated SDA3 XML
+
+Your job: return an improved, more detailed scenario description that corrects every clinical \
+incoherence, temporal inconsistency, medication lifecycle error, missing structured data element, \
+and cross-facility identity problem you find in the XML.
+
+The improved scenario must explicitly state:
+- Exact encounter dates, facility codes, facility names, and encounter types for every encounter
+- Each facility's local MRN for the patient (every source system must have its own)
+- Which facility prescribes each medication, with start date, stop date, and completion status
+- When each condition begins and resolves, with explicit dates that fall within the relevant encounter
+- Required structured observations and approximate values (vitals trajectory, labs at each time point, \
+functional test measurements)
+- Telehealth vs in-person encounter distinction if specimens are collected
+
+Return ONLY the improved scenario text — no explanation, no XML, no commentary.\
+"""
+
+
+async def _xml_generation_pass(
+    client,
+    model: str,
+    system_prompt: str,
+    user_message: str,
 ) -> AsyncIterator[dict]:
     """
-    Stream SDA3 XML generation for a single patient scenario.
-
-    Yields:
-        {"type": "token",  "content": str}
-        {"type": "done",   "files": list, "zip_path": str, "zip_name": str}
-        {"type": "error",  "message": str}
+    Single XML generation pass. Yields token/status events, then a final
+    {"type": "xml_complete", "xml": str} event with the full collected text.
     """
-    try:
-        from openai import AsyncOpenAI
-    except ImportError:
-        yield {"type": "error", "message": "openai package not installed"}
-        return
-
-    if not OPENAI_API_KEY:
-        yield {"type": "error", "message": "OPENAI_API_KEY not configured"}
-        return
-
-    system_prompt = _load_system_prompt()
-
-    # Build user message, optionally prefixed with template clinical context
-    template_context = ""
-    if cohort_refs:
-        try:
-            template_context = _build_template_context(cohort_refs)
-        except Exception as exc:
-            yield {"type": "error", "message": f"Failed to load template: {exc}"}
-            return
-
-    user_message = (
-        "Generate realistic InterSystems HealthShare SDA3 XML sample data "
-        "for the following scenario:\n\n"
-    )
-    if template_context:
-        user_message += template_context + "\n\n"
-    user_message += scenario.strip()
-
-    client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+    max_tokens = 32000 if model.startswith("gpt-4.1") else 16000
     try:
         stream = await client.chat.completions.create(
             model=model,
-            max_tokens=32000 if model.startswith("gpt-4.1") else 16000,
+            max_tokens=max_tokens,
             temperature=0.4,
             messages=[
                 {"role": "system", "content": system_prompt},
@@ -451,42 +442,34 @@ async def generate_record(
             full_text += delta
             yield {"type": "token", "content": delta}
 
-    # If the output was cut off before </Container>, continue up to 3 times.
-    # Strip the markdown fence before using full_text as the assistant message so
-    # the model doesn't inject a second ```xml fence into the middle of the XML.
-    max_tokens = 32000 if model.startswith("gpt-4.1") else 16000
+    # Continuation passes if output was cut off before </Container>
     for _cont in range(3):
-        stripped = full_text.strip().rstrip("`").rstrip()
-        if stripped.endswith("</Container>"):
+        if full_text.strip().rstrip("`").rstrip().endswith("</Container>"):
             break
         yield {"type": "status", "message": f"Output limit reached — requesting continuation (pass {_cont + 2})…"}
-        # Build clean assistant content: strip fence, then trim to the last
-        # complete '>' so the model never sees a half-written tag and cannot
-        # produce overlapping/duplicate content in its continuation.
         assistant_content = full_text.strip()
         if assistant_content.startswith("```"):
             assistant_content = re.sub(r"^```(?:xml)?\s*\n?", "", assistant_content)
         last_close = assistant_content.rfind(">")
         if last_close > 0:
             assistant_content = assistant_content[: last_close + 1]
-            full_text = assistant_content  # keep full_text in sync so continuation appends cleanly
-        messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "user",   "content": user_message},
-            {"role": "assistant", "content": assistant_content},
-            {"role": "user",   "content": (
-                "The XML was cut off before </Container>. "
-                "Continue exactly where you left off — output raw XML only, "
-                "no markdown code fences, ending with </Container>. "
-                "Do not repeat any content already written."
-            )},
-        ]
+            full_text = assistant_content
         try:
             cont_stream = await client.chat.completions.create(
                 model=model,
                 max_tokens=max_tokens,
                 temperature=0.4,
-                messages=messages,
+                messages=[
+                    {"role": "system",    "content": system_prompt},
+                    {"role": "user",      "content": user_message},
+                    {"role": "assistant", "content": assistant_content},
+                    {"role": "user",      "content": (
+                        "The XML was cut off before </Container>. "
+                        "Continue exactly where you left off — output raw XML only, "
+                        "no markdown code fences, ending with </Container>. "
+                        "Do not repeat any content already written."
+                    )},
+                ],
                 stream=True,
             )
         except Exception as exc:
@@ -497,17 +480,136 @@ async def generate_record(
             if delta:
                 full_text += delta
 
-    yield {"type": "status", "message": "Packaging files…"}
+    yield {"type": "xml_complete", "xml": full_text}
 
-    # Strip markdown fence to get clean XML
-    xml = full_text.strip()
+
+async def _refine_scenario(
+    original_scenario: str,
+    xml_text: str,
+    model: str,
+    client,
+) -> str | None:
+    """
+    Ask GPT to review the generated XML against the original scenario and return
+    an improved scenario description. Returns None if refinement fails or adds
+    no meaningful content.
+    """
+    # Truncate XML to stay within context limits (~80k chars ≈ 20k tokens)
+    xml_excerpt = xml_text[:80_000]
+    user_message = (
+        f"ORIGINAL SCENARIO:\n{original_scenario}\n\n"
+        f"GENERATED XML:\n{xml_excerpt}"
+    )
+    try:
+        resp = await client.chat.completions.create(
+            model=model,
+            max_tokens=4000,
+            temperature=0.3,
+            messages=[
+                {"role": "system", "content": _REFINE_SYSTEM_PROMPT},
+                {"role": "user",   "content": user_message},
+            ],
+        )
+        refined = resp.choices[0].message.content.strip()
+        # Only use if the refined scenario is meaningfully longer / different
+        if refined and len(refined) > max(300, len(original_scenario) * 0.8):
+            return refined
+    except Exception:
+        pass
+    return None
+
+
+def _strip_xml_fences(text: str) -> str:
+    xml = text.strip()
     if xml.startswith("```"):
         xml = re.sub(r"^```(?:xml)?\s*\n?", "", xml)
         xml = re.sub(r"\n?```\s*$", "", xml)
-    # Remove any stray fence artifacts from mid-content (injected by continuation)
     xml = re.sub(r"```(?:xml)?\s*", "", xml)
+    return xml
 
-    # Derive base name from optional filename param
+
+async def generate_record(
+    scenario: str,
+    filename: str | None = None,
+    model: str = "gpt-4o",
+    cohort_refs: list[dict] | None = None,
+) -> AsyncIterator[dict]:
+    """
+    Stream SDA3 XML generation for a single patient scenario.
+    Automatically runs a second pass after clinical coherence review.
+
+    Yields:
+        {"type": "token",  "content": str}
+        {"type": "status", "message": str}
+        {"type": "done",   "files": list, "zip_path": str, "zip_name": str}
+        {"type": "error",  "message": str}
+    """
+    try:
+        from openai import AsyncOpenAI
+    except ImportError:
+        yield {"type": "error", "message": "openai package not installed"}
+        return
+
+    if not OPENAI_API_KEY:
+        yield {"type": "error", "message": "OPENAI_API_KEY not configured"}
+        return
+
+    system_prompt = _load_system_prompt()
+
+    template_context = ""
+    if cohort_refs:
+        try:
+            template_context = _build_template_context(cohort_refs)
+        except Exception as exc:
+            yield {"type": "error", "message": f"Failed to load template: {exc}"}
+            return
+
+    base_user_message = (
+        "Generate realistic InterSystems HealthShare SDA3 XML sample data "
+        "for the following scenario:\n\n"
+    )
+    if template_context:
+        base_user_message += template_context + "\n\n"
+    base_user_message += scenario.strip()
+
+    client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+
+    # ── Pass 1: initial generation ────────────────────────────────────────────
+    first_pass_xml = ""
+    async for event in _xml_generation_pass(client, model, system_prompt, base_user_message):
+        if event["type"] == "xml_complete":
+            first_pass_xml = event["xml"]
+        else:
+            yield event
+            if event["type"] == "error":
+                return
+
+    # ── Refinement: improve the scenario based on what was generated ──────────
+    yield {"type": "status", "message": "Analyzing clinical coherence…"}
+    refined_scenario = await _refine_scenario(scenario, first_pass_xml, model, client)
+
+    if refined_scenario:
+        yield {"type": "status", "message": "Regenerating with refined scenario…"}
+        refined_user_message = base_user_message.replace(scenario.strip(), refined_scenario)
+        final_xml = ""
+        async for event in _xml_generation_pass(client, model, system_prompt, refined_user_message):
+            if event["type"] == "xml_complete":
+                final_xml = event["xml"]
+            else:
+                yield event
+                if event["type"] == "error":
+                    return
+        active_scenario = refined_scenario
+        active_user_message = refined_user_message
+    else:
+        final_xml = first_pass_xml
+        active_scenario = scenario
+        active_user_message = base_user_message
+
+    yield {"type": "status", "message": "Packaging files…"}
+
+    xml = _strip_xml_fences(final_xml)
+
     if not filename:
         from datetime import datetime
         base_name = f"patient_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
@@ -519,17 +621,19 @@ async def generate_record(
     try:
         files, zip_path = _split_by_facility(xml, base_name, out_dir)
 
-        # Save scenario (for history display) and full prompt (for reproducibility)
-        (out_dir / "scenario.txt").write_text(scenario.strip(), encoding="utf-8")
+        (out_dir / "scenario.txt").write_text(active_scenario.strip(), encoding="utf-8")
+        if refined_scenario:
+            (out_dir / "scenario_original.txt").write_text(scenario.strip(), encoding="utf-8")
+            (out_dir / "scenario_refined.txt").write_text(refined_scenario.strip(), encoding="utf-8")
+
         prompt_content = (
             "=== SYSTEM PROMPT ===\n\n"
             + system_prompt
             + "\n\n=== USER MESSAGE ===\n\n"
-            + user_message
+            + active_user_message
         )
         (out_dir / "prompt.txt").write_text(prompt_content, encoding="utf-8")
 
-        # Append both metadata files to the existing ZIP
         with zipfile.ZipFile(zip_path, "a", zipfile.ZIP_DEFLATED) as zf:
             zf.write(out_dir / "prompt.txt", "prompt.txt")
             zf.write(out_dir / "scenario.txt", "scenario.txt")
@@ -541,7 +645,6 @@ async def generate_record(
             "zip_name": zip_path.name,
         }
     except Exception as exc:
-        # Fallback: save single file if XML is unparseable
         _RECORDS_DIR.mkdir(parents=True, exist_ok=True)
         fallback = _RECORDS_DIR / f"{base_name}.xml"
         fallback.write_text(xml, encoding="utf-8")
