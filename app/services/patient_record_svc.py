@@ -670,167 +670,164 @@ async def _refine_scenario(
 
 def _reconcile_medications(xml: str) -> tuple[str, list[str]]:
     """
-    Deterministic post-generation pass.
+    Deterministic post-generation pass on the single-Container combined XML.
 
-    For every facility container:
-    1. Fix EncounterNumber on any medication whose encounter number belongs to
-       a different facility (Rule 6) — replace with this facility's latest
-       encounter number.
-    2. Inject any active medication that exists in another facility's container
-       but is missing here, if this facility had an encounter on or after that
-       medication's FromTime.
+    GPT generates ONE <Container> with all clinical records mixed together.
+    _split_by_facility routes each Medication to a facility based on its
+    SendingFacility field (falling back to EnteredAt/Code).
+
+    This function:
+    1. Detects facility codes from encounter numbers (pattern FAC-YYYYMMDD-NN)
+    2. Fixes EncounterNumber on any medication whose encounter belongs to a
+       different facility than the one it routes to (Rule 6)
+    3. Injects a copy of each active medication for every facility that had
+       an encounter while it was active but has no routing entry for that drug
 
     Returns (fixed_xml, list_of_changes_made).
     """
+    from collections import defaultdict
     changes: list[str] = []
 
-    # ── Step 1: collect all facility codes and their latest encounter numbers ──
-    all_fac_codes: set[str] = set(
-        re.findall(r"<SendingFacility>([^<]+)</SendingFacility>", xml)
-    )
+    # ── Step 1: find facility codes and their latest encounters ───────────────
+    # Encounter numbers follow the pattern FAC_CODE-YYYYMMDD-NN
+    enc_to_fac: dict[str, str] = {}
+    fac_encs: dict[str, list[tuple[str, str]]] = defaultdict(list)  # fac → [(date, enc)]
+    for enc in re.findall(r"<EncounterNumber>([^<]+)</EncounterNumber>", xml):
+        enc = enc.strip()
+        m = re.match(r"^([A-Z][A-Z0-9]*)-(\d{8})-", enc)
+        if m:
+            fac, date = m.group(1), m.group(2)
+            enc_to_fac[enc] = fac
+            fac_encs[fac].append((date, enc))
 
-    # Map fac_code → latest encounter number (by position in the XML, last wins)
-    latest_enc: dict[str, str] = {}
-    for fac in all_fac_codes:
-        # Find all encounter numbers inside a Container whose SendingFacility == fac
-        for container in re.findall(r"<Container>(.*?)</Container>", xml, re.DOTALL):
-            sf = re.search(r"<SendingFacility>([^<]+)</SendingFacility>", container)
-            if sf and sf.group(1).strip() == fac:
-                encs = re.findall(r"<EncounterNumber>([^<]+)</EncounterNumber>", container)
-                # Keep only encounter numbers that contain this facility's code
-                own = [e for e in encs if fac in e]
-                if own:
-                    latest_enc[fac] = own[-1]
-                elif encs:
-                    latest_enc[fac] = encs[-1]
+    if len(fac_encs) <= 1:
+        return xml, changes  # single-facility record, nothing to reconcile
 
-    # ── Step 2: build a master medication list across all facilities ───────────
-    # Each entry: {drug_desc, entered_at, from_time, raw_block}
-    all_meds: list[dict] = []
-    seen_drugs: set[str] = set()
-    for container in re.findall(r"<Container>(.*?)</Container>", xml, re.DOTALL):
-        for med in re.findall(r"<Medication>(.*?)</Medication>", container, re.DOTALL):
-            drug_m  = re.search(
-                r"<DrugProduct>.*?<Description>([^<]+)</Description>", med, re.DOTALL
-            )
-            at_m    = re.search(r"<EnteredAt>\s*<Code>([^<]+)</Code>", med)
-            from_m  = re.search(r"<FromTime>([^<]+)</FromTime>", med)
-            status_m = re.search(r"<Status>([^<]+)</Status>", med)
-            if not drug_m:
-                continue
-            drug_desc  = drug_m.group(1).strip()
-            entered_at = at_m.group(1).strip() if at_m else ""
-            from_time  = from_m.group(1).strip() if from_m else ""
-            status     = status_m.group(1).strip().lower() if status_m else "active"
-            # Only track active/ongoing medications for reconciliation
-            if status not in ("active", ""):
-                continue
-            if drug_desc not in seen_drugs:
-                seen_drugs.add(drug_desc)
-                all_meds.append({
-                    "drug_desc":  drug_desc,
-                    "entered_at": entered_at,
-                    "from_time":  from_time,
-                    "raw":        med,
-                })
+    # Latest encounter per facility (by embedded date)
+    latest_enc: dict[str, str] = {
+        fac: max(pairs, key=lambda p: p[0])[1]
+        for fac, pairs in fac_encs.items()
+    }
 
-    # ── Step 3: process each Container ────────────────────────────────────────
-    def fix_container(container: str) -> str:
-        sf = re.search(r"<SendingFacility>([^<]+)</SendingFacility>", container)
-        if not sf:
-            return container
-        fac = sf.group(1).strip()
-        own_enc = latest_enc.get(fac, "")
+    # ── Step 2: inventory active medications and their routing facilities ─────
+    # "Routing facility" = SendingFacility if present, else EnteredAt/Code
+    drug_routing: dict[str, set[str]] = defaultdict(set)   # drug_name → set of fac
+    master_meds: dict[str, dict] = {}                       # drug_name → canonical entry
 
-        # 3a. Fix Rule 6: replace wrong-facility encounter numbers on medications
-        def fix_enc_num(med_block: str) -> str:
-            enc_m = re.search(r"<EncounterNumber>([^<]+)</EncounterNumber>", med_block)
-            if not enc_m or not own_enc:
-                return med_block
-            enc_val = enc_m.group(1).strip()
-            # If the encounter number contains a DIFFERENT facility's code, fix it
-            for other in all_fac_codes:
-                if other != fac and other in enc_val:
-                    drug_m = re.search(
-                        r"<DrugProduct>.*?<Description>([^<]+)</Description>",
-                        med_block, re.DOTALL
-                    )
-                    drug_name = drug_m.group(1).strip() if drug_m else "?"
-                    changes.append(
-                        f"[{fac}] Fixed EncounterNumber on '{drug_name}': "
-                        f"'{enc_val}' → '{own_enc}'"
-                    )
-                    return med_block.replace(
-                        f"<EncounterNumber>{enc_val}</EncounterNumber>",
-                        f"<EncounterNumber>{own_enc}</EncounterNumber>",
-                    )
+    for med in re.findall(r"<Medication>(.*?)</Medication>", xml, re.DOTALL):
+        drug_m = re.search(
+            r"<DrugProduct>.*?<Description>([^<]+)</Description>", med, re.DOTALL
+        )
+        if not drug_m:
+            continue
+        drug_desc = drug_m.group(1).strip()
+
+        sf_m   = re.search(r"<SendingFacility>([^<]+)</SendingFacility>", med)
+        at_m   = re.search(r"<EnteredAt>\s*<Code>([^<]+)</Code>", med)
+        from_m = re.search(r"<FromTime>([^<]+)</FromTime>", med)
+        stat_m = re.search(r"<Status>([^<]+)</Status>", med)
+
+        entered_at   = at_m.group(1).strip() if at_m else ""
+        routing_fac  = sf_m.group(1).strip() if sf_m else entered_at
+        from_time    = from_m.group(1).strip() if from_m else ""
+        status       = stat_m.group(1).strip().lower() if stat_m else "active"
+
+        if status not in ("active", ""):
+            continue
+
+        if routing_fac:
+            drug_routing[drug_desc].add(routing_fac)
+
+        # Prefer the copy with an explicit EnteredAt as the canonical source
+        if drug_desc not in master_meds or (entered_at and not master_meds[drug_desc]["entered_at"]):
+            master_meds[drug_desc] = {
+                "drug_desc":  drug_desc,
+                "entered_at": entered_at,
+                "from_time":  from_time,
+                "raw":        med,
+            }
+
+    # ── Step 3: Rule 6 — fix wrong-facility encounter numbers on medications ──
+    def fix_enc_in_med(med_block: str) -> str:
+        sf_m  = re.search(r"<SendingFacility>([^<]+)</SendingFacility>", med_block)
+        at_m  = re.search(r"<EnteredAt>\s*<Code>([^<]+)</Code>", med_block)
+        routing = (sf_m.group(1).strip() if sf_m else
+                   (at_m.group(1).strip() if at_m else ""))
+        if not routing or routing not in latest_enc:
             return med_block
-
-        # Apply Rule 6 fix to all medications in this container
-        fixed = re.sub(
-            r"<Medication>(.*?)</Medication>",
-            lambda m: f"<Medication>{fix_enc_num(m.group(1))}</Medication>",
-            container,
-            flags=re.DOTALL,
-        )
-
-        # 3b. Rule 7: inject missing active medications
-        # Drugs already present in this container
-        present = set(
-            m.strip() for m in
-            re.findall(
-                r"<DrugProduct>.*?<Description>([^<]+)</Description>",
-                fixed, re.DOTALL
+        enc_m = re.search(r"<EncounterNumber>([^<]+)</EncounterNumber>", med_block)
+        if not enc_m:
+            return med_block
+        enc_val = enc_m.group(1).strip()
+        enc_fac = enc_to_fac.get(enc_val, "")
+        if enc_fac and enc_fac != routing:
+            drug_m = re.search(
+                r"<DrugProduct>.*?<Description>([^<]+)</Description>", med_block, re.DOTALL
             )
-        )
-        injected: list[str] = []
-        for med_info in all_meds:
-            if med_info["drug_desc"] in present:
-                continue  # already there
-            # Only inject if this facility's latest encounter is on/after the med's start
-            # (simple string compare works because ISO dates sort lexicographically)
-            if own_enc and med_info["from_time"] and own_enc < med_info["from_time"]:
-                continue  # medication started after this facility's last encounter
-            # Build a reconciled medication block
-            raw = med_info["raw"]
-            # Replace EncounterNumber with this facility's own encounter number
-            if own_enc:
-                raw = re.sub(
-                    r"<EncounterNumber>[^<]+</EncounterNumber>",
-                    f"<EncounterNumber>{own_enc}</EncounterNumber>",
-                    raw,
-                )
-            injected.append(f"    <Medication>{raw}</Medication>")
+            drug_name = drug_m.group(1).strip() if drug_m else "?"
+            new_enc = latest_enc[routing]
             changes.append(
-                f"[{fac}] Injected missing medication '{med_info['drug_desc']}' "
-                f"(originated {med_info['entered_at']}), enc={own_enc}"
+                f"[{routing}] Fixed EncounterNumber on '{drug_name}': '{enc_val}' → '{new_enc}'"
             )
+            return med_block.replace(
+                f"<EncounterNumber>{enc_val}</EncounterNumber>",
+                f"<EncounterNumber>{new_enc}</EncounterNumber>",
+            )
+        return med_block
 
-        if injected:
-            inject_block = "\n".join(injected)
-            # Insert before </Medications> if section exists, else append a new section
-            if "</Medications>" in fixed:
-                fixed = fixed.replace(
-                    "</Medications>",
-                    "\n" + inject_block + "\n  </Medications>",
-                    1,
-                )
-            else:
-                fixed = fixed.rstrip() + (
-                    f"\n  <Medications>\n{inject_block}\n  </Medications>\n"
-                )
-
-        return fixed
-
-    # Apply container-level fixes across the full XML
-    fixed_xml = re.sub(
-        r"<Container>(.*?)</Container>",
-        lambda m: f"<Container>{fix_container(m.group(1))}</Container>",
+    xml = re.sub(
+        r"<Medication>(.*?)</Medication>",
+        lambda m: f"<Medication>{fix_enc_in_med(m.group(1))}</Medication>",
         xml,
         flags=re.DOTALL,
     )
 
-    return fixed_xml, changes
+    # ── Step 4: Rule 7 — inject missing medications per facility ─────────────
+    injected_blocks: list[str] = []
+    for drug_name, med_info in master_meds.items():
+        for fac, fac_enc in latest_enc.items():
+            if fac in drug_routing.get(drug_name, set()):
+                continue  # already routed to this facility
+            # Only inject if the facility's latest encounter is on/after the med start
+            fac_date_m = re.match(r"^[A-Z][A-Z0-9]*-(\d{8})-", fac_enc)
+            fac_date   = fac_date_m.group(1) if fac_date_m else ""
+            from_digits = re.sub(r"[^0-9]", "", med_info["from_time"])[:8]
+            if fac_date and from_digits and fac_date < from_digits:
+                continue  # medication started after this facility's last encounter
+            # Build reconciled copy: set SendingFacility to target facility,
+            # preserve EnteredAt (originating facility), fix EncounterNumber
+            raw = med_info["raw"]
+            if re.search(r"<SendingFacility>[^<]+</SendingFacility>", raw):
+                raw = re.sub(
+                    r"<SendingFacility>[^<]+</SendingFacility>",
+                    f"<SendingFacility>{fac}</SendingFacility>",
+                    raw,
+                )
+            else:
+                raw = raw.rstrip() + f"\n    <SendingFacility>{fac}</SendingFacility>"
+            if re.search(r"<EncounterNumber>[^<]+</EncounterNumber>", raw):
+                raw = re.sub(
+                    r"<EncounterNumber>[^<]+</EncounterNumber>",
+                    f"<EncounterNumber>{fac_enc}</EncounterNumber>",
+                    raw,
+                )
+            else:
+                raw = raw.rstrip() + f"\n    <EncounterNumber>{fac_enc}</EncounterNumber>"
+            injected_blocks.append(f"    <Medication>{raw}</Medication>")
+            changes.append(
+                f"[{fac}] Injected missing medication '{drug_name}' "
+                f"(originated {med_info['entered_at']}), enc={fac_enc}"
+            )
+            drug_routing[drug_name].add(fac)  # prevent double-injection
+
+    if injected_blocks:
+        inject_str = "\n".join(injected_blocks)
+        if "</Medications>" in xml:
+            xml = xml.replace("</Medications>", f"\n{inject_str}\n  </Medications>", 1)
+        else:
+            xml = xml.rstrip() + f"\n  <Medications>\n{inject_str}\n  </Medications>"
+
+    return xml, changes
 
 
 def _deterministic_checks(xml: str) -> list[str]:
