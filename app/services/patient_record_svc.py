@@ -668,6 +668,171 @@ async def _refine_scenario(
     return None
 
 
+def _reconcile_medications(xml: str) -> tuple[str, list[str]]:
+    """
+    Deterministic post-generation pass.
+
+    For every facility container:
+    1. Fix EncounterNumber on any medication whose encounter number belongs to
+       a different facility (Rule 6) — replace with this facility's latest
+       encounter number.
+    2. Inject any active medication that exists in another facility's container
+       but is missing here, if this facility had an encounter on or after that
+       medication's FromTime.
+
+    Returns (fixed_xml, list_of_changes_made).
+    """
+    changes: list[str] = []
+
+    # ── Step 1: collect all facility codes and their latest encounter numbers ──
+    all_fac_codes: set[str] = set(
+        re.findall(r"<SendingFacility>([^<]+)</SendingFacility>", xml)
+    )
+
+    # Map fac_code → latest encounter number (by position in the XML, last wins)
+    latest_enc: dict[str, str] = {}
+    for fac in all_fac_codes:
+        # Find all encounter numbers inside a Container whose SendingFacility == fac
+        for container in re.findall(r"<Container>(.*?)</Container>", xml, re.DOTALL):
+            sf = re.search(r"<SendingFacility>([^<]+)</SendingFacility>", container)
+            if sf and sf.group(1).strip() == fac:
+                encs = re.findall(r"<EncounterNumber>([^<]+)</EncounterNumber>", container)
+                # Keep only encounter numbers that contain this facility's code
+                own = [e for e in encs if fac in e]
+                if own:
+                    latest_enc[fac] = own[-1]
+                elif encs:
+                    latest_enc[fac] = encs[-1]
+
+    # ── Step 2: build a master medication list across all facilities ───────────
+    # Each entry: {drug_desc, entered_at, from_time, raw_block}
+    all_meds: list[dict] = []
+    seen_drugs: set[str] = set()
+    for container in re.findall(r"<Container>(.*?)</Container>", xml, re.DOTALL):
+        for med in re.findall(r"<Medication>(.*?)</Medication>", container, re.DOTALL):
+            drug_m  = re.search(
+                r"<DrugProduct>.*?<Description>([^<]+)</Description>", med, re.DOTALL
+            )
+            at_m    = re.search(r"<EnteredAt>\s*<Code>([^<]+)</Code>", med)
+            from_m  = re.search(r"<FromTime>([^<]+)</FromTime>", med)
+            status_m = re.search(r"<Status>([^<]+)</Status>", med)
+            if not drug_m:
+                continue
+            drug_desc  = drug_m.group(1).strip()
+            entered_at = at_m.group(1).strip() if at_m else ""
+            from_time  = from_m.group(1).strip() if from_m else ""
+            status     = status_m.group(1).strip().lower() if status_m else "active"
+            # Only track active/ongoing medications for reconciliation
+            if status not in ("active", ""):
+                continue
+            if drug_desc not in seen_drugs:
+                seen_drugs.add(drug_desc)
+                all_meds.append({
+                    "drug_desc":  drug_desc,
+                    "entered_at": entered_at,
+                    "from_time":  from_time,
+                    "raw":        med,
+                })
+
+    # ── Step 3: process each Container ────────────────────────────────────────
+    def fix_container(container: str) -> str:
+        sf = re.search(r"<SendingFacility>([^<]+)</SendingFacility>", container)
+        if not sf:
+            return container
+        fac = sf.group(1).strip()
+        own_enc = latest_enc.get(fac, "")
+
+        # 3a. Fix Rule 6: replace wrong-facility encounter numbers on medications
+        def fix_enc_num(med_block: str) -> str:
+            enc_m = re.search(r"<EncounterNumber>([^<]+)</EncounterNumber>", med_block)
+            if not enc_m or not own_enc:
+                return med_block
+            enc_val = enc_m.group(1).strip()
+            # If the encounter number contains a DIFFERENT facility's code, fix it
+            for other in all_fac_codes:
+                if other != fac and other in enc_val:
+                    drug_m = re.search(
+                        r"<DrugProduct>.*?<Description>([^<]+)</Description>",
+                        med_block, re.DOTALL
+                    )
+                    drug_name = drug_m.group(1).strip() if drug_m else "?"
+                    changes.append(
+                        f"[{fac}] Fixed EncounterNumber on '{drug_name}': "
+                        f"'{enc_val}' → '{own_enc}'"
+                    )
+                    return med_block.replace(
+                        f"<EncounterNumber>{enc_val}</EncounterNumber>",
+                        f"<EncounterNumber>{own_enc}</EncounterNumber>",
+                    )
+            return med_block
+
+        # Apply Rule 6 fix to all medications in this container
+        fixed = re.sub(
+            r"<Medication>(.*?)</Medication>",
+            lambda m: f"<Medication>{fix_enc_num(m.group(1))}</Medication>",
+            container,
+            flags=re.DOTALL,
+        )
+
+        # 3b. Rule 7: inject missing active medications
+        # Drugs already present in this container
+        present = set(
+            m.strip() for m in
+            re.findall(
+                r"<DrugProduct>.*?<Description>([^<]+)</Description>",
+                fixed, re.DOTALL
+            )
+        )
+        injected: list[str] = []
+        for med_info in all_meds:
+            if med_info["drug_desc"] in present:
+                continue  # already there
+            # Only inject if this facility's latest encounter is on/after the med's start
+            # (simple string compare works because ISO dates sort lexicographically)
+            if own_enc and med_info["from_time"] and own_enc < med_info["from_time"]:
+                continue  # medication started after this facility's last encounter
+            # Build a reconciled medication block
+            raw = med_info["raw"]
+            # Replace EncounterNumber with this facility's own encounter number
+            if own_enc:
+                raw = re.sub(
+                    r"<EncounterNumber>[^<]+</EncounterNumber>",
+                    f"<EncounterNumber>{own_enc}</EncounterNumber>",
+                    raw,
+                )
+            injected.append(f"    <Medication>{raw}</Medication>")
+            changes.append(
+                f"[{fac}] Injected missing medication '{med_info['drug_desc']}' "
+                f"(originated {med_info['entered_at']}), enc={own_enc}"
+            )
+
+        if injected:
+            inject_block = "\n".join(injected)
+            # Insert before </Medications> if section exists, else append a new section
+            if "</Medications>" in fixed:
+                fixed = fixed.replace(
+                    "</Medications>",
+                    "\n" + inject_block + "\n  </Medications>",
+                    1,
+                )
+            else:
+                fixed = fixed.rstrip() + (
+                    f"\n  <Medications>\n{inject_block}\n  </Medications>\n"
+                )
+
+        return fixed
+
+    # Apply container-level fixes across the full XML
+    fixed_xml = re.sub(
+        r"<Container>(.*?)</Container>",
+        lambda m: f"<Container>{fix_container(m.group(1))}</Container>",
+        xml,
+        flags=re.DOTALL,
+    )
+
+    return fixed_xml, changes
+
+
 def _deterministic_checks(xml: str) -> list[str]:
     """
     Regex-based checks that do not rely on GPT.
@@ -805,9 +970,21 @@ async def generate_record(
         active_scenario = scenario
         active_user_message = base_user_message
 
-    yield {"type": "status", "message": "Packaging files…"}
+    yield {"type": "status", "message": "Reconciling medications…"}
 
     xml = _strip_xml_fences(final_xml)
+
+    # ── Deterministic medication reconciliation (no GPT) ─────────────────────
+    xml, reconcile_changes = _reconcile_medications(xml)
+    if reconcile_changes:
+        yield {
+            "type": "status",
+            "message": f"Auto-fixed {len(reconcile_changes)} medication issue(s): "
+                       + "; ".join(reconcile_changes[:3])
+                       + ("…" if len(reconcile_changes) > 3 else ""),
+        }
+
+    yield {"type": "status", "message": "Packaging files…"}
 
     if not filename:
         from datetime import datetime
