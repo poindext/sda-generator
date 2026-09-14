@@ -1109,6 +1109,40 @@ When a scenario spans multiple facilities, **every facility that generates recor
 </PatientNumbers>
 ```
 
+#### Source ownership of medications — MANDATORY
+
+Each facility's SDA record must only **originate** medications it actually prescribed. If a medication was initiated at a different facility, the receiving facility must represent it as a **prior/home/reconciled medication** — not as a new active prescription.
+
+**Originating facility** creates the medication with:
+- `FromTime` = actual prescription date at that facility
+- `ToTime` = end of prescribed course (for time-limited meds)
+- `Status` = active (while running) or `C` (completed)
+
+**Receiving facility** that reconciles an already-in-progress medication must:
+- Use the **original `FromTime`** from the prescribing encounter — never the admission date
+- Set `Status=C` if the course is already complete by admission
+- Not duplicate it as a new active prescription starting on the admission date
+
+```
+WRONG: CMC starts Paxlovid on 08/12, even though COVID was diagnosed 08/10 at PC001
+       → implies hospital initiated an antiviral that should already be finishing
+
+CORRECT:
+  PC001 record: Paxlovid FromTime=08/10 ToTime=08/14 Status=C EnteredAt=PC001
+  CMC001 record: Paxlovid FromTime=08/10 ToTime=08/14 Status=C EnteredAt=PC001
+                 (reconciled from outpatient record — not a new hospital order)
+  CMC001 originates: Remdesivir, Dexamethasone, Enoxaparin (inpatient-only therapies)
+```
+
+**Rule of thumb for common medication sources in a COVID hospitalization:**
+| Medication | Originates at |
+|---|---|
+| Paxlovid (antiviral, 5-day outpatient course) | Primary care / urgent care |
+| Remdesivir IV | Hospital only |
+| Dexamethasone (inpatient COVID dose) | Hospital only |
+| Enoxaparin prophylaxis | Hospital only |
+| Chronic medications (lisinopril, metformin, etc.) | Primary care |
+
 #### Medication lifecycle
 
 - **Time-limited medications** (antivirals, antibiotics, short-course steroids, acute anticoagulants) **must have a `ToTime`** matching the prescribed course duration. An antiviral or steroid without `ToTime` will appear as ongoing therapy indefinitely.
@@ -1116,10 +1150,33 @@ When a scenario spans multiple facilities, **every facility that generates recor
 - **Never restart a completed medication.** If facility B is documenting a medication that facility A prescribed and the patient has already completed, record it with `Status=C` and the original `FromTime`/`ToTime` — do not create a new active prescription.
 - A medication prescribed elsewhere but active at the current encounter should carry the prescribing facility's `EnteredAt` and original `FromTime`.
 
+#### Encounter boundary constraint — CRITICAL
+
+**Resolution dates, vital-sign normalization, and medication stop dates must fall within the encounter whose notes say the event occurred.**
+
+If the discharge summary says a condition resolved before discharge, its `ToTime` must be ≤ the encounter's `ToTime`. A discharge date of 08/17 means nothing can resolve on 08/18 or 08/19 if the discharge note says it was already resolved.
+
+```
+WRONG: Encounter ToTime = 08/17. Problem "Fever" ToTime = 08/18.
+       → structured data says patient was discharged while still febrile,
+         then fever resolved the next day with no encounter
+
+CORRECT: Problem "Fever" ToTime = 08/15 or 08/16 (within the inpatient stay,
+         before the discharge note confirms afebrile status)
+```
+
+**The structured record must tell the same temporal story as the notes.**
+
+If the discharge summary says: *"afebrile × 48 h, SpO₂ 95% room air at discharge"* — then:
+- Fever problem `ToTime` must be discharge date minus ≥2 days
+- Hypoxemia problem `ToTime` must be ≤ discharge date
+- Final SpO₂ observation must show 95% room air on discharge date
+- Supplemental oxygen medication/order must end on or before discharge date
+
 #### Condition lifecycle — problems and diagnoses
 
 - Acute conditions **must transition to resolved** when the narrative describes recovery. A discharge summary that says "hypoxemia resolved" means the Problem and Diagnosis entries must also show resolved — not still active.
-- **Resolution dates must be clinically coherent**: a condition cannot resolve *after* the discharge date if the discharge summary says it resolved *during* the hospitalization. Resolve it at or before discharge.
+- **Resolution dates must be clinically coherent**: a condition cannot resolve *after* the discharge date if the discharge summary says it resolved *during* the hospitalization. Resolve it at or before discharge. (See Encounter boundary constraint above.)
 - When a condition is resolved at a subsequent encounter, generate an updated `<Problem>` with `ActionCode=U`, the same ICD-10 code, `Status=Resolved`, and `ToTime` set to the resolution date.
 - **Include the principal inpatient diagnosis as a structured `<Diagnosis>` entry** even when complication codes are also present. A discharge summary that lists U07.1 as the principal diagnosis must produce a U07.1 `<Diagnosis>` record — not only complication or symptom codes.
 
@@ -1144,6 +1201,32 @@ For inpatient stays, generate **at minimum three lab snapshots**:
 
 Results must show clinically coherent improvement where expected (e.g., CRP falling, WBC normalizing). A single lab panel for a 5-day hospitalization is not acceptable.
 
+#### Specialist and follow-up encounter structured data minimum
+
+A specialist or follow-up encounter that contains only a clinical note and one procedure CPT code is **not useful clinical data** for an HIE demonstration. Every encounter must contribute structured facts that a downstream system can read without NLP.
+
+**Minimum structured content for a specialist follow-up encounter:**
+- At least one `<Diagnosis>` or `<Problem>` representing the condition being followed
+- Relevant `<Observation>` records for the key clinical measurements documented at that visit
+- If a functional test was performed (6-minute walk, spirometry, stress test), discrete `<Observation>` elements for each measured parameter — not only the CPT code
+
+**6-minute walk test (6MWT) — required structured observations when performed:**
+
+| Measurement | LOINC | Example |
+|---|---|---|
+| Resting SpO₂ | `59408-5` | 96% |
+| Resting heart rate | `8867-4` | 78 bpm |
+| Distance walked | `64098-7` | 420 m |
+| Nadir (lowest) SpO₂ | `2708-6` | 92% |
+| Recovery SpO₂ at 1 min | `59408-5` | 95% |
+| Peak heart rate | `8867-4` | 105 bpm |
+| Supplemental O₂ required | `74206-8` | None |
+
+**Post-acute / recovery visit — minimum structured content:**
+- Active `<Problem>` for any residual condition (e.g., post-COVID fatigue, exertional intolerance) — a note mention is not sufficient
+- Resting vital signs including SpO₂
+- Resolution or improving `Status` on conditions left active by the prior facility
+
 #### Encounter type coherence
 
 Telehealth/virtual encounters (`EncounterType=V`) must not contain specimen collection, physical examination measurements, or in-person diagnostic testing. If the scenario includes a telehealth encounter and a same-day diagnostic test:
@@ -1152,7 +1235,7 @@ Telehealth/virtual encounters (`EncounterType=V`) must not contain specimen coll
 
 #### Coding coherence
 
-- **Two different lab panels cannot share the same LOINC order code.** If no appropriate LOINC panel code exists for a combination, use an institutional local code (e.g., `LCL-INFLAM`) with a clear `Description` rather than misusing a LOINC that has a different clinical meaning.
+- **Custom panel groupings must use `SDACodingStandard=LOCAL`, not `LN`.** A locally assembled combination of inflammatory markers is not a LOINC panel. Give it a local code (e.g., `LCL-INFLAM`) with `SDACodingStandard=LOCAL` and a clear `Description`. The individual result items within it still use `LN` LOINC codes.
 - **CPT codes must exactly match the procedure description**: 71045 = single portable/AP chest X-ray; 71046 = two-view PA and lateral chest X-ray. If the note or radiology order says "PA and lateral," use CPT 71046 — not 71045.
 - **CTA pulmonary arteries for PE evaluation** (CPT 71275) is distinct from CT chest with contrast (71250). If PE evaluation is explicitly part of the reason for the study, order and code CTA pulmonary arteries — not generic CT chest with contrast.
 
