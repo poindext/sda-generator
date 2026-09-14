@@ -88,6 +88,19 @@ async def list_cohort_templates():
     return {"options": patient_record_svc.list_cohort_options()}
 
 
+@router.get("/patient-record/next-scenario")
+async def get_next_scenario(package: str):
+    """Return the scenario_next.txt for a package (used by the UI regenerate button)."""
+    from app.config import BASE_DIR, POPULATIONS_DIR
+    path = (POPULATIONS_DIR / "single-records" / package / "scenario_next.txt").resolve()
+    records_resolved = (POPULATIONS_DIR / "single-records").resolve()
+    if not str(path).startswith(str(records_resolved)):
+        raise HTTPException(403)
+    if not path.exists():
+        raise HTTPException(404, "No refined scenario available for this package")
+    return {"scenario": path.read_text(encoding="utf-8")}
+
+
 @router.post("/patient-record/generate")
 async def generate_patient_record(body: RecordRequest):
     from app.services import patient_record_svc

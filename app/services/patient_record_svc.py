@@ -483,6 +483,82 @@ async def _xml_generation_pass(
     yield {"type": "xml_complete", "xml": full_text}
 
 
+_SCORE_SYSTEM_PROMPT = """\
+You are a clinical data quality reviewer scoring InterSystems HealthShare SDA3 patient records \
+for use as HIE/EMPI demonstration data.
+
+Score the record on four dimensions (25 points each, 100 total):
+
+1. Clinical accuracy (25): diagnoses, medications, labs, and procedures are clinically correct \
+and coherent with the patient story
+2. Temporal coherence (25): all dates are internally consistent; conditions resolve within the \
+encounter that documents resolution; medication start/stop dates match the prescribed course; \
+no event occurs outside its owning encounter's time window
+3. Cross-facility realism (25): every source facility has its own distinct local MRN; medications \
+are attributed to the facility that originated them; cross-facility medication reconciliation is \
+correct
+4. Structured data completeness (25): every clinically important fact from the notes also exists \
+as discrete structured data (observations, labs, problems, diagnoses) — not only in note text
+
+Then return an improved scenario description that would fix every remaining issue if used to \
+regenerate the record.
+
+Return ONLY valid JSON in this exact shape — no markdown fences, no commentary:
+{
+  "score": 82,
+  "dimensions": {
+    "clinical_accuracy": 22,
+    "temporal_coherence": 18,
+    "cross_facility_realism": 20,
+    "structured_completeness": 22
+  },
+  "issues": [
+    "Fever resolved 08/18, one day after 08/17 discharge — must resolve on or before discharge",
+    "PULM01 PatientNumbers is empty — needs a local MRN"
+  ],
+  "refined_scenario": "Full improved scenario text here..."
+}\
+"""
+
+
+async def _score_record(
+    scenario: str,
+    xml_text: str,
+    model: str,
+    client,
+) -> dict | None:
+    """
+    Ask GPT to score the refined record and return an improved scenario.
+    Returns a dict with score/dimensions/issues/refined_scenario, or None on failure.
+    """
+    xml_excerpt = xml_text[:80_000]
+    user_message = (
+        f"SCENARIO:\n{scenario}\n\n"
+        f"GENERATED XML:\n{xml_excerpt}"
+    )
+    try:
+        resp = await client.chat.completions.create(
+            model=model,
+            max_tokens=4000,
+            temperature=0.2,
+            messages=[
+                {"role": "system", "content": _SCORE_SYSTEM_PROMPT},
+                {"role": "user",   "content": user_message},
+            ],
+        )
+        raw = resp.choices[0].message.content.strip()
+        # Strip accidental markdown fences
+        raw = re.sub(r"^```(?:json)?\s*", "", raw)
+        raw = re.sub(r"\s*```$", "", raw)
+        result = json.loads(raw)
+        # Validate expected keys
+        if "score" in result and "refined_scenario" in result:
+            return result
+    except Exception:
+        pass
+    return None
+
+
 async def _refine_scenario(
     original_scenario: str,
     xml_text: str,
@@ -638,12 +714,29 @@ async def generate_record(
             zf.write(out_dir / "prompt.txt", "prompt.txt")
             zf.write(out_dir / "scenario.txt", "scenario.txt")
 
+        # ── Pass 2 review: score and offer another round before signalling done ─
+        yield {"type": "status", "message": "Scoring clinical quality…"}
+        review = await _score_record(active_scenario, xml, model, client)
+        if review:
+            next_scenario = review.get("refined_scenario", "")
+            if next_scenario:
+                (out_dir / "scenario_next.txt").write_text(next_scenario.strip(), encoding="utf-8")
+            yield {
+                "type": "review",
+                "score": review.get("score"),
+                "dimensions": review.get("dimensions", {}),
+                "issues": review.get("issues", []),
+                "next_scenario": next_scenario,
+                "package_name": base_name,
+            }
+
         yield {
             "type": "done",
             "files": files,
             "zip_path": str(zip_path.relative_to(BASE_DIR)),
             "zip_name": zip_path.name,
         }
+
     except Exception as exc:
         _RECORDS_DIR.mkdir(parents=True, exist_ok=True)
         fallback = _RECORDS_DIR / f"{base_name}.xml"

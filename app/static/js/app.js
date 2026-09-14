@@ -1682,6 +1682,79 @@ function loadPrHistory() {
   });
 }
 
+function _renderReviewCard(evt, originalScenario, cohortRefs, model) {
+  const score = evt.score ?? '—';
+  const dims  = evt.dimensions || {};
+  const issues = evt.issues || [];
+  const nextScenario = evt.next_scenario || '';
+
+  const scoreColor = score >= 90 ? '#28a745'
+    : score >= 75 ? 'var(--clr-primary)'
+    : score >= 60 ? '#fd7e14'
+    : '#dc3545';
+
+  const dimRows = Object.entries({
+    clinical_accuracy:       'Clinical accuracy',
+    temporal_coherence:      'Temporal coherence',
+    cross_facility_realism:  'Cross-facility realism',
+    structured_completeness: 'Structured completeness',
+  }).map(([k, label]) => {
+    const val = dims[k] ?? '—';
+    const pct = typeof val === 'number' ? Math.round(val / 25 * 100) : 0;
+    const barColor = pct >= 80 ? '#28a745' : pct >= 60 ? '#fd7e14' : '#dc3545';
+    return `<tr>
+      <td style="padding:4px 10px 4px 0;font-size:13px;white-space:nowrap">${label}</td>
+      <td style="padding:4px 0;width:100%">
+        <div style="background:var(--border);border-radius:4px;height:8px;overflow:hidden">
+          <div style="background:${barColor};height:100%;width:${pct}%;transition:width .4s"></div>
+        </div>
+      </td>
+      <td style="padding:4px 0 4px 10px;font-size:13px;font-weight:600;text-align:right">${val}/25</td>
+    </tr>`;
+  }).join('');
+
+  const issueList = issues.length
+    ? `<ul style="margin:8px 0 0;padding-left:18px;font-size:13px;color:var(--clr-text)">
+        ${issues.map(i => `<li style="margin-bottom:4px">${i}</li>`).join('')}
+       </ul>`
+    : '<p class="text-muted text-sm" style="margin-top:8px">No significant issues found.</p>';
+
+  const card = document.createElement('div');
+  card.id = 'pr-review-card';
+  card.className = 'card';
+  card.style.marginTop = '16px';
+  card.innerHTML = `
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px;justify-content:space-between">
+      <h3 style="margin:0">Clinical Quality Review</h3>
+      <div style="font-size:32px;font-weight:700;color:${scoreColor}">${score}<span style="font-size:16px;font-weight:400;color:var(--clr-muted)">/100</span></div>
+    </div>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:14px">${dimRows}</table>
+    <div>
+      <p style="font-size:13px;font-weight:600;margin:0">Remaining issues:</p>
+      ${issueList}
+    </div>
+    ${nextScenario ? `
+    <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);display:flex;align-items:center;gap:12px;justify-content:space-between">
+      <p style="font-size:13px;color:var(--clr-muted);margin:0">An improved scenario is ready. Regenerate to apply all fixes.</p>
+      <button id="btn-pr-regen" class="btn btn-primary">Regenerate with improved scenario →</button>
+    </div>` : ''}
+  `;
+
+  // Insert after result card
+  const resultCard = el('pr-result-card');
+  resultCard.parentNode.insertBefore(card, resultCard.nextSibling);
+
+  if (nextScenario) {
+    document.getElementById('btn-pr-regen').addEventListener('click', () => {
+      // Pre-fill the scenario and re-trigger generation with the refined scenario
+      el('pr-scenario').value = nextScenario;
+      // Keep same model/filename/cohorts, just use the improved scenario
+      card.remove();
+      el('btn-generate-record').click();
+    });
+  }
+}
+
 register('patient-record', () => {
   el('page-patient-record').classList.add('active');
 
@@ -1689,6 +1762,8 @@ register('patient-record', () => {
   hide('pr-progress-card');
   hide('pr-result-card');
   el('pr-file-list').innerHTML = '';
+  const prev = document.getElementById('pr-review-card');
+  if (prev) prev.remove();
 
   loadPrHistory();
 
@@ -1755,6 +1830,10 @@ register('patient-record', () => {
       statusEl.textContent = 'Generating SDA3 record' + '.'.repeat(dots);
     }, 600);
 
+    // Clear any previous review card
+    const existingReview = document.getElementById('pr-review-card');
+    if (existingReview) existingReview.remove();
+
     streamPost(
       '/patient-record/generate',
       { scenario, model, filename, cohort_refs },
@@ -1765,6 +1844,8 @@ register('patient-record', () => {
         } else if (evt.type === 'status') {
           clearInterval(dotTimer);
           statusEl.textContent = evt.message;
+        } else if (evt.type === 'review') {
+          _renderReviewCard(evt, scenario, cohort_refs, model);
         }
       },
       evt => {
