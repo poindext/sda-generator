@@ -1165,28 +1165,45 @@ Apply this check to **every** medication, lab order, procedure, diagnosis, and o
 
 #### Medication reconciliation at reviewing facilities — MANDATORY
 
-If a facility's encounter notes, a care plan, or a "continue current regimen" statement acknowledges a medication that was originated at a different facility, **that facility's SDA file must include the medication as a reconciled entry** — even though it did not originate there.
+**Rule:** Every medication that was active during a facility's encounter must appear in that facility's XML — regardless of where it was originally prescribed.
 
-- Use the **original `EnteredAt`** (the prescribing facility) and the original `FromTime`
-- Set `<EncounterNumber>` to the **reviewing facility's own encounter number**
-- This represents the reviewing facility documenting awareness and continuation of the medication
+Do not think in terms of "which facility originated this medication." Think in terms of "what medications were active on the date of this encounter?" Every active medication on that date belongs in that facility's Medications section.
+
+**Mechanical pre-generation step — complete this before writing any XML:**
+
+For each facility in the scenario, list the active medications at the time of that facility's last (or most relevant) encounter:
 
 ```
-Scenario: Empagliflozin prescribed at ENDO001 (09/01/2022). PC001 sees the patient
-          on 08/20/2026 and continues the regimen.
+Facility PC001, last encounter 08/20/2026 — active medications on that date:
+  1. Metformin 1000mg  → originated PC001  → include in PC001.xml ✓
+  2. Empagliflozin 10mg → originated ENDO001 → still active on 08/20/2026 → include in PC001.xml ✓
+  3. Lisinopril 20mg   → originated PC001  → include in PC001.xml ✓
+  4. Amlodipine 5mg    → originated PC001  → include in PC001.xml ✓
+  5. Atorvastatin 40mg → originated PC001  → include in PC001.xml ✓
+  6. Aspirin 81mg      → originated PC001  → include in PC001.xml ✓
 
+Facility ENDO001, encounter 05/15/2026 — active medications on that date:
+  1. Metformin 1000mg  → originated PC001  → active on 05/15/2026 → include in ENDO001.xml ✓
+  2. Empagliflozin 10mg → originated ENDO001 → include in ENDO001.xml ✓
+```
+
+If you skip this step, you will omit cross-facility medications from the reviewing facility's record.
+
+**For cross-facility medications (originated elsewhere, reconciled here):**
+- Use the **original `EnteredAt`** (the prescribing facility's code) and the original `FromTime`
+- Set `<EncounterNumber>` to the **current facility's own encounter number** for the visit where the medication was active
+- Do NOT change `EnteredAt` — the prescribing facility remains the source
+
+```
 WRONG: PC001 record contains only the 5 medications PC001 originated.
        → A clinician viewing PC001's record sees no Jardiance despite the
-         care plan explicitly continuing it.
+         patient actively taking it and the care plan explicitly continuing it.
 
 CORRECT:
   ENDO001.xml: Empagliflozin, EnteredAt=ENDO001, Enc=ENDO001-20260515-01, FromTime=09/01/2022
   PC001.xml:   Empagliflozin, EnteredAt=ENDO001, Enc=PC001-20260820-01, FromTime=09/01/2022
-               (reconciled — PC001 is documenting it continues; ENDO001 is still the source)
+               (PC001 is documenting the medication was active and continued at this visit)
 ```
-
-**Checklist before finalizing each facility's XML:**
-For every medication listed as active in the scenario's medication list, ask: *"Does every facility that had a visit where this medication was active or reviewed contain this medication?"* If not, add the reconciled entry.
 
 #### Medication lifecycle
 

@@ -400,6 +400,10 @@ The improved scenario must explicitly state:
 - Exact encounter dates, facility codes, facility names, and encounter types for every encounter
 - Each facility's local MRN for the patient (every source system must have its own)
 - Which facility prescribes each medication, with start date, stop date, and completion status
+- For each active medication, explicitly list EVERY facility whose encounter occurred while that \
+  medication was active — those facilities must document the medication as reconciled in their XML \
+  (e.g. "Empagliflozin initiated by ENDO001; also active and reconciled at PC001 visits on 02/10/2026, \
+  07/15/2026, and 08/20/2026 — must appear in PC001.xml for each of those encounters")
 - When each condition begins and resolves, with explicit dates that fall within the relevant encounter
 - Required structured observations and approximate values (vitals trajectory, labs at each time point, \
 functional test measurements)
