@@ -541,6 +541,24 @@ Use `FromTime` for prescription start date. Use `DoseQuantity`+`DoseUoM` (not `<
 
 ### Lab order / result example
 
+**One `<LabOrder>` per distinct ordered test or panel.** Do NOT bundle unrelated tests into one LabOrder just because they were collected at the same visit.
+
+- A lab panel (Lipid Panel, CMP, BMP, CBC) gets **one** `<LabOrder>` whose `<OrderItem>` names the panel, and **one `<LabResultItem>` per component** inside `<ResultItems>`.
+- A test ordered individually (e.g., HbA1c ordered by itself, TSH, urine ACR) gets its own `<LabOrder>` with a single `<LabResultItem>`.
+- If a scenario includes an HbA1c, a Lipid Panel, and a BMP, that is **three separate `<LabOrder>` elements** — not one order with all results jammed in.
+
+```
+WRONG: One LabOrder "Hemoglobin A1c" containing ResultItems for A1c, LDL,
+       Glucose, Creatinine, Triglycerides, and ACR — all 9 results under
+       one order name. HealthShare displays all 9 tests as "Order: HbA1c."
+
+CORRECT:
+  LabOrder 1: OrderItem = HbA1c panel (LOINC 4548-4) → 1 ResultItem: A1c
+  LabOrder 2: OrderItem = Lipid Panel (LOINC 24331-1) → 4 ResultItems: Total Cholesterol, LDL, HDL, Triglycerides
+  LabOrder 3: OrderItem = CMP (LOINC 24323-8)         → ResultItems: Glucose, Creatinine, eGFR, etc.
+  LabOrder 4: OrderItem = Urine ACR (LOINC 14959-1)   → 1 ResultItem: ACR
+```
+
 Note: Use `FromTime` for the order date — there is NO `OrderedOn` field. `ToTime` = `FromTime` for most orders. `EncounterNumber` is LAST.
 `ResultStatus` is a **plain string** (`F`=Final, `R`=Entered, `K`=Corrected) — not a CodeTableDetail.
 
@@ -555,12 +573,14 @@ Critical ordering rules:
 
 ```xml
 <LabOrders>
+
+  <!-- Single-test order: HbA1c ordered by itself -->
   <LabOrder>
     <PlacerId>LAB-20240315-001</PlacerId>
     <OrderItem>
       <SDACodingStandard>LN</SDACodingStandard>
-      <Code>2339-0</Code>
-      <Description>Glucose panel</Description>
+      <Code>4548-4</Code>
+      <Description>Hemoglobin A1c/Hemoglobin.total in Blood</Description>
     </OrderItem>
     <OrderedBy><Code>DR456</Code><Description>Dr. Smith</Description></OrderedBy>
     <EnteringOrganization><Code>GH001</Code><Description>General Hospital</Description></EnteringOrganization>
@@ -577,27 +597,115 @@ Critical ordering rules:
       <ResultType>AT</ResultType>
       <ResultItems>
         <LabResultItem>
-          <EnteredOn>2024-03-17T14:30:22Z</EnteredOn>
+          <EnteredOn>2024-03-15T14:30:00Z</EnteredOn>
           <TestItemCode>
             <SDACodingStandard>LN</SDACodingStandard>
-            <Code>2339-0</Code>
-            <Description>Glucose [Mass/volume] in Blood</Description>
+            <Code>4548-4</Code>
+            <Description>Hemoglobin A1c/Hemoglobin.total in Blood</Description>
             <IsNumeric>true</IsNumeric>
           </TestItemCode>
-          <ResultValue>142</ResultValue>
-          <ResultValueUnits>mg/dL</ResultValueUnits>
-          <ResultNormalRange>70-99</ResultNormalRange>
+          <ResultValue>7.1</ResultValue>
+          <ResultValueUnits>%</ResultValueUnits>
+          <ResultNormalRange>4.0-5.6</ResultNormalRange>
           <ResultInterpretation>H</ResultInterpretation>
           <ExternalId>LabResultItem_1</ExternalId>
         </LabResultItem>
       </ResultItems>
-      <ResultTime>2024-03-17T14:30:22Z</ResultTime>
+      <ResultTime>2024-03-15T14:30:00Z</ResultTime>
       <ResultStatus>F</ResultStatus>
       <ExternalId>Result_1</ExternalId>
     </Result>
     <ExternalId>LabOrder_1</ExternalId>
     <EncounterNumber>ENC-2024031501</EncounterNumber>
   </LabOrder>
+
+  <!-- Panel order: Lipid Panel with multiple result items -->
+  <LabOrder>
+    <PlacerId>LAB-20240315-002</PlacerId>
+    <OrderItem>
+      <SDACodingStandard>LN</SDACodingStandard>
+      <Code>24331-1</Code>
+      <Description>Lipid Panel</Description>
+    </OrderItem>
+    <OrderedBy><Code>DR456</Code><Description>Dr. Smith</Description></OrderedBy>
+    <EnteringOrganization><Code>GH001</Code><Description>General Hospital</Description></EnteringOrganization>
+    <Specimen>Blood</Specimen>
+    <SpecimenCollectedTime>2024-03-15T08:00:00Z</SpecimenCollectedTime>
+    <Priority><Code>R</Code><Description>Routine</Description></Priority>
+    <ActionCode>A</ActionCode>
+    <EnteredBy><Code>DR456</Code><Description>Dr. Smith</Description></EnteredBy>
+    <EnteredAt><Code>GH001</Code><Description>General Hospital</Description></EnteredAt>
+    <EnteredOn>2024-03-15T00:00:00Z</EnteredOn>
+    <FromTime>2024-03-15T00:00:00Z</FromTime>
+    <ToTime>2024-03-15T00:00:00Z</ToTime>
+    <Result>
+      <ResultType>AT</ResultType>
+      <ResultItems>
+        <LabResultItem>
+          <EnteredOn>2024-03-15T14:30:00Z</EnteredOn>
+          <TestItemCode>
+            <SDACodingStandard>LN</SDACodingStandard>
+            <Code>2093-3</Code>
+            <Description>Cholesterol [Mass/volume] in Serum or Plasma</Description>
+            <IsNumeric>true</IsNumeric>
+          </TestItemCode>
+          <ResultValue>168</ResultValue>
+          <ResultValueUnits>mg/dL</ResultValueUnits>
+          <ResultNormalRange>&lt;200</ResultNormalRange>
+          <ResultInterpretation>N</ResultInterpretation>
+          <ExternalId>LabResultItem_2</ExternalId>
+        </LabResultItem>
+        <LabResultItem>
+          <EnteredOn>2024-03-15T14:30:00Z</EnteredOn>
+          <TestItemCode>
+            <SDACodingStandard>LN</SDACodingStandard>
+            <Code>2089-1</Code>
+            <Description>Cholesterol in LDL [Mass/volume] in Serum or Plasma</Description>
+            <IsNumeric>true</IsNumeric>
+          </TestItemCode>
+          <ResultValue>94</ResultValue>
+          <ResultValueUnits>mg/dL</ResultValueUnits>
+          <ResultNormalRange>&lt;100</ResultNormalRange>
+          <ResultInterpretation>N</ResultInterpretation>
+          <ExternalId>LabResultItem_3</ExternalId>
+        </LabResultItem>
+        <LabResultItem>
+          <EnteredOn>2024-03-15T14:30:00Z</EnteredOn>
+          <TestItemCode>
+            <SDACodingStandard>LN</SDACodingStandard>
+            <Code>2085-9</Code>
+            <Description>Cholesterol in HDL [Mass/volume] in Serum or Plasma</Description>
+            <IsNumeric>true</IsNumeric>
+          </TestItemCode>
+          <ResultValue>48</ResultValue>
+          <ResultValueUnits>mg/dL</ResultValueUnits>
+          <ResultNormalRange>&gt;40</ResultNormalRange>
+          <ResultInterpretation>N</ResultInterpretation>
+          <ExternalId>LabResultItem_4</ExternalId>
+        </LabResultItem>
+        <LabResultItem>
+          <EnteredOn>2024-03-15T14:30:00Z</EnteredOn>
+          <TestItemCode>
+            <SDACodingStandard>LN</SDACodingStandard>
+            <Code>2571-8</Code>
+            <Description>Triglyceride [Mass/volume] in Serum or Plasma</Description>
+            <IsNumeric>true</IsNumeric>
+          </TestItemCode>
+          <ResultValue>130</ResultValue>
+          <ResultValueUnits>mg/dL</ResultValueUnits>
+          <ResultNormalRange>&lt;150</ResultNormalRange>
+          <ResultInterpretation>N</ResultInterpretation>
+          <ExternalId>LabResultItem_5</ExternalId>
+        </LabResultItem>
+      </ResultItems>
+      <ResultTime>2024-03-15T14:30:00Z</ResultTime>
+      <ResultStatus>F</ResultStatus>
+      <ExternalId>Result_2</ExternalId>
+    </Result>
+    <ExternalId>LabOrder_2</ExternalId>
+    <EncounterNumber>ENC-2024031501</EncounterNumber>
+  </LabOrder>
+
 </LabOrders>
 ```
 
