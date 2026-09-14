@@ -84,22 +84,6 @@ def list_cohort_options() -> list[dict]:
                     "cohort_id": c.get("id", ""),
                 })
 
-    # Main population templates (templates/*.template.json)
-    for path in sorted(TEMPLATES_DIR.glob("*.template.json")):
-        try:
-            data = json.loads(path.read_text(encoding="utf-8"))
-        except Exception:
-            continue
-        template_name = data.get("meta", {}).get("name", path.stem)
-        cohorts = data.get("cohorts", [])
-        rel = str(path.relative_to(TEMPLATES_DIR))
-        for c in cohorts:
-            options.append({
-                "label": f"{template_name} — {c.get('name', c.get('id', ''))}",
-                "template_file": rel,
-                "cohort_id": c.get("id", ""),
-            })
-
     return sorted(options, key=lambda o: o["label"].lower())
 
 
