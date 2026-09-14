@@ -495,10 +495,38 @@ and coherent with the patient story
 encounter that documents resolution; medication start/stop dates match the prescribed course; \
 no event occurs outside its owning encounter's time window
 3. Cross-facility realism (25): every source facility has its own distinct local MRN; medications \
-are attributed to the facility that originated them; cross-facility medication reconciliation is \
-correct
+are attributed to the facility that originated them; cross-facility medication reconciliation is correct
 4. Structured data completeness (25): every clinically important fact from the notes also exists \
-as discrete structured data (observations, labs, problems, diagnoses) — not only in note text
+as discrete structured data — not only in note text
+
+SEMANTIC CROSS-CHECK RULES — these catch errors that syntactic validators miss. Apply them \
+explicitly before scoring each dimension.
+
+Narrative ↔ structured problem-state (Temporal Coherence):
+- Read every discharge summary and progress note. Extract all language indicating a condition \
+  resolved, improved, or was no longer active (e.g. "afebrile", "no longer requiring oxygen", \
+  "all acute symptoms resolved", "SpO₂ 95% room air at discharge").
+- For each such finding, locate the corresponding structured Problem at the SAME facility.
+- If the Problem is still Active with no ToTime when the discharge note says it resolved, \
+  deduct 5–10 points from Temporal Coherence. This is a REAL defect — a hospital whose own \
+  discharge note says fever resolved must not have an Active Fever problem with no end date.
+- If a DIFFERENT facility correctly resolves the problem but the originating facility does not, \
+  that is the same defect. The originating source cannot have worse knowledge of its own \
+  patient's state than a downstream source.
+
+Observation ↔ structured problem:
+- If a measured vital sign or lab value objectively demonstrates resolution (temperature 98.6°F, \
+  SpO₂ ≥ 94% on room air, WBC normalized), any Active structured problem representing that \
+  finding must be resolved. An Active "Fever" problem alongside a normal final temperature \
+  is a contradiction worth 5–8 points off.
+
+Source ↔ source consistency (Cross-Facility Realism):
+- If Source A resolves a condition on date D, and Source B (the originating source) has the \
+  same condition still Active, deduct from Cross-Facility Realism. The originating source \
+  owns the resolution event.
+
+Do not give 100 unless all semantic cross-checks pass. A structurally clean record with a \
+narrative/structured contradiction is NOT a 100.
 
 Then return an improved scenario description that would fix every remaining issue if used to \
 regenerate the record.
@@ -513,8 +541,8 @@ Return ONLY valid JSON in this exact shape — no markdown fences, no commentary
     "structured_completeness": 22
   },
   "issues": [
-    "Fever resolved 08/18, one day after 08/17 discharge — must resolve on or before discharge",
-    "PULM01 PatientNumbers is empty — needs a local MRN"
+    "CMC Fever problem is Active with no ToTime — discharge note says all acute symptoms resolved 08/17",
+    "CMC Shortness of breath is Active — discharge note and SpO₂ 95% room air contradict this"
   ],
   "refined_scenario": "Full improved scenario text here..."
 }\

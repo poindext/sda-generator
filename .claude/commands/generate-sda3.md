@@ -1180,6 +1180,35 @@ If the discharge summary says: *"afebrile × 48 h, SpO₂ 95% room air at discha
 - When a condition is resolved at a subsequent encounter, generate an updated `<Problem>` with `ActionCode=U`, the same ICD-10 code, `Status=Resolved`, and `ToTime` set to the resolution date.
 - **Include the principal inpatient diagnosis as a structured `<Diagnosis>` entry** even when complication codes are also present. A discharge summary that lists U07.1 as the principal diagnosis must produce a U07.1 `<Diagnosis>` record — not only complication or symptom codes.
 
+#### Discharge document ↔ structured problem consistency — MANDATORY
+
+Before finalising any inpatient record, read the discharge summary and check every Active structured problem against it.
+
+**Rule:** If the discharge summary contains language indicating a condition resolved — *"afebrile at discharge"*, *"no longer requiring supplemental oxygen"*, *"all acute symptoms resolved"*, *"SpO₂ 95% room air"* — then every Active structured `<Problem>` or `<Diagnosis>` at that **same facility** that maps to a resolved condition **must** have `Status=Resolved` and `ToTime ≤ encounter ToTime`.
+
+The discharge summary and the structured problem list must tell exactly the same story. It is incoherent for a hospital's own discharge note to say a fever resolved while the hospital's own problem list still shows Fever as Active with no end date.
+
+```
+WRONG (CMC discharge says "afebrile, all acute symptoms resolved 08/17"):
+  <Problem>
+    <Problem><Code>R50.9</Code><Description>Fever</Description></Problem>
+    <Status><Code>55561003</Code><Description>Active</Description></Status>
+    <FromTime>2026-08-12T00:00:00Z</FromTime>
+    <!-- no ToTime — contradicts own discharge note -->
+  </Problem>
+
+CORRECT:
+  <Problem>
+    <Problem><Code>R50.9</Code><Description>Fever</Description></Problem>
+    <Status><Code>413322009</Code><Description>Resolved</Description></Status>
+    <ActionCode>U</ActionCode>
+    <FromTime>2026-08-12T00:00:00Z</FromTime>
+    <ToTime>2026-08-15T00:00:00Z</ToTime>  <!-- resolved during admission, before discharge -->
+  </Problem>
+```
+
+Apply this check to every symptom and acute condition at every facility before writing the final XML.
+
 #### Inpatient serial observations
 
 For inpatient stays ≥2 days, generate **periodic observations** showing clinical trajectory — not only admission values.
