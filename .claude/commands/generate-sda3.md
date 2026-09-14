@@ -253,7 +253,12 @@ Most clinical records should reference an encounter via `<EncounterNumber>`. Use
 
 ### Encounter example (Care Team + Insurance)
 
-**CRITICAL internal order**: EncounterNumber → EncounterType → AttendingClinicians → ReferringClinician → HealthCareFacility → HealthFunds → ActionCode → EnteredBy → EnteredAt → EnteredOn → FromTime → ToTime
+**CRITICAL internal order**: EncounterNumber → EncounterType → AdmittingClinician → AttendingClinicians → ReferringClinician → HealthCareFacility → HealthFunds → ActionCode → EnteredBy → EnteredAt → EnteredOn → FromTime → ToTime
+
+**Provider encoding — CRITICAL for Clinical Viewer display:**
+- `<AdmittingClinician>` is the primary provider field read by the HealthShare Clinical Viewer encounter tab. **Always populate this field** for every encounter type — inpatient, outpatient, and ED alike. This is the field that surfaces the provider in the UI.
+- `<AttendingClinicians>` is a secondary collection. For inpatient encounters where the attending differs from the admitting physician, include both. For outpatient and ED encounters, populate `AdmittingClinician` with the treating provider and omit `AttendingClinicians` unless there is a distinct attending to record.
+- Both fields use a plain `<CareProvider>` child with `<Code>` and `<Description>`.
 
 `HealthFunds.HealthFund.HealthFund.SDACodingStandard` = `QD_HealthPlanCodeList`. **`SDACodingStandard` must be the very first child** of the inner `<HealthFund>` element (before `<Code>` and `<Description>`). Priority=1 for primary insurance. No `SendingFacility` on Encounter.
 
@@ -262,12 +267,10 @@ Most clinical records should reference an encounter via `<EncounterNumber>`. Use
   <Encounter>
     <EncounterNumber>ENC-2024031501</EncounterNumber>
     <EncounterType>O</EncounterType>
-    <AttendingClinicians>
-      <CareProvider>
-        <Code>DR456</Code>
-        <Description>Dr. Smith</Description>
-      </CareProvider>
-    </AttendingClinicians>
+    <AdmittingClinician>
+      <Code>DR456</Code>
+      <Description>Dr. Smith</Description>
+    </AdmittingClinician>
     <ReferringClinician>
       <Code>DR123</Code>
       <Description>Dr. Jones</Description>
