@@ -1180,6 +1180,35 @@ If the discharge summary says: *"afebrile × 48 h, SpO₂ 95% room air at discha
 - When a condition is resolved at a subsequent encounter, generate an updated `<Problem>` with `ActionCode=U`, the same ICD-10 code, `Status=Resolved`, and `ToTime` set to the resolution date.
 - **Include the principal inpatient diagnosis as a structured `<Diagnosis>` entry** even when complication codes are also present. A discharge summary that lists U07.1 as the principal diagnosis must produce a U07.1 `<Diagnosis>` record — not only complication or symptom codes.
 
+#### Active + past ToTime is always a hard error — NEVER do this
+
+A `<Problem>` or `<Diagnosis>` with `Status=Active` **must not** have a `ToTime` that is earlier than the encounter date where it appears. A condition that ended in the past cannot be Active right now. This is a logical impossibility, not a style issue.
+
+Pick exactly one:
+- Condition is **still ongoing** → keep `Status=Active`, omit `ToTime`
+- Condition **has ended** → set `Status=Resolved` (or `Inactive`), set `ToTime` to the end date
+
+```
+WRONG (seen in a pulmonary record on 09/05):
+  Status=Active, FromTime=08/12, ToTime=08/19
+  → as of 09/05, ToTime is 17 days in the past — Active is impossible
+
+CORRECT option A (condition resolved):
+  Status=Resolved, FromTime=08/12, ToTime=08/19
+
+CORRECT option B (condition is still active on 09/05):
+  Status=Active, FromTime=08/12
+  (no ToTime — the condition is ongoing)
+```
+
+#### Clinical precision of finding labels
+
+Use the most specific label the structured data supports. **"Hypoxemia"** and **"exertional desaturation"** are different clinical concepts:
+- Resting SpO₂ ≤ 92% → Hypoxemia (may warrant Active problem)
+- Resting SpO₂ 94–96% but nadir 91–92% on exercise → Exertional desaturation / exercise-induced oxygen desaturation
+
+If the 6MWT shows resting SpO₂ 95% with nadir 92% on exertion, model two separate problems: prior hypoxemia (Resolved, ToTime = resolution date) + exertional desaturation (Active, current finding). Do not reuse the "Hypoxemia" label for an exertional finding when resting saturation is normal.
+
 #### Discharge document ↔ structured problem consistency — MANDATORY
 
 Before finalising any inpatient record, read the discharge summary and check every Active structured problem against it.

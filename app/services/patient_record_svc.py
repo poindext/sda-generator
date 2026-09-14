@@ -502,31 +502,46 @@ as discrete structured data — not only in note text
 SEMANTIC CROSS-CHECK RULES — these catch errors that syntactic validators miss. Apply them \
 explicitly before scoring each dimension.
 
-Narrative ↔ structured problem-state (Temporal Coherence):
+Rule 1 — Active + past ToTime (HARD FAILURE, deduct 10–15 pts from Temporal Coherence):
+- Scan every Problem and Diagnosis. If Status=Active AND ToTime is set AND ToTime is earlier \
+  than the encounter's FromTime (or the record date), this is a logical contradiction. \
+  A condition that has already ended cannot be Active. This rule is deterministic — it is \
+  always wrong, no exceptions.
+- Example: Problem Status=Active, FromTime=08/12, ToTime=08/19, on an encounter dated 09/05. \
+  The ToTime is 17 days before the encounter. The condition is over; Active is wrong.
+- Fix: either remove ToTime (if still genuinely active) or change Status to Resolved/Inactive.
+
+Rule 2 — Narrative ↔ structured problem-state (deduct 5–10 pts per violation):
 - Read every discharge summary and progress note. Extract all language indicating a condition \
-  resolved, improved, or was no longer active (e.g. "afebrile", "no longer requiring oxygen", \
-  "all acute symptoms resolved", "SpO₂ 95% room air at discharge").
+  resolved ("afebrile", "no longer requiring oxygen", "all acute symptoms resolved", \
+  "SpO₂ 95% room air at discharge").
 - For each such finding, locate the corresponding structured Problem at the SAME facility.
 - If the Problem is still Active with no ToTime when the discharge note says it resolved, \
-  deduct 5–10 points from Temporal Coherence. This is a REAL defect — a hospital whose own \
-  discharge note says fever resolved must not have an Active Fever problem with no end date.
+  this is a REAL defect. A hospital whose discharge note says fever resolved must not have \
+  an Active Fever problem with no end date.
 - If a DIFFERENT facility correctly resolves the problem but the originating facility does not, \
   that is the same defect. The originating source cannot have worse knowledge of its own \
   patient's state than a downstream source.
 
-Observation ↔ structured problem:
-- If a measured vital sign or lab value objectively demonstrates resolution (temperature 98.6°F, \
-  SpO₂ ≥ 94% on room air, WBC normalized), any Active structured problem representing that \
-  finding must be resolved. An Active "Fever" problem alongside a normal final temperature \
-  is a contradiction worth 5–8 points off.
+Rule 3 — Observation ↔ structured problem (deduct 5–8 pts per violation):
+- If a measured vital sign or lab value objectively demonstrates resolution (temp 98.6°F, \
+  SpO₂ ≥ 94% room air, WBC normalized), any Active structured problem representing that \
+  finding must be resolved. Active "Fever" problem alongside a normal final temperature \
+  is always a contradiction.
 
-Source ↔ source consistency (Cross-Facility Realism):
+Rule 4 — Source ↔ source consistency (deduct from Cross-Facility Realism):
 - If Source A resolves a condition on date D, and Source B (the originating source) has the \
   same condition still Active, deduct from Cross-Facility Realism. The originating source \
   owns the resolution event.
 
-Do not give 100 unless all semantic cross-checks pass. A structurally clean record with a \
-narrative/structured contradiction is NOT a 100.
+Rule 5 — Clinical precision of finding labels:
+- Check that problem/diagnosis descriptions match the clinical specificity of the findings. \
+  "Hypoxemia" and "exertional desaturation" are different conditions — a resting SpO₂ of 95% \
+  with nadir 92% on exertion is exertional desaturation, not hypoxemia. Using a non-specific \
+  label when the structured data supports a more precise one is a Clinical Accuracy deduction.
+
+Do not give 100 unless all semantic cross-checks pass. A structurally clean record with \
+any of the above contradictions is NOT a 100.
 
 Then return an improved scenario description that would fix every remaining issue if used to \
 regenerate the record.
