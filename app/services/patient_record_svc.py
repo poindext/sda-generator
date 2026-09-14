@@ -540,6 +540,23 @@ Rule 5 — Clinical precision of finding labels:
   with nadir 92% on exertion is exertional desaturation, not hypoxemia. Using a non-specific \
   label when the structured data supports a more precise one is a Clinical Accuracy deduction.
 
+Rule 6 — Medication EncounterNumber ↔ EnteredAt facility mismatch (HARD FAILURE, \
+deduct 5–8 pts from Cross-Facility Realism):
+- For every medication (and every lab order, procedure, diagnosis, and observation), the \
+  EncounterNumber must reference an encounter at the SAME facility as EnteredAt. If a \
+  medication has EnteredAt=ENDO001 but EncounterNumber=PC001-XXXX, that is a cross-facility \
+  linkage error — the medication appears to belong to an encounter it has no relationship to. \
+  This is always wrong, no exceptions. Check every single medication record.
+
+Rule 7 — Medication reconciliation completeness (deduct 5–10 pts from Cross-Facility Realism):
+- Read the scenario's medication list and each facility's care plan or visit notes. For every \
+  active medication listed in the scenario, verify that EVERY facility whose encounter \
+  explicitly reviewed, adjusted, continued, or managed that medication includes it in its XML. \
+  If PC001 documented "continue current regimen" or "diabetes and hypertension management" but \
+  its XML omits a medication originated at ENDO001, that is a reconciliation gap — a clinician \
+  viewing only PC001 cannot see the complete active medication list. Each missing reconciled \
+  medication counts as one deduction instance.
+
 Do not give 100 unless all semantic cross-checks pass. A structurally clean record with \
 any of the above contradictions is NOT a 100.
 

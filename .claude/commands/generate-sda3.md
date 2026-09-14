@@ -1148,6 +1148,46 @@ CORRECT:
 | Enoxaparin prophylaxis | Hospital only |
 | Chronic medications (lisinopril, metformin, etc.) | Primary care |
 
+#### Medication EncounterNumber must match EnteredAt facility — MANDATORY
+
+Every medication's `<EncounterNumber>` must reference an encounter at the **same facility** as its `<EnteredAt>`. Never put a PC001 encounter number on a medication entered at ENDO001, and vice versa.
+
+```
+WRONG: <EnteredAt><Code>ENDO001</Code>...</EnteredAt>
+       <EncounterNumber>PC001-20260820-01</EncounterNumber>
+       → medication appears to belong to a PC001 encounter it has no relationship to
+
+CORRECT: <EnteredAt><Code>ENDO001</Code>...</EnteredAt>
+         <EncounterNumber>ENDO001-20260515-01</EncounterNumber>
+```
+
+Apply this check to **every** medication, lab order, procedure, diagnosis, and observation before writing the final XML. The encounter number prefix (or facility code embedded in it) must always agree with the `EnteredAt` facility code.
+
+#### Medication reconciliation at reviewing facilities — MANDATORY
+
+If a facility's encounter notes, a care plan, or a "continue current regimen" statement acknowledges a medication that was originated at a different facility, **that facility's SDA file must include the medication as a reconciled entry** — even though it did not originate there.
+
+- Use the **original `EnteredAt`** (the prescribing facility) and the original `FromTime`
+- Set `<EncounterNumber>` to the **reviewing facility's own encounter number**
+- This represents the reviewing facility documenting awareness and continuation of the medication
+
+```
+Scenario: Empagliflozin prescribed at ENDO001 (09/01/2022). PC001 sees the patient
+          on 08/20/2026 and continues the regimen.
+
+WRONG: PC001 record contains only the 5 medications PC001 originated.
+       → A clinician viewing PC001's record sees no Jardiance despite the
+         care plan explicitly continuing it.
+
+CORRECT:
+  ENDO001.xml: Empagliflozin, EnteredAt=ENDO001, Enc=ENDO001-20260515-01, FromTime=09/01/2022
+  PC001.xml:   Empagliflozin, EnteredAt=ENDO001, Enc=PC001-20260820-01, FromTime=09/01/2022
+               (reconciled — PC001 is documenting it continues; ENDO001 is still the source)
+```
+
+**Checklist before finalizing each facility's XML:**
+For every medication listed as active in the scenario's medication list, ask: *"Does every facility that had a visit where this medication was active or reviewed contain this medication?"* If not, add the reconciled entry.
+
 #### Medication lifecycle
 
 - **Time-limited medications** (antivirals, antibiotics, short-course steroids, acute anticoagulants) **must have a `ToTime`** matching the prescribed course duration. An antiviral or steroid without `ToTime` will appear as ongoing therapy indefinitely.
