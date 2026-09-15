@@ -1008,6 +1008,9 @@ async def generate_record(
         files, zip_path = _split_by_facility(xml, base_name, out_dir)
 
         (out_dir / "scenario.txt").write_text(active_scenario.strip(), encoding="utf-8")
+        # Save first non-blank line of original user input as the display description
+        desc_line = next((ln.strip() for ln in scenario.splitlines() if ln.strip()), "")[:140]
+        (out_dir / "description.txt").write_text(desc_line, encoding="utf-8")
         if refined_scenario:
             (out_dir / "scenario_original.txt").write_text(scenario.strip(), encoding="utf-8")
             (out_dir / "scenario_refined.txt").write_text(refined_scenario.strip(), encoding="utf-8")

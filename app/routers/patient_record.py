@@ -53,9 +53,12 @@ async def list_patient_records():
         xml_files = sorted(pkg.glob("*.xml"))
         zip_files = list(pkg.glob("*.zip"))
         zip_path = str(zip_files[0].relative_to(BASE_DIR)) if zip_files else ""
+        desc_file = pkg / "description.txt"
         scenario_file = pkg / "scenario.txt"
         description = ""
-        if scenario_file.exists():
+        if desc_file.exists():
+            description = desc_file.read_text(encoding="utf-8").strip()[:140]
+        elif scenario_file.exists():
             first_line = scenario_file.read_text(encoding="utf-8").split("\n")[0].strip()
             description = first_line[:140]
         results.append({
