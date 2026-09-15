@@ -24,7 +24,7 @@ class RecordRequest(BaseModel):
     cohort_id: str = ""
 
 
-@router.delete("/patient-record/{package}")
+@router.post("/patient-record/{package}/delete")
 async def delete_patient_record(package: str):
     import shutil
     from app.config import POPULATIONS_DIR

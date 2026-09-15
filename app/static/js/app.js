@@ -1690,7 +1690,7 @@ function deletePatientRecord(packageName, btnEl) {
   if (!confirm(`Delete "${packageName}" and all its files? This cannot be undone.`)) return;
   btnEl.disabled = true;
   btnEl.textContent = 'Deleting…';
-  fetch(`/api/patient-record/${encodeURIComponent(packageName)}`, { method: 'DELETE' })
+  fetch(`/api/patient-record/${encodeURIComponent(packageName)}/delete`, { method: 'POST' })
     .then(r => {
       if (!r.ok) throw new Error(`Server returned ${r.status}`);
       // Remove the table row
