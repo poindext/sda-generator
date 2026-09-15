@@ -589,19 +589,16 @@ Rule 5 — Clinical precision of finding labels:
 Do not give 100 unless all semantic cross-checks pass. A structurally clean record with \
 any of the above contradictions is NOT a 100.
 
-Then return a refined scenario description that would fix every remaining issue if used to \
-regenerate the record.
+Then write a short amendment list — specific fixes to apply when regenerating the record.
 
-CRITICAL CONSTRAINTS FOR refined_scenario:
-- Start from the ORIGINAL SCENARIO provided in the user message. Do NOT invent a new patient.
-- Preserve EXACTLY: patient name, date of birth, sex, race/ethnicity, and all demographic details.
-- Preserve EXACTLY: every facility code, facility name, specialty provider, and their clinical roles.
-- Preserve ALL clinical content that has no issue (diagnoses, medications, labs, procedures, \
-  timeline of events that were scored correctly).
-- Only ADD, AMEND, or CLARIFY the specific elements that the identified issues require you to fix.
-- The result should read as a targeted amendment of the original scenario — at least 90% of the \
-  wording should be unchanged or only lightly edited.
-- Do NOT simplify, shorten, or reduce the clinical complexity of the original scenario.
+CRITICAL: Do NOT rewrite or summarise the scenario. Write ONLY the amendments — a bulleted list \
+of specific corrections. 3–10 bullets max. Each bullet names the exact facility, field, and fix. \
+The original scenario text will be prepended automatically; you only supply what changes.
+
+Example amendments format:
+- PC001 Lyme disease Diagnosis: change Status from Active to Resolved; add ToTime=2019-07-15
+- GH001 Babesiosis Problem: add ToTime=2020-03-30 to reflect documented resolution at discharge
+- ID001: add an explicit LabResultItem for Babesia microti PCR with ResultValue=Negative on 2020-04-10
 
 Return ONLY valid JSON in this exact shape — no markdown fences, no commentary:
 {
@@ -616,7 +613,7 @@ Return ONLY valid JSON in this exact shape — no markdown fences, no commentary
     "CMC Fever problem is Active with no ToTime — discharge note says all acute symptoms resolved 08/17",
     "CMC Shortness of breath is Active — discharge note and SpO₂ 95% room air contradict this"
   ],
-  "refined_scenario": "Same patient, same facilities, same providers — original scenario text with targeted amendments only to fix the listed issues."
+  "amendments": "- PC001 Lyme disease Diagnosis: change Status from Active to Resolved; add ToTime=2019-07-15\n- GH001 Babesiosis Problem: add ToTime=2020-03-30"
 }\
 """
 
@@ -639,7 +636,7 @@ async def _score_record(
     try:
         resp = await client.chat.completions.create(
             model=model,
-            max_tokens=4000,
+            max_tokens=1500,
             temperature=0.2,
             messages=[
                 {"role": "system", "content": _SCORE_SYSTEM_PROMPT},
@@ -652,8 +649,19 @@ async def _score_record(
         raw = re.sub(r"\s*```$", "", raw)
         result = json.loads(raw)
         # Validate expected keys
-        if "score" in result and "refined_scenario" in result:
-            return result
+        if "score" not in result:
+            return None
+        # Build refined_scenario by prepending the original — amendments only change what's broken
+        amendments = result.get("amendments", result.get("refined_scenario", ""))
+        if amendments:
+            result["refined_scenario"] = (
+                scenario.strip()
+                + "\n\n[AMENDMENTS — apply all of the following fixes on regeneration]\n"
+                + amendments.strip()
+            )
+        else:
+            result["refined_scenario"] = ""
+        return result
     except Exception:
         pass
     return None
