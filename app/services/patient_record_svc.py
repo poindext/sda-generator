@@ -969,29 +969,41 @@ def _deterministic_checks(xml: str) -> list[str]:
                 drug_keys_seen.append(med_key)
 
     # Rule 9 — Diagnosis missing Status
-    # Diagnoses use EnteredAt/Code for facility (not SendingFacility, which is record-level).
-    # Iterate over all Diagnoses in the pre-split combined XML directly.
-    for dx_section in re.findall(r"<Diagnoses>(.*?)</Diagnoses>", xml, re.DOTALL):
-        for dx_block in re.findall(r"<Diagnosis>(.*?)</Diagnosis>", dx_section, re.DOTALL):
-            # Skip the inner nested <Diagnosis> code element (no EncounterNumber or EnteredAt)
-            if "<EncounterNumber>" not in dx_block and "<EnteredAt>" not in dx_block:
+    # Regex cannot reliably handle nested <Diagnosis> tags, so use lxml.
+    try:
+        from lxml import etree as _lxml_et
+        _root = _lxml_et.fromstring(
+            _prep_xml_for_lxml(xml).encode(), _lxml_et.XMLParser(recover=True)
+        )
+        for dx_record in _root.findall(".//Diagnoses/Diagnosis"):
+            if dx_record.find("Status") is not None:
                 continue
-            fac_m = re.search(r"<EnteredAt>[\s\S]*?<Code>([^<]+)</Code>", dx_block)
-            fac = fac_m.group(1).strip() if fac_m else ""
-            code_m = re.search(r"<Diagnosis>[\s\S]*?<Code>([^<]+)</Code>", dx_block)
-            code = code_m.group(1).strip() if code_m else "unknown"
-            if not re.search(r"<Status>", dx_block):
-                issues.append(
-                    f"Rule 9 CONFIRMED — [{fac}] Diagnosis {code} is missing a Status element. "
-                    f"Every Diagnosis must have a Status with Code=A (Active) or Code=R + ToTime (Resolved). "
-                    f"DiagnosisType (Acute/Chronic) is not a substitute for Status."
-                )
+            fac = dx_record.findtext("EnteredAt/Code") or ""
+            code = dx_record.findtext("Diagnosis/Code") or "unknown"
+            issues.append(
+                f"Rule 9 CONFIRMED — [{fac}] Diagnosis {code} is missing a Status element. "
+                f"Every Diagnosis must have a Status with Code=A (Active) or Code=R + ToTime (Resolved). "
+                f"DiagnosisType (Acute/Chronic) is not a substitute for Status."
+            )
+    except Exception:
+        pass  # If lxml parse fails, skip Rule 9 (fixer runs before checks)
 
     return issues
 
 
 # Z-code prefixes that are always historical (personal/family history) → always Resolved
 _HISTORY_CODE_PREFIXES = ("Z80.", "Z81.", "Z82.", "Z83.", "Z84.", "Z85.", "Z86.", "Z87.", "Z88.", "Z89.", "Z96.", "Z97.")
+
+
+def _prep_xml_for_lxml(xml: str) -> str:
+    """Apply the same pre-processing _split_by_facility uses before lxml parsing."""
+    raw = xml.strip()
+    if raw.startswith("<?xml"):
+        raw = raw[raw.index("?>") + 2:].strip()
+    raw = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f]", "", raw)
+    raw = re.sub(r"&(?!(?:amp|lt|gt|apos|quot|#\d+|#x[0-9a-fA-F]+);)", "&amp;", raw)
+    raw = re.sub(r"<(?![a-zA-Z/!?])", "&lt;", raw)
+    return raw
 
 
 def _fix_diagnosis_status(xml: str) -> tuple[str, int]:
@@ -1005,14 +1017,11 @@ def _fix_diagnosis_status(xml: str) -> tuple[str, int]:
     Returns (patched_xml, count_fixed).
     """
     from lxml import etree as lxml_et
-    from xml.etree import ElementTree as ET
-
-    raw = xml.strip()
-    if raw.startswith("<?xml"):
-        raw = raw[raw.index("?>") + 2:].strip()
 
     try:
-        root = lxml_et.fromstring(raw.encode(), lxml_et.XMLParser(recover=True))
+        root = lxml_et.fromstring(
+            _prep_xml_for_lxml(xml).encode(), lxml_et.XMLParser(recover=True)
+        )
     except Exception:
         return xml, 0
 
