@@ -512,7 +512,6 @@ Comes **after `<Vaccinations>`** near the end of `<Container>`. `Status` is plai
     <ObservationTime>2024-03-15T09:00:00Z</ObservationTime>
     <ObservationCode><Code>8480-6</Code><Description>BP Systolic</Description></ObservationCode>
     <ObservationValue>128</ObservationValue>
-    <ObservationValueUnits>mmHg</ObservationValueUnits>
     <Clinician><Code>DR456</Code><Description>Dr. Smith</Description></Clinician>
     <EnteredAt><Code>GH001</Code><Description>General Hospital</Description></EnteredAt>
     <EnteredOn>2024-03-15T09:00:00Z</EnteredOn>
@@ -523,7 +522,6 @@ Comes **after `<Vaccinations>`** near the end of `<Container>`. `Status` is plai
     <ObservationTime>2024-03-15T09:00:00Z</ObservationTime>
     <ObservationCode><Code>8462-4</Code><Description>BP Diastolic</Description></ObservationCode>
     <ObservationValue>76</ObservationValue>
-    <ObservationValueUnits>mmHg</ObservationValueUnits>
     <Clinician><Code>DR456</Code><Description>Dr. Smith</Description></Clinician>
     <EnteredAt><Code>GH001</Code><Description>General Hospital</Description></EnteredAt>
     <EnteredOn>2024-03-15T09:00:00Z</EnteredOn>
@@ -534,7 +532,6 @@ Comes **after `<Vaccinations>`** near the end of `<Container>`. `Status` is plai
     <ObservationTime>2024-03-15T09:00:00Z</ObservationTime>
     <ObservationCode><Code>8302-2</Code><Description>Body height</Description></ObservationCode>
     <ObservationValue>70</ObservationValue>
-    <ObservationValueUnits>in</ObservationValueUnits>
     <Clinician><Code>DR456</Code><Description>Dr. Smith</Description></Clinician>
     <EnteredAt><Code>GH001</Code><Description>General Hospital</Description></EnteredAt>
     <EnteredOn>2024-03-15T09:00:00Z</EnteredOn>
@@ -545,7 +542,6 @@ Comes **after `<Vaccinations>`** near the end of `<Container>`. `Status` is plai
     <ObservationTime>2024-03-15T09:00:00Z</ObservationTime>
     <ObservationCode><Code>29463-7</Code><Description>Body weight</Description></ObservationCode>
     <ObservationValue>222</ObservationValue>
-    <ObservationValueUnits>lbs</ObservationValueUnits>
     <Clinician><Code>DR456</Code><Description>Dr. Smith</Description></Clinician>
     <EnteredAt><Code>GH001</Code><Description>General Hospital</Description></EnteredAt>
     <EnteredOn>2024-03-15T09:00:00Z</EnteredOn>
@@ -556,7 +552,6 @@ Comes **after `<Vaccinations>`** near the end of `<Container>`. `Status` is plai
     <ObservationTime>2024-03-15T09:00:00Z</ObservationTime>
     <ObservationCode><Code>39156-5</Code><Description>Body mass index (BMI)</Description></ObservationCode>
     <ObservationValue>31.8</ObservationValue>
-    <ObservationValueUnits>kg/m2</ObservationValueUnits>
     <Clinician><Code>DR456</Code><Description>Dr. Smith</Description></Clinician>
     <EnteredAt><Code>GH001</Code><Description>General Hospital</Description></EnteredAt>
     <EnteredOn>2024-03-15T09:00:00Z</EnteredOn>
