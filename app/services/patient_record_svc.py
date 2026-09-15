@@ -586,6 +586,15 @@ Rule 5 — Clinical precision of finding labels:
   with nadir 92% on exertion is exertional desaturation, not hypoxemia. Using a non-specific \
   label when the structured data supports a more precise one is a Clinical Accuracy deduction.
 
+Rule 6 — Diagnosis Status field missing (deduct 5 pts per missing instance from Structured Completeness):
+- Every `<Diagnosis>` element MUST contain a `<Status>` element.
+- Acute diagnoses that have resolved (infections, acute episodes) MUST have Status Code=R \
+  (Resolved) AND a `<ToTime>` set to when the condition ended.
+- Active chronic diagnoses MUST have Status Code=A (Active).
+- A `<Diagnosis>` with only `<DiagnosisType>` and no `<Status>` is ALWAYS an error. \
+  `DiagnosisType` (Acute/Chronic) is not the same as Status (Active/Resolved).
+- In the amendments, name the exact facility, diagnosis code, and correct Status/ToTime to add.
+
 Do not give 100 unless all semantic cross-checks pass. A structurally clean record with \
 any of the above contradictions is NOT a 100.
 
@@ -958,6 +967,30 @@ def _deterministic_checks(xml: str) -> list[str]:
                 )
             else:
                 drug_keys_seen.append(med_key)
+
+    # Rule 9 — Diagnosis missing <Status>
+    # Operates at the container level (same as Rules 6/8) on the pre-split combined XML
+    for container in re.findall(r"<Container>(.*?)</Container>", xml, re.DOTALL):
+        sf_m = re.search(r"<SendingFacility>([^<]+)</SendingFacility>", container)
+        sending_fac = sf_m.group(1).strip() if sf_m else ""
+
+        dx_section_m = re.search(r"<Diagnoses>(.*?)</Diagnoses>", container, re.DOTALL)
+        if not dx_section_m:
+            continue
+        for dx_block in re.findall(r"<Diagnosis>(.*?)</Diagnosis>", dx_section_m.group(1), re.DOTALL):
+            # Skip inner <Diagnosis> code elements (they have no <EncounterNumber> or <EnteredAt>)
+            if "<EncounterNumber>" not in dx_block and "<EnteredAt>" not in dx_block:
+                continue
+            # Extract ICD code from the nested <Diagnosis> child
+            code_m = re.search(r"<Diagnosis>[\s\S]*?<Code>([^<]+)</Code>", dx_block)
+            code = code_m.group(1).strip() if code_m else "unknown"
+            has_status = bool(re.search(r"<Status>", dx_block))
+            if not has_status:
+                issues.append(
+                    f"Rule 9 CONFIRMED — [{sending_fac}] Diagnosis {code} is missing a <Status> element. "
+                    f"Every Diagnosis must have <Status><SDACodingStandard>HL7</SDACodingStandard>"
+                    f"<Code>A</Code><Description>Active</Description></Status> (or Code R + ToTime if resolved)."
+                )
 
     return issues
 

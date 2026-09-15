@@ -786,8 +786,17 @@ Critical ordering rules:
 
 **Critical**: The diagnosis code lives in a **child `<Diagnosis>` element** (same name as parent). No `SDACodingStandard` on the nested code or `DiagnosisType`. No `ActionCode`. `EncounterNumber` is **first**. `ExternalId` is **last**.
 
+**Always include `<Status>`** on every Diagnosis using HL7 coding:
+- Active/ongoing: `<Status><SDACodingStandard>HL7</SDACodingStandard><Code>A</Code><Description>Active</Description></Status>`
+- Resolved/past: `<Status><SDACodingStandard>HL7</SDACodingStandard><Code>R</Code><Description>Resolved</Description></Status>`
+
+**Acute diagnoses that have resolved** (infections, episodes, acute injuries) **MUST** have:
+1. `<Status>` with Code `R` and Description `Resolved`
+2. `<ToTime>` set to the date the condition ended (end of antibiotic course, discharge date, etc.)
+
 ```xml
 <Diagnoses>
+  <!-- Active chronic condition -->
   <Diagnosis>
     <EncounterNumber>ENC-2024031501</EncounterNumber>
     <DiagnosingClinician><Code>DR456</Code><Description>Dr. Smith</Description></DiagnosingClinician>
@@ -799,10 +808,40 @@ Critical ordering rules:
       <Code>C</Code>
       <Description>Chronic</Description>
     </DiagnosisType>
+    <Status>
+      <SDACodingStandard>HL7</SDACodingStandard>
+      <Code>A</Code>
+      <Description>Active</Description>
+    </Status>
     <EnteredBy><Code>DR456</Code><Description>Dr. Smith</Description></EnteredBy>
     <EnteredAt><Code>GH001</Code><Description>General Hospital</Description></EnteredAt>
     <EnteredOn>2024-03-15T00:00:00Z</EnteredOn>
+    <FromTime>2024-03-15T00:00:00Z</FromTime>
     <ExternalId>Diagnoses_1</ExternalId>
+  </Diagnosis>
+  <!-- Resolved acute condition — MUST include Status=R and ToTime -->
+  <Diagnosis>
+    <EncounterNumber>ENC-2024031501</EncounterNumber>
+    <DiagnosingClinician><Code>DR456</Code><Description>Dr. Smith</Description></DiagnosingClinician>
+    <Diagnosis>
+      <Code>J06.9</Code>
+      <Description>Acute upper respiratory infection, unspecified</Description>
+    </Diagnosis>
+    <DiagnosisType>
+      <Code>A</Code>
+      <Description>Acute</Description>
+    </DiagnosisType>
+    <Status>
+      <SDACodingStandard>HL7</SDACodingStandard>
+      <Code>R</Code>
+      <Description>Resolved</Description>
+    </Status>
+    <EnteredBy><Code>DR456</Code><Description>Dr. Smith</Description></EnteredBy>
+    <EnteredAt><Code>GH001</Code><Description>General Hospital</Description></EnteredAt>
+    <EnteredOn>2024-03-01T00:00:00Z</EnteredOn>
+    <FromTime>2024-03-01T00:00:00Z</FromTime>
+    <ToTime>2024-03-14T00:00:00Z</ToTime>
+    <ExternalId>Diagnoses_2</ExternalId>
   </Diagnosis>
 </Diagnoses>
 ```
