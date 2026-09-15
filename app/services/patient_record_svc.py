@@ -4,6 +4,8 @@ generate-sda3 skill as a system prompt and an OpenAI model as the generator.
 Optionally enriches the prompt with clinical context extracted from an existing
 population template cohort (validated ICD-10, RxNorm, LOINC codes).
 """
+from __future__ import annotations
+
 import copy
 import json
 import re
