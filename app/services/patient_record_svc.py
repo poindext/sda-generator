@@ -645,7 +645,8 @@ async def _summarize_scenario(scenario: str, model: str, client) -> str:
                     "content": (
                         "You are a clinical informatics assistant. "
                         "Summarize the clinical scenario in one concise line (≤100 characters). "
-                        "Format: 'Patient name, age/sex, primary conditions, facilities.' "
+                        "Format: 'Patient name, age/sex, primary conditions, N facility' (e.g. '2 facilities'). "
+                        "Never list facility codes or names — only count them. "
                         "Output only the summary line — no quotes, no explanation."
                     ),
                 },
