@@ -73,7 +73,7 @@ Required date fields by type:
 | Record type | Required date fields | Notes |
 |---|---|---|
 | `Encounter` | `FromTime`, `ToTime`, `EnteredOn` | Outpatient: same datetime for From/To. Inpatient: ToTime = FromTime + 1–7 days. |
-| `Diagnosis` | `EnteredOn` | = encounter `FromTime`. Note: there is NO `DiagnosisTime` field. |
+| `Diagnosis` | `OnsetTime`, `EnteredOn` | `OnsetTime` = when condition began (may predate encounter). `EnteredOn` = encounter date. **No `FromTime` or `ToTime`** — these are not valid Diagnosis fields. |
 | `Medication` | `FromTime`, `EnteredOn` | `FromTime` = date first prescribed (may be a past encounter). `ToTime` required if discontinued. Note: there is NO `StartTime`/`StopTime`. |
 | `LabOrder` | `FromTime`, `ToTime`, `EnteredOn`, `SpecimenCollectedTime`, `Result.ResultTime` | `FromTime` = `ToTime` = `EnteredOn` = encounter date. `SpecimenCollectedTime` = time specimen drawn (use encounter date + a morning time, e.g. `T08:00:00Z`). Note: there is NO `OrderedOn` field. `ResultTime` = same day (STAT) or 1–3 days later (routine). |
 | `Observation` | `ObservationTime`, `EnteredOn` | Both = encounter `FromTime`. |
@@ -786,13 +786,16 @@ Critical ordering rules:
 
 **Critical**: The diagnosis code lives in a **child `<Diagnosis>` element** (same name as parent). No `SDACodingStandard` on the nested code or `DiagnosisType`. No `ActionCode`. `EncounterNumber` is **first**. `ExternalId` is **last**.
 
+**CRITICAL XSD RULES for Diagnosis time fields:**
+- Use `<OnsetTime>` (NOT `<FromTime>`) for when the condition began. `<FromTime>` is NOT a valid Diagnosis field and will fail XSD validation.
+- `<ToTime>` is **NOT a valid Diagnosis field** — do not include it. Diagnoses have no end-date field.
+- A resolved condition is indicated solely by `<Status><Code>R</Code></Status>` — there is no date-of-resolution field on Diagnosis.
+
 **Always include `<Status>`** on every Diagnosis using HL7 coding:
 - Active/ongoing: `<Status><SDACodingStandard>HL7</SDACodingStandard><Code>A</Code><Description>Active</Description></Status>`
 - Resolved/past: `<Status><SDACodingStandard>HL7</SDACodingStandard><Code>R</Code><Description>Resolved</Description></Status>`
 
-**Acute diagnoses that have resolved** (infections, episodes, acute injuries) **MUST** have:
-1. `<Status>` with Code `R` and Description `Resolved`
-2. `<ToTime>` set to the date the condition ended (end of antibiotic course, discharge date, etc.)
+**XSD field order**: `EncounterNumber → DiagnosingClinician → Diagnosis (code) → DiagnosisType → Status → OnsetTime → EnteredBy → EnteredAt → EnteredOn → ExternalId`
 
 ```xml
 <Diagnoses>
@@ -813,13 +816,13 @@ Critical ordering rules:
       <Code>A</Code>
       <Description>Active</Description>
     </Status>
+    <OnsetTime>2015-06-01T00:00:00Z</OnsetTime>
     <EnteredBy><Code>DR456</Code><Description>Dr. Smith</Description></EnteredBy>
     <EnteredAt><Code>GH001</Code><Description>General Hospital</Description></EnteredAt>
     <EnteredOn>2024-03-15T00:00:00Z</EnteredOn>
-    <FromTime>2024-03-15T00:00:00Z</FromTime>
     <ExternalId>Diagnoses_1</ExternalId>
   </Diagnosis>
-  <!-- Resolved acute condition — MUST include Status=R and ToTime -->
+  <!-- Resolved acute condition — Status=R only; NO ToTime (not a valid Diagnosis field) -->
   <Diagnosis>
     <EncounterNumber>ENC-2024031501</EncounterNumber>
     <DiagnosingClinician><Code>DR456</Code><Description>Dr. Smith</Description></DiagnosingClinician>
@@ -836,11 +839,10 @@ Critical ordering rules:
       <Code>R</Code>
       <Description>Resolved</Description>
     </Status>
+    <OnsetTime>2024-03-01T00:00:00Z</OnsetTime>
     <EnteredBy><Code>DR456</Code><Description>Dr. Smith</Description></EnteredBy>
     <EnteredAt><Code>GH001</Code><Description>General Hospital</Description></EnteredAt>
-    <EnteredOn>2024-03-01T00:00:00Z</EnteredOn>
-    <FromTime>2024-03-01T00:00:00Z</FromTime>
-    <ToTime>2024-03-14T00:00:00Z</ToTime>
+    <EnteredOn>2024-03-14T00:00:00Z</EnteredOn>
     <ExternalId>Diagnoses_2</ExternalId>
   </Diagnosis>
 </Diagnoses>
@@ -1422,9 +1424,11 @@ If the discharge summary says: *"afebrile × 48 h, SpO₂ 95% room air at discha
 
 #### Active + past ToTime is always a hard error — NEVER do this
 
-A `<Problem>` or `<Diagnosis>` with `Status=Active` **must not** have a `ToTime` that is earlier than the encounter date where it appears. A condition that ended in the past cannot be Active right now. This is a logical impossibility, not a style issue.
+A `<Problem>` with `Status=Active` **must not** have a `ToTime` that is earlier than the encounter date where it appears. A condition that ended in the past cannot be Active right now. This is a logical impossibility, not a style issue.
 
-Pick exactly one:
+Note: `<Diagnosis>` records do **not** have a `<ToTime>` field — that field only exists on `<Problem>`. Resolved diagnoses are indicated by `Status=Resolved` alone.
+
+Pick exactly one for Problems:
 - Condition is **still ongoing** → keep `Status=Active`, omit `ToTime`
 - Condition **has ended** → set `Status=Resolved` (or `Inactive`), set `ToTime` to the end date
 
@@ -1453,7 +1457,7 @@ If the 6MWT shows resting SpO₂ 95% with nadir 92% on exertion, model two separ
 
 Before finalising any inpatient record, read the discharge summary and check every Active structured problem against it.
 
-**Rule:** If the discharge summary contains language indicating a condition resolved — *"afebrile at discharge"*, *"no longer requiring supplemental oxygen"*, *"all acute symptoms resolved"*, *"SpO₂ 95% room air"* — then every Active structured `<Problem>` or `<Diagnosis>` at that **same facility** that maps to a resolved condition **must** have `Status=Resolved` and `ToTime ≤ encounter ToTime`.
+**Rule:** If the discharge summary contains language indicating a condition resolved — *"afebrile at discharge"*, *"no longer requiring supplemental oxygen"*, *"all acute symptoms resolved"*, *"SpO₂ 95% room air"* — then every Active structured `<Problem>` or `<Diagnosis>` at that **same facility** that maps to a resolved condition **must** have `Status=Resolved`. For `<Problem>` records, also set `ToTime ≤ encounter ToTime`. (`<Diagnosis>` records have no `ToTime` field — Status=Resolved is sufficient.)
 
 The discharge summary and the structured problem list must tell exactly the same story. It is incoherent for a hospital's own discharge note to say a fever resolved while the hospital's own problem list still shows Fever as Active with no end date.
 

@@ -1071,6 +1071,70 @@ def _fix_diagnosis_status(xml: str) -> tuple[str, int]:
         return xml, 0
 
 
+def _fix_diagnosis_time_fields(xml: str) -> tuple[str, int]:
+    """
+    Fix time-field errors in <Diagnoses>/<Diagnosis> records:
+    - <FromTime> is not a valid Diagnosis field; rename/move to <OnsetTime>
+      which must appear BEFORE <EnteredBy> in the XSD sequence.
+    - <ToTime> is not a valid Diagnosis field; remove it.
+    Must run AFTER _fix_diagnosis_status so the ToTime heuristic can still
+    detect resolved conditions before we strip them.
+    Returns (patched_xml, count_changed).
+    """
+    from lxml import etree as lxml_et
+
+    # XSD sequence anchors: OnsetTime goes after Status (or DiagnosisType,
+    # or Diagnosis code element) and before EnteredBy.
+    _ONSET_INSERT_AFTER = ("VerificationStatus", "Status", "DiagnosisType",
+                           "Diagnosis")
+
+    try:
+        root = lxml_et.fromstring(
+            _prep_xml_for_lxml(xml).encode(), lxml_et.XMLParser(recover=True)
+        )
+    except Exception:
+        return xml, 0
+
+    changed = 0
+    for dx_record in root.findall(".//Diagnoses/Diagnosis"):
+        children = list(dx_record)
+
+        # --- Handle FromTime -> OnsetTime ---
+        from_el = dx_record.find("FromTime")
+        if from_el is not None:
+            from_text = from_el.text
+            dx_record.remove(from_el)
+            onset_el = dx_record.find("OnsetTime")
+            if onset_el is None:
+                # Create a new OnsetTime and insert it at the right position
+                new_onset = lxml_et.Element("OnsetTime")
+                new_onset.text = from_text
+                insert_idx = len(list(dx_record))  # default: append
+                children_now = list(dx_record)
+                # Find the last anchor tag we can insert after
+                for anchor in _ONSET_INSERT_AFTER:
+                    anchor_el = dx_record.find(anchor)
+                    if anchor_el is not None:
+                        insert_idx = children_now.index(anchor_el) + 1
+                        break
+                dx_record.insert(insert_idx, new_onset)
+            changed += 1
+
+        # --- Remove ToTime (not a valid Diagnosis field) ---
+        to_el = dx_record.find("ToTime")
+        if to_el is not None:
+            dx_record.remove(to_el)
+            changed += 1
+
+    if changed == 0:
+        return xml, 0
+
+    try:
+        return lxml_et.tostring(root, encoding="unicode"), changed
+    except Exception:
+        return xml, 0
+
+
 def _strip_xml_fences(text: str) -> str:
     xml = text.strip()
     if xml.startswith("```"):
@@ -1177,6 +1241,13 @@ async def generate_record(
         yield {
             "type": "status",
             "message": f"Auto-fixed {dx_status_fixed} Diagnosis Status element(s) missing from generated XML.",
+        }
+
+    xml, dx_time_fixed = _fix_diagnosis_time_fields(xml)
+    if dx_time_fixed:
+        yield {
+            "type": "status",
+            "message": f"Auto-fixed {dx_time_fixed} Diagnosis time field(s) (FromTime→OnsetTime / removed ToTime).",
         }
 
     yield {"type": "status", "message": "Packaging files…"}
