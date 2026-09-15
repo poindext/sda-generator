@@ -255,7 +255,15 @@ def _split_by_facility(
     # (e.g. "EFW < 10th percentile" in note text)
     raw = re.sub(r"<(?![a-zA-Z/!?])", "&lt;", raw)
 
-    root = ET.fromstring(raw)
+    try:
+        root = ET.fromstring(raw)
+    except ET.ParseError:
+        # GPT occasionally writes mismatched closing tags (e.g. <TagA>val</TagB>).
+        # Use lxml's recovery parser to fix the XML, then convert back to stdlib ET.
+        from lxml import etree as _lxml
+        _recovered = _lxml.fromstring(raw.encode(), _lxml.XMLParser(recover=True))
+        root = ET.fromstring(_lxml.tostring(_recovered))
+
     patient_el = root.find("Patient")
 
     # Build encounter map: number -> FromTime (for nearest-date remapping)

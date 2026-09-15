@@ -1650,7 +1650,7 @@ function loadPrHistory() {
       const date = new Date(r.created).toLocaleString();
       const dlBtn = r.zip_path
         ? `<button class="btn btn-secondary" style="padding:4px 10px;font-size:12px"
-             onclick="window.location.href='/api/patient-record/download-zip?path=${encodeURIComponent(r.zip_path)}'">
+             onclick="window.location.href=API_BASE+'/api/patient-record/download-zip?path=${encodeURIComponent(r.zip_path)}'">
              Download ZIP</button>`
         : '<span class="text-muted text-sm">—</span>';
       const desc = r.description
