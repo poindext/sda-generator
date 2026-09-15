@@ -968,31 +968,98 @@ def _deterministic_checks(xml: str) -> list[str]:
             else:
                 drug_keys_seen.append(med_key)
 
-    # Rule 9 — Diagnosis missing <Status>
-    # Operates at the container level (same as Rules 6/8) on the pre-split combined XML
-    for container in re.findall(r"<Container>(.*?)</Container>", xml, re.DOTALL):
-        sf_m = re.search(r"<SendingFacility>([^<]+)</SendingFacility>", container)
-        sending_fac = sf_m.group(1).strip() if sf_m else ""
-
-        dx_section_m = re.search(r"<Diagnoses>(.*?)</Diagnoses>", container, re.DOTALL)
-        if not dx_section_m:
-            continue
-        for dx_block in re.findall(r"<Diagnosis>(.*?)</Diagnosis>", dx_section_m.group(1), re.DOTALL):
-            # Skip inner <Diagnosis> code elements (they have no <EncounterNumber> or <EnteredAt>)
+    # Rule 9 — Diagnosis missing Status
+    # Diagnoses use EnteredAt/Code for facility (not SendingFacility, which is record-level).
+    # Iterate over all Diagnoses in the pre-split combined XML directly.
+    for dx_section in re.findall(r"<Diagnoses>(.*?)</Diagnoses>", xml, re.DOTALL):
+        for dx_block in re.findall(r"<Diagnosis>(.*?)</Diagnosis>", dx_section, re.DOTALL):
+            # Skip the inner nested <Diagnosis> code element (no EncounterNumber or EnteredAt)
             if "<EncounterNumber>" not in dx_block and "<EnteredAt>" not in dx_block:
                 continue
-            # Extract ICD code from the nested <Diagnosis> child
+            fac_m = re.search(r"<EnteredAt>[\s\S]*?<Code>([^<]+)</Code>", dx_block)
+            fac = fac_m.group(1).strip() if fac_m else ""
             code_m = re.search(r"<Diagnosis>[\s\S]*?<Code>([^<]+)</Code>", dx_block)
             code = code_m.group(1).strip() if code_m else "unknown"
-            has_status = bool(re.search(r"<Status>", dx_block))
-            if not has_status:
+            if not re.search(r"<Status>", dx_block):
                 issues.append(
-                    f"Rule 9 CONFIRMED — [{sending_fac}] Diagnosis {code} is missing a <Status> element. "
-                    f"Every Diagnosis must have <Status><SDACodingStandard>HL7</SDACodingStandard>"
-                    f"<Code>A</Code><Description>Active</Description></Status> (or Code R + ToTime if resolved)."
+                    f"Rule 9 CONFIRMED — [{fac}] Diagnosis {code} is missing a Status element. "
+                    f"Every Diagnosis must have a Status with Code=A (Active) or Code=R + ToTime (Resolved). "
+                    f"DiagnosisType (Acute/Chronic) is not a substitute for Status."
                 )
 
     return issues
+
+
+# Z-code prefixes that are always historical (personal/family history) → always Resolved
+_HISTORY_CODE_PREFIXES = ("Z80.", "Z81.", "Z82.", "Z83.", "Z84.", "Z85.", "Z86.", "Z87.", "Z88.", "Z89.", "Z96.", "Z97.")
+
+
+def _fix_diagnosis_status(xml: str) -> tuple[str, int]:
+    """
+    Deterministic post-pass: inject a <Status> element into every Diagnosis
+    record that is missing one.  Uses DiagnosisType and ICD code as heuristics:
+      - History/Z86.x codes           → Resolved
+      - DiagnosisType=A with ToTime   → Resolved
+      - Everything else               → Active
+    Parses with lxml (recover=True) so malformed XML is tolerated.
+    Returns (patched_xml, count_fixed).
+    """
+    from lxml import etree as lxml_et
+    from xml.etree import ElementTree as ET
+
+    raw = xml.strip()
+    if raw.startswith("<?xml"):
+        raw = raw[raw.index("?>") + 2:].strip()
+
+    try:
+        root = lxml_et.fromstring(raw.encode(), lxml_et.XMLParser(recover=True))
+    except Exception:
+        return xml, 0
+
+    fixed = 0
+    for dx_record in root.findall(".//Diagnoses/Diagnosis"):
+        if dx_record.find("Status") is not None:
+            continue
+
+        # ICD code lives in the nested <Diagnosis> child element
+        code_el = dx_record.find("Diagnosis/Code")
+        icd = (code_el.text or "").strip() if code_el is not None else ""
+
+        to_time_el = dx_record.find("ToTime")
+        dx_type_code = dx_record.findtext("DiagnosisType/Code") or ""
+
+        is_history = any(icd.startswith(p) for p in _HISTORY_CODE_PREFIXES)
+        if is_history or (dx_type_code.upper() == "A" and to_time_el is not None):
+            code, desc = "R", "Resolved"
+        else:
+            code, desc = "A", "Active"
+
+        status_el = lxml_et.Element("Status")
+        lxml_et.SubElement(status_el, "SDACodingStandard").text = "HL7"
+        lxml_et.SubElement(status_el, "Code").text = code
+        lxml_et.SubElement(status_el, "Description").text = desc
+
+        # Position: insert after DiagnosisType if present, else after nested Diagnosis code
+        children = list(dx_record)
+        insert_after = dx_record.find("DiagnosisType")
+        if insert_after is None:
+            insert_after = dx_record.find("Diagnosis")
+        if insert_after is not None:
+            idx = children.index(insert_after)
+            dx_record.insert(idx + 1, status_el)
+        else:
+            dx_record.append(status_el)
+        fixed += 1
+
+    if fixed == 0:
+        return xml, 0
+
+    # Re-serialize and convert back to stdlib ET string
+    try:
+        result_bytes = lxml_et.tostring(root, encoding="unicode")
+        return result_bytes, fixed
+    except Exception:
+        return xml, 0
 
 
 def _strip_xml_fences(text: str) -> str:
@@ -1094,6 +1161,13 @@ async def generate_record(
             "message": f"Auto-fixed {len(reconcile_changes)} medication issue(s): "
                        + "; ".join(reconcile_changes[:3])
                        + ("…" if len(reconcile_changes) > 3 else ""),
+        }
+
+    xml, dx_status_fixed = _fix_diagnosis_status(xml)
+    if dx_status_fixed:
+        yield {
+            "type": "status",
+            "message": f"Auto-fixed {dx_status_fixed} Diagnosis Status element(s) missing from generated XML.",
         }
 
     yield {"type": "status", "message": "Packaging files…"}
