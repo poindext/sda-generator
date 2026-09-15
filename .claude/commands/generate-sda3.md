@@ -488,19 +488,21 @@ Comes **after `<Vaccinations>`** near the end of `<Container>`. `Status` is plai
 
 **CRITICAL**: `ExternalId` is the **very first** element — never place it after `ObservationCode`, `ObservationValue`, `EnteredAt`, or `EnteredOn`. `ObservationCode` must **NOT** include `SDACodingStandard`. No `ActionCode` on Observations.
 
+**Units**: `ObservationValueUnits` is a child of `<ObservationCode>`, typed as a CodeTableDetail (`UoM`). Always include it with at least `<Code>`. Only add `<Description>` when it differs from the code (e.g. `kg/m2` → description `kg/m²`).
+
 **Vital-sign LOINC codes** (no `SDACodingStandard` on these):
 
-| Vital | LOINC | Units |
+| Vital | LOINC | Units code |
 |---|---|---|
-| BP Systolic | `8480-6` | mmHg |
-| BP Diastolic | `8462-4` | mmHg |
-| Heart Rate | `8867-4` | /min |
-| Respiratory Rate | `9279-1` | /min |
-| Temperature | `8310-5` | °F |
-| **Height** | **`8302-2`** | **in** (or cm) |
-| **Weight** | **`29463-7`** | **lbs** (or kg) |
-| **BMI** | **`39156-5`** | **kg/m2** |
-| O2 Saturation | `59408-5` | % |
+| BP Systolic | `8480-6` | `mm[Hg]` |
+| BP Diastolic | `8462-4` | `mm[Hg]` |
+| Heart Rate | `8867-4` | `/min` |
+| Respiratory Rate | `9279-1` | `/min` |
+| Temperature | `8310-5` | `[degF]` |
+| **Height** | **`8302-2`** | **`[in_i]`** (or `cm`) |
+| **Weight** | **`29463-7`** | **`[lb_av]`** (or `kg`) |
+| **BMI** | **`39156-5`** | **`kg/m2`** |
+| O2 Saturation | `59408-5` | `%` |
 
 **Height, Weight, and BMI are mandatory whenever the scenario mentions them.** If the visit note records weight or height, those values MUST appear as discrete `<Observation>` elements — not only in note text. Every encounter that includes an anthropometric measurement must have all three (height, weight, BMI) as separate observations.
 
@@ -510,7 +512,11 @@ Comes **after `<Vaccinations>`** near the end of `<Container>`. `Status` is plai
     <ExternalId>Observations_1</ExternalId>
     <EncounterNumber>ENC-2024031501</EncounterNumber>
     <ObservationTime>2024-03-15T09:00:00Z</ObservationTime>
-    <ObservationCode><Code>8480-6</Code><Description>BP Systolic</Description></ObservationCode>
+    <ObservationCode>
+      <Code>8480-6</Code>
+      <Description>BP Systolic</Description>
+      <ObservationValueUnits><Code>mm[Hg]</Code></ObservationValueUnits>
+    </ObservationCode>
     <ObservationValue>128</ObservationValue>
     <Clinician><Code>DR456</Code><Description>Dr. Smith</Description></Clinician>
     <EnteredAt><Code>GH001</Code><Description>General Hospital</Description></EnteredAt>
@@ -520,7 +526,11 @@ Comes **after `<Vaccinations>`** near the end of `<Container>`. `Status` is plai
     <ExternalId>Observations_2</ExternalId>
     <EncounterNumber>ENC-2024031501</EncounterNumber>
     <ObservationTime>2024-03-15T09:00:00Z</ObservationTime>
-    <ObservationCode><Code>8462-4</Code><Description>BP Diastolic</Description></ObservationCode>
+    <ObservationCode>
+      <Code>8462-4</Code>
+      <Description>BP Diastolic</Description>
+      <ObservationValueUnits><Code>mm[Hg]</Code></ObservationValueUnits>
+    </ObservationCode>
     <ObservationValue>76</ObservationValue>
     <Clinician><Code>DR456</Code><Description>Dr. Smith</Description></Clinician>
     <EnteredAt><Code>GH001</Code><Description>General Hospital</Description></EnteredAt>
@@ -530,7 +540,11 @@ Comes **after `<Vaccinations>`** near the end of `<Container>`. `Status` is plai
     <ExternalId>Observations_3</ExternalId>
     <EncounterNumber>ENC-2024031501</EncounterNumber>
     <ObservationTime>2024-03-15T09:00:00Z</ObservationTime>
-    <ObservationCode><Code>8302-2</Code><Description>Body height</Description></ObservationCode>
+    <ObservationCode>
+      <Code>8302-2</Code>
+      <Description>Body height</Description>
+      <ObservationValueUnits><Code>[in_i]</Code></ObservationValueUnits>
+    </ObservationCode>
     <ObservationValue>70</ObservationValue>
     <Clinician><Code>DR456</Code><Description>Dr. Smith</Description></Clinician>
     <EnteredAt><Code>GH001</Code><Description>General Hospital</Description></EnteredAt>
@@ -540,7 +554,11 @@ Comes **after `<Vaccinations>`** near the end of `<Container>`. `Status` is plai
     <ExternalId>Observations_4</ExternalId>
     <EncounterNumber>ENC-2024031501</EncounterNumber>
     <ObservationTime>2024-03-15T09:00:00Z</ObservationTime>
-    <ObservationCode><Code>29463-7</Code><Description>Body weight</Description></ObservationCode>
+    <ObservationCode>
+      <Code>29463-7</Code>
+      <Description>Body weight</Description>
+      <ObservationValueUnits><Code>[lb_av]</Code></ObservationValueUnits>
+    </ObservationCode>
     <ObservationValue>222</ObservationValue>
     <Clinician><Code>DR456</Code><Description>Dr. Smith</Description></Clinician>
     <EnteredAt><Code>GH001</Code><Description>General Hospital</Description></EnteredAt>
@@ -550,7 +568,11 @@ Comes **after `<Vaccinations>`** near the end of `<Container>`. `Status` is plai
     <ExternalId>Observations_5</ExternalId>
     <EncounterNumber>ENC-2024031501</EncounterNumber>
     <ObservationTime>2024-03-15T09:00:00Z</ObservationTime>
-    <ObservationCode><Code>39156-5</Code><Description>Body mass index (BMI)</Description></ObservationCode>
+    <ObservationCode>
+      <Code>39156-5</Code>
+      <Description>Body mass index (BMI)</Description>
+      <ObservationValueUnits><Code>kg/m2</Code></ObservationValueUnits>
+    </ObservationCode>
     <ObservationValue>31.8</ObservationValue>
     <Clinician><Code>DR456</Code><Description>Dr. Smith</Description></Clinician>
     <EnteredAt><Code>GH001</Code><Description>General Hospital</Description></EnteredAt>
