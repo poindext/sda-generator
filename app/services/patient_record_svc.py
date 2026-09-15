@@ -428,6 +428,12 @@ Your job: return an improved, more detailed scenario description that corrects e
 incoherence, temporal inconsistency, medication lifecycle error, missing structured data element, \
 and cross-facility identity problem you find in the XML.
 
+CRITICAL: You are amending the original scenario, NOT rewriting it from scratch.
+- Preserve EXACTLY: the patient's name, date of birth, sex, race/ethnicity, and all demographics.
+- Preserve EXACTLY: all facility codes, facility names, specialty providers, and clinical relationships.
+- Preserve all clinical content that is correct in the XML.
+- Only ADD detail or CORRECT errors — do not replace or simplify existing content.
+
 The improved scenario must explicitly state:
 - Exact encounter dates, facility codes, facility names, and encounter types for every encounter
 - Each facility's local MRN for the patient (every source system must have its own)
@@ -575,8 +581,19 @@ Rule 5 — Clinical precision of finding labels:
 Do not give 100 unless all semantic cross-checks pass. A structurally clean record with \
 any of the above contradictions is NOT a 100.
 
-Then return an improved scenario description that would fix every remaining issue if used to \
+Then return a refined scenario description that would fix every remaining issue if used to \
 regenerate the record.
+
+CRITICAL CONSTRAINTS FOR refined_scenario:
+- Start from the ORIGINAL SCENARIO provided in the user message. Do NOT invent a new patient.
+- Preserve EXACTLY: patient name, date of birth, sex, race/ethnicity, and all demographic details.
+- Preserve EXACTLY: every facility code, facility name, specialty provider, and their clinical roles.
+- Preserve ALL clinical content that has no issue (diagnoses, medications, labs, procedures, \
+  timeline of events that were scored correctly).
+- Only ADD, AMEND, or CLARIFY the specific elements that the identified issues require you to fix.
+- The result should read as a targeted amendment of the original scenario — at least 90% of the \
+  wording should be unchanged or only lightly edited.
+- Do NOT simplify, shorten, or reduce the clinical complexity of the original scenario.
 
 Return ONLY valid JSON in this exact shape — no markdown fences, no commentary:
 {
@@ -591,7 +608,7 @@ Return ONLY valid JSON in this exact shape — no markdown fences, no commentary
     "CMC Fever problem is Active with no ToTime — discharge note says all acute symptoms resolved 08/17",
     "CMC Shortness of breath is Active — discharge note and SpO₂ 95% room air contradict this"
   ],
-  "refined_scenario": "Full improved scenario text here..."
+  "refined_scenario": "Same patient, same facilities, same providers — original scenario text with targeted amendments only to fix the listed issues."
 }\
 """
 
