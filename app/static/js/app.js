@@ -1656,13 +1656,15 @@ function loadPrHistory() {
       const desc = r.description
         ? `<div style="font-size:11px;color:var(--text-muted);margin-top:2px;font-weight:normal;font-family:inherit">${r.description}</div>`
         : '';
+      const viewBtn = `<button class="btn btn-secondary" style="padding:4px 10px;font-size:12px;margin-right:6px"
+           onclick="viewPatientSummary('${r.name}')">View</button>`;
       return `<tr>
         <td style="padding:6px 12px">
           <span style="font-family:monospace;font-size:13px">${r.name}</span>${desc}
         </td>
         <td style="padding:6px 12px;white-space:nowrap">${r.file_count} file${r.file_count !== 1 ? 's' : ''}</td>
         <td style="padding:6px 12px;color:var(--text-muted);font-size:13px;white-space:nowrap">${date}</td>
-        <td style="padding:6px 12px">${dlBtn}</td>
+        <td style="padding:6px 12px;white-space:nowrap">${viewBtn}${dlBtn}</td>
       </tr>`;
     }).join('');
     list.innerHTML = `
@@ -1672,13 +1674,126 @@ function loadPrHistory() {
             <th style="text-align:left;padding:6px 12px;font-size:12px;color:var(--text-muted)">Name</th>
             <th style="text-align:left;padding:6px 12px;font-size:12px;color:var(--text-muted)">Files</th>
             <th style="text-align:left;padding:6px 12px;font-size:12px;color:var(--text-muted)">Generated</th>
-            <th style="text-align:left;padding:6px 12px;font-size:12px;color:var(--text-muted)">Download</th>
+            <th style="text-align:left;padding:6px 12px;font-size:12px;color:var(--text-muted)">Actions</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
       </table>`;
   }).catch(() => {
     list.innerHTML = '<p class="text-muted text-sm">Could not load records.</p>';
+  });
+}
+
+function viewPatientSummary(packageName) {
+  // Show modal with loading state
+  let modal = document.getElementById('pt-summary-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'pt-summary-modal';
+    modal.style.cssText = `
+      position:fixed;inset:0;z-index:1000;display:flex;align-items:flex-start;
+      justify-content:center;background:rgba(0,0,0,0.45);padding:40px 20px;overflow-y:auto;`;
+    modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+    document.body.appendChild(modal);
+  }
+  modal.innerHTML = `
+    <div style="background:var(--bg-card,#fff);border-radius:8px;width:100%;max-width:780px;
+                box-shadow:0 8px 32px rgba(0,0,0,0.18);padding:28px 32px;position:relative">
+      <button onclick="document.getElementById('pt-summary-modal').remove()"
+              style="position:absolute;top:16px;right:20px;background:none;border:none;
+                     font-size:20px;cursor:pointer;color:var(--text-muted)">×</button>
+      <p class="text-muted text-sm" style="margin:32px 0 16px">Loading summary…</p>
+    </div>`;
+
+  api.get(`/patient-record/summary?package=${encodeURIComponent(packageName)}`).then(d => {
+    const p = d.patient || {};
+    const name = [p.given, p.family].filter(Boolean).join(' ') || packageName;
+    const demo = [
+      p.dob ? `DOB ${p.dob}` : '',
+      p.gender || '',
+      p.race   || '',
+    ].filter(Boolean).join(' · ');
+
+    const section = (title, rows, cols, emptyMsg) => {
+      if (!rows.length) return `<div style="margin-top:20px"><h4 style="margin:0 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted)">${title}</h4><p class="text-muted text-sm">${emptyMsg}</p></div>`;
+      const header = cols.map(c => `<th style="text-align:left;padding:4px 10px;font-size:11px;color:var(--text-muted);white-space:nowrap">${c.label}</th>`).join('');
+      const body = rows.map(r =>
+        `<tr style="border-top:1px solid var(--border)">${
+          cols.map(c => `<td style="padding:5px 10px;font-size:13px;white-space:nowrap">${r[c.key] || '—'}</td>`).join('')
+        }</tr>`
+      ).join('');
+      return `
+        <div style="margin-top:20px">
+          <h4 style="margin:0 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted)">${title}</h4>
+          <table style="width:100%;border-collapse:collapse;font-size:13px">
+            <thead><tr>${header}</tr></thead>
+            <tbody>${body}</tbody>
+          </table>
+        </div>`;
+    };
+
+    const ENC_TYPE = {I:'Inpatient',O:'Outpatient',E:'Emergency',G:'Generated'};
+    const encs = d.encounters.map(e => ({
+      date: e.date, type: ENC_TYPE[e.type] || e.type,
+      facility: e.facility, provider: e.provider
+    }));
+
+    const meds = d.medications.map(m => ({
+      drug: m.drug,
+      dose: [m.dose, m.route, m.freq].filter(Boolean).join(' · '),
+      since: m.from,
+    }));
+
+    const dx = d.diagnoses.map(x => ({code: x.code, desc: x.desc, onset: x.onset}));
+    const probs = d.problems.map(x => ({code: x.code, desc: x.desc, onset: x.onset}));
+
+    const vit = d.vitals.map(v => ({
+      date: v.date,
+      bp:   v.bp   || '—',
+      hr:   v.hr   ? v.hr + ' bpm' : '—',
+      wt:   v.wt   ? v.wt + ' lbs' : '—',
+      bmi:  v.bmi  || '—',
+    }));
+
+    const labRows = d.labs.map(l => ({
+      date: l.date, test: l.test,
+      result: l.flag && l.flag !== 'N' ? `${l.value} (${l.flag})` : l.value,
+    }));
+
+    const procs = d.procedures.map(p => ({
+      date: p.date, desc: p.desc || p.code, provider: p.provider
+    }));
+
+    const allRows = d.allergies.map(a => ({
+      allergen: a.allergen, reaction: a.reaction, category: a.category
+    }));
+
+    const facs = (d.facilities || []).map(f => f.name !== f.code ? `${f.code} — ${f.name}` : f.code).join(', ');
+
+    modal.querySelector('div').innerHTML = `
+      <button onclick="document.getElementById('pt-summary-modal').remove()"
+              style="position:absolute;top:16px;right:20px;background:none;border:none;
+                     font-size:22px;cursor:pointer;color:var(--text-muted);line-height:1">×</button>
+      <h3 style="margin:0 0 4px">${name}</h3>
+      ${demo ? `<p style="margin:0 0 4px;font-size:13px;color:var(--text-muted)">${demo}</p>` : ''}
+      ${d.description ? `<p style="margin:0 0 12px;font-size:13px;font-style:italic;color:var(--text-muted)">${d.description}</p>` : ''}
+      ${facs ? `<p style="margin:0 0 4px;font-size:12px;color:var(--text-muted)">Facilities: ${facs}</p>` : ''}
+      <hr style="margin:16px 0;border:none;border-top:1px solid var(--border)">
+      ${section('Encounters',         encs,    [{key:'date',label:'Date'},{key:'type',label:'Type'},{key:'facility',label:'Facility'},{key:'provider',label:'Provider'}], 'None')}
+      ${section('Active Diagnoses',   dx,      [{key:'code',label:'Code'},{key:'desc',label:'Description'},{key:'onset',label:'Onset'}], 'None')}
+      ${section('Problem List',       probs,   [{key:'code',label:'Code'},{key:'desc',label:'Description'},{key:'onset',label:'Onset'}], 'None')}
+      ${section('Medications',        meds,    [{key:'drug',label:'Drug'},{key:'dose',label:'Dose / Route / Freq'},{key:'since',label:'Since'}], 'None')}
+      ${section('Allergies',          allRows, [{key:'allergen',label:'Allergen'},{key:'reaction',label:'Reaction'},{key:'category',label:'Category'}], 'None')}
+      ${section('Vital Signs',        vit,     [{key:'date',label:'Date'},{key:'bp',label:'BP'},{key:'hr',label:'HR'},{key:'wt',label:'Weight'},{key:'bmi',label:'BMI'}], 'None')}
+      ${section('Lab Results',        labRows, [{key:'date',label:'Date'},{key:'test',label:'Test'},{key:'result',label:'Result'}], 'None')}
+      ${section('Procedures',         procs,   [{key:'date',label:'Date'},{key:'desc',label:'Description'},{key:'provider',label:'Provider'}], 'None')}
+      <div style="margin-top:24px;text-align:right">
+        <button class="btn btn-secondary" onclick="document.getElementById('pt-summary-modal').remove()">Close</button>
+      </div>`;
+  }).catch(() => {
+    modal.querySelector('div').innerHTML = `
+      <p style="color:#dc3545">Failed to load summary.</p>
+      <button class="btn btn-secondary" onclick="document.getElementById('pt-summary-modal').remove()">Close</button>`;
   });
 }
 
