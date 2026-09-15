@@ -749,9 +749,11 @@ def _reconcile_medications(xml: str) -> tuple[str, list[str]]:
     }
 
     # ── Step 2: inventory active medications and their routing facilities ─────
-    # "Routing facility" = SendingFacility if present, else EnteredAt/Code
-    drug_routing: dict[str, set[str]] = defaultdict(set)   # drug_name → set of fac
-    master_meds: dict[str, dict] = {}                       # drug_name → canonical entry
+    # Key is (drug_desc, from_time) so the same drug prescribed on different
+    # dates (e.g. doxycycline 2019 and again 2021) is treated as two independent
+    # courses rather than collapsed into one.
+    drug_routing: dict[tuple, set[str]] = defaultdict(set)   # (drug, from) → set of fac
+    master_meds: dict[tuple, dict] = {}                       # (drug, from) → canonical entry
 
     for med in re.findall(r"<Medication>(.*?)</Medication>", xml, re.DOTALL):
         drug_m = re.search(
@@ -774,12 +776,14 @@ def _reconcile_medications(xml: str) -> tuple[str, list[str]]:
         if status not in ("active", ""):
             continue
 
+        med_key = (drug_desc, from_time)
+
         if routing_fac:
-            drug_routing[drug_desc].add(routing_fac)
+            drug_routing[med_key].add(routing_fac)
 
         # Prefer the copy with an explicit EnteredAt as the canonical source
-        if drug_desc not in master_meds or (entered_at and not master_meds[drug_desc]["entered_at"]):
-            master_meds[drug_desc] = {
+        if med_key not in master_meds or (entered_at and not master_meds[med_key]["entered_at"]):
+            master_meds[med_key] = {
                 "drug_desc":  drug_desc,
                 "entered_at": entered_at,
                 "from_time":  from_time,
@@ -823,9 +827,10 @@ def _reconcile_medications(xml: str) -> tuple[str, list[str]]:
 
     # ── Step 4: Rule 7 — inject missing medications per facility ─────────────
     injected_blocks: list[str] = []
-    for drug_name, med_info in master_meds.items():
+    for med_key, med_info in master_meds.items():
+        drug_name = med_info["drug_desc"]
         for fac, fac_enc in latest_enc.items():
-            if fac in drug_routing.get(drug_name, set()):
+            if fac in drug_routing.get(med_key, set()):
                 continue  # already routed to this facility
             # Only inject if the facility's latest encounter is on/after the med start
             fac_date_m = re.match(r"^[A-Z][A-Z0-9]*-(\d{8})-", fac_enc)
@@ -857,7 +862,7 @@ def _reconcile_medications(xml: str) -> tuple[str, list[str]]:
                 f"[{fac}] Injected missing medication '{drug_name}' "
                 f"(originated {med_info['entered_at']}), enc={fac_enc}"
             )
-            drug_routing[drug_name].add(fac)  # prevent double-injection
+            drug_routing[med_key].add(fac)  # prevent double-injection
 
     if injected_blocks:
         inject_str = "\n".join(injected_blocks)
@@ -884,7 +889,7 @@ def _deterministic_checks(xml: str) -> list[str]:
         sf_m = re.search(r"<SendingFacility>([^<]+)</SendingFacility>", container)
         sending_fac = sf_m.group(1).strip() if sf_m else ""
 
-        drug_names_seen: list[str] = []
+        drug_keys_seen: list[tuple] = []
         for med in re.findall(r"<Medication>(.*?)</Medication>", container, re.DOTALL):
             enc_m  = re.search(r"<EncounterNumber>([^<]+)</EncounterNumber>", med)
             drug_m = re.search(
@@ -894,6 +899,8 @@ def _deterministic_checks(xml: str) -> list[str]:
                 continue
             enc_num   = enc_m.group(1).strip()
             drug_name = drug_m.group(1).strip()
+            from_m    = re.search(r"<FromTime>([^<]+)</FromTime>", med)
+            from_time = from_m.group(1).strip() if from_m else ""
 
             # Rule 6 — EncounterNumber must belong to this container's facility,
             # not to a different facility's encounter
@@ -907,14 +914,15 @@ def _deterministic_checks(xml: str) -> list[str]:
                         )
                         break
 
-            # Rule 8 — duplicate drug within same facility
-            if drug_name in drug_names_seen:
+            # Rule 8 — true duplicate: same drug AND same start date within same facility
+            med_key = (drug_name, from_time)
+            if med_key in drug_keys_seen:
                 issues.append(
-                    f"Rule 8 CONFIRMED — [{sending_fac}] '{drug_name}' appears more than once "
-                    f"(one entry per drug per facility is the rule)."
+                    f"Rule 8 CONFIRMED — [{sending_fac}] '{drug_name}' (FromTime={from_time}) "
+                    f"appears more than once — exact duplicate entry."
                 )
             else:
-                drug_names_seen.append(drug_name)
+                drug_keys_seen.append(med_key)
 
     return issues
 
