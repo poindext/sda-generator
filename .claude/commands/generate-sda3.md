@@ -984,9 +984,12 @@ Common `OrderItem` codes for Diagnostic Studies: `CXR-PA-LAT` Chest X-Ray · `EK
 
 ### MedicalClaim example (Claims section)
 
-Comes **after `<Vaccinations>`** and **before `<SocialDeterminants>`**. `AdjudicatedCoverage` is a **plain string** (insurer name). `ProcedureCode` in `MedicalClaimLine` uses `Description` only (free text). `MedicalClaimNumber` = unique claim identifier.
+Comes **after `<Vaccinations>`** and **before `<SocialDeterminants>`**. `AdjudicatedCoverage` is the `ExternalId` of the linked `MemberEnrollment` (e.g. `BCBS-PPO-MBR654321`) — it is **not** a free-text insurer name. `ProcedureCode` in `MedicalClaimLine` uses `Description` only (free text). `MedicalClaimNumber` = unique claim identifier.
 
-**CRITICAL XSD field order: all SuperClass fields (`EnteredBy`, `EnteredAt`, `EnteredOn`, `UpdatedOn`, `FromTime`, `ToTime`, `ExternalId`) come BEFORE MedicalClaim-specific fields like `MedicalClaimNumber`.**
+**CRITICAL XSD field order inside `<MedicalClaim>`:**
+SuperClass fields first (`EnteredBy`, `EnteredAt`, `EnteredOn`, `UpdatedOn`, `FromTime`, `ToTime`, `ExternalId`), then claim-specific fields in this order: `AdjudicatedCoverage` → `AdjudicationStatus` → `BillingProvider` → `ClaimProcessedDate` → `ClaimType` → `Payer` → `Status` → `PrimaryProcedure` → `PaymentStatus` → `PaymentAmount` → `Priority` → `SubmissionDate` → `ReceivedDate` → `MedicalClaimNumber` → `MedicalClaimLines`.
+
+**`MedicalClaimNumber` comes AFTER `AdjudicatedCoverage` — never before it.**
 
 ```xml
 <MedicalClaims>
@@ -998,33 +1001,32 @@ Comes **after `<Vaccinations>`** and **before `<SocialDeterminants>`**. `Adjudic
     <FromTime>2024-03-15T08:00:00Z</FromTime>
     <ToTime>2024-03-15T14:00:00Z</ToTime>
     <ExternalId>MedicalClaims_1</ExternalId>
-    <MedicalClaimNumber>CLM-20240315-001</MedicalClaimNumber>
-    <AdjudicatedCoverage>Blue Cross Blue Shield</AdjudicatedCoverage>
+    <AdjudicatedCoverage>BCBS-PPO-MBR654321</AdjudicatedCoverage>
     <AdjudicationStatus><Code>complete</Code><Description>complete</Description></AdjudicationStatus>
-    <ClaimProcessedDate>2024-03-20T00:00:00Z</ClaimProcessedDate>
-    <ReceivedDate>2024-03-16T00:00:00Z</ReceivedDate>
-    <SubmissionDate>2024-03-16T00:00:00Z</SubmissionDate>
-    <Priority><Code>N</Code><Description>normal</Description></Priority>
-    <Status><Code>active</Code><Description>active</Description></Status>
     <BillingProvider><Code>GH001</Code><Description>General Hospital</Description></BillingProvider>
+    <ClaimProcessedDate>2024-03-20T00:00:00Z</ClaimProcessedDate>
     <ClaimType><Code>Professional</Code><Description>Professional</Description></ClaimType>
     <Payer><Code>BCBS</Code><Description>Blue Cross Blue Shield</Description></Payer>
+    <Status><Code>active</Code><Description>active</Description></Status>
     <PrimaryProcedure>
       <Procedure><Description>Office or other outpatient visit, moderate complexity (99213)</Description></Procedure>
     </PrimaryProcedure>
     <PaymentStatus><Code>paid</Code><Description>paid</Description></PaymentStatus>
     <PaymentAmount>120</PaymentAmount>
+    <Priority><Code>N</Code><Description>normal</Description></Priority>
+    <SubmissionDate>2024-03-16T00:00:00Z</SubmissionDate>
+    <ReceivedDate>2024-03-16T00:00:00Z</ReceivedDate>
+    <MedicalClaimNumber>CLM-20240315-001</MedicalClaimNumber>
     <MedicalClaimLines>
       <MedicalClaimLine>
+        <!-- MedicalClaimLine does NOT extend SuperClass — no FromTime/ToTime/EnteredBy here -->
         <LineCounter>1</LineCounter>
-        <FromTime>2024-03-15T08:00:00Z</FromTime>
-        <ToTime>2024-03-15T14:00:00Z</ToTime>
-        <ProcedureCode><Description>Office or other outpatient visit, moderate complexity (99213)</Description></ProcedureCode>
         <AdjudicationDetails>
           <AdjudicationDetail>
             <Category><Code>submitted</Code><Description>submitted</Description></Category>
           </AdjudicationDetail>
         </AdjudicationDetails>
+        <ProcedureCode><Description>Office or other outpatient visit, moderate complexity (99213)</Description></ProcedureCode>
       </MedicalClaimLine>
     </MedicalClaimLines>
   </MedicalClaim>
