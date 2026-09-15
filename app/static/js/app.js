@@ -1690,13 +1690,8 @@ function deletePatientRecord(packageName, btnEl) {
   if (!confirm(`Delete "${packageName}" and all its files? This cannot be undone.`)) return;
   btnEl.disabled = true;
   btnEl.textContent = 'Deleting…';
-  fetch('/api/patient-record/delete', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ package: packageName }),
-    })
-    .then(r => {
-      if (!r.ok) throw new Error(`Server returned ${r.status}`);
+  api.post('/patient-record/delete', { package: packageName })
+    .then(() => {
       // Remove the table row
       const row = btnEl.closest('tr');
       if (row) row.remove();
