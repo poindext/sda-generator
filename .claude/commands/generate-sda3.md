@@ -78,7 +78,7 @@ Required date fields by type:
 | `LabOrder` | `FromTime`, `ToTime`, `EnteredOn`, `SpecimenCollectedTime`, `Result.ResultTime` | `FromTime` = `ToTime` = `EnteredOn` = encounter date. `SpecimenCollectedTime` = time specimen drawn (use encounter date + a morning time, e.g. `T08:00:00Z`). Note: there is NO `OrderedOn` field. `ResultTime` = same day (STAT) or 1–3 days later (routine). |
 | `Observation` | `ObservationTime`, `EnteredOn` | Both = encounter `FromTime`. |
 | `Allergy` | `EnteredOn` | `FromTime` optional (onset). |
-| `Procedure` | `FromTime`, `EnteredOn` | Both = encounter datetime. `ProcedureTime` also exists but comes late in the sequence — use `FromTime` for the procedure date. |
+| `Procedure` | `FromTime`, `ProcedureTime`, `EnteredOn` | `ProcedureTime` = procedure datetime (populates the "Procedure Date" column in HealthShare). `FromTime` = same value. `EnteredOn` = encounter datetime. |
 | `Vaccination` | `FromTime`, `EnteredOn` | `FromTime` = date administered. |
 
 **Coherence rules:**
@@ -895,19 +895,28 @@ For **inpatient encounters** include two documents: an H&P (`Code="HP"`) on admi
 
 **Critical**: The procedure code lives in a **child `<Procedure>` element** (same name as the parent record). Never put `<SDACodingStandard>` directly inside the outer `<Procedure>` — it must be wrapped in the inner `<Procedure>`. **No `SendingFacility` on Procedure records.**
 
+**XSD field order**: `FromTime → ToTime → EncounterNumber → Procedure (code) → Clinician → ProcedureTime → EnteredBy → EnteredAt → EnteredOn → ExternalId → ActionCode`
+
+- `<Clinician>` populates the **Care Provider** column in HealthShare — always include it
+- `<ProcedureTime>` populates the **Procedure Date** column in HealthShare — always include it (same datetime as `FromTime`)
+
 ```xml
 <Procedures>
   <Procedure>
-    <FromTime>2024-03-15T00:00:00Z</FromTime>
+    <FromTime>2024-03-15T09:00:00Z</FromTime>
+    <ToTime>2024-03-15T09:00:00Z</ToTime>
     <EncounterNumber>ENC-2024031501</EncounterNumber>
     <Procedure>
       <SDACodingStandard>CPT</SDACodingStandard>
       <Code>99213</Code>
       <Description>Office visit, moderate complexity</Description>
     </Procedure>
+    <Clinician><Code>DR456</Code><Description>Dr. Smith</Description></Clinician>
+    <ProcedureTime>2024-03-15T09:00:00Z</ProcedureTime>
     <EnteredBy><Code>DR456</Code><Description>Dr. Smith</Description></EnteredBy>
     <EnteredAt><Code>GH001</Code><Description>General Hospital</Description></EnteredAt>
-    <EnteredOn>2024-03-15T00:00:00Z</EnteredOn>
+    <EnteredOn>2024-03-15T09:00:00Z</EnteredOn>
+    <ExternalId>Procedures_1</ExternalId>
     <ActionCode>A</ActionCode>
   </Procedure>
 </Procedures>
