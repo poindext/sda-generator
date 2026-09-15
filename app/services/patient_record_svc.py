@@ -632,6 +632,31 @@ async def _score_record(
     return None
 
 
+async def _summarize_scenario(scenario: str, model: str, client) -> str:
+    """Return a single-line clinical description (~100 chars) of the scenario."""
+    try:
+        resp = await client.chat.completions.create(
+            model=model,
+            max_tokens=80,
+            temperature=0.0,
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are a clinical informatics assistant. "
+                        "Summarize the clinical scenario in one concise line (≤100 characters). "
+                        "Format: 'Patient name, age/sex, primary conditions, facilities.' "
+                        "Output only the summary line — no quotes, no explanation."
+                    ),
+                },
+                {"role": "user", "content": scenario},
+            ],
+        )
+        return resp.choices[0].message.content.strip()[:140]
+    except Exception:
+        return ""
+
+
 async def _refine_scenario(
     original_scenario: str,
     xml_text: str,
@@ -1008,8 +1033,9 @@ async def generate_record(
         files, zip_path = _split_by_facility(xml, base_name, out_dir)
 
         (out_dir / "scenario.txt").write_text(active_scenario.strip(), encoding="utf-8")
-        # Save first non-blank line of original user input as the display description
-        desc_line = next((ln.strip() for ln in scenario.splitlines() if ln.strip()), "")[:140]
+        # Ask GPT for a single-line clinical summary; fall back to first line of user input
+        gpt_desc = await _summarize_scenario(scenario, model, client)
+        desc_line = gpt_desc or next((ln.strip() for ln in scenario.splitlines() if ln.strip()), "")[:140]
         (out_dir / "description.txt").write_text(desc_line, encoding="utf-8")
         if refined_scenario:
             (out_dir / "scenario_original.txt").write_text(scenario.strip(), encoding="utf-8")
