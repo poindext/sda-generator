@@ -24,6 +24,21 @@ class RecordRequest(BaseModel):
     cohort_id: str = ""
 
 
+@router.delete("/patient-record/{package}")
+async def delete_patient_record(package: str):
+    import shutil
+    from app.config import POPULATIONS_DIR
+
+    pkg_dir = (POPULATIONS_DIR / "single-records" / package).resolve()
+    records_resolved = (POPULATIONS_DIR / "single-records").resolve()
+    if not str(pkg_dir).startswith(str(records_resolved)):
+        raise HTTPException(403)
+    if not pkg_dir.exists():
+        raise HTTPException(404, "Package not found")
+    shutil.rmtree(pkg_dir)
+    return {"deleted": package}
+
+
 @router.get("/patient-record/download-zip")
 async def download_zip(path: str):
     from app.config import BASE_DIR, POPULATIONS_DIR

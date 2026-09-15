@@ -1658,13 +1658,15 @@ function loadPrHistory() {
         : '';
       const viewBtn = `<button class="btn btn-secondary" style="padding:4px 10px;font-size:12px;margin-right:6px"
            onclick="viewPatientSummary('${r.name}')">View</button>`;
+      const delBtn = `<button class="btn" style="padding:4px 10px;font-size:12px;margin-right:6px;background:#fff;border:1px solid #dc3545;color:#dc3545"
+           onclick="deletePatientRecord('${r.name}', this)">Delete</button>`;
       return `<tr>
         <td style="padding:6px 12px">
           <span style="font-family:monospace;font-size:13px">${r.name}</span>${desc}
         </td>
         <td style="padding:6px 12px;white-space:nowrap">${r.file_count} file${r.file_count !== 1 ? 's' : ''}</td>
         <td style="padding:6px 12px;color:var(--text-muted);font-size:13px;white-space:nowrap">${date}</td>
-        <td style="padding:6px 12px;white-space:nowrap">${viewBtn}${dlBtn}</td>
+        <td style="padding:6px 12px;white-space:nowrap">${viewBtn}${dlBtn}${delBtn}</td>
       </tr>`;
     }).join('');
     list.innerHTML = `
@@ -1682,6 +1684,30 @@ function loadPrHistory() {
   }).catch(() => {
     list.innerHTML = '<p class="text-muted text-sm">Could not load records.</p>';
   });
+}
+
+function deletePatientRecord(packageName, btnEl) {
+  if (!confirm(`Delete "${packageName}" and all its files? This cannot be undone.`)) return;
+  btnEl.disabled = true;
+  btnEl.textContent = 'Deleting…';
+  fetch(`/api/patient-record/${encodeURIComponent(packageName)}`, { method: 'DELETE' })
+    .then(r => {
+      if (!r.ok) throw new Error(`Server returned ${r.status}`);
+      // Remove the table row
+      const row = btnEl.closest('tr');
+      if (row) row.remove();
+      // If table body is now empty, show the empty state
+      const tbody = document.querySelector('#pr-history-list tbody');
+      if (tbody && !tbody.querySelector('tr')) {
+        document.getElementById('pr-history-list').innerHTML =
+          '<p class="text-muted text-sm">No records yet.</p>';
+      }
+    })
+    .catch(err => {
+      btnEl.disabled = false;
+      btnEl.textContent = 'Delete';
+      alert(`Delete failed: ${err.message}`);
+    });
 }
 
 function viewPatientSummary(packageName) {
