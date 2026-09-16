@@ -1639,28 +1639,42 @@ function renderTemplatePreview(t) {
 const _prRecordNames = new Set();
 
 function _parseNameFromScenario(text) {
-  // "named First Last" or "patient: First Last"
-  let m = text.match(/(?:named\s+|patient[:\s]+)([A-Z][a-z'-]+)\s+([A-Z][a-z'-]+)/);
-  if (m) return { first: m[1], last: m[2] };
-  // "First Last," or "First Last." near the start
-  m = text.match(/^([A-Z][a-z'-]+)\s+([A-Z][a-z'-]+)[,\.]/);
-  if (m) return { first: m[1], last: m[2] };
-  // Fallback: first two Title-Case words that aren't common clinical/English terms
-  const SKIP = new Set(['Type','Male','Female','Year','Old','With','Without','The','And',
-    'For','Has','Who','She','His','Her','Lab','History','No','Acute','Chronic','New',
-    'Ohio','Stage','Level','After','During','Following','Initial','Recent','Presenting']);
-  const names = [];
-  for (const w of text.split(/[\s,\.]+/)) {
-    if (/^[A-Z][a-z'-]{1,}$/.test(w) && !SKIP.has(w)) {
-      names.push(w);
-      if (names.length === 2) return { first: names[0], last: names[1] };
-    }
+  // Words that may appear immediately after a name in a sentence — not part of the name.
+  const NAME_STOP = new Set(['presenting','with','who','at','in','on','for','after','and',
+    'or','the','a','an','is','was','has','have','to','of','from','by','suffering',
+    'diagnosed','admitted','complaining','reporting','experiencing','regarding']);
+
+  function _extractName(raw) {
+    const tokens = raw.replace(/[().,;:\n]+$/, '').trim().split(/\s+/)
+      .filter(t => !NAME_STOP.has(t.toLowerCase()));
+    if (tokens.length >= 2) return { first: tokens[0], last: tokens[tokens.length - 1] };
+    return null;
   }
+
+  // Explicit "name is" phrasing — most reliable
+  let m = text.match(/\bname\s+is\s+([A-Za-z][A-Za-z'-]*(?:\s+[A-Za-z][A-Za-z'-]*){1,3})/i);
+  if (m) { const r = _extractName(m[1]); if (r) return r; }
+
+  // "Patient:" or "Patient Name:" label — require a colon separator
+  m = text.match(/\bpatient(?:\s+name)?\s*:\s*([A-Za-z][A-Za-z'-]*(?:\s+[A-Za-z][A-Za-z'-]*){1,3})/i);
+  if (m) { const r = _extractName(m[1]); if (r) return r; }
+
+  // Standalone "Name: First Last" label
+  m = text.match(/(?:^|\n)\s*name[:\s]+([A-Za-z][A-Za-z'-]*(?:\s+[A-Za-z][A-Za-z'-]*){1,3})/i);
+  if (m) { const r = _extractName(m[1]); if (r) return r; }
+
+  // "named First Last" — match 2-3 words, stop-word filtered
+  m = text.match(/\bnamed\s+([A-Za-z][A-Za-z'-]*(?:\s+[A-Za-z][A-Za-z'-]*){1,3})/i);
+  if (m) { const r = _extractName(m[1]); if (r) return r; }
+
   return null;
 }
 
 function _nameToSlug(first, last) {
-  return (last + '_' + first).toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+  return (last + '_' + first).toLowerCase()
+    .replace(/'/g, '')
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_|_$/g, '');
 }
 
 function loadPrHistory() {
