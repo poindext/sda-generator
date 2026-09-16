@@ -425,6 +425,39 @@ def _split_by_facility(
 # Record generation
 # --------------------------------------------------------------------------
 
+_FIX_SYSTEM_PROMPT = """\
+You are an expert InterSystems HealthShare SDA3 clinical data editor.
+
+You will be given:
+1. A list of specific issues to correct (in an [AMENDMENTS] section)
+2. The complete existing SDA3 XML for the patient
+
+Your job: return the COMPLETE corrected SDA3 XML as a single <Container> element.
+
+CRITICAL — PRESERVATION (change NOTHING that is not listed in the issues):
+- Preserve WITHOUT MODIFICATION: every facility code (EnteredAt/Code, SendingFacility values in \
+clinical records), every local MRN, every EncounterNumber, every provider name and code, every \
+encounter date and time
+- Do not rename facilities, renumber encounters, or change provider names
+- Do not restructure, reorganize, or reorder sections not touched by the fixes
+
+CRITICAL — XSD COMPLIANCE (apply to all new or modified elements):
+- Diagnoses: use <OnsetTime> (NOT <FromTime>); no <ToTime> on Diagnosis records
+- Always include <Status> on every <Diagnosis> using HL7 coding \
+(Code=A Active or Code=R Resolved)
+- EncounterNumber is the FIRST element in every clinical record
+- Maintain the SDA3 XSD element sequence throughout
+
+When adding new clinical records:
+- Match the facility code and EnteredAt from existing records at the same facility
+- Use an existing EncounterNumber from that facility for the same encounter date
+- Mirror the structure of existing correct records at the same facility
+
+Return ONLY the XML — no explanation, no markdown fences. Start with <Container>, end \
+with </Container>.\
+"""
+
+
 _REFINE_SYSTEM_PROMPT = """\
 You are a clinical data quality reviewer for InterSystems HealthShare SDA3 patient records.
 
@@ -1144,6 +1177,57 @@ def _strip_xml_fences(text: str) -> str:
     return xml
 
 
+def _recombine_facility_files(out_dir: Path) -> str | None:
+    """
+    Read all ADD XML files in out_dir and merge them back into a single
+    <Container> suitable for GPT fix-mode editing.  Returns None if no files.
+    Merges PatientNumbers from all facilities so GPT sees every MRN.
+    """
+    add_files = sorted([f for f in out_dir.glob("*.xml") if "_DELETE" not in f.name])
+    if not add_files:
+        return None
+
+    combined = ET.Element("Container")
+    merged_patient = None
+    merged_pn_wrapper = None
+
+    for fpath in add_files:
+        try:
+            root = ET.parse(fpath).getroot()
+        except Exception:
+            continue
+
+        p = root.find("Patient")
+        if p is not None:
+            if merged_patient is None:
+                merged_patient = copy.deepcopy(p)
+                merged_pn_wrapper = merged_patient.find("PatientNumbers")
+                if merged_pn_wrapper is None:
+                    merged_pn_wrapper = ET.SubElement(merged_patient, "PatientNumbers")
+                # Already has this facility's PatientNumber — keep it
+            else:
+                # Merge PatientNumbers from subsequent files
+                src_pn_wrapper = p.find("PatientNumbers")
+                if src_pn_wrapper is not None:
+                    for pn in src_pn_wrapper:
+                        merged_pn_wrapper.append(copy.deepcopy(pn))
+
+        for section in root:
+            if section.tag in ("Patient", "SendingFacility"):
+                continue
+            existing_sec = combined.find(section.tag)
+            if existing_sec is None:
+                existing_sec = ET.SubElement(combined, section.tag)
+            for record in section:
+                existing_sec.append(copy.deepcopy(record))
+
+    if merged_patient is not None:
+        combined.insert(0, merged_patient)
+
+    raw = ET.tostring(combined, encoding="unicode")
+    return '<?xml version="1.0" encoding="UTF-8"?>\n' + raw
+
+
 async def generate_record(
     scenario: str,
     filename: str | None = None,
@@ -1170,57 +1254,101 @@ async def generate_record(
         yield {"type": "error", "message": "OPENAI_API_KEY not configured"}
         return
 
-    system_prompt = _load_system_prompt()
-
-    template_context = ""
-    if cohort_refs:
-        try:
-            template_context = _build_template_context(cohort_refs)
-        except Exception as exc:
-            yield {"type": "error", "message": f"Failed to load template: {exc}"}
-            return
-
-    base_user_message = (
-        "Generate realistic InterSystems HealthShare SDA3 XML sample data "
-        "for the following scenario:\n\n"
-    )
-    if template_context:
-        base_user_message += template_context + "\n\n"
-    base_user_message += scenario.strip()
+    # Resolve output directory early so we can detect fix mode
+    if not filename:
+        from datetime import datetime
+        base_name = f"patient_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    else:
+        base_name = filename.removesuffix(".xml")
+    out_dir = _RECORDS_DIR / base_name
 
     client = AsyncOpenAI(api_key=OPENAI_API_KEY)
 
-    # ── Pass 1: initial generation ────────────────────────────────────────────
-    first_pass_xml = ""
-    async for event in _xml_generation_pass(client, model, system_prompt, base_user_message):
-        if event["type"] == "xml_complete":
-            first_pass_xml = event["xml"]
-        else:
-            yield event
-            if event["type"] == "error":
-                return
+    # ── Detect fix mode ────────────────────────────────────────────────────────
+    # When the package already has XML files AND the scenario contains [AMENDMENTS],
+    # pass the existing XML to GPT and ask for surgical fixes rather than a full
+    # regeneration.  This preserves all facility codes, MRNs, encounter numbers,
+    # provider names, and encounter dates that are already correct.
+    existing_xml = _recombine_facility_files(out_dir) if out_dir.exists() else None
+    is_fix_mode = bool(existing_xml and "[AMENDMENTS" in scenario)
 
-    # ── Refinement: improve the scenario based on what was generated ──────────
-    yield {"type": "status", "message": "Analyzing clinical coherence…"}
-    refined_scenario = await _refine_scenario(scenario, first_pass_xml, model, client)
+    system_prompt = _load_system_prompt()
+    refined_scenario = ""  # only set in fresh-generation mode
 
-    if refined_scenario:
-        yield {"type": "status", "message": "Regenerating with refined scenario…"}
-        refined_user_message = base_user_message.replace(scenario.strip(), refined_scenario)
+    if is_fix_mode:
+        # ── Fix mode: GPT edits existing XML rather than generating from scratch ─
+        yield {"type": "status", "message": "Fix mode: passing existing XML to GPT for surgical corrections…"}
+        fix_user_message = (
+            "The following specific issues were found in the existing SDA3 patient XML. "
+            "Fix ONLY these issues and return the COMPLETE corrected XML as a single "
+            "<Container> element.\n\n"
+            "Preserve without modification: all facility codes, all MRNs, all encounter "
+            "numbers, all provider names and codes, and all encounter dates that are NOT "
+            "mentioned in the issues below.\n\n"
+            + scenario.strip()
+            + "\n\nEXISTING XML:\n"
+            + existing_xml
+        )
         final_xml = ""
-        async for event in _xml_generation_pass(client, model, system_prompt, refined_user_message):
+        async for event in _xml_generation_pass(client, model, _FIX_SYSTEM_PROMPT, fix_user_message):
             if event["type"] == "xml_complete":
                 final_xml = event["xml"]
             else:
                 yield event
                 if event["type"] == "error":
                     return
-        active_scenario = refined_scenario
-        active_user_message = refined_user_message
-    else:
-        final_xml = first_pass_xml
         active_scenario = scenario
-        active_user_message = base_user_message
+        active_user_message = fix_user_message
+
+    else:
+        # ── Fresh generation mode ──────────────────────────────────────────────
+        template_context = ""
+        if cohort_refs:
+            try:
+                template_context = _build_template_context(cohort_refs)
+            except Exception as exc:
+                yield {"type": "error", "message": f"Failed to load template: {exc}"}
+                return
+
+        base_user_message = (
+            "Generate realistic InterSystems HealthShare SDA3 XML sample data "
+            "for the following scenario:\n\n"
+        )
+        if template_context:
+            base_user_message += template_context + "\n\n"
+        base_user_message += scenario.strip()
+
+        # Pass 1: initial generation
+        first_pass_xml = ""
+        async for event in _xml_generation_pass(client, model, system_prompt, base_user_message):
+            if event["type"] == "xml_complete":
+                first_pass_xml = event["xml"]
+            else:
+                yield event
+                if event["type"] == "error":
+                    return
+
+        # Refinement: improve the scenario based on what was generated
+        yield {"type": "status", "message": "Analyzing clinical coherence…"}
+        refined_scenario = await _refine_scenario(scenario, first_pass_xml, model, client)
+
+        if refined_scenario:
+            yield {"type": "status", "message": "Regenerating with refined scenario…"}
+            refined_user_message = base_user_message.replace(scenario.strip(), refined_scenario)
+            final_xml = ""
+            async for event in _xml_generation_pass(client, model, system_prompt, refined_user_message):
+                if event["type"] == "xml_complete":
+                    final_xml = event["xml"]
+                else:
+                    yield event
+                    if event["type"] == "error":
+                        return
+            active_scenario = refined_scenario
+            active_user_message = refined_user_message
+        else:
+            final_xml = first_pass_xml
+            active_scenario = scenario
+            active_user_message = base_user_message
 
     yield {"type": "status", "message": "Reconciling medications…"}
 
@@ -1251,14 +1379,6 @@ async def generate_record(
         }
 
     yield {"type": "status", "message": "Packaging files…"}
-
-    if not filename:
-        from datetime import datetime
-        base_name = f"patient_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    else:
-        base_name = filename.removesuffix(".xml")
-
-    out_dir = _RECORDS_DIR / base_name
 
     try:
         files, zip_path = _split_by_facility(xml, base_name, out_dir)
