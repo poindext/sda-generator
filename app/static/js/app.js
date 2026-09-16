@@ -1636,12 +1636,41 @@ function renderTemplatePreview(t) {
 // PAGE: SINGLE PATIENT RECORD
 // =========================================================
 
+const _prRecordNames = new Set();
+
+function _parseNameFromScenario(text) {
+  // "named First Last" or "patient: First Last"
+  let m = text.match(/(?:named\s+|patient[:\s]+)([A-Z][a-z'-]+)\s+([A-Z][a-z'-]+)/);
+  if (m) return { first: m[1], last: m[2] };
+  // "First Last," or "First Last." near the start
+  m = text.match(/^([A-Z][a-z'-]+)\s+([A-Z][a-z'-]+)[,\.]/);
+  if (m) return { first: m[1], last: m[2] };
+  // Fallback: first two Title-Case words that aren't common clinical/English terms
+  const SKIP = new Set(['Type','Male','Female','Year','Old','With','Without','The','And',
+    'For','Has','Who','She','His','Her','Lab','History','No','Acute','Chronic','New',
+    'Ohio','Stage','Level','After','During','Following','Initial','Recent','Presenting']);
+  const names = [];
+  for (const w of text.split(/[\s,\.]+/)) {
+    if (/^[A-Z][a-z'-]{1,}$/.test(w) && !SKIP.has(w)) {
+      names.push(w);
+      if (names.length === 2) return { first: names[0], last: names[1] };
+    }
+  }
+  return null;
+}
+
+function _nameToSlug(first, last) {
+  return (last + '_' + first).toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+}
+
 function loadPrHistory() {
   const list = el('pr-history-list');
   if (!list) return;
   list.innerHTML = '<p class="text-muted text-sm">Loading…</p>';
   api.get('/patient-record/list').then(resp => {
     const records = resp.records || [];
+    _prRecordNames.clear();
+    records.forEach(r => _prRecordNames.add(r.name));
     if (!records.length) {
       list.innerHTML = '<p class="text-muted text-sm">No records yet.</p>';
       return;
@@ -1946,6 +1975,32 @@ register('patient-record', () => {
     });
   }
 
+  // Attach listeners only once
+  if (!el('pr-scenario')._init) {
+    el('pr-scenario')._init = true;
+
+    el('pr-scenario').addEventListener('blur', () => {
+      const filenameEl = el('pr-filename');
+      // Don't overwrite if the user typed something manually
+      if (filenameEl.value.trim() && !filenameEl._autoSuggested) return;
+      const parsed = _parseNameFromScenario(el('pr-scenario').value);
+      if (!parsed) return;
+      let slug = _nameToSlug(parsed.first, parsed.last);
+      if (_prRecordNames.has(slug)) {
+        let n = 2;
+        while (_prRecordNames.has(`${slug}_${n}`)) n++;
+        slug = `${slug}_${n}`;
+      }
+      filenameEl.value = slug;
+      filenameEl._autoSuggested = true;
+    });
+
+    el('pr-filename').addEventListener('input', () => {
+      // User is typing manually — stop overwriting
+      el('pr-filename')._autoSuggested = false;
+    });
+  }
+
   const btn = el('btn-generate-record');
 
   btn.onclick = async () => {
@@ -2054,6 +2109,9 @@ register('patient-record', () => {
 
         show('pr-result-card');
         loadPrHistory();
+        // Reset so the next scenario gets a fresh auto-suggestion
+        el('pr-filename').value = '';
+        el('pr-filename')._autoSuggested = false;
       }
     );
   };
