@@ -878,7 +878,7 @@ Critical ordering rules:
 
 ### Document example (clinical notes)
 
-**No `SDACodingStandard`** on `DocumentType`. `ExternalId` REQUIRED. `NoteText` is plain text (not Base64). Include `<Documents>` for every encounter — at minimum a progress note for outpatient visits; H&P + Discharge Summary for inpatient visits.
+**No `SDACodingStandard`** on `DocumentType`. `ExternalId` REQUIRED. `NoteText` is plain text (not Base64). Include `<Documents>` for every encounter — at minimum a progress note for outpatient visits; H&P + Discharge Summary for inpatient visits. **`<ActionCode>A</ActionCode>` is required — without it HealthShare will not display the document in the clinical viewer.**
 
 DocumentType codes: `PN`=Progress Note, `DS`=Discharge Summary, `HP`=History & Physical, `SV`=Sick Visit.
 
@@ -905,7 +905,8 @@ FOLLOW-UP: Return in 3 months.</NoteText>
     </DocumentType>
     <Clinician><Code>DR456</Code><Description>Dr. Smith</Description></Clinician>
     <DocumentName>Outpatient Progress Note</DocumentName>
-    <FileType>Progress Note</FileType>
+    <FileType>TXT</FileType>
+    <ActionCode>A</ActionCode>
     <EnteredBy><Code>DR456</Code><Description>Dr. Smith</Description></EnteredBy>
     <EnteredAt><Code>GH001</Code><Description>General Hospital</Description></EnteredAt>
     <EnteredOn>2024-03-15T14:00:00Z</EnteredOn>
