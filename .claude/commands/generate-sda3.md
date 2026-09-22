@@ -53,6 +53,7 @@ The XSD enforces strict section ordering inside `<Container>`. **Never reorder, 
 - For each clinical section, include 1–3 records unless the scenario specifies a quantity
 - Populate **required and commonly-used fields only** — leave optional fields absent unless they add clinical realism to the scenario
 - All data must be clinically coherent: diagnoses, medications, labs, and allergies should relate to each other and to the stated scenario
+- **MULTI-FACILITY CRITICAL: If the scenario specifies more than one facility, you MUST generate Encounters and clinical records for EVERY facility. Do not silently omit any facility. Each facility's encounters, diagnoses, medications, labs, and notes must appear in the output with the correct facility code in `<EnteredAt>` and `<SendingFacility>`.**
 - **Always wrap entries in their plural container tag even when there is only one entry.** A single encounter must still be: `<Encounters><Encounter>...</Encounter></Encounters>`. This applies to every section without exception: `<Encounters>`, `<Allergies>`, `<IllnessHistories>`, `<SocialHistories>`, `<FamilyHistories>`, `<Diagnoses>`, `<Observations>`, `<Problems>`, `<Procedures>`, `<Documents>`, `<LabOrders>`, `<Medications>`, `<Vaccinations>`, `<SocialDeterminants>`, `<PatientNumbers>`, `<ResultItems>`. Never emit a bare child element without its plural wrapper.
 
 ### Date format — ISO 8601 required

@@ -1318,6 +1318,22 @@ async def generate_record(
             base_user_message += template_context + "\n\n"
         base_user_message += scenario.strip()
 
+        # If the scenario names multiple facility codes, call them out explicitly
+        # so GPT cannot silently omit one.  Pattern: parenthesised ALL-CAPS codes
+        # like (RCL001), (REGHOSP), (WVR001) that appear in the scenario text.
+        _fac_codes = sorted(set(re.findall(r'\(([A-Z][A-Z0-9]{2,})\)', scenario)))
+        # Drop common non-facility abbreviations
+        _NON_FAC = {"MRN", "ICD", "CPT", "BID", "QD", "TID", "IV", "PO", "PRN",
+                    "CBC", "CMP", "BMI", "DOB", "SSN", "NPI", "DEA", "CDA", "SUD"}
+        _fac_codes = [c for c in _fac_codes if c not in _NON_FAC]
+        if len(_fac_codes) > 1:
+            base_user_message += (
+                f"\n\nCRITICAL — MULTI-FACILITY REQUIREMENT: This scenario specifies "
+                f"{len(_fac_codes)} facilities: {', '.join(_fac_codes)}. "
+                f"You MUST generate Encounters and clinical records for ALL {len(_fac_codes)} "
+                f"of them. Do not omit any facility from the output."
+            )
+
         # Pass 1: initial generation
         first_pass_xml = ""
         async for event in _xml_generation_pass(client, model, system_prompt, base_user_message):
