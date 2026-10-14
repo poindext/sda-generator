@@ -1319,13 +1319,21 @@ async def generate_record(
         base_user_message += scenario.strip()
 
         # If the scenario names multiple facility codes, call them out explicitly
-        # so GPT cannot silently omit one.  Pattern: parenthesised ALL-CAPS codes
-        # like (RCL001), (REGHOSP), (WVR001) that appear in the scenario text.
-        _fac_codes = sorted(set(re.findall(r'\(([A-Z][A-Z0-9]{2,})\)', scenario)))
-        # Drop common non-facility abbreviations
+        # so GPT cannot silently omit one.  Detect codes in several formats:
+        #   (RCL001)  — parenthesised
+        #   Organization Code: PC001  — labelled field
+        #   "at REGHOSP" / "from NEPH001" — bare reference
         _NON_FAC = {"MRN", "ICD", "CPT", "BID", "QD", "TID", "IV", "PO", "PRN",
-                    "CBC", "CMP", "BMI", "DOB", "SSN", "NPI", "DEA", "CDA", "SUD"}
-        _fac_codes = [c for c in _fac_codes if c not in _NON_FAC]
+                    "CBC", "CMP", "BMI", "DOB", "SSN", "NPI", "DEA", "CDA", "SUD",
+                    "LLM", "HIE", "LOINC", "EDT", "EST", "UTC", "XML", "SDA", "API"}
+        _raw = set()
+        # Pattern 1: explicit "Organization Code: XXXX" label
+        _raw.update(re.findall(r'[Oo]rganization\s+[Cc]ode[:\s]+([A-Z][A-Z0-9]{2,})', scenario))
+        # Pattern 2: parenthesised codes like (RCL001)
+        _raw.update(re.findall(r'\(([A-Z][A-Z0-9]{2,})\)', scenario))
+        # Pattern 3: numbered list only "1. PC001 —" (not bullet dashes, to avoid lab names)
+        _raw.update(re.findall(r'(?:^|\n)\s*\d+\.\s+([A-Z][A-Z0-9]{2,})\s*[—:\-]', scenario))
+        _fac_codes = sorted(c for c in _raw if c not in _NON_FAC)
         if len(_fac_codes) > 1:
             base_user_message += (
                 f"\n\nCRITICAL — MULTI-FACILITY REQUIREMENT: This scenario specifies "
