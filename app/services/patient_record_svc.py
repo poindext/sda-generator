@@ -1177,6 +1177,52 @@ def _strip_xml_fences(text: str) -> str:
     return xml
 
 
+def _merge_container_strings(xml_list: list[str]) -> str:
+    """
+    Merge multiple <Container> XML strings into one.
+    Mirrors _recombine_facility_files but operates on in-memory strings
+    (used when per-facility generation produces separate Container outputs).
+    """
+    combined = ET.Element("Container")
+    merged_patient = None
+    merged_pn_wrapper = None
+
+    for xml in xml_list:
+        xml_clean = _prep_xml_for_lxml(xml)
+        try:
+            root = ET.fromstring(xml_clean)
+        except Exception:
+            continue
+
+        p = root.find("Patient")
+        if p is not None:
+            if merged_patient is None:
+                merged_patient = copy.deepcopy(p)
+                merged_pn_wrapper = merged_patient.find("PatientNumbers")
+                if merged_pn_wrapper is None:
+                    merged_pn_wrapper = ET.SubElement(merged_patient, "PatientNumbers")
+            else:
+                src_pn_wrapper = p.find("PatientNumbers")
+                if src_pn_wrapper is not None:
+                    for pn in src_pn_wrapper:
+                        merged_pn_wrapper.append(copy.deepcopy(pn))
+
+        for section in root:
+            if section.tag in ("Patient", "SendingFacility"):
+                continue
+            existing_sec = combined.find(section.tag)
+            if existing_sec is None:
+                existing_sec = ET.SubElement(combined, section.tag)
+            for record in section:
+                existing_sec.append(copy.deepcopy(record))
+
+    if merged_patient is not None:
+        combined.insert(0, merged_patient)
+
+    raw = ET.tostring(combined, encoding="unicode")
+    return '<?xml version="1.0" encoding="UTF-8"?>\n' + raw
+
+
 def _recombine_facility_files(out_dir: Path) -> str | None:
     """
     Read all ADD XML files in out_dir and merge them back into a single
@@ -1335,44 +1381,80 @@ async def generate_record(
         _raw.update(re.findall(r'(?:^|\n)\s*\d+\.\s+([A-Z][A-Z0-9]{2,})\s*[—:\-]', scenario))
         _fac_codes = sorted(c for c in _raw if c not in _NON_FAC)
         if len(_fac_codes) > 1:
-            base_user_message += (
-                f"\n\nCRITICAL — MULTI-FACILITY REQUIREMENT: This scenario specifies "
-                f"{len(_fac_codes)} facilities: {', '.join(_fac_codes)}. "
-                f"You MUST generate Encounters and clinical records for ALL {len(_fac_codes)} "
-                f"of them. Do not omit any facility from the output."
-            )
+            # Per-facility generation: each facility gets its own API call so no
+            # single pass exceeds the ~32k output token limit. Results are merged
+            # back into one Container before the shared downstream pipeline.
+            yield {
+                "type": "status",
+                "message": f"Multi-facility scenario — generating {len(_fac_codes)} facilities separately…",
+            }
+            per_fac_xmls: list[str] = []
+            for i, fac in enumerate(_fac_codes):
+                yield {
+                    "type": "status",
+                    "message": f"Generating facility {i + 1}/{len(_fac_codes)}: {fac}…",
+                }
+                fac_msg = (
+                    base_user_message
+                    + f"\n\nFACILITY SCOPE: Generate ONLY the clinical records for facility {fac}. "
+                    f"Set SendingFacility={fac} on every Encounter, Diagnosis, Medication, "
+                    f"LabOrder, Observation, Document, and all other records you output. "
+                    f"Include the Patient element as normal. "
+                    f"Do not generate any records attributed to other facilities."
+                )
+                fac_xml = ""
+                async for event in _xml_generation_pass(client, model, system_prompt, fac_msg):
+                    if event["type"] == "xml_complete":
+                        fac_xml = event["xml"]
+                    else:
+                        yield event
+                        if event["type"] == "error":
+                            return
+                if fac_xml.strip():
+                    per_fac_xmls.append(_strip_xml_fences(fac_xml))
 
-        # Pass 1: initial generation
-        first_pass_xml = ""
-        async for event in _xml_generation_pass(client, model, system_prompt, base_user_message):
-            if event["type"] == "xml_complete":
-                first_pass_xml = event["xml"]
-            else:
-                yield event
-                if event["type"] == "error":
-                    return
+            if not per_fac_xmls:
+                yield {"type": "error", "message": "Per-facility generation produced no XML output"}
+                return
 
-        # Refinement: improve the scenario based on what was generated
-        yield {"type": "status", "message": "Analyzing clinical coherence…"}
-        refined_scenario = await _refine_scenario(scenario, first_pass_xml, model, client)
+            yield {"type": "status", "message": f"Merging {len(per_fac_xmls)} facility record(s)…"}
+            final_xml = _merge_container_strings(per_fac_xmls)
+            active_scenario = scenario
+            active_user_message = base_user_message
 
-        if refined_scenario:
-            yield {"type": "status", "message": "Regenerating with refined scenario…"}
-            refined_user_message = base_user_message.replace(scenario.strip(), refined_scenario)
-            final_xml = ""
-            async for event in _xml_generation_pass(client, model, system_prompt, refined_user_message):
+        else:
+            # Single facility (or no codes detected): existing 2-pass flow with refinement
+            # Pass 1: initial generation
+            first_pass_xml = ""
+            async for event in _xml_generation_pass(client, model, system_prompt, base_user_message):
                 if event["type"] == "xml_complete":
-                    final_xml = event["xml"]
+                    first_pass_xml = event["xml"]
                 else:
                     yield event
                     if event["type"] == "error":
                         return
-            active_scenario = refined_scenario
-            active_user_message = refined_user_message
-        else:
-            final_xml = first_pass_xml
-            active_scenario = scenario
-            active_user_message = base_user_message
+
+            # Refinement: improve the scenario based on what was generated
+            yield {"type": "status", "message": "Analyzing clinical coherence…"}
+            refined_scenario = await _refine_scenario(scenario, first_pass_xml, model, client)
+
+            if refined_scenario:
+                yield {"type": "status", "message": "Regenerating with refined scenario…"}
+                refined_user_message = base_user_message.replace(scenario.strip(), refined_scenario)
+                final_xml = ""
+                async for event in _xml_generation_pass(client, model, system_prompt, refined_user_message):
+                    if event["type"] == "xml_complete":
+                        final_xml = event["xml"]
+                    else:
+                        yield event
+                        if event["type"] == "error":
+                            return
+                active_scenario = refined_scenario
+                active_user_message = refined_user_message
+            else:
+                final_xml = first_pass_xml
+                active_scenario = scenario
+                active_user_message = base_user_message
 
     yield {"type": "status", "message": "Reconciling medications…"}
 
